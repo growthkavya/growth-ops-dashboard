@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth & Ops - Leadership Update</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #16a34a;
+            --warning: #eab308;
+            --danger: #dc2626;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --bg: #ffffff;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        .quarter-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 500;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .summary-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .summary-card .label {
+            font-size: 0.875rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .summary-card.success .value { color: var(--success); }
+        .summary-card.warning .value { color: var(--warning); }
+        .summary-card.danger .value { color: var(--danger); }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .progress-section {
+            background: #f8f9fa;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .layer-row {
+            display: grid;
+            grid-template-columns: 200px 1fr 80px;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .layer-row:last-child {
+            border-bottom: none;
+        }
+
+        .layer-name {
+            font-weight: 600;
+        }
+
+        .layer-focus {
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        .progress-bar {
+            height: 24px;
+            background: #dee2e6;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #60a5fa);
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+
+        .layer-percent {
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .highlights {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .highlight-card {
+            background: #f8f9fa;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .highlight-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .highlight-card h3::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .highlight-card.done h3::before { background: var(--success); }
+        .highlight-card.next h3::before { background: var(--primary); }
+
+        .highlight-card ul {
+            list-style: none;
+            font-size: 0.9375rem;
+        }
+
+        .highlight-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .highlight-card li:last-child {
+            border-bottom: none;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+        }
+
+        .kpi-mini {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .kpi-mini .score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .kpi-mini .name {
+            font-size: 0.6875rem;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .kpi-mini .target {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            color: var(--muted);
+            font-size: 0.875rem;
+        }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .back-link {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .highlights {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .layer-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Growth & Ops Update</h1>
+        <span class="quarter-badge" id="quarter">Q2 2026</span>
+    </header>
+
+    <div id="content">
+        <div class="loading">Loading...</div>
+    </div>
+
+    <footer>
+        <a href="../index.html" class="back-link">Back to Dashboard</a>
+        <span id="last-updated">Last updated: -</span>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script>
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function init() {
+            try {
+                // Check auth
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) {
+                    window.location.href = '../login.html';
+                    return;
+                }
+
+                // Load data
+                const [actionsResult, kpisResult, scoresResult] = await Promise.all([
+                    supabase.from('actions').select('*').order('action_id'),
+                    supabase.from('kpis').select('*').order('name'),
+                    supabase.from('kpi_scores').select('*')
+                ]);
+
+                const actions = actionsResult.data || [];
+                const kpis = kpisResult.data || [];
+                const scores = scoresResult.data || [];
+
+                render(actions, kpis, scores);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('content').innerHTML =
+                    '<div class="loading">Failed to load data. Please try refreshing.</div>';
+            }
+        }
+
+        function render(actions, kpis, scores) {
+            const stats = {
+                done: actions.filter(a => a.status === 'done').length,
+                progress: actions.filter(a => a.status === 'in_progress').length,
+                pending: actions.filter(a => a.status === 'not_started').length
+            };
+
+            const layerProgress = [1, 2, 3].map(layer => {
+                const layerActions = actions.filter(a => a.layer === layer);
+                const done = layerActions.filter(a => a.status === 'done').length;
+                const total = layerActions.length;
+                return total > 0 ? Math.round((done / total) * 100) : 0;
+            });
+
+            const completed = actions.filter(a => a.status === 'done').slice(0, 5);
+            const inProgress = actions.filter(a => a.status === 'in_progress').slice(0, 5);
+
+            const currentYear = new Date().getFullYear();
+            const latestScores = {};
+            kpis.forEach(kpi => {
+                const kpiScores = scores
+                    .filter(s => s.kpi_id === kpi.id && s.year === currentYear)
+                    .sort((a, b) => b.month - a.month);
+                latestScores[kpi.id] = kpiScores.length > 0 ? kpiScores[0].score : null;
+            });
+
+            document.getElementById('content').innerHTML = `
+                <div class="summary-grid">
+                    <div class="summary-card success">
+                        <div class="value">${stats.done}</div>
+                        <div class="label">Completed</div>
+                    </div>
+                    <div class="summary-card warning">
+                        <div class="value">${stats.progress}</div>
+                        <div class="label">In Progress</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="value">${stats.pending}</div>
+                        <div class="label">Pending</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="value">${actions.length}</div>
+                        <div class="label">Total Actions</div>
+                    </div>
+                </div>
+
+                <section>
+                    <h2>Layer Progress</h2>
+                    <div class="progress-section">
+                        <div class="layer-row">
+                            <div>
+                                <div class="layer-name">Layer 1: Infrastructure</div>
+                                <div class="layer-focus">Fix the Leaky Bucket</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${layerProgress[0]}%"></div>
+                            </div>
+                            <div class="layer-percent">${layerProgress[0]}%</div>
+                        </div>
+                        <div class="layer-row">
+                            <div>
+                                <div class="layer-name">Layer 2: Operating System</div>
+                                <div class="layer-focus">Build Team Enablement</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${layerProgress[1]}%"></div>
+                            </div>
+                            <div class="layer-percent">${layerProgress[1]}%</div>
+                        </div>
+                        <div class="layer-row">
+                            <div>
+                                <div class="layer-name">Layer 3: Growth</div>
+                                <div class="layer-focus">Scale What Works</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${layerProgress[2]}%"></div>
+                            </div>
+                            <div class="layer-percent">${layerProgress[2]}%</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Highlights</h2>
+                    <div class="highlights">
+                        <div class="highlight-card done">
+                            <h3>Completed</h3>
+                            <ul>
+                                ${completed.length
+                                    ? completed.map(a => `<li>${a.title}</li>`).join('')
+                                    : '<li>None yet</li>'
+                                }
+                            </ul>
+                        </div>
+                        <div class="highlight-card next">
+                            <h3>In Progress</h3>
+                            <ul>
+                                ${inProgress.length
+                                    ? inProgress.map(a => `<li>${a.title}</li>`).join('')
+                                    : '<li>Nothing in progress</li>'
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>KPI Snapshot</h2>
+                    <div class="kpi-grid">
+                        ${kpis.map(kpi => `
+                            <div class="kpi-mini">
+                                <div class="score">${latestScores[kpi.id] !== null ? latestScores[kpi.id] : '-'}</div>
+                                <div class="name">${kpi.name.split(' ')[0]}</div>
+                                <div class="target">Target: ${kpi.target}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+
+            document.getElementById('last-updated').textContent =
+                'Last updated: ' + new Date().toLocaleDateString();
+        }
+
+        init();
+    </script>
+</body>
+</html>
