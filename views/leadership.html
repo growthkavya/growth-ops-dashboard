@@ -290,15 +290,15 @@
     <script src="../js/config.js"></script>
     <script>
         // Initialize Supabase client
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function init() {
             try {
                 // Load data (no auth required for leadership view - it's read-only)
                 const [actionsResult, kpisResult, scoresResult] = await Promise.all([
-                    supabase.from('actions').select('*').order('action_id'),
-                    supabase.from('kpis').select('*').order('name'),
-                    supabase.from('kpi_scores').select('*')
+                    sb.from('actions').select('*').order('action_id'),
+                    sb.from('kpis').select('*').order('name'),
+                    sb.from('kpi_scores').select('*')
                 ]);
 
                 const actions = actionsResult.data || [];
