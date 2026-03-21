@@ -294,14 +294,7 @@
 
         async function init() {
             try {
-                // Check auth
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) {
-                    window.location.href = '../login.html';
-                    return;
-                }
-
-                // Load data
+                // Load data (no auth required for leadership view - it's read-only)
                 const [actionsResult, kpisResult, scoresResult] = await Promise.all([
                     supabase.from('actions').select('*').order('action_id'),
                     supabase.from('kpis').select('*').order('name'),
