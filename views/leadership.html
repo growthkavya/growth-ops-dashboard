@@ -269,6 +269,76 @@
                 gap: 0.5rem;
             }
         }
+
+        /* Blockers / Needs Attention Section */
+        .needs-attention {
+            margin-bottom: 2rem;
+        }
+
+        .needs-attention h2 {
+            color: var(--danger);
+        }
+
+        .blockers-section {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .blocker-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #fecaca;
+        }
+
+        .blocker-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .blocker-row:first-child {
+            padding-top: 0;
+        }
+
+        .blocker-icon {
+            color: var(--danger);
+            font-size: 1.25rem;
+        }
+
+        .blocker-details {
+            flex: 1;
+        }
+
+        .blocker-text {
+            color: #991b1b;
+            font-weight: 500;
+        }
+
+        .blocker-meta {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+        }
+
+        .foundation-warning {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            color: #92400e;
+        }
+
+        .foundation-warning .warning-icon {
+            font-size: 1.5rem;
+            color: #f59e0b;
+        }
     </style>
 </head>
 <body>
@@ -295,17 +365,21 @@
         async function init() {
             try {
                 // Load data (no auth required for leadership view - it's read-only)
-                const [actionsResult, kpisResult, scoresResult] = await Promise.all([
+                const [actionsResult, kpisResult, scoresResult, workLogsResult, profilesResult] = await Promise.all([
                     sb.from('actions').select('*').order('action_id'),
                     sb.from('kpis').select('*').order('name'),
-                    sb.from('kpi_scores').select('*')
+                    sb.from('kpi_scores').select('*'),
+                    sb.from('work_logs').select('*').gte('log_date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]),
+                    sb.from('profiles').select('id, full_name')
                 ]);
 
                 const actions = actionsResult.data || [];
                 const kpis = kpisResult.data || [];
                 const scores = scoresResult.data || [];
+                const workLogs = workLogsResult.data || [];
+                const profiles = profilesResult.data || [];
 
-                render(actions, kpis, scores);
+                render(actions, kpis, scores, workLogs, profiles);
             } catch (error) {
                 console.error('Error loading data:', error);
                 document.getElementById('content').innerHTML =
@@ -313,7 +387,7 @@
             }
         }
 
-        function render(actions, kpis, scores) {
+        function render(actions, kpis, scores, workLogs = [], profiles = []) {
             const stats = {
                 done: actions.filter(a => a.status === 'done').length,
                 progress: actions.filter(a => a.status === 'in_progress').length,
@@ -330,6 +404,18 @@
             const completed = actions.filter(a => a.status === 'done').slice(0, 5);
             const inProgress = actions.filter(a => a.status === 'in_progress').slice(0, 5);
 
+            // Get blockers from work logs
+            const allBlockers = [];
+            workLogs.forEach(log => {
+                if (log.blockers && log.blockers.length > 0) {
+                    const profile = profiles.find(p => p.id === log.user_id);
+                    const userName = profile ? profile.full_name : 'Team Member';
+                    log.blockers.forEach(blocker => {
+                        allBlockers.push({ text: blocker, owner: userName, date: log.log_date });
+                    });
+                }
+            });
+
             const currentYear = new Date().getFullYear();
             const latestScores = {};
             kpis.forEach(kpi => {
@@ -339,7 +425,27 @@
                 latestScores[kpi.id] = kpiScores.length > 0 ? kpiScores[0].score : null;
             });
 
+            // Check for foundation gap
+            const foundationWarning = layerProgress[1] > layerProgress[0] && layerProgress[0] < 50;
+
             document.getElementById('content').innerHTML = `
+                ${allBlockers.length > 0 ? `
+                <section class="needs-attention">
+                    <h2>Needs Leadership Input</h2>
+                    <div class="blockers-section">
+                        ${allBlockers.map(b => `
+                            <div class="blocker-row">
+                                <span class="blocker-icon">&#9888;</span>
+                                <div class="blocker-details">
+                                    <div class="blocker-text">${b.text}</div>
+                                    <div class="blocker-meta">${b.owner} - ${new Date(b.date).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+                ` : ''}
+
                 <div class="summary-grid">
                     <div class="summary-card success">
                         <div class="value">${stats.done}</div>
@@ -358,6 +464,13 @@
                         <div class="label">Total Actions</div>
                     </div>
                 </div>
+
+                ${foundationWarning ? `
+                <div class="foundation-warning">
+                    <span class="warning-icon">&#9888;</span>
+                    <span>Foundation Gap: Layer 2 progress (${layerProgress[1]}%) exceeds Layer 1 (${layerProgress[0]}%). Consider prioritizing infrastructure work.</span>
+                </div>
+                ` : ''}
 
                 <section>
                     <h2>Layer Progress</h2>

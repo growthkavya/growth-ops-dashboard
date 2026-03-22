@@ -37,11 +37,68 @@ const dashboardModule = {
     },
 
     render() {
+        this.renderTodaysFocus();
         this.renderStats();
         this.renderLayerProgress();
         this.renderKPIGauges();
         this.renderRecentActivity();
         this.renderLastUpdated();
+    },
+
+    renderTodaysFocus() {
+        // Set today's date
+        const dateEl = document.getElementById('focus-date');
+        if (dateEl) {
+            dateEl.textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+
+        // Find priority action: first in_progress, or first not_started from lowest layer
+        let focusAction = this.actions.find(a => a.status === 'in_progress');
+        if (!focusAction) {
+            // Get first not_started from Layer 1, then 2, then 3
+            for (let layer = 1; layer <= 3; layer++) {
+                focusAction = this.actions.find(a => a.status === 'not_started' && a.layer === layer);
+                if (focusAction) break;
+            }
+        }
+
+        const titleEl = document.getElementById('focus-title');
+        const layerEl = document.getElementById('focus-layer');
+        const kpiEl = document.getElementById('focus-kpi');
+        const btnEl = document.getElementById('mark-focus-done');
+        const cardEl = document.getElementById('focus-card');
+
+        if (focusAction) {
+            if (titleEl) titleEl.textContent = focusAction.title;
+            if (layerEl) {
+                layerEl.textContent = `L${focusAction.layer}`;
+                layerEl.className = `focus-layer layer-${focusAction.layer}`;
+            }
+            // Find KPI name
+            const kpi = this.kpis.find(k => k.id === focusAction.kpi_id);
+            if (kpiEl && kpi) kpiEl.textContent = `KPI: ${kpi.name}`;
+            if (btnEl) {
+                btnEl.style.display = 'inline-block';
+                btnEl.onclick = () => this.markFocusDone(focusAction);
+            }
+            if (cardEl) cardEl.classList.add('has-focus');
+        } else {
+            if (titleEl) titleEl.textContent = 'All caught up!';
+            if (layerEl) layerEl.textContent = '';
+            if (kpiEl) kpiEl.textContent = '';
+            if (btnEl) btnEl.style.display = 'none';
+            if (cardEl) cardEl.classList.remove('has-focus');
+        }
+    },
+
+    async markFocusDone(action) {
+        try {
+            await db.updateAction(action.id, { status: 'done' });
+            toast.success(`Completed: ${action.title}`);
+            this.refresh();
+        } catch (error) {
+            toast.error('Failed to update action');
+        }
     },
 
     renderStats() {
@@ -59,11 +116,14 @@ const dashboardModule = {
     },
 
     renderLayerProgress() {
+        const layerPercents = [];
+
         for (let layer = 1; layer <= 3; layer++) {
             const layerActions = this.actions.filter(a => a.layer === layer);
             const done = layerActions.filter(a => a.status === 'done').length;
             const total = layerActions.length;
             const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+            layerPercents.push(percent);
 
             const progressBar = document.getElementById(`layer${layer}-progress`);
             const percentText = document.getElementById(`layer${layer}-percent`);
@@ -71,19 +131,54 @@ const dashboardModule = {
             if (progressBar) progressBar.style.width = `${percent}%`;
             if (percentText) percentText.textContent = `${percent}%`;
         }
+
+        // Show warning if Layer 2 > Layer 1 (building on shaky foundation)
+        const warningEl = document.getElementById('layer-warning');
+        if (warningEl) {
+            if (layerPercents[1] > layerPercents[0] && layerPercents[0] < 50) {
+                warningEl.style.display = 'flex';
+            } else {
+                warningEl.style.display = 'none';
+            }
+        }
     },
 
     renderKPIGauges() {
         const container = document.getElementById('kpi-gauges');
         if (!container) return;
 
-        const latestScores = this.getLatestScores();
+        const { current: latestScores, previous: prevScores } = this.getScoresWithTrend();
 
         container.innerHTML = this.kpis.map(kpi => {
             const score = latestScores[kpi.id];
+            const prevScore = prevScores[kpi.id];
+            let trend = '';
+            let trendClass = '';
+
+            if (score !== null && prevScore !== null) {
+                if (score > prevScore) {
+                    trend = '<span class="trend-up">&#9650;</span>';
+                    trendClass = 'trending-up';
+                } else if (score < prevScore) {
+                    trend = '<span class="trend-down">&#9660;</span>';
+                    trendClass = 'trending-down';
+                } else {
+                    trend = '<span class="trend-flat">&#8212;</span>';
+                }
+            }
+
+            // Calculate fill percentage for visual gauge
+            const fillPercent = score !== null ? (score / 4) * 100 : 0;
+
             return `
-                <div class="kpi-gauge">
-                    <div class="kpi-gauge-value">${score !== null ? score : '-'}</div>
+                <div class="kpi-gauge ${trendClass}">
+                    <div class="kpi-gauge-ring">
+                        <svg viewBox="0 0 36 36">
+                            <path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="gauge-fill" stroke-dasharray="${fillPercent}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        </svg>
+                        <div class="kpi-gauge-value">${score !== null ? score : '-'}${trend}</div>
+                    </div>
                     <div class="kpi-gauge-label">${kpi.name.split(' ')[0]}</div>
                 </div>
             `;
@@ -95,6 +190,36 @@ const dashboardModule = {
         if (weightedScoreEl) {
             weightedScoreEl.textContent = weightedScore !== null ? weightedScore.toFixed(2) : '-';
         }
+    },
+
+    getScoresWithTrend() {
+        const current = {};
+        const previous = {};
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth() + 1;
+
+        this.kpis.forEach(kpi => {
+            current[kpi.id] = null;
+            previous[kpi.id] = null;
+        });
+
+        // Get scores sorted by month descending
+        const sortedScores = this.kpiScores
+            .filter(s => s.year === currentYear)
+            .sort((a, b) => b.month - a.month);
+
+        // Get current and previous month scores
+        this.kpis.forEach(kpi => {
+            const kpiScores = sortedScores.filter(s => s.kpi_id === kpi.id);
+            if (kpiScores.length > 0) {
+                current[kpi.id] = kpiScores[0].score;
+                if (kpiScores.length > 1) {
+                    previous[kpi.id] = kpiScores[1].score;
+                }
+            }
+        });
+
+        return { current, previous };
     },
 
     getLatestScores() {
@@ -145,15 +270,24 @@ const dashboardModule = {
 
         container.innerHTML = this.recentActivity.map(activity => {
             const time = this.formatTimeAgo(new Date(activity.timestamp));
+            const initials = this.getInitials(activity.user_name);
             const actionText = this.formatActivityText(activity);
 
             return `
                 <li>
-                    ${actionText}
-                    <span class="activity-time">${time}</span>
+                    <span class="activity-avatar">${initials}</span>
+                    <div class="activity-content">
+                        ${actionText}
+                        <span class="activity-time">${time}</span>
+                    </div>
                 </li>
             `;
         }).join('');
+    },
+
+    getInitials(name) {
+        if (!name || name === 'Unknown') return '?';
+        return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
     },
 
     formatTimeAgo(date) {
