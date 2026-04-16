@@ -1,12 +1,17 @@
 /**
- * Actions Module
+ * Actions Module — Year 2 KRA framework
+ *
+ * Actions are grouped by KRA (kra1..kra5) and can be filtered by KRA, owner
+ * (kavya/ishita/riya), and status. Double-click a row to edit; click the
+ * status pill to cycle not_started → in_progress → done.
  */
 
 const actionsModule = {
     actions: [],
+    kras: [],
     kpis: [],
     profiles: [],
-    currentFilter: { layer: 'all', status: 'all' },
+    currentFilter: { kra: 'all', owner: 'all', status: 'all' },
 
     async init() {
         await this.loadData();
@@ -17,13 +22,15 @@ const actionsModule = {
 
     async loadData() {
         try {
-            const [actions, kpis, profiles] = await Promise.all([
+            const [actions, kras, kpis, profiles] = await Promise.all([
                 db.getActions(),
+                db.getKRAs(),
                 db.getKPIs(),
                 db.getProfiles()
             ]);
 
             this.actions = actions || [];
+            this.kras = kras || [];
             this.kpis = kpis || [];
             this.profiles = profiles || [];
         } catch (error) {
@@ -43,46 +50,52 @@ const actionsModule = {
             return;
         }
 
-        // Group by layer
-        const grouped = {
-            1: filteredActions.filter(a => a.layer === 1),
-            2: filteredActions.filter(a => a.layer === 2),
-            3: filteredActions.filter(a => a.layer === 3)
-        };
-
+        // Group by KRA (using kra_code from joined kras row, fall back to kra_id lookup)
+        const kraList = this.kras.slice().sort((a, b) => a.sort_order - b.sort_order);
         let html = '';
 
-        for (let layer = 1; layer <= 3; layer++) {
-            if (this.currentFilter.layer !== 'all' && this.currentFilter.layer !== layer.toString()) {
+        for (const kra of kraList) {
+            // Skip if KRA filter is set to a specific KRA and doesn't match
+            if (this.currentFilter.kra !== 'all' && this.currentFilter.kra !== kra.kra_code) {
                 continue;
             }
 
-            const layerConfig = APP_CONFIG.layers[layer];
-            const layerActions = grouped[layer];
+            const kraActions = filteredActions.filter(a => {
+                const code = a.kras?.kra_code;
+                return code === kra.kra_code;
+            });
 
-            if (layerActions.length === 0) continue;
+            if (kraActions.length === 0) continue;
+
+            const doneCount = kraActions.filter(a => a.status === 'done').length;
 
             html += `
-                <div class="layer-section" data-layer="${layer}">
-                    <div class="layer-header">
-                        <h3><span class="layer-num">${layer}</span> ${layerConfig.name}</h3>
-                        <span class="layer-meta">Weeks ${layerConfig.weeks} | ${layerConfig.focus}</span>
+                <div class="kra-section" data-kra="${kra.kra_code}">
+                    <div class="kra-header">
+                        <h3>
+                            <span class="kra-num">${kra.kra_code.replace('kra','')}</span>
+                            ${kra.name}
+                        </h3>
+                        <span class="kra-meta">${doneCount} / ${kraActions.length} done</span>
                     </div>
                     <div class="actions-list">
-                        ${layerActions.map(action => this.renderAction(action)).join('')}
+                        ${kraActions.map(action => this.renderAction(action)).join('')}
                     </div>
                 </div>
             `;
         }
 
-        container.innerHTML = html;
+        container.innerHTML = html || '<div class="empty">No actions match the current filter</div>';
 
-        // Attach event listeners to status buttons
+        // Status pill click → cycle status
         container.querySelectorAll('.action-status').forEach(btn => {
-            btn.addEventListener('click', (e) => this.toggleStatus(e));
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleStatus(e);
+            });
         });
 
-        // Attach event listeners to action rows for editing
+        // Double-click row → edit modal
         container.querySelectorAll('.action-item').forEach(row => {
             row.addEventListener('dblclick', (e) => {
                 if (!e.target.classList.contains('action-status')) {
@@ -94,19 +107,28 @@ const actionsModule = {
 
     renderAction(action) {
         const kpiName = action.kpis?.name || '-';
-        const assignee = action.profiles?.full_name || 'Unassigned';
+        const owner = action.owner_name || 'unassigned';
+        const ownerLabel = memberName(owner);
+        const dueDate = action.due_date
+            ? new Date(action.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+            : '';
 
         return `
             <div class="action-item" data-id="${action.id}" data-status="${action.status}">
                 <span class="action-id">${action.action_id}</span>
-                <span class="action-title">${action.title}</span>
-                <span class="action-kpi">${kpiName}</span>
-                <span class="action-assignee">${assignee}</span>
+                <span class="action-title" title="${this.escape(action.notes || '')}">${this.escape(action.title)}</span>
+                <span class="action-kpi">${this.escape(kpiName)}</span>
+                <span class="owner-badge badge-${owner}">${ownerLabel}</span>
+                <span class="action-due">${dueDate}</span>
                 <button class="action-status ${action.status}" data-id="${action.id}">
                     ${this.formatStatus(action.status)}
                 </button>
             </div>
         `;
+    },
+
+    escape(s) {
+        return String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
     },
 
     formatStatus(status) {
@@ -120,11 +142,13 @@ const actionsModule = {
 
     getFilteredActions() {
         return this.actions.filter(action => {
-            const layerMatch = this.currentFilter.layer === 'all' ||
-                action.layer === parseInt(this.currentFilter.layer);
+            const kraMatch = this.currentFilter.kra === 'all' ||
+                action.kras?.kra_code === this.currentFilter.kra;
+            const ownerMatch = this.currentFilter.owner === 'all' ||
+                action.owner_name === this.currentFilter.owner;
             const statusMatch = this.currentFilter.status === 'all' ||
                 action.status === this.currentFilter.status;
-            return layerMatch && statusMatch;
+            return kraMatch && ownerMatch && statusMatch;
         });
     },
 
@@ -135,7 +159,6 @@ const actionsModule = {
 
         if (!action) return;
 
-        // Cycle through statuses
         const statuses = ['not_started', 'in_progress', 'done'];
         const currentIndex = statuses.indexOf(action.status);
         const newStatus = statuses[(currentIndex + 1) % statuses.length];
@@ -147,7 +170,6 @@ const actionsModule = {
         try {
             await db.updateAction(actionId, { status: newStatus });
 
-            // Log activity
             await db.logActivity(
                 auth.currentUser.id,
                 auth.currentProfile?.full_name || 'Unknown',
@@ -159,14 +181,12 @@ const actionsModule = {
             );
 
             action.status = newStatus;
-            toast.success(`Action ${action.action_id} updated`);
+            toast.success(`Action ${action.action_id}: ${this.formatStatus(newStatus)}`);
 
-            // Update dashboard if visible
             if (typeof dashboardModule !== 'undefined') {
                 dashboardModule.refresh();
             }
         } catch (error) {
-            // Revert on error
             btn.className = `action-status ${action.status}`;
             btn.textContent = this.formatStatus(action.status);
             toast.error('Failed to update action');
@@ -177,15 +197,19 @@ const actionsModule = {
         const action = this.actions.find(a => a.id === actionId);
         if (!action) return;
 
+        const ownerOptions = APP_CONFIG.team.map(m =>
+            `<option value="${m.id}" ${action.owner_name === m.id ? 'selected' : ''}>${m.name}</option>`
+        ).join('');
+
         const content = `
             <form id="edit-action-form">
                 <div class="form-group">
                     <label>Action ID</label>
-                    <input type="text" value="${action.action_id}" disabled>
+                    <input type="text" value="${this.escape(action.action_id)}" disabled>
                 </div>
                 <div class="form-group">
                     <label for="action-title">Title</label>
-                    <input type="text" id="action-title" name="title" value="${action.title}" required>
+                    <input type="text" id="action-title" name="title" value="${this.escape(action.title)}" required>
                 </div>
                 <div class="form-group">
                     <label for="action-status">Status</label>
@@ -196,12 +220,10 @@ const actionsModule = {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="action-assignee">Assignee</label>
-                    <select id="action-assignee" name="assignee_id">
+                    <label for="action-owner">Owner</label>
+                    <select id="action-owner" name="owner_name">
                         <option value="">Unassigned</option>
-                        ${this.profiles.map(p => `
-                            <option value="${p.id}" ${action.assignee_id === p.id ? 'selected' : ''}>${p.full_name}</option>
-                        `).join('')}
+                        ${ownerOptions}
                     </select>
                 </div>
                 <div class="form-group">
@@ -210,7 +232,7 @@ const actionsModule = {
                 </div>
                 <div class="form-group">
                     <label for="action-notes">Notes</label>
-                    <textarea id="action-notes" name="notes">${action.notes || ''}</textarea>
+                    <textarea id="action-notes" name="notes">${this.escape(action.notes || '')}</textarea>
                 </div>
             </form>
         `;
@@ -225,14 +247,13 @@ const actionsModule = {
                 const updates = {
                     title: formData.get('title'),
                     status: formData.get('status'),
-                    assignee_id: formData.get('assignee_id') || null,
+                    owner_name: formData.get('owner_name') || null,
                     due_date: formData.get('due_date') || null,
                     notes: formData.get('notes')
                 };
 
                 await db.updateAction(actionId, updates);
 
-                // Log activity
                 await db.logActivity(
                     auth.currentUser.id,
                     auth.currentProfile?.full_name || 'Unknown',
@@ -242,7 +263,6 @@ const actionsModule = {
                     updates.title
                 );
 
-                // Refresh
                 await this.loadData();
                 this.render();
                 toast.success('Action updated');
@@ -255,12 +275,20 @@ const actionsModule = {
     },
 
     setupEventListeners() {
-        const layerFilter = document.getElementById('filter-layer');
+        const kraFilter = document.getElementById('filter-kra');
+        const ownerFilter = document.getElementById('filter-owner');
         const statusFilter = document.getElementById('filter-status');
 
-        if (layerFilter) {
-            layerFilter.addEventListener('change', (e) => {
-                this.currentFilter.layer = e.target.value;
+        if (kraFilter) {
+            kraFilter.addEventListener('change', (e) => {
+                this.currentFilter.kra = e.target.value;
+                this.render();
+            });
+        }
+
+        if (ownerFilter) {
+            ownerFilter.addEventListener('change', (e) => {
+                this.currentFilter.owner = e.target.value;
                 this.render();
             });
         }

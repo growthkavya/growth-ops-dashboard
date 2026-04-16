@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth & Ops - Leadership Update</title>
+    <title>GrowthOps Year 2 — Leadership Update</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -14,337 +14,137 @@
             --muted: #6b7280;
             --bg: #ffffff;
             --border: #e5e7eb;
+            --kavya: #2563eb;
+            --ishita: #7c3aed;
+            --riya: #16a34a;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            background: var(--bg); color: var(--text);
+            line-height: 1.6; padding: 2rem;
+            max-width: 1200px; margin: 0 auto;
         }
-
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; padding-bottom: 1rem;
             border-bottom: 2px solid var(--border);
         }
-
-        header h1 {
-            font-size: 1.75rem;
-            font-weight: 600;
-        }
-
+        header h1 { font-size: 1.75rem; font-weight: 600; }
         .quarter-badge {
-            background: var(--primary);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-weight: 500;
+            background: var(--primary); color: white;
+            padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 500;
         }
-
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            gap: 1.5rem; margin-bottom: 2rem;
         }
-
         .summary-card {
-            background: #f8f9fa;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            text-align: center;
+            background: #f8f9fa; border-radius: 0.75rem;
+            padding: 1.5rem; text-align: center;
         }
-
-        .summary-card .value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .summary-card .label {
-            font-size: 0.875rem;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
+        .summary-card .value { font-size: 2.5rem; font-weight: 700; color: var(--primary); }
+        .summary-card .label { font-size: 0.875rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
         .summary-card.success .value { color: var(--success); }
         .summary-card.warning .value { color: var(--warning); }
-        .summary-card.danger .value { color: var(--danger); }
+        .summary-card.danger  .value { color: var(--danger); }
 
-        section {
-            margin-bottom: 2rem;
-        }
-
+        section { margin-bottom: 2rem; }
         section h2 {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-size: 1.1rem; margin-bottom: 1rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.05em;
         }
 
-        .progress-section {
-            background: #f8f9fa;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-        }
-
-        .layer-row {
+        .progress-section { background: #f8f9fa; border-radius: 0.75rem; padding: 1.5rem; }
+        .kra-row {
             display: grid;
-            grid-template-columns: 200px 1fr 80px;
-            align-items: center;
-            gap: 1rem;
+            grid-template-columns: 260px 1fr 120px;
+            align-items: center; gap: 1rem;
             padding: 0.75rem 0;
             border-bottom: 1px solid var(--border);
         }
-
-        .layer-row:last-child {
-            border-bottom: none;
-        }
-
-        .layer-name {
-            font-weight: 600;
-        }
-
-        .layer-focus {
-            font-size: 0.875rem;
-            color: var(--muted);
-        }
-
-        .progress-bar {
-            height: 24px;
-            background: #dee2e6;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
+        .kra-row:last-child { border-bottom: none; }
+        .kra-name { font-weight: 600; }
+        .kra-focus { font-size: 0.875rem; color: var(--muted); }
+        .progress-bar { height: 24px; background: #dee2e6; border-radius: 12px; overflow: hidden; }
         .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #60a5fa);
+            height: 100%; background: linear-gradient(90deg, var(--primary), #60a5fa);
             border-radius: 12px;
+            display: flex; align-items: center; justify-content: flex-end;
+            padding-right: 0.75rem; color: white; font-size: 0.75rem; font-weight: 600;
             transition: width 0.5s ease;
         }
+        .kra-percent { font-size: 1rem; font-weight: 700; text-align: right; }
 
-        .layer-percent {
-            font-size: 1.25rem;
-            font-weight: 700;
-            text-align: right;
-        }
-
-        .highlights {
+        .team-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; margin-bottom: 2rem;
         }
-
-        .highlight-card {
-            background: #f8f9fa;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
+        .team-card {
+            background: #f8f9fa; border-radius: 0.75rem; padding: 1.25rem;
+            border-left: 4px solid var(--primary);
         }
+        .team-card.kavya  { border-left-color: var(--kavya); }
+        .team-card.ishita { border-left-color: var(--ishita); }
+        .team-card.riya   { border-left-color: var(--riya); }
+        .team-name { font-weight: 600; font-size: 1rem; }
+        .team-role { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; }
+        .team-score { font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .team-score-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; }
+        .team-tasks { display: flex; gap: 1rem; margin-top: 0.6rem; font-size: 0.8rem; color: var(--muted); }
 
+        .highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .highlight-card { background: #f8f9fa; border-radius: 0.75rem; padding: 1.5rem; }
         .highlight-card h3 {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 1rem; margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
         }
-
         .highlight-card h3::before {
-            content: "";
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+            content: ""; display: inline-block;
+            width: 8px; height: 8px; border-radius: 50%;
         }
-
         .highlight-card.done h3::before { background: var(--success); }
         .highlight-card.next h3::before { background: var(--primary); }
-
-        .highlight-card ul {
-            list-style: none;
-            font-size: 0.9375rem;
-        }
-
-        .highlight-card li {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .highlight-card li:last-child {
-            border-bottom: none;
-        }
-
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 1rem;
-        }
-
-        .kpi-mini {
-            background: #f8f9fa;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .kpi-mini .score {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .kpi-mini .name {
-            font-size: 0.6875rem;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
-
-        .kpi-mini .target {
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-
-        footer {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            color: var(--muted);
-            font-size: 0.875rem;
-        }
-
-        .back-link {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: var(--muted);
-        }
-
-        @media print {
-            body {
-                padding: 0;
-            }
-
-            .back-link {
-                display: none;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .summary-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .highlights {
-                grid-template-columns: 1fr;
-            }
-
-            .kpi-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .layer-row {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-        }
-
-        /* Blockers / Needs Attention Section */
-        .needs-attention {
-            margin-bottom: 2rem;
-        }
-
-        .needs-attention h2 {
-            color: var(--danger);
-        }
+        .highlight-card.blocked h3::before { background: var(--danger); }
+        .highlight-card ul { list-style: none; font-size: 0.9375rem; }
+        .highlight-card li { padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+        .highlight-card li:last-child { border-bottom: none; }
 
         .blockers-section {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 0.75rem;
-            padding: 1rem;
+            background: #fef2f2; border: 1px solid #fecaca;
+            border-radius: 0.75rem; padding: 1rem;
         }
-
         .blocker-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #fecaca;
+            display: flex; gap: 0.75rem;
+            padding: 0.75rem 0; border-bottom: 1px solid #fecaca;
         }
+        .blocker-row:first-child { padding-top: 0; }
+        .blocker-row:last-child { padding-bottom: 0; border-bottom: none; }
+        .blocker-text { color: #991b1b; font-weight: 500; }
+        .blocker-meta { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; }
 
-        .blocker-row:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
+        footer {
+            margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between;
+            color: var(--muted); font-size: 0.875rem;
         }
+        .back-link { color: var(--primary); text-decoration: none; }
+        .loading { text-align: center; padding: 2rem; color: var(--muted); }
 
-        .blocker-row:first-child {
-            padding-top: 0;
-        }
-
-        .blocker-icon {
-            color: var(--danger);
-            font-size: 1.25rem;
-        }
-
-        .blocker-details {
-            flex: 1;
-        }
-
-        .blocker-text {
-            color: #991b1b;
-            font-weight: 500;
-        }
-
-        .blocker-meta {
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin-top: 0.25rem;
-        }
-
-        .foundation-warning {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem;
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 0.75rem;
-            margin-bottom: 2rem;
-            color: #92400e;
-        }
-
-        .foundation-warning .warning-icon {
-            font-size: 1.5rem;
-            color: #f59e0b;
+        @media print { body { padding: 0; } .back-link { display: none; } }
+        @media (max-width: 768px) {
+            .summary-grid, .team-grid { grid-template-columns: repeat(2, 1fr); }
+            .highlights { grid-template-columns: 1fr; }
+            .kra-row { grid-template-columns: 1fr; gap: 0.5rem; }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Growth & Ops Update</h1>
-        <span class="quarter-badge" id="quarter">Q2 2026</span>
+        <h1>GrowthOps Year 2 — Leadership Update</h1>
+        <span class="quarter-badge" id="quarter">Q1 Y2 | Apr-Jun 2026</span>
     </header>
 
     <div id="content">
@@ -357,200 +157,194 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/config.js"></script>
+    <script src="../js/config.js?v=3"></script>
     <script>
-        // Initialize Supabase client
-        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        async function init() {
-            try {
-                // Load data (no auth required for leadership view - it's read-only)
-                const [actionsResult, kpisResult, scoresResult, workLogsResult, profilesResult] = await Promise.all([
-                    sb.from('actions').select('*').order('action_id'),
-                    sb.from('kpis').select('*').order('name'),
-                    sb.from('kpi_scores').select('*'),
-                    sb.from('work_logs').select('*').gte('log_date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]),
-                    sb.from('profiles').select('id, full_name')
-                ]);
+    function escapeHtml(s) {
+        return String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
 
-                const actions = actionsResult.data || [];
-                const kpis = kpisResult.data || [];
-                const scores = scoresResult.data || [];
-                const workLogs = workLogsResult.data || [];
-                const profiles = profilesResult.data || [];
+    async function init() {
+        try {
+            const [actionsRes, kpisRes, scoresRes, krasRes, workLogsRes, profilesRes] = await Promise.all([
+                sb.from('actions').select('*, kras(kra_code, short_name, sort_order), kpis(name, member)').order('action_id'),
+                sb.from('kpis').select('*, kras(kra_code, short_name, sort_order)'),
+                sb.from('kpi_scores').select('*'),
+                sb.from('kras').select('*').order('sort_order'),
+                sb.from('work_logs').select('*').gte('log_date',
+                    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+                ),
+                sb.from('profiles').select('id, full_name')
+            ]);
 
-                render(actions, kpis, scores, workLogs, profiles);
-            } catch (error) {
-                console.error('Error loading data:', error);
-                document.getElementById('content').innerHTML =
-                    '<div class="loading">Failed to load data. Please try refreshing.</div>';
-            }
+            render({
+                actions: actionsRes.data || [],
+                kpis: kpisRes.data || [],
+                scores: scoresRes.data || [],
+                kras: krasRes.data || [],
+                workLogs: workLogsRes.data || [],
+                profiles: profilesRes.data || []
+            });
+        } catch (error) {
+            console.error('Error loading data:', error);
+            document.getElementById('content').innerHTML =
+                '<div class="loading">Failed to load data. Please refresh.</div>';
         }
+    }
 
-        function render(actions, kpis, scores, workLogs = [], profiles = []) {
-            const stats = {
-                done: actions.filter(a => a.status === 'done').length,
-                progress: actions.filter(a => a.status === 'in_progress').length,
-                pending: actions.filter(a => a.status === 'not_started').length
-            };
+    function getLatestScore(scores, kpiId) {
+        const currentYear = 2026;
+        const match = scores
+            .filter(s => s.kpi_id === kpiId && s.year === currentYear)
+            .sort((a, b) => b.month - a.month);
+        return match.length ? match[0].score : null;
+    }
 
-            const layerProgress = [1, 2, 3].map(layer => {
-                const layerActions = actions.filter(a => a.layer === layer);
-                const done = layerActions.filter(a => a.status === 'done').length;
-                const total = layerActions.length;
-                return total > 0 ? Math.round((done / total) * 100) : 0;
-            });
+    function memberWeightedScore(kpis, scores, memberId) {
+        const memberKpis = kpis.filter(k => k.member === memberId);
+        let weightedSum = 0, totalWeight = 0;
+        memberKpis.forEach(kpi => {
+            const s = getLatestScore(scores, kpi.id);
+            if (s !== null) {
+                weightedSum += s * kpi.weight;
+                totalWeight += kpi.weight;
+            }
+        });
+        return totalWeight === 0 ? null : weightedSum / totalWeight;
+    }
 
-            const completed = actions.filter(a => a.status === 'done').slice(0, 5);
-            const inProgress = actions.filter(a => a.status === 'in_progress').slice(0, 5);
+    function render({ actions, kpis, scores, kras, workLogs, profiles }) {
+        const stats = {
+            done: actions.filter(a => a.status === 'done').length,
+            progress: actions.filter(a => a.status === 'in_progress').length,
+            pending: actions.filter(a => a.status === 'not_started').length,
+            total: actions.length
+        };
 
-            // Get blockers from work logs
-            const allBlockers = [];
-            workLogs.forEach(log => {
-                if (log.blockers && log.blockers.length > 0) {
-                    const profile = profiles.find(p => p.id === log.user_id);
-                    const userName = profile ? profile.full_name : 'Team Member';
-                    log.blockers.forEach(blocker => {
-                        allBlockers.push({ text: blocker, owner: userName, date: log.log_date });
-                    });
-                }
-            });
+        // KRA progress (5 rows)
+        const kraProgress = kras.map(kra => {
+            const kraActions = actions.filter(a => a.kras?.kra_code === kra.kra_code);
+            const done = kraActions.filter(a => a.status === 'done').length;
+            const total = kraActions.length;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            return { kra, done, total, pct };
+        });
 
-            const currentYear = new Date().getFullYear();
-            const latestScores = {};
-            kpis.forEach(kpi => {
-                const kpiScores = scores
-                    .filter(s => s.kpi_id === kpi.id && s.year === currentYear)
-                    .sort((a, b) => b.month - a.month);
-                latestScores[kpi.id] = kpiScores.length > 0 ? kpiScores[0].score : null;
-            });
+        // Team scores
+        const teamScores = APP_CONFIG.team.map(m => {
+            const score = memberWeightedScore(kpis, scores, m.id);
+            const active = actions.filter(a => a.owner_name === m.id && a.status === 'in_progress').length;
+            const pending = actions.filter(a => a.owner_name === m.id && a.status === 'not_started').length;
+            const done = actions.filter(a => a.owner_name === m.id && a.status === 'done').length;
+            return { m, score, active, pending, done };
+        });
 
-            // Check for foundation gap
-            const foundationWarning = layerProgress[1] > layerProgress[0] && layerProgress[0] < 50;
+        const completed = actions.filter(a => a.status === 'done').slice(0, 6);
+        const inProgress = actions.filter(a => a.status === 'in_progress').slice(0, 6);
 
-            document.getElementById('content').innerHTML = `
-                ${allBlockers.length > 0 ? `
-                <section class="needs-attention">
+        // Blockers from work logs
+        const blockers = [];
+        workLogs.forEach(log => {
+            if (Array.isArray(log.blockers) && log.blockers.length) {
+                const profile = profiles.find(p => p.id === log.user_id);
+                const user = profile?.full_name || 'Team member';
+                log.blockers.forEach(b => blockers.push({ text: b, owner: user, date: log.log_date }));
+            }
+        });
+
+        document.getElementById('content').innerHTML = `
+            <div class="summary-grid">
+                <div class="summary-card success"><div class="value">${stats.done}</div><div class="label">Completed</div></div>
+                <div class="summary-card warning"><div class="value">${stats.progress}</div><div class="label">In Progress</div></div>
+                <div class="summary-card"><div class="value">${stats.pending}</div><div class="label">Pending</div></div>
+                <div class="summary-card"><div class="value">${stats.total}</div><div class="label">Total Actions</div></div>
+            </div>
+
+            <section>
+                <h2>Team Weighted Scores</h2>
+                <div class="team-grid">
+                    ${teamScores.map(t => `
+                        <div class="team-card ${t.m.id}">
+                            <div class="team-name">${t.m.name}</div>
+                            <div class="team-role">${t.m.role}</div>
+                            <div class="team-score">${t.score !== null ? t.score.toFixed(2) : '-'}</div>
+                            <div class="team-score-label">Weighted / 5.0</div>
+                            <div class="team-tasks">
+                                <span>Active <strong>${t.active}</strong></span>
+                                <span>Pending <strong>${t.pending}</strong></span>
+                                <span>Done <strong>${t.done}</strong></span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </section>
+
+            <section>
+                <h2>KRA Progress</h2>
+                <div class="progress-section">
+                    ${kraProgress.map(kp => `
+                        <div class="kra-row">
+                            <div>
+                                <div class="kra-name">KRA ${kp.kra.kra_code.replace('kra','')}: ${escapeHtml(kp.kra.short_name)}</div>
+                                <div class="kra-focus">${kp.done} / ${kp.total} actions done</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${kp.pct}%">${kp.pct > 10 ? kp.pct + '%' : ''}</div>
+                            </div>
+                            <div class="kra-percent">${kp.pct}%</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </section>
+
+            <section>
+                <h2>Highlights</h2>
+                <div class="highlights">
+                    <div class="highlight-card done">
+                        <h3>Completed</h3>
+                        <ul>
+                            ${completed.length
+                                ? completed.map(a => `<li>${escapeHtml(a.title)}</li>`).join('')
+                                : '<li>None yet</li>'
+                            }
+                        </ul>
+                    </div>
+                    <div class="highlight-card next">
+                        <h3>In Progress</h3>
+                        <ul>
+                            ${inProgress.length
+                                ? inProgress.map(a => `<li>${escapeHtml(a.title)}</li>`).join('')
+                                : '<li>Nothing in progress</li>'
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            ${blockers.length > 0 ? `
+                <section>
                     <h2>Needs Leadership Input</h2>
                     <div class="blockers-section">
-                        ${allBlockers.map(b => `
+                        ${blockers.map(b => `
                             <div class="blocker-row">
-                                <span class="blocker-icon">&#9888;</span>
-                                <div class="blocker-details">
-                                    <div class="blocker-text">${b.text}</div>
-                                    <div class="blocker-meta">${b.owner} - ${new Date(b.date).toLocaleDateString()}</div>
+                                <span style="color: var(--danger); font-size: 1.25rem;">!</span>
+                                <div>
+                                    <div class="blocker-text">${escapeHtml(b.text)}</div>
+                                    <div class="blocker-meta">${escapeHtml(b.owner)} — ${new Date(b.date).toLocaleDateString()}</div>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                 </section>
-                ` : ''}
+            ` : ''}
+        `;
 
-                <div class="summary-grid">
-                    <div class="summary-card success">
-                        <div class="value">${stats.done}</div>
-                        <div class="label">Completed</div>
-                    </div>
-                    <div class="summary-card warning">
-                        <div class="value">${stats.progress}</div>
-                        <div class="label">In Progress</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="value">${stats.pending}</div>
-                        <div class="label">Pending</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="value">${actions.length}</div>
-                        <div class="label">Total Actions</div>
-                    </div>
-                </div>
+        document.getElementById('last-updated').textContent =
+            'Last updated: ' + new Date().toLocaleDateString();
+    }
 
-                ${foundationWarning ? `
-                <div class="foundation-warning">
-                    <span class="warning-icon">&#9888;</span>
-                    <span>Foundation Gap: Layer 2 progress (${layerProgress[1]}%) exceeds Layer 1 (${layerProgress[0]}%). Consider prioritizing infrastructure work.</span>
-                </div>
-                ` : ''}
-
-                <section>
-                    <h2>Layer Progress</h2>
-                    <div class="progress-section">
-                        <div class="layer-row">
-                            <div>
-                                <div class="layer-name">Layer 1: Infrastructure</div>
-                                <div class="layer-focus">Fix the Leaky Bucket</div>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${layerProgress[0]}%"></div>
-                            </div>
-                            <div class="layer-percent">${layerProgress[0]}%</div>
-                        </div>
-                        <div class="layer-row">
-                            <div>
-                                <div class="layer-name">Layer 2: Operating System</div>
-                                <div class="layer-focus">Build Team Enablement</div>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${layerProgress[1]}%"></div>
-                            </div>
-                            <div class="layer-percent">${layerProgress[1]}%</div>
-                        </div>
-                        <div class="layer-row">
-                            <div>
-                                <div class="layer-name">Layer 3: Growth</div>
-                                <div class="layer-focus">Scale What Works</div>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${layerProgress[2]}%"></div>
-                            </div>
-                            <div class="layer-percent">${layerProgress[2]}%</div>
-                        </div>
-                    </div>
-                </section>
-
-                <section>
-                    <h2>Highlights</h2>
-                    <div class="highlights">
-                        <div class="highlight-card done">
-                            <h3>Completed</h3>
-                            <ul>
-                                ${completed.length
-                                    ? completed.map(a => `<li>${a.title}</li>`).join('')
-                                    : '<li>None yet</li>'
-                                }
-                            </ul>
-                        </div>
-                        <div class="highlight-card next">
-                            <h3>In Progress</h3>
-                            <ul>
-                                ${inProgress.length
-                                    ? inProgress.map(a => `<li>${a.title}</li>`).join('')
-                                    : '<li>Nothing in progress</li>'
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-
-                <section>
-                    <h2>KPI Snapshot</h2>
-                    <div class="kpi-grid">
-                        ${kpis.map(kpi => `
-                            <div class="kpi-mini">
-                                <div class="score">${latestScores[kpi.id] !== null ? latestScores[kpi.id] : '-'}</div>
-                                <div class="name">${kpi.name.split(' ')[0]}</div>
-                                <div class="target">Target: ${kpi.target}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>
-            `;
-
-            document.getElementById('last-updated').textContent =
-                'Last updated: ' + new Date().toLocaleDateString();
-        }
-
-        init();
+    init();
     </script>
 </body>
 </html>

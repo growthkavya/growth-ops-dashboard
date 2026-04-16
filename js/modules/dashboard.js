@@ -1,11 +1,15 @@
 /**
- * Dashboard Module
+ * Dashboard Module — Year 2 KRA framework
+ *
+ * Overview page: Today's Focus, Quick Stats, KRA Progress (5 rows),
+ * Team Snapshot (Kavya / Ishita / Riya weighted scores), Recent Activity.
  */
 
 const dashboardModule = {
     actions: [],
     kpis: [],
     kpiScores: [],
+    kras: [],
     goals: [],
     recentActivity: [],
 
@@ -17,10 +21,11 @@ const dashboardModule = {
 
     async loadData() {
         try {
-            const [actions, kpis, kpiScores, goals, activity] = await Promise.all([
+            const [actions, kpis, kpiScores, kras, goals, activity] = await Promise.all([
                 db.getActions(),
                 db.getKPIs(),
                 db.getKPIScores(),
+                db.getKRAs(),
                 db.getGoals(),
                 db.getActivityLog(10)
             ]);
@@ -28,6 +33,7 @@ const dashboardModule = {
             this.actions = actions || [];
             this.kpis = kpis || [];
             this.kpiScores = kpiScores || [];
+            this.kras = (kras || []).slice().sort((a, b) => a.sort_order - b.sort_order);
             this.goals = goals || [];
             this.recentActivity = activity || [];
         } catch (error) {
@@ -39,25 +45,28 @@ const dashboardModule = {
     render() {
         this.renderTodaysFocus();
         this.renderStats();
-        this.renderLayerProgress();
+        this.renderKRAProgress();
+        this.renderTeamSnapshot();
         this.renderKPIGauges();
         this.renderRecentActivity();
         this.renderLastUpdated();
     },
 
     renderTodaysFocus() {
-        // Set today's date
         const dateEl = document.getElementById('focus-date');
         if (dateEl) {
-            dateEl.textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            dateEl.textContent = new Date().toLocaleDateString('en-US', {
+                weekday: 'short', month: 'short', day: 'numeric'
+            });
         }
 
-        // Find priority action: first in_progress, or first not_started from lowest layer
+        // Priority: first in_progress, else first not_started ordered by KRA sort_order.
         let focusAction = this.actions.find(a => a.status === 'in_progress');
         if (!focusAction) {
-            // Get first not_started from Layer 1, then 2, then 3
-            for (let layer = 1; layer <= 3; layer++) {
-                focusAction = this.actions.find(a => a.status === 'not_started' && a.layer === layer);
+            for (const kra of this.kras) {
+                focusAction = this.actions.find(a =>
+                    a.status === 'not_started' && a.kras?.kra_code === kra.kra_code
+                );
                 if (focusAction) break;
             }
         }
@@ -69,14 +78,20 @@ const dashboardModule = {
         const cardEl = document.getElementById('focus-card');
 
         if (focusAction) {
+            const kraCode = focusAction.kras?.kra_code || '';
             if (titleEl) titleEl.textContent = focusAction.title;
             if (layerEl) {
-                layerEl.textContent = `L${focusAction.layer}`;
-                layerEl.className = `focus-layer layer-${focusAction.layer}`;
+                layerEl.textContent = kraCode.toUpperCase();
+                layerEl.className = `focus-layer kra-tag kra-${kraCode}`;
             }
-            // Find KPI name
             const kpi = this.kpis.find(k => k.id === focusAction.kpi_id);
-            if (kpiEl && kpi) kpiEl.textContent = `KPI: ${kpi.name}`;
+            const owner = focusAction.owner_name ? memberName(focusAction.owner_name) : 'Unassigned';
+            if (kpiEl) {
+                kpiEl.innerHTML = `
+                    <span class="owner-badge badge-${focusAction.owner_name || 'unassigned'}">${owner}</span>
+                    ${kpi ? ` • KPI: ${kpi.name}` : ''}
+                `;
+            }
             if (btnEl) {
                 btnEl.style.display = 'inline-block';
                 btnEl.onclick = () => this.markFocusDone(focusAction);
@@ -84,7 +99,7 @@ const dashboardModule = {
             if (cardEl) cardEl.classList.add('has-focus');
         } else {
             if (titleEl) titleEl.textContent = 'All caught up!';
-            if (layerEl) layerEl.textContent = '';
+            if (layerEl) { layerEl.textContent = ''; layerEl.className = 'focus-layer'; }
             if (kpiEl) kpiEl.textContent = '';
             if (btnEl) btnEl.style.display = 'none';
             if (cardEl) cardEl.classList.remove('has-focus');
@@ -109,154 +124,112 @@ const dashboardModule = {
             goals: this.goals.length
         };
 
-        document.getElementById('stat-done').textContent = stats.done;
-        document.getElementById('stat-progress').textContent = stats.progress;
-        document.getElementById('stat-pending').textContent = stats.pending;
-        document.getElementById('stat-goals').textContent = stats.goals;
-    },
-
-    renderLayerProgress() {
-        const layerPercents = [];
-
-        for (let layer = 1; layer <= 3; layer++) {
-            const layerActions = this.actions.filter(a => a.layer === layer);
-            const done = layerActions.filter(a => a.status === 'done').length;
-            const total = layerActions.length;
-            const percent = total > 0 ? Math.round((done / total) * 100) : 0;
-            layerPercents.push(percent);
-
-            const progressBar = document.getElementById(`layer${layer}-progress`);
-            const percentText = document.getElementById(`layer${layer}-percent`);
-
-            if (progressBar) progressBar.style.width = `${percent}%`;
-            if (percentText) percentText.textContent = `${percent}%`;
-        }
-
-        // Show warning if Layer 2 > Layer 1 (building on shaky foundation)
-        const warningEl = document.getElementById('layer-warning');
-        if (warningEl) {
-            if (layerPercents[1] > layerPercents[0] && layerPercents[0] < 50) {
-                warningEl.style.display = 'flex';
-            } else {
-                warningEl.style.display = 'none';
-            }
+        const ids = { done: 'stat-done', progress: 'stat-progress', pending: 'stat-pending', goals: 'stat-goals' };
+        for (const k in ids) {
+            const el = document.getElementById(ids[k]);
+            if (el) el.textContent = stats[k];
         }
     },
 
-    renderKPIGauges() {
-        const container = document.getElementById('kpi-gauges');
+    renderKRAProgress() {
+        const container = document.getElementById('kra-progress');
         if (!container) return;
 
-        const { current: latestScores, previous: prevScores } = this.getScoresWithTrend();
-
-        container.innerHTML = this.kpis.map(kpi => {
-            const score = latestScores[kpi.id];
-            const prevScore = prevScores[kpi.id];
-            let trend = '';
-            let trendClass = '';
-
-            if (score !== null && prevScore !== null) {
-                if (score > prevScore) {
-                    trend = '<span class="trend-up">&#9650;</span>';
-                    trendClass = 'trending-up';
-                } else if (score < prevScore) {
-                    trend = '<span class="trend-down">&#9660;</span>';
-                    trendClass = 'trending-down';
-                } else {
-                    trend = '<span class="trend-flat">&#8212;</span>';
-                }
-            }
-
-            // Calculate fill percentage for visual gauge
-            const fillPercent = score !== null ? (score / 4) * 100 : 0;
+        container.innerHTML = this.kras.map(kra => {
+            const kraActions = this.actions.filter(a => a.kras?.kra_code === kra.kra_code);
+            const done = kraActions.filter(a => a.status === 'done').length;
+            const total = kraActions.length;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
             return `
-                <div class="kpi-gauge ${trendClass}">
-                    <div class="kpi-gauge-ring">
-                        <svg viewBox="0 0 36 36">
-                            <path class="gauge-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                            <path class="gauge-fill" stroke-dasharray="${fillPercent}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                        </svg>
-                        <div class="kpi-gauge-value">${score !== null ? score : '-'}${trend}</div>
+                <div class="progress-item">
+                    <span class="progress-label">
+                        <strong>KRA ${kra.kra_code.replace('kra','')}:</strong> ${kra.short_name}
+                    </span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${pct}%"></div>
                     </div>
-                    <div class="kpi-gauge-label">${kpi.name.split(' ')[0]}</div>
+                    <span class="progress-percent">${done}/${total} · ${pct}%</span>
                 </div>
             `;
         }).join('');
-
-        // Calculate weighted score
-        const weightedScore = this.calculateWeightedScore(latestScores);
-        const weightedScoreEl = document.getElementById('weighted-score');
-        if (weightedScoreEl) {
-            weightedScoreEl.textContent = weightedScore !== null ? weightedScore.toFixed(2) : '-';
-        }
     },
 
-    getScoresWithTrend() {
-        const current = {};
-        const previous = {};
-        const currentYear = new Date().getFullYear();
-        const currentMonth = new Date().getMonth() + 1;
+    renderTeamSnapshot() {
+        const container = document.getElementById('team-snapshot');
+        if (!container) return;
 
-        this.kpis.forEach(kpi => {
-            current[kpi.id] = null;
-            previous[kpi.id] = null;
-        });
+        container.innerHTML = APP_CONFIG.team.map(m => {
+            const score = this.calculateMemberWeightedScore(m.id);
+            const inProg = this.actions.filter(a => a.owner_name === m.id && a.status === 'in_progress').length;
+            const pending = this.actions.filter(a => a.owner_name === m.id && a.status === 'not_started').length;
+            const done = this.actions.filter(a => a.owner_name === m.id && a.status === 'done').length;
 
-        // Get scores sorted by month descending
-        const sortedScores = this.kpiScores
-            .filter(s => s.year === currentYear)
-            .sort((a, b) => b.month - a.month);
+            return `
+                <div class="team-sum-card card-${m.id}">
+                    <div class="team-sum-name">${m.name}</div>
+                    <div class="team-sum-role">${m.role}</div>
+                    <div class="team-sum-score">${score !== null ? score.toFixed(2) : '-'}</div>
+                    <div class="team-sum-score-label">Weighted / 5.0</div>
+                    <div class="team-sum-tasks">
+                        <span>Active <strong>${inProg}</strong></span>
+                        <span>Pending <strong>${pending}</strong></span>
+                        <span>Done <strong>${done}</strong></span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    },
 
-        // Get current and previous month scores
-        this.kpis.forEach(kpi => {
-            const kpiScores = sortedScores.filter(s => s.kpi_id === kpi.id);
-            if (kpiScores.length > 0) {
-                current[kpi.id] = kpiScores[0].score;
-                if (kpiScores.length > 1) {
-                    previous[kpi.id] = kpiScores[1].score;
-                }
+    calculateMemberWeightedScore(memberId) {
+        const scores = this.getLatestScores();
+        const memberKpis = this.kpis.filter(k => k.member === memberId);
+        let totalWeight = 0, weightedSum = 0;
+        memberKpis.forEach(kpi => {
+            const score = scores[kpi.id];
+            if (score !== null && score !== undefined) {
+                weightedSum += score * kpi.weight;
+                totalWeight += kpi.weight;
             }
         });
+        return totalWeight === 0 ? null : weightedSum / totalWeight;
+    },
 
-        return { current, previous };
+    renderKPIGauges() {
+        // Kept for backwards compat if the card exists in HTML, but the new
+        // Team Snapshot replaces the previous KPI summary card. If the
+        // container is not present, skip.
+        const container = document.getElementById('kpi-gauges');
+        if (!container) return;
+        container.innerHTML = '';
+        const weightedScoreEl = document.getElementById('weighted-score');
+        if (weightedScoreEl) {
+            // Team-wide = simple average of the 3 member weighted scores
+            const memberScores = APP_CONFIG.team
+                .map(m => this.calculateMemberWeightedScore(m.id))
+                .filter(s => s !== null);
+            if (memberScores.length === 0) {
+                weightedScoreEl.textContent = '-';
+            } else {
+                const avg = memberScores.reduce((a, b) => a + b, 0) / memberScores.length;
+                weightedScoreEl.textContent = avg.toFixed(2);
+            }
+        }
     },
 
     getLatestScores() {
         const scores = {};
-        const currentYear = new Date().getFullYear();
+        const currentYear = 2026;
+        this.kpis.forEach(kpi => { scores[kpi.id] = null; });
 
-        this.kpis.forEach(kpi => {
-            scores[kpi.id] = null;
-        });
-
-        // Get most recent score for each KPI
         this.kpiScores
             .filter(s => s.year === currentYear)
             .sort((a, b) => b.month - a.month)
-            .forEach(score => {
-                if (scores[score.kpi_id] === null) {
-                    scores[score.kpi_id] = score.score;
-                }
+            .forEach(s => {
+                if (scores[s.kpi_id] === null) scores[s.kpi_id] = s.score;
             });
 
         return scores;
-    },
-
-    calculateWeightedScore(scores) {
-        let totalWeight = 0;
-        let weightedSum = 0;
-
-        this.kpis.forEach(kpi => {
-            const score = scores[kpi.id];
-            if (score !== null) {
-                weightedSum += score * (kpi.weight / 100);
-                totalWeight += kpi.weight;
-            }
-        });
-
-        if (totalWeight === 0) return null;
-        return (weightedSum / totalWeight) * 100;
     },
 
     renderRecentActivity() {
@@ -293,7 +266,6 @@ const dashboardModule = {
     formatTimeAgo(date) {
         const now = new Date();
         const diff = Math.floor((now - date) / 1000);
-
         if (diff < 60) return 'Just now';
         if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
         if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
@@ -301,20 +273,13 @@ const dashboardModule = {
     },
 
     formatActivityText(activity) {
-        const actionMap = {
-            created: 'created',
-            updated: 'updated',
-            deleted: 'deleted'
-        };
-
+        const actionMap = { created: 'created', updated: 'updated', deleted: 'deleted' };
         return `<strong>${activity.user_name || 'Someone'}</strong> ${actionMap[activity.action]} ${activity.entity_type} "${activity.entity_title || ''}"`;
     },
 
     renderLastUpdated() {
         const el = document.getElementById('last-updated');
-        if (el) {
-            el.textContent = new Date().toLocaleDateString();
-        }
+        if (el) el.textContent = new Date().toLocaleDateString();
     },
 
     setupRealtimeUpdates() {

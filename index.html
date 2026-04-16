@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Growth & Ops Workspace</title>
-    <link rel="stylesheet" href="css/styles.css?v=3">
+    <link rel="stylesheet" href="css/styles.css?v=4">
 </head>
 <body>
     <!-- Loading Screen -->
@@ -19,7 +19,7 @@
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h1>Growth & Ops</h1>
-                <span class="quarter-badge">Q2 2026</span>
+                <span class="quarter-badge">Q1 Y2 | Apr-Jun 2026</span>
             </div>
 
             <ul class="nav-links">
@@ -116,35 +116,19 @@
                         </div>
                     </div>
 
-                    <!-- Layer Progress -->
+                    <!-- KRA Progress -->
                     <div class="card progress-card">
-                        <h3>Layer Progress</h3>
-                        <div class="layer-warning" id="layer-warning" style="display:none;">
-                            <span class="warning-icon">&#9888;</span>
-                            <span class="warning-text">Foundation gap: Layer 2 is ahead of Layer 1. Consider prioritizing infrastructure first.</span>
+                        <h3>KRA Progress</h3>
+                        <div class="kra-progress" id="kra-progress">
+                            <!-- Populated by JS: 5 rows, one per KRA -->
                         </div>
-                        <div class="layer-progress">
-                            <div class="progress-item">
-                                <span class="progress-label">Layer 1: Infrastructure</span>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="layer1-progress" style="width: 0%"></div>
-                                </div>
-                                <span class="progress-percent" id="layer1-percent">0%</span>
-                            </div>
-                            <div class="progress-item">
-                                <span class="progress-label">Layer 2: Operating System</span>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="layer2-progress" style="width: 0%"></div>
-                                </div>
-                                <span class="progress-percent" id="layer2-percent">0%</span>
-                            </div>
-                            <div class="progress-item">
-                                <span class="progress-label">Layer 3: Growth</span>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="layer3-progress" style="width: 0%"></div>
-                                </div>
-                                <span class="progress-percent" id="layer3-percent">0%</span>
-                            </div>
+                    </div>
+
+                    <!-- Team Snapshot -->
+                    <div class="card team-snapshot-card">
+                        <h3>Team Snapshot</h3>
+                        <div class="team-snapshot" id="team-snapshot">
+                            <!-- Populated by JS: 3 cards (Kavya/Ishita/Riya) -->
                         </div>
                     </div>
 
@@ -186,11 +170,19 @@
                 <header class="section-header">
                     <h2>Action Tracker</h2>
                     <div class="filters">
-                        <select id="filter-layer">
-                            <option value="all">All Layers</option>
-                            <option value="1">Layer 1</option>
-                            <option value="2">Layer 2</option>
-                            <option value="3">Layer 3</option>
+                        <select id="filter-kra">
+                            <option value="all">All KRAs</option>
+                            <option value="kra1">KRA 1: Data Hygiene</option>
+                            <option value="kra2">KRA 2: Lead Flow</option>
+                            <option value="kra3">KRA 3: Events</option>
+                            <option value="kra4">KRA 4: Growth</option>
+                            <option value="kra5">KRA 5: Coordination</option>
+                        </select>
+                        <select id="filter-owner">
+                            <option value="all">All Owners</option>
+                            <option value="kavya">Kavya</option>
+                            <option value="ishita">Ishita</option>
+                            <option value="riya">Riya</option>
                         </select>
                         <select id="filter-status">
                             <option value="all">All Status</option>
@@ -210,24 +202,33 @@
             <section id="kpis" class="section">
                 <header class="section-header">
                     <h2>KPI Dashboard</h2>
-                    <button class="btn btn-primary" id="add-score-btn">+ Add Score</button>
+                    <div class="kpi-header-right">
+                        <span class="kpi-score-total">Weighted: <strong id="weighted-score-pill">-</strong> / 5.0</span>
+                        <button class="btn btn-primary" id="add-score-btn">+ Add Score</button>
+                    </div>
                 </header>
 
+                <!-- Team tabs: Kavya / Ishita / Riya -->
+                <div class="tab-bar" id="kpi-tabs">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- KPI cards for the selected member, grouped by KRA -->
                 <div class="kpi-grid" id="kpi-grid">
                     <!-- Populated by JS -->
                 </div>
 
                 <div class="kpi-table-container">
-                    <h3>Score History</h3>
+                    <h3>Monthly Scores <span class="text-muted">(click a cell to update)</span></h3>
                     <table class="kpi-table" id="kpi-table">
                         <thead>
                             <tr>
+                                <th>KRA</th>
                                 <th>KPI</th>
                                 <th>Weight</th>
-                                <th>March</th>
-                                <th>April</th>
+                                <th>Apr</th>
                                 <th>May</th>
-                                <th>June</th>
+                                <th>Jun</th>
                                 <th>Target</th>
                             </tr>
                         </thead>
@@ -390,20 +391,20 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js?v=2"></script>
-    <script src="js/supabase-client.js?v=3"></script>
+    <script src="js/config.js?v=3"></script>
+    <script src="js/supabase-client.js?v=4"></script>
     <script src="js/components/toast.js"></script>
     <script src="js/components/modal.js"></script>
-    <script src="js/auth.js?v=2"></script>
-    <script src="js/modules/dashboard.js?v=2"></script>
+    <script src="js/auth.js?v=3"></script>
+    <script src="js/modules/dashboard.js?v=3"></script>
     <script src="js/modules/goals.js"></script>
-    <script src="js/modules/actions.js"></script>
-    <script src="js/modules/kpis.js"></script>
+    <script src="js/modules/actions.js?v=3"></script>
+    <script src="js/modules/kpis.js?v=3"></script>
     <script src="js/modules/ideas.js"></script>
     <script src="js/modules/documents.js"></script>
     <script src="js/modules/weekly.js"></script>
     <script src="js/modules/activity.js"></script>
-    <script src="js/modules/team.js?v=2"></script>
-    <script src="js/app.js?v=2"></script>
+    <script src="js/modules/team.js?v=3"></script>
+    <script src="js/app.js?v=3"></script>
 </body>
 </html>

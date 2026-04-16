@@ -10,12 +10,24 @@ var supabase = window.sb;
 // Database helper functions
 const db = {
     // ========================================
+    // KRAs (Year 2 framework)
+    // ========================================
+    async getKRAs() {
+        const { data, error } = await supabase
+            .from('kras')
+            .select('*')
+            .order('sort_order');
+        if (error) throw error;
+        return data;
+    },
+
+    // ========================================
     // Actions
     // ========================================
     async getActions() {
         const { data, error } = await supabase
             .from('actions')
-            .select('*, kpis(name), profiles(full_name)')
+            .select('*, kpis(name, member, kpi_code), kras(kra_code, name, short_name, sort_order), profiles(full_name)')
             .order('action_id');
         if (error) throw error;
         return data;
@@ -77,18 +89,29 @@ const db = {
     // KPIs
     // ========================================
     async getKPIs() {
+        // Ordered by KRA → member → sort_order so the UI can group cleanly.
         const { data, error } = await supabase
             .from('kpis')
-            .select('*')
-            .order('name');
+            .select('*, kras(kra_code, name, short_name, sort_order)')
+            .order('sort_order');
         if (error) throw error;
-        return data;
+        // Sort in JS: KRA order → member order → kpi sort_order
+        const memberOrder = { kavya: 1, ishita: 2, riya: 3 };
+        return (data || []).sort((a, b) => {
+            const aOrder = a.kras?.sort_order ?? 99;
+            const bOrder = b.kras?.sort_order ?? 99;
+            if (aOrder !== bOrder) return aOrder - bOrder;
+            const am = memberOrder[a.member] || 99;
+            const bm = memberOrder[b.member] || 99;
+            if (am !== bm) return am - bm;
+            return (a.sort_order || 0) - (b.sort_order || 0);
+        });
     },
 
     async getKPIScores() {
         const { data, error } = await supabase
             .from('kpi_scores')
-            .select('*, kpis(name)')
+            .select('*, kpis(name, member, kpi_code)')
             .order('year', { ascending: false })
             .order('month', { ascending: false });
         if (error) throw error;
