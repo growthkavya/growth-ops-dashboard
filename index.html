@@ -113,7 +113,10 @@
                     errorDiv.style.display = 'block';
                 } else {
                     console.log('8. Login successful!');
-                    window.location.href = 'dashboard.html';
+                    // Respect ?next= query param (e.g. deep link from leadership view)
+                    const params = new URLSearchParams(window.location.search);
+                    const next = params.get('next');
+                    window.location.href = next || 'dashboard.html';
                 }
             } catch (err) {
                 console.error('9. Catch error:', err);
