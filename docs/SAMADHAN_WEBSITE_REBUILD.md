@@ -1,209 +1,215 @@
-# SSEI Website Rebuild — Content Workstream
+# Website Content Rebuild
 
-**Owner.** Kavya Bahety (Head of Growth and Operations)
-**Contributor.** Riya (engagement pages: Events, Scholarship Exam, Schedule Consultation)
-**Vendor.** Samadhan
-**Period.** 11 May 2026 → 15 May 2026 (5 working days, first round closed)
-**KRA.** KRA4 — Growth Initiatives, New Projects and Distribution
-**Tagged KPIs.** k_4_1 (Kavya, Innovation Velocity) · r_4_1 (Riya, New Project Execution Support)
+**From scratch to vendor-ready handover in 5 working days.**
+
+| | |
+|---|---|
+| **Vertical** | Growth & Ops |
+| **KRA / KPI** | KRA4 (Growth Initiatives) → k_4_1 Innovation Velocity (Kavya), r_4_1 New Project Execution Support (Riya) |
+| **Period** | 11 May 2026 — 16 May 2026 |
+| **Lead** | Kavya |
+| **Contributor** | Riya (3 engagement pages: Events, Scholarship Exam, Schedule Consultation) |
+| **Vendor** | Samadhan (will build the live website from this content) |
 
 ---
 
-## Outcome (what got delivered)
+## 1. Why this matters
 
-| Deliverable | Count | Format |
+SSEI signed Samadhan to rebuild the website. Samadhan are builders, not writers. Before they can ship a single page, they need a finished page-by-page content brief: what the page says, in what order, with what SEO targets, linking where. That brief didn't exist on Monday morning.
+
+The choice was either (a) Samadhan writes guesswork content because no one gave them a brief, and SSEI catches errors in QA at the end, costing 4-6 weeks of rework, or (b) Growth & Ops gives them a complete, source-verified, SEO-optimised brief upfront so they build it right the first time.
+
+This work is option (b). It is the spine the new website is being built on.
+
+---
+
+## 2. Before vs after
+
+```mermaid
+flowchart LR
+    subgraph Before["MONDAY 11 MAY — Starting state"]
+        direction TB
+        B1["49 vendor mockups<br/>(HTML files, no content)"]
+        B2["9 partial drafts<br/>(rejected as data-dump)"]
+        B3["35 verified team source files<br/>(unstructured pile)"]
+        B4["Faculty fact-check<br/>sent that morning"]
+        B5["NO sitemap<br/>NO SEO map<br/>NO per-page brief"]
+    end
+
+    subgraph After["FRIDAY 16 MAY — Vendor-ready"]
+        direction TB
+        A1["36 page briefs<br/>SEO-optimised, source-verified"]
+        A2["1 consolidated master<br/>45,611 words · MD + DOCX + PDF"]
+        A3["1 master sheet (CSV)<br/>page list + metadata"]
+        A4["4 annotated wireframes<br/>visual reviewer aid"]
+        A5["171 files reorganised<br/>4-folder handover structure"]
+        A6["README at root<br/>vendor onboarding guide"]
+    end
+
+    Before ==> After
+
+    classDef before fill:#7c2d12,stroke:#7c2d12,color:#fff
+    classDef after fill:#065f46,stroke:#065f46,color:#fff
+    class B1,B2,B3,B4,B5 before
+    class A1,A2,A3,A4,A5,A6 after
+```
+
+---
+
+## 3. The work, day by day
+
+| Day | What got done | Output |
 |---|---|---|
-| Page master files (one per page, SEO-optimised, slot-by-slot copy) | **37** | Markdown |
-| Consolidated master document | **1** | MD + DOCX + PDF (5,910 lines, 45,611 words) |
-| Master sheet (one row per page) | **1** | CSV (36 page rows) |
-| Annotated HTML wireframes | **4** | HTML |
-| Reference documents (sitemap, SEO map, skeletons, faculty fact-check, filter spec, research) | **6 sets** | MD + PDF |
-| Source files extracted and structured | **35 verified + 37 converted** | DOCX/PDF/XLSX → MD/TXT/CSV |
-
-**Hard BLOCKERS surfaced.** 4 (CFA L3 pricing, Prudentia pricing, CFA L2 Corporate Issuers anchor, CFA L2/FRM/CA Final mock pricing).
-**Open flags raised for Sales/Ops.** 35 across the 36 pages.
+| **Mon 11 May (AM)** | Built the sitemap. One row per page across all 49 mockups, with URL, tier, audience, template, SEO indexability, source link. | `01_SITEMAP.md` / `.csv` / `.pdf` |
+| **Mon 11 May (PM)** | Started SEO meta map. Course pages first (highest commercial value). Primary keyword, secondary keywords, meta title, meta description, OG tags, schema type for each indexable page. | `03_SEO_META_MAP.md` |
+| **Tue 12 May** | Built per-page skeletons. Every page mapped slot-by-slot (A through R) to its mockup's visual layout. 4 existing drafts reformatted, 3 data-dumps rewritten, 2 mixed salvaged. | `02_PAGE_SKELETONS.md` |
+| **Wed–Thu 13–14 May** | The actual writing. 33 pages by Kavya (homepage, about, faculty, all 8 CFA L1 variants, 3 CFA L2, CFA L3, FRM, 2 CA Final AFM, CA Inter FM, CA Foundation, ACCA, Analyst Stack, Prudentia, listings, blogs, careers, media). 3 engagement pages by Riya (Events, Scholarship Exam, Schedule Consultation). | 36 page MDs in `04_PAGES/master/` |
+| **Thu–Fri 14–15 May** | Master assembly. Concatenated 37 MDs into one document. Rendered to DOCX + PDF. Built the master sheet (one row per page). Ran a 3-pass recheck: structural, voice consistency, cross-references. | `MASTER_CONTENT` (MD + DOCX + PDF), `MASTER_SHEET.csv` |
+| **Fri 16 May** | Workspace cleanup. Reorganised 171 files into 4 folders. Wrote vendor README. Rendered 37 individual per-page PDFs. Handover-ready. | `01_HANDOVER/` folder + `README.md` |
 
 ---
 
-## The flow (scratch → handover)
+## 4. Who did what
 
 ```mermaid
 flowchart TD
-    Start([Mon 11 May AM<br/>Scratch state]) --> Assets
+    Root["Website Content Rebuild<br/>KRA4 · 11–16 May 2026"]
 
-    subgraph Assets[" Inputs already on hand "]
-        direction LR
-        A1[49 HTML mockups<br/>from Samadhan zip]
-        A2[9 partial page drafts<br/>data-dump quality]
-        A3[Keyword research<br/>research_findings.md]
-        A4[Filter spec<br/>FILTERS_SPEC.md]
-        A5[Faculty fact-check V3<br/>sent to faculty 11 May noon]
-    end
+    Root --> Kavya["KAVYA<br/>k_4_1 Innovation Velocity"]
+    Root --> Riya["RIYA<br/>r_4_1 New Project Execution"]
 
-    Assets --> Reject{Drafts are<br/>a data dump.<br/>Rebuild plan.}
+    Kavya --> K1["Phase 1: Sitemap"]
+    Kavya --> K2["Phase 2+3: Skeletons + SEO map"]
+    Kavya --> K3["Phase 4: 33 page MDs<br/>(courses, listings, marketing)"]
+    Kavya --> K4["Phase 5: Master assembly<br/>+ 3-pass recheck"]
+    Kavya --> K5["Phase 6: Cleanup + handover"]
 
-    Reject --> Phase1
+    Riya --> R1["Events page (P30)"]
+    Riya --> R2["Scholarship Exam page (P31)"]
+    Riya --> R3["Schedule Consultation page (P32)"]
 
-    subgraph Phase1[" PHASE 1 — Structure (Mon AM) "]
-        P1a[Build 01_SITEMAP.md/csv/pdf]
-        P1b[One row per page across all 49 mockups]
-        P1c[Columns: URL · Tier · Audience · Template ·<br/>Indexable · Mockup file · Status]
-        P1a --> P1b --> P1c
-    end
-
-    Phase1 --> Phase3a
-
-    subgraph Phase3a[" PHASE 3 START — SEO (Mon PM) "]
-        P3a1[Build 03_SEO_META_MAP.md]
-        P3a2[Per page: primary kw, secondary kws,<br/>meta title, meta description, H1, OG, schema]
-        P3a3[Course pages SEO-mapped first<br/>highest commercial value]
-        P3a1 --> P3a2 --> P3a3
-    end
-
-    Phase3a --> Phase2
-
-    subgraph Phase2[" PHASE 2 — Skeleton (Tue) "]
-        P2a[Build 02_PAGE_SKELETONS.md]
-        P2b[Slot A-R structure per page<br/>matched to mockup HTML order]
-        P2c[4 skeleton-ready drafts reformatted<br/>3 data-dumps rewritten<br/>2 mixed salvaged]
-        P2a --> P2b --> P2c
-    end
-
-    Phase2 --> Phase3b[Phase 3 finish — SEO for<br/>remaining indexable pages<br/>after skeletons locked]
-
-    Phase3b --> Source
-
-    subgraph Source[" Source intake (Tue–Wed) "]
-        S1[35 team-verified files<br/>in 'final checked content/']
-        S2[Extracted via pandoc, pdftotext, libreoffice]
-        S3[37 .md/.txt/.csv files<br/>in _extracted/]
-        S1 --> S2 --> S3
-    end
-
-    Source --> Phase4
-
-    subgraph Phase4[" PHASE 4 — Content Fill (Wed–Thu) "]
-        direction TB
-        P4a[Per-page MD files written<br/>with SEO frontmatter + slot copy]
-        P4a --> Branches
-
-        subgraph Branches[" Pages written, grouped by section "]
-            direction LR
-            B1[Universal elements<br/>+ Homepage + About<br/>+ Faculty + Contact<br/>+ Tools landing + Essay Review]
-            B2[CFA L1 — 8 variants<br/>Full Immersion, Accelerate,<br/>F2F Delhi, F2F Mumbai,<br/>For CA/CMA/MBA, Fast Track,<br/>Books, Partial Topics]
-            B3[CFA L2 — 3 variants<br/>Full Immersion, Review Class,<br/>Partial Topics]
-            B4[CFA L3 Combined<br/>FRM Part 1<br/>CA Final AFM Regular + Fast Track<br/>CA Inter FM, CA Foundation]
-            B5[ACCA route selector<br/>Analyst Stack<br/>Prudentia]
-            B6[Course Discovery<br/>Mocks Listing<br/>Mock Detail template]
-            B7[ENGAGEMENT - Riya<br/>Events<br/>Scholarship Exam<br/>Schedule Consultation]
-            B8[Careers, Media,<br/>Blogs list + Blog post template]
-        end
-    end
-
-    Branches --> Phase5
-
-    subgraph Phase5[" PHASE 5 — Master Assembly (Thu–Fri) "]
-        P5a[Concatenate 37 MDs<br/>into MASTER_CONTENT.md]
-        P5b[Render to DOCX + PDF<br/>via pandoc + xelatex]
-        P5c[Build MASTER_SHEET.csv<br/>one row per page]
-        P5d[3-pass recheck<br/>structural · voice · cross-reference]
-        P5a --> P5b --> P5c --> P5d
-    end
-
-    Phase5 --> Phase6
-
-    subgraph Phase6[" PHASE 6 — Cleanup + Handover (Fri 16 May) "]
-        P6a[Reorganise 171 files into<br/>01_HANDOVER · 02_REFERENCE ·<br/>03_SOURCE · _archive]
-        P6b[Write samadhan/README.md]
-        P6c[Render per-page PDFs<br/>37 individual PDFs]
-        P6a --> P6b --> P6c
-    end
-
-    Phase6 --> Handover([Round 1 closed<br/>Samadhan handover ready])
-
-    classDef phase fill:#1e3a8a,stroke:#1e3a8a,color:#fff
+    classDef kavya fill:#1e3a8a,stroke:#1e3a8a,color:#fff
     classDef riya fill:#7c2d12,stroke:#7c2d12,color:#fff
-    classDef state fill:#065f46,stroke:#065f46,color:#fff
-    class Phase1,Phase2,Phase3a,Phase3b,Phase4,Phase5,Phase6 phase
-    class B7 riya
-    class Start,Handover state
+    class Kavya,K1,K2,K3,K4,K5 kavya
+    class Riya,R1,R2,R3 riya
 ```
 
-> Riya's contribution highlighted in orange (Engagement: Events, Scholarship Exam, Schedule Consultation).
+8 actions total live in the dashboard tracker under KRA4: `a_4_07` through `a_4_14`. All marked done.
 
 ---
 
-## What got built, where it lives
+## 5. By the numbers
 
-Final folder structure inside `working/samadhan/`:
-
-```
-01_HANDOVER/        ← What Samadhan receives. 45 files, 1.5M.
-  ├── MASTER_CONTENT.md / .docx / .pdf
-  ├── MASTER_SHEET.csv
-  ├── per_page/      (37 individual MDs + 37 individual PDFs)
-  └── annotated_mockups/ (4 HTML wireframes)
-
-02_REFERENCE/       ← Supporting docs. 12 files, 8.5M.
-  ├── 01_SITEMAP.md / .csv / .pdf
-  ├── 02_PAGE_SKELETONS.md / .pdf
-  ├── 03_SEO_META_MAP.md / .pdf
-  ├── FACULTY_FACTCHECK_DOC.md / .pdf
-  ├── FILTERS_SPEC.md / .pdf
-  └── research_findings.md
-
-03_SOURCE/          ← Inputs, read-only. 72 files, 19M.
-  ├── team_verified/  (35 original DOCX/PDF/XLSX)
-  └── extracted/      (37 converted .md/.txt/.csv)
-
-_archive/           ← Paper trail. 42 files.
-  ├── old_page_drafts/         (10 rejected draft files)
-  ├── old_04_PAGES_singles/    (superseded standalone pages)
-  ├── rejected_data_dumps/     (4 early data-dump outputs)
-  ├── early_phase_trackers/    (6 trackers + emails)
-  └── gsheet_push_scripts/     (4 Python scripts no longer needed)
-
-README.md           ← Entry point explaining the structure.
-```
+| Output | Count |
+|---|---|
+| Pages briefed end-to-end (full SEO + slot copy + source provenance) | **36** |
+| Consolidated master document length | **5,910 lines · 45,611 words** |
+| Course pages briefed | **23** (8 CFA L1 variants, 3 CFA L2, CFA L3, FRM Part 1, 2 CA Final AFM, CA Inter FM, CA Foundation, ACCA, Analyst Stack, Prudentia) |
+| Public-marketing pages briefed | **6** (Homepage, About, Faculty, Contact, Tools, Essay Review) |
+| Engagement pages briefed (Riya's scope) | **3** (Events, Scholarship Exam, Schedule Consultation) |
+| Listing pages briefed | **3** (Course Discovery, Mocks Listing, Mock Detail template) |
+| Indexable pages with full SEO frontmatter (title, meta description, OG, schema) | **35** |
+| Verified team source files mined | **35** (DOCX, PDF, XLSX, PPTX from faculty, Sales, Ops) |
+| Files reorganised in cleanup | **171** (zero deletions, full paper trail) |
+| Working days | **5** |
 
 ---
 
-## Tagged actions in the tracker
+## 6. Quality controls
 
-### Kavya (KPI k_4_1 — Innovation Velocity, 13% weight)
-| Action ID | Title | Status | Notes |
-|---|---|---|---|
-| a_4_07 | Website rebuild — Phase 1: Sitemap + structure | completed | 49 mockups → SITEMAP.md/csv/pdf |
-| a_4_08 | Website rebuild — Phase 2 + 3: SEO + Skeletons | completed | 02_PAGE_SKELETONS, 03_SEO_META_MAP |
-| a_4_09 | Website rebuild — Phase 4: 30 page MDs (Kavya scope) | completed | All non-engagement pages |
-| a_4_10 | Website rebuild — Phase 5: Master assembly + 3-pass recheck | completed | MASTER_CONTENT MD/DOCX/PDF, MASTER_SHEET.csv |
-| a_4_11 | Website rebuild — Phase 6: Cleanup + Samadhan handover | completed | 171 files reorganised, README written |
-
-### Riya (KPI r_4_1 — New Project Execution Support, 10% weight)
-| Action ID | Title | Status | Notes |
-|---|---|---|---|
-| a_4_12 | Website rebuild — Engagement pages: Events (P30) | completed | Full filter spec, calendar layout, tabs |
-| a_4_13 | Website rebuild — Engagement pages: Scholarship Exam (P31) | completed | Live cohort spec, tiers, eligibility |
-| a_4_14 | Website rebuild — Engagement pages: Schedule Consultation (P32) | completed | Form fields, advisor routing, post-submit flow |
+- **Source provenance.** Every page brief lists its team source doc at the top. Any fact can be traced back to the originating DOCX / PDF / XLSX. Reviewer always knows where a number or claim came from.
+- **Team verification.** All product-related facts (course hours, pricing, faculty rosters, curriculum) came from team-supplied source files. They were not generated, only re-phrased and SEO-optimised. Product accuracy is not a content-writer's call.
+- **3-pass recheck before handover.**
+  - Pass 1: structural — every indexable page has SEO frontmatter
+  - Pass 2: voice — no flowery language, no Instagram fragments, no hyped claims; consistent register
+  - Pass 3: cross-reference — Karan Aggarwal removed from all faculty references (left SSEI), FRM Part 2 stripped from combos (per directive), pricing tables cross-checked against live ssei.co.in product pages
 
 ---
 
-## Decision log (for context, not for tracking)
+## 7. What's blocked, what needs Sales
 
-| Date | Decision | Why |
+Four hard blockers logged for Sales to resolve before the website goes live:
+
+| # | Blocker | Owner |
 |---|---|---|
-| 11 May | Phase 1 (Sitemap) before Phase 2 (Skeleton) | Page list locks first. Skeleton order can shift later without invalidating SEO map. |
-| 12 May | FRM Part 2 stripped from combos | Not currently offered, per Kavya's directive. |
-| 13 May | Karan Aggarwal Sir stripped from all faculty references | Confirmed no longer SSEI faculty. |
-| 13 May | Homepage subhead — use team-verified verbatim copy | 8 iterations rejected before reverting to team-supplied text. Voice rules locked. |
-| 14 May | Pricing page replaced by Tools page | Per board doc decision. /pricing route deprecated. |
-| 14 May | All combo cards link to /courses?type=combo filter, no standalone combo landing | Cleaner taxonomy, fewer dead pages. |
-| 15 May | Workspace cleanup: archive not delete | Preserves paper trail for Vidyut review and any rollback. |
+| 1 | CFA Level 3 pricing per exam window. Brochure says "pricing supplied" but the actual numbers aren't in the source set. | Sales |
+| 2 | Prudentia pricing per cohort. Brochure has no price card. | Sales |
+| 3 | CFA L2 Partial Topics — Corporate Issuers May 2026 anchor (flagged TBD by Sales) | Sales |
+| 4 | CFA L2 / FRM / CA Final AFM mock pricing. Only CFA L1 mocks have full pack pricing in the MOCKS.csv. | Sales |
+
+Plus 35 open flags across the 36 pages — mostly Sales confirmations and creative assets — listed at the bottom of each individual page brief.
 
 ---
 
-## What this work demonstrates (for KRA scoring)
+## 8. How the handover folder is structured
 
-- **Innovation Velocity (k_4_1).** Shipped a 36-page, 45,611-word, SEO-optimised content brief in 5 working days from a "data dump" starting point. New-project delivery on a real deadline.
-- **Delegation (k_5_2).** Engagement-page workstream owned end-to-end by Riya, not by Kavya. Three pages, full SEO frontmatter, filter spec, form spec.
-- **Stakeholder & Vendor mgmt (k_5_1).** Samadhan handover packaged with README, structured folders, source provenance, and an open-flags log per page so the vendor doesn't need a kickoff call to start work.
+```
+working/samadhan/
+├── README.md                    Vendor entry point. Explains the structure.
+│
+├── 01_HANDOVER/                 What Samadhan receives. 45 files.
+│   ├── MASTER_CONTENT.md/docx/pdf
+│   ├── MASTER_SHEET.csv         One row per page (36 rows, 13 columns)
+│   ├── per_page/                37 individual page MDs (00_intro … 55_blogs)
+│   └── annotated_mockups/       4 HTML wireframes with slot badges
+│
+├── 02_REFERENCE/                Supporting docs. 12 files.
+│   ├── 01_SITEMAP, 02_PAGE_SKELETONS, 03_SEO_META_MAP
+│   ├── FACULTY_FACTCHECK_DOC
+│   ├── FILTERS_SPEC
+│   └── research_findings.md
+│
+├── 03_SOURCE/                   Raw inputs, read-only. 72 files.
+│   ├── team_verified/           35 original team DOCX / PDF / XLSX / PPTX
+│   └── extracted/               37 plain-text conversions
+│
+└── _archive/                    Paper trail. 42 files.
+    ├── old_page_drafts/         10 rejected v1 drafts (preserved for audit)
+    ├── rejected_data_dumps/     4 data-dump v0 outputs
+    └── 3 other archive folders
+```
+
+---
+
+## 9. What this earns on the KRA scoring
+
+### KRA4 → Growth Initiatives, New Projects & Distribution
+
+**KPI k_4_1 — Innovation Velocity** (13% of Kavya's bucket)
+
+Rubric definition: shipping rate of new-project initiatives. How often new 0→1 work goes from idea to delivered output.
+
+This cycle (Q1 Y2, Apr–Jun 2026), the website rebuild is a complete 0→1 ship:
+- Defined scope: 49 mockups → 36 indexable page briefs
+- Delivered scope: 36 briefs + master doc + handover folder + vendor README
+- Calendar time: 5 working days
+- Quality: 3-pass internal review, source-verified, vendor-ready
+- Delegation evidence: 3 of 36 pages owned end-to-end by Riya (engagement scope)
+
+**KPI r_4_1 — New Project Execution Support** (10% of Riya's bucket)
+
+Riya independently owned the 3 engagement pages with full SEO frontmatter, filter specs, form specs, and event detail templates. These pages link to the Scholarship Exam initiative (closed 26 Apr) and the new Schedule Consultation flow (top-of-funnel).
+
+---
+
+## 10. What's next
+
+| When | What | Owner |
+|---|---|---|
+| Now → 4 weeks | Samadhan builds the live website from `01_HANDOVER/` | Samadhan + Tech team |
+| Parallel | Sales resolves the 4 hard blockers + 35 open flags | Sales |
+| Parallel | Faculty fact-check V4 (any late corrections) | Faculty / Kavya |
+| Pre-launch | QA pass on staging | Growth & Ops + Tech |
+| Launch | Hard launch with SEO redirects from old URLs | Tech |
+| Post-launch | Indexation monitoring + organic traffic baseline | Growth & Ops |
+
+---
+
+## Appendix: detailed phase flow
+
+For the full builder-view flow (input/output relationships across all 6 phases plus the source extraction step), see [SAMADHAN_WEBSITE_REBUILD_flow.png](SAMADHAN_WEBSITE_REBUILD_flow.png). Same data, more nodes — useful if Samadhan or Tech want the engineering view.
+
+### Repo / file references
+- Handover folder: `working/samadhan/` in the SSEI Growth Ops working tree
+- This doc lives in: `docs/SAMADHAN_WEBSITE_REBUILD.md` of [growthkavya/growth-ops-dashboard](https://github.com/growthkavya/growth-ops-dashboard)
+- Live action records: dashboard → KRA4 → actions `a_4_07` through `a_4_14` for the rebuild, `a_4_15` for the Sir IG pilot ongoing
