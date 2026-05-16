@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Content Rebuild — GrowthOps showcase</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #16a34a;
+            --warning: #eab308;
+            --danger: #dc2626;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --bg: #ffffff;
+            --soft: #f8f9fa;
+            --border: #e5e7eb;
+            --kavya: #1e3a8a;
+            --riya: #7c2d12;
+            --before: #7c2d12;
+            --after: #065f46;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg); color: var(--text);
+            line-height: 1.65; padding: 2rem;
+            max-width: 1100px; margin: 0 auto;
+        }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Header */
+        header {
+            margin-bottom: 2rem; padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .back-link {
+            display: inline-block; margin-bottom: 1rem;
+            color: var(--muted); font-size: 0.875rem;
+        }
+        .kra-badge {
+            display: inline-block; background: var(--primary); color: white;
+            padding: 0.35rem 0.85rem; border-radius: 2rem;
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em;
+            text-transform: uppercase; margin-bottom: 0.75rem;
+        }
+        header h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; }
+        header .subtitle { font-size: 1.125rem; color: var(--muted); }
+
+        /* Meta strip */
+        .meta-strip {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 1rem; margin: 1.5rem 0 2rem;
+            background: var(--soft); border-radius: 0.75rem; padding: 1.25rem;
+        }
+        .meta-strip .item .label {
+            font-size: 0.7rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        .meta-strip .item .value { font-size: 0.95rem; font-weight: 600; }
+
+        /* Section */
+        section { margin: 2.5rem 0; }
+        section h2 {
+            font-size: 1.5rem; font-weight: 700;
+            margin-bottom: 1rem; padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: baseline; gap: 0.5rem;
+        }
+        section h2 .num {
+            color: var(--muted); font-size: 0.875rem;
+            font-weight: 500; min-width: 1.5rem;
+        }
+        section h3 {
+            font-size: 1.05rem; font-weight: 700;
+            margin: 1.25rem 0 0.5rem;
+            color: var(--text);
+        }
+        section p { margin-bottom: 0.85rem; }
+        section ul, section ol { margin: 0.5rem 0 0.85rem 1.5rem; }
+        section li { margin-bottom: 0.35rem; }
+
+        /* Diagrams */
+        .diagram { margin: 1rem 0; text-align: center; }
+        .diagram img {
+            max-width: 100%; border: 1px solid var(--border);
+            border-radius: 0.5rem; background: #fffbeb;
+        }
+        .diagram .caption { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+
+        /* Tables */
+        table {
+            width: 100%; border-collapse: collapse;
+            margin: 0.75rem 0 1rem; font-size: 0.92rem;
+        }
+        th {
+            background: var(--soft); text-align: left;
+            padding: 0.65rem 0.85rem; font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+        td {
+            padding: 0.6rem 0.85rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        tr:last-child td { border-bottom: none; }
+        td strong { color: var(--text); }
+
+        /* Method-step cards */
+        .method-step {
+            background: var(--soft); border-radius: 0.75rem;
+            padding: 1.25rem 1.5rem; margin: 0.85rem 0;
+            border-left: 4px solid var(--primary);
+        }
+        .method-step .step-num {
+            display: inline-block; background: var(--primary); color: white;
+            font-size: 0.7rem; font-weight: 700;
+            padding: 0.15rem 0.55rem; border-radius: 0.25rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            margin-bottom: 0.45rem;
+        }
+        .method-step h3 { margin-top: 0; }
+        .method-step .why {
+            margin-top: 0.5rem; padding: 0.65rem 0.9rem;
+            background: white; border-radius: 0.5rem; font-size: 0.92rem;
+            border-left: 3px solid var(--success);
+        }
+        .method-step .why strong { color: var(--success); }
+
+        /* Numbers grid */
+        .numbers-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 1rem; margin: 1rem 0;
+        }
+        .number-card {
+            background: var(--soft); border-radius: 0.5rem;
+            padding: 1.25rem; text-align: center;
+        }
+        .number-card .num {
+            font-size: 2.25rem; font-weight: 700; color: var(--primary);
+            line-height: 1;
+        }
+        .number-card .lbl {
+            font-size: 0.75rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.05em;
+            margin-top: 0.4rem;
+        }
+
+        /* Tag pills */
+        .pill {
+            display: inline-block; padding: 0.15rem 0.55rem;
+            border-radius: 0.25rem; font-size: 0.72rem;
+            font-weight: 600; letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .pill-kavya { background: var(--kavya); color: white; }
+        .pill-riya { background: var(--riya); color: white; }
+        .pill-done { background: var(--success); color: white; }
+        .pill-blocker { background: var(--danger); color: white; }
+
+        /* Blocker list */
+        .blocker-list {
+            background: #fef2f2; border-left: 4px solid var(--danger);
+            padding: 1rem 1.25rem; border-radius: 0.5rem;
+            margin: 0.75rem 0;
+        }
+        .blocker-list ol { margin: 0.5rem 0 0 1.25rem; }
+        .blocker-list li { margin: 0.45rem 0; }
+
+        /* Folder structure */
+        pre.folder {
+            background: #f8fafc; border: 1px solid var(--border);
+            padding: 1rem; border-radius: 0.5rem;
+            font-size: 0.82rem; line-height: 1.55;
+            overflow-x: auto;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 3rem; padding-top: 1.5rem;
+            border-top: 2px solid var(--border);
+            color: var(--muted); font-size: 0.85rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        footer a { color: var(--primary); }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .meta-strip { grid-template-columns: 1fr 1fr; }
+            .numbers-grid { grid-template-columns: 1fr 1fr; }
+            header h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../dashboard.html" class="back-link">&larr; Back to Dashboard</a>
+        <span class="kra-badge">KRA4 · Innovation Velocity</span>
+        <h1>Website Content Rebuild</h1>
+        <p class="subtitle">From scratch to vendor-ready handover in 5 working days.</p>
+    </header>
+
+    <div class="meta-strip">
+        <div class="item">
+            <div class="label">Period</div>
+            <div class="value">11&ndash;16 May 2026</div>
+        </div>
+        <div class="item">
+            <div class="label">Lead</div>
+            <div class="value">Kavya &middot; k_4_1</div>
+        </div>
+        <div class="item">
+            <div class="label">Contributor</div>
+            <div class="value">Riya &middot; r_4_1 (engagement)</div>
+        </div>
+        <div class="item">
+            <div class="label">Vendor</div>
+            <div class="value">Samadhan</div>
+        </div>
+    </div>
+
+    <section>
+        <h2><span class="num">1.</span> Why this matters</h2>
+        <p>SSEI signed Samadhan to rebuild the website. Samadhan are builders, not writers. Before they can ship a single page, they need a finished page-by-page content brief: what the page says, in what order, with what SEO targets, linking where. That brief did not exist on Monday morning.</p>
+        <p>The choice was either (a) Samadhan writes guesswork content because no one gave them a brief, and SSEI catches errors in QA at the end &mdash; costing 4 to 6 weeks of rework &mdash; or (b) Growth &amp; Ops gives them a complete, source-verified, SEO-optimised brief upfront so they build it right the first time.</p>
+        <p><strong>This work is option (b).</strong> It is the spine the new website is being built on.</p>
+    </section>
+
+    <section>
+        <h2><span class="num">2.</span> Who provided what (content credits)</h2>
+        <p>Content briefs are only as good as the source-of-truth inputs feeding them. Every fact in the master document traces back to a named subject-matter contributor.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:18%">Contributor</th>
+                    <th>What they provided</th>
+                    <th style="width:22%">Used for</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Vidyut</strong></td>
+                    <td>Original master sheet of all course pricing per exam window across CFA, FRM, CA, ACCA, Analyst Stack programmes</td>
+                    <td>Sticky purchase card on every course detail page (36 pages)</td>
+                </tr>
+                <tr>
+                    <td><strong>Chirag</strong></td>
+                    <td>Verified course content (curriculum, hours, faculty, mode, validity, deliverables) for every course <strong>except ACCA</strong> &mdash; 15 SKUs across CFA L1, L2, L3, FRM, CA Final AFM, CA Inter FM, CA Foundation, Analyst Stack, Prudentia</td>
+                    <td>Course detail pages, listings, faculty roster</td>
+                </tr>
+                <tr>
+                    <td><strong>Shubhankar</strong></td>
+                    <td>Verified ACCA programme content across all <strong>7 ACCA SKUs</strong> (Knowledge Level, Knowledge + Skills, All 13 Papers, 8 Papers, 7 Papers, 10 Papers, Professional Level)</td>
+                    <td>ACCA programme landing page + route selector</td>
+                </tr>
+                <tr>
+                    <td><strong>Kavya</strong></td>
+                    <td>Designed the <strong>skeleton template</strong> (slot A&ndash;R framework) used across every page. Provided the framework to Chirag and Shubhankar so their inputs slotted in without re-formatting. Did the SEO research, the sitemap, the master assembly, and the 3-pass recheck.</td>
+                    <td>Process design, page architecture, SEO layer, final QA</td>
+                </tr>
+                <tr>
+                    <td><strong>Riya</strong></td>
+                    <td>End-to-end content for the 3 engagement pages: Events (P30), Scholarship Exam (P31), Schedule Consultation (P32) &mdash; including filter specs, calendar layouts, form fields, and event detail templates</td>
+                    <td>Engagement section of the master doc</td>
+                </tr>
+                <tr>
+                    <td><strong>Faculty Affairs</strong></td>
+                    <td>Faculty fact-check V3 doc &mdash; sent 11 May noon, replies threaded back during the writing phase</td>
+                    <td>Faculty roster page + faculty references across course pages</td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="margin-top:0.85rem; font-size:0.9rem; color:var(--muted);"><em>The bigger point: nothing in the brief is invented. Every product fact is from a named source. Phrasing and SEO are mine. Facts are theirs.</em></p>
+    </section>
+
+    <section>
+        <h2><span class="num">3.</span> Before vs after</h2>
+        <div class="diagram">
+            <img src="../docs/SAMADHAN_BEFORE_AFTER.png" alt="Before-after diagram showing Monday starting state (mockups, drafts, source files, no structure) vs Friday vendor-ready state (page briefs, master doc, master sheet, wireframes, organised folders, README).">
+        </div>
+    </section>
+
+    <section>
+        <h2><span class="num">4.</span> The science behind the content</h2>
+        <p>Vidyut asked how SSEI's content gets written. The honest answer is it is not vibes &mdash; it is a repeatable 8-step process. Every page in the master document went through the same pipeline. Here it is, in order.</p>
+
+        <div class="method-step">
+            <span class="step-num">Step 1</span>
+            <h3>Sitemap development</h3>
+            <p>Start by listing every page that will exist on the website. One row per page, with eight columns: page ID, URL, tier (P0 launch-critical, P1 launch-nice, P2 post-launch), audience (visitor / student / admin), template type, indexability (yes / no for SEO), mockup file reference, source content document.</p>
+            <p>For this rebuild: 49 mockups from Samadhan, condensed and re-prioritised to 36 indexable pages plus a handful of templates.</p>
+            <div class="why"><strong>Why this comes first.</strong> You cannot write what you do not know exists. Locking the page list before writing kills scope creep and tells every contributor exactly which pages they need to provide source content for.</div>
+        </div>
+
+        <div class="method-step">
+            <span class="step-num">Step 2</span>
+            <h3>Skeleton framework (slot A&ndash;R)</h3>
+            <p>Every page is built from the same alphabetical slot grid. Course pages use slots A (Breadcrumb), B (H1 + Badge row), C (Meta row), D (Tabs), E (Overview lead paragraph + What&rsquo;s Inside list), F (Curriculum), G (Faculty), H (Mocks), I (FAQs 5x), J (Toppers), K (Related Courses 3x), L&ndash;R (Sticky Purchase Card with pricing, validity extension, CTA).</p>
+            <p>Public marketing pages use a variant. Engagement pages a third. The slot pattern stays consistent within each page type.</p>
+            <div class="why"><strong>Why this matters.</strong> Consistency. The reviewer does not have to re-learn each page&rsquo;s layout. Chirag and Shubhankar both fill the same skeleton, so the master assembly stays clean. Build once, reuse 36 times.</div>
+        </div>
+
+        <div class="method-step">
+            <span class="step-num">Step 3</span>
+            <h3>SEO research per indexable page</h3>
+            <p>Search engines rank pages, not websites. So every one of the 35 indexable pages got its own SEO research pass:</p>
+            <ul>
+                <li>Primary keyword (1 high-intent target, e.g. <em>&ldquo;CFA Level 1 coaching India&rdquo;</em>)</li>
+                <li>Secondary keywords (3 to 5 variants, e.g. <em>&ldquo;CFA L1 Sanjay Saraf&rdquo;</em>, <em>&ldquo;CFA Level 1 online classes&rdquo;</em>)</li>
+                <li>Long-tail / question keywords (2 to 3 for FAQ-stage searchers)</li>
+                <li>Meta title (under 60 characters, includes primary keyword)</li>
+                <li>Meta description (under 155 characters, CTR-optimised, action-oriented)</li>
+                <li>H1 (under 70 characters, exactly one per page)</li>
+                <li>Open Graph title and description (for LinkedIn / WhatsApp shares)</li>
+                <li>Schema.org type (Course / Organization / Person / FAQPage / BreadcrumbList) with structured fields</li>
+                <li>Internal-link targets (every page links to 3+ related pages)</li>
+            </ul>
+            <p>Sources for the keyword research: <code>research_findings.md</code> (29K of keyword clusters, competitor SERP intel, search-intent breakdowns), live ssei.co.in product pages, and Google&rsquo;s autocomplete / People Also Ask scraping.</p>
+            <div class="why"><strong>Why this matters.</strong> A course detail page that ranks first for &ldquo;CFA Level 1 coaching India&rdquo; is worth more than the entire homepage combined. Per-page SEO is how you compound long-term organic traffic.</div>
+        </div>
+
+        <div class="method-step">
+            <span class="step-num">Step 4</span>
+            <h3>Annotated mockups (visual cross-reference)</h3>
+            <p>For the four most-reviewed pages (Homepage, About, Mocks listing, Mock detail), the HTML mockups were annotated with blue floating slot badges &mdash; TL-A, TL-B, MD-A, MD-B etc. &mdash; so a reviewer can see &ldquo;this paragraph in the brief fills slot E on the mockup&rdquo; at a single glance.</p>
+            <div class="why"><strong>Why this matters.</strong> When the content writer and the designer are different people (and they always are), the annotated mockup is the bridge. No more &ldquo;which slot does this go into?&rdquo; in QA.</div>
+        </div>
+
+        <div class="method-step">
+            <span class="step-num">Step 5</span>
+            <h3>First-pass team verification (source intake)</h3>
+            <p>Before any content gets written, the source-of-truth docs are collected and verified:</p>
+            <ul>
+                <li>Vidyut signs off on the master pricing sheet</li>
+                <li>Chirag delivers 15 course content docs (CFA, FRM, CA, Analyst Stack, Prudentia)</li>
+                <li>Shubhankar delivers 7 ACCA docs</li>
+                <li>Faculty Affairs returns the fact-check responses</li>
+                <li>Sales delivers the FAQ pool</li>
+            </ul>
+            <p>These get extracted (DOCX &rarr; markdown via pandoc, PDF &rarr; text via pdftotext, XLSX &rarr; CSV via libreoffice, PPTX &rarr; XML regex) into a structured <code>_extracted/</code> folder. Every page brief later cites which source file it used.</p>
+            <div class="why"><strong>Why this matters.</strong> No fact in the master document is &ldquo;made up.&rdquo; Every number, hour count, price, faculty name traces back to a named team contributor. If something is wrong, you know exactly who provided it and where to send the fix request.</div>
+        </div>
+
+        <div class="method-step">
+            <span class="step-num">Step 6</span>
+            <h3>Detailed content writing</h3>
+            <p>36 individual page briefs written into per-page markdown files. Each file has SEO frontmatter (title, meta, OG, schema) at the top, then slot-by-slot copy in mockup order. Facts come only from the verified Step 5 sources. SSEI&rsquo;s voice rules apply throughout:</p>
+            <ul>
+                <li>No flowery / consulting language</li>
+                <li>No Instagram-style sentence fragments</li>
+                <li>Web-content register (authoritative, clear, never catchy)</li>
+                <li>Specific numbers always (10 lakh, 30 years, four credentials) not approximations</li>
+                <li>Product facts unchanged from source; phrasing SEO-polished</li>
+            </ul>
+            <div class="why"><strong>Why this matters.</strong> Voice drift across 36 pages is the most common failure mode. Locking the voice rules upfront and self-policing through writing keeps the master document feeling like one document, not 36 stitched-together drafts.</div>
+        </div>
+
+        <div class="method-step">
+            <span class="step-num">Step 7</span>
+            <h3>Second-pass team verification (cross-check)</h3>
+            <p>After the pages are written, a second verification loop catches any factual errors introduced through phrasing. Course detail pages go back to Chirag (or Shubhankar for ACCA) for a spot-check. Pricing tables go back to Vidyut. Faculty bios go back to Faculty Affairs.</p>
+            <p>This is also where decisions like &ldquo;remove Karan Aggarwal from all faculty references&rdquo; (he left SSEI) and &ldquo;strip FRM Part 2 from combos&rdquo; (out of scope per directive) get applied across the entire document.</p>
+            <div class="why"><strong>Why this matters.</strong> Even a careful writer occasionally introduces an error through paraphrase. The second-pass catches it before vendor handover, when fixing it costs 10x more.</div>
+        </div>
+
+        <div class="method-step">
+            <span class="step-num">Step 8</span>
+            <h3>Final SEO optimisation + 3-pass recheck</h3>
+            <p>One last sweep across the master document with three independent passes:</p>
+            <ol>
+                <li><strong>Structural pass.</strong> Every indexable page has complete SEO frontmatter. No missing meta description. No missing schema. Heading hierarchy logical (H1 once, H2 sections, H3 subsections).</li>
+                <li><strong>Voice pass.</strong> Em-dash sweep (none in original prose). Instagram-fragment sweep (none). Hyped-claim sweep (every claim grounded in a source).</li>
+                <li><strong>Cross-reference pass.</strong> Internal links resolve to existing pages. Pricing matches between course detail and master sheet. Faculty names spelled consistently. Combos link to existing combo URLs. Stale references (e.g. removed faculty) stripped.</li>
+            </ol>
+            <div class="why"><strong>Why this matters.</strong> This is the difference between a content document and a publishable spec. Samadhan can build directly from the master doc without coming back with &ldquo;what about X&rdquo; questions, because X is already cross-referenced.</div>
+        </div>
+
+        <p style="margin-top:1.25rem; font-size:0.95rem;"><em>That is the content science. 8 steps, 5 working days, repeated for every page. The output is not just words on a wall &mdash; it is a vendor-ready spec a third party can build from without further input.</em></p>
+    </section>
+
+    <section>
+        <h2><span class="num">5.</span> Day-by-day</h2>
+        <table>
+            <thead>
+                <tr><th style="width:20%">Day</th><th>What got done</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Mon 11 May (AM)</strong></td>
+                    <td>Built the sitemap. One row per page across all 49 mockups, with URL, tier, audience, template, SEO indexability, source link.</td>
+                </tr>
+                <tr>
+                    <td><strong>Mon 11 May (PM)</strong></td>
+                    <td>Started SEO meta map. Course pages first (highest commercial value). Primary keyword, secondary keywords, meta title/description, OG tags, schema type per indexable page.</td>
+                </tr>
+                <tr>
+                    <td><strong>Tue 12 May</strong></td>
+                    <td>Built per-page skeletons. Every page mapped slot-by-slot (A through R) to its mockup&rsquo;s visual layout. 4 existing drafts reformatted, 3 data-dumps rewritten, 2 mixed salvaged.</td>
+                </tr>
+                <tr>
+                    <td><strong>Wed&ndash;Thu 13&ndash;14 May</strong></td>
+                    <td>The actual writing. 33 pages by Kavya (homepage, about, faculty, all 8 CFA L1 variants, 3 CFA L2, CFA L3, FRM, 2 CA Final AFM, CA Inter FM, CA Foundation, ACCA, Analyst Stack, Prudentia, listings, blogs, careers, media). 3 engagement pages by Riya.</td>
+                </tr>
+                <tr>
+                    <td><strong>Thu&ndash;Fri 14&ndash;15 May</strong></td>
+                    <td>Master assembly. Concatenated 37 MDs into one document. Rendered to DOCX + PDF. Built the master sheet (one row per page). Ran the 3-pass recheck.</td>
+                </tr>
+                <tr>
+                    <td><strong>Fri 16 May</strong></td>
+                    <td>Workspace cleanup. Reorganised 171 files into 4 folders. Wrote vendor README. Rendered 37 individual per-page PDFs. Handover-ready.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2><span class="num">6.</span> Who did what</h2>
+        <div class="diagram">
+            <img src="../docs/SAMADHAN_WHO_DID_WHAT.png" alt="Tree diagram showing Kavya owns 5 phases (Sitemap, Skeletons+SEO, 33 page MDs, Master assembly, Cleanup+handover) and Riya owns 3 engagement pages (Events, Scholarship Exam, Schedule Consultation).">
+        </div>
+        <p>8 actions live in the dashboard tracker under KRA4 (<code>a_4_07</code> through <code>a_4_14</code>). All marked <span class="pill pill-done">done</span>.</p>
+    </section>
+
+    <section>
+        <h2><span class="num">7.</span> By the numbers</h2>
+        <div class="numbers-grid">
+            <div class="number-card"><div class="num">36</div><div class="lbl">Page briefs</div></div>
+            <div class="number-card"><div class="num">45,611</div><div class="lbl">Words in master doc</div></div>
+            <div class="number-card"><div class="num">35</div><div class="lbl">Indexable pages w/ full SEO</div></div>
+            <div class="number-card"><div class="num">35</div><div class="lbl">Source files mined</div></div>
+            <div class="number-card"><div class="num">23</div><div class="lbl">Course pages</div></div>
+            <div class="number-card"><div class="num">6</div><div class="lbl">Marketing pages</div></div>
+            <div class="number-card"><div class="num">3</div><div class="lbl">Engagement (Riya)</div></div>
+            <div class="number-card"><div class="num">5</div><div class="lbl">Working days</div></div>
+        </div>
+    </section>
+
+    <section>
+        <h2><span class="num">8.</span> What is blocked &mdash; Sales asks</h2>
+        <p>Four hard blockers logged for Sales to resolve before the website goes live:</p>
+        <div class="blocker-list">
+            <ol>
+                <li><strong>CFA Level 3 pricing per exam window.</strong> Brochure says &ldquo;pricing supplied&rdquo; but the actual numbers are not in the source set.</li>
+                <li><strong>Prudentia pricing per cohort.</strong> Brochure has no price card.</li>
+                <li><strong>CFA L2 Partial Topics &mdash; Corporate Issuers May 2026 anchor</strong> (flagged TBD by Sales).</li>
+                <li><strong>CFA L2 / FRM / CA Final AFM mock pricing.</strong> Only CFA L1 mocks have full pack pricing in the MOCKS.csv.</li>
+            </ol>
+        </div>
+        <p>Plus 35 open flags across the 36 pages, listed at the bottom of each individual page brief. Most are Sales confirmations and creative assets, not content gaps.</p>
+    </section>
+
+    <section>
+        <h2><span class="num">9.</span> KRA scoring rationale</h2>
+        <h3>KRA4 &rarr; Innovation Velocity (k_4_1, Kavya, 13% bucket weight)</h3>
+        <p>The rubric measures shipping rate of new-project initiatives &mdash; how often new 0&rarr;1 work goes from idea to delivered output.</p>
+        <p>For Q1 Year 2 (Apr&ndash;Jun 2026), the website rebuild is a complete 0&rarr;1 ship:</p>
+        <ul>
+            <li>Defined scope: 49 mockups &rarr; 36 indexable page briefs</li>
+            <li>Delivered scope: 36 briefs + master doc + handover folder + vendor README</li>
+            <li>Calendar time: 5 working days</li>
+            <li>Quality: 8-step process applied, 3-pass internal review, source-verified</li>
+            <li>Delegation evidence: 3 of 36 pages owned end-to-end by Riya</li>
+        </ul>
+        <h3>KRA4 &rarr; New Project Execution Support (r_4_1, Riya, 10% bucket weight)</h3>
+        <p>Riya independently owned the 3 engagement pages with full SEO frontmatter, filter specs, form specs, and event detail templates. These pages link to the Scholarship Exam initiative (closed 26 Apr) and the new Schedule Consultation flow (top-of-funnel).</p>
+    </section>
+
+    <section>
+        <h2><span class="num">10.</span> What is next</h2>
+        <table>
+            <thead>
+                <tr><th style="width:25%">When</th><th>What</th><th style="width:25%">Owner</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Now &rarr; 4 weeks</td><td>Samadhan builds the live website from the handover</td><td>Samadhan + Tech</td></tr>
+                <tr><td>Parallel</td><td>Sales resolves the 4 hard blockers + 35 open flags</td><td>Sales</td></tr>
+                <tr><td>Parallel</td><td>Faculty fact-check V4 for any late corrections</td><td>Faculty / Kavya</td></tr>
+                <tr><td>Pre-launch</td><td>QA pass on staging</td><td>Growth &amp; Ops + Tech</td></tr>
+                <tr><td>Launch</td><td>Hard launch with SEO redirects from old URLs</td><td>Tech</td></tr>
+                <tr><td>Post-launch</td><td>Indexation monitoring + organic traffic baseline</td><td>Growth &amp; Ops</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <span>Last updated: <span id="last-updated"></span></span>
+        <span><a href="../dashboard.html">Back to Dashboard</a> &middot; <a href="leadership.html">Leadership view</a></span>
+    </footer>
+
+    <script>
+        document.getElementById('last-updated').textContent =
+            new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+    </script>
+</body>
+</html>
