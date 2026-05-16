@@ -96,7 +96,7 @@ const db = {
             .order('sort_order');
         if (error) throw error;
         // Sort in JS: KRA order → member order → kpi sort_order
-        const memberOrder = { kavya: 1, ishita: 2, riya: 3 };
+        const memberOrder = { kavya: 1, riya: 2 };
         return (data || []).sort((a, b) => {
             const aOrder = a.kras?.sort_order ?? 99;
             const bOrder = b.kras?.sort_order ?? 99;

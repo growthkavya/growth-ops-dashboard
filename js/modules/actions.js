@@ -2,7 +2,7 @@
  * Actions Module — Year 2 KRA framework
  *
  * Actions are grouped by KRA (kra1..kra5) and can be filtered by KRA, owner
- * (kavya/ishita/riya), and status. Double-click a row to edit; click the
+ * (kavya/riya), and status. Double-click a row to edit; click the
  * status pill to cycle not_started → in_progress → done.
  */
 

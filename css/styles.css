@@ -1668,12 +1668,11 @@ textarea {
 
 /* Team color tokens */
 :root {
-    --kavya:  #2563eb;
-    --ishita: #7c3aed;
-    --riya:   #16a34a;
+    --kavya: #2563eb;
+    --riya:  #16a34a;
 }
 
-/* Owner badges (Kavya / Ishita / Riya) */
+/* Owner badges (Kavya / Riya) */
 .owner-badge {
     display: inline-block;
     padding: 0.2rem 0.55rem;
@@ -1684,9 +1683,8 @@ textarea {
     text-transform: capitalize;
     letter-spacing: 0.02em;
 }
-.owner-badge.badge-kavya       { background: var(--kavya);  }
-.owner-badge.badge-ishita      { background: var(--ishita); }
-.owner-badge.badge-riya        { background: var(--riya);   }
+.owner-badge.badge-kavya       { background: var(--kavya); }
+.owner-badge.badge-riya        { background: var(--riya);  }
 .owner-badge.badge-unassigned  { background: var(--text-secondary); }
 
 /* KRA sections on the Action Tracker */
@@ -1756,9 +1754,8 @@ textarea {
     padding: 1rem;
     border-left: 4px solid var(--primary);
 }
-.team-sum-card.card-kavya  { border-left-color: var(--kavya); }
-.team-sum-card.card-ishita { border-left-color: var(--ishita); }
-.team-sum-card.card-riya   { border-left-color: var(--riya); }
+.team-sum-card.card-kavya { border-left-color: var(--kavya); }
+.team-sum-card.card-riya  { border-left-color: var(--riya); }
 .team-sum-name  { font-weight: 600; }
 .team-sum-role  { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
 .team-sum-score { font-size: 1.75rem; font-weight: 700; color: var(--primary); line-height: 1; }

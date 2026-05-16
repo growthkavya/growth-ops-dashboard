@@ -2,7 +2,7 @@
  * KPIs Module — Year 2 KRA framework
  *
  * 30 KPIs (10 per member × 3 members) organized under 5 KRAs.
- * UI has a team tab (Kavya / Ishita / Riya), cards grouped by KRA,
+ * UI has a team tab (Kavya / Riya), cards grouped by KRA,
  * and a monthly scoring table (Apr / May / Jun) with click-to-edit cells.
  */
 

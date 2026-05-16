@@ -49,9 +49,8 @@ const APP_CONFIG = {
 
 // Color lookup by member id
 const MEMBER_COLORS = {
-    kavya:  '#2563eb',
-    ishita: '#7c3aed',
-    riya:   '#16a34a'
+    kavya: '#2563eb',
+    riya:  '#16a34a'
 };
 
 // Helper: KRA short name from code

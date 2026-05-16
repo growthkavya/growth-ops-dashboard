@@ -2,7 +2,7 @@
  * Dashboard Module — Year 2 KRA framework
  *
  * Overview page: Today's Focus, Quick Stats, KRA Progress (5 rows),
- * Team Snapshot (Kavya / Ishita / Riya weighted scores), Recent Activity.
+ * Team Snapshot (Kavya / Riya weighted scores), Recent Activity.
  */
 
 const dashboardModule = {
