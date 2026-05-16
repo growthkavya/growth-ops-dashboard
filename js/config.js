@@ -21,10 +21,10 @@ const APP_CONFIG = {
     framework: 'Year 2 — 5 KRAs × 10 KPIs per member',
 
     // Team members (matches `member` enum in kpis + owner_name in actions)
+    // Ishita removed 16 May 2026 — exited SSEI. Team is now 2-person.
     team: [
-        { id: 'kavya',  name: 'Kavya',  role: 'Head of Growth & Ops', color: '#2563eb' },
-        { id: 'ishita', name: 'Ishita', role: 'Writer, CFA L1',       color: '#7c3aed' },
-        { id: 'riya',   name: 'Riya',   role: 'Executor',             color: '#16a34a' }
+        { id: 'kavya', name: 'Kavya', role: 'Head of Growth & Ops', color: '#2563eb' },
+        { id: 'riya',  name: 'Riya',  role: 'Executor',             color: '#16a34a' }
     ],
 
     // 5 Key Result Areas (matches kra_code in DB)
