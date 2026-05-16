@@ -118,7 +118,7 @@ if (document.getElementById('login-form')) {
     // Check if already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
-            window.location.href = 'index.html';
+            window.location.href = 'dashboard.html';
         }
     });
 
@@ -135,7 +135,7 @@ if (document.getElementById('login-form')) {
 
         try {
             await auth.signIn(email, password);
-            window.location.href = 'index.html';
+            window.location.href = 'dashboard.html';
         } catch (error) {
             loginError.textContent = error.message || 'Invalid email or password';
             loginError.style.display = 'block';
@@ -180,7 +180,7 @@ if (document.getElementById('login-form')) {
                 alert('Check your email for a confirmation link!');
             } else if (data.session) {
                 // Auto-confirmed, redirect
-                window.location.href = 'index.html';
+                window.location.href = 'dashboard.html';
             }
         } catch (error) {
             signupError.textContent = error.message || 'Failed to create account';

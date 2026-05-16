@@ -12,7 +12,7 @@ const app = {
 
         if (!isAuthenticated) {
             // Redirect to login
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
             return;
         }
 
@@ -115,7 +115,7 @@ const app = {
             logoutBtn.addEventListener('click', async () => {
                 if (confirm('Are you sure you want to log out?')) {
                     await auth.signOut();
-                    window.location.href = 'login.html';
+                    window.location.href = 'index.html';
                 }
             });
         }

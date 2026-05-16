@@ -3,408 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth & Ops Workspace</title>
-    <link rel="stylesheet" href="css/styles.css?v=4">
+    <title>Login - Growth & Ops Workspace</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="loading-spinner"></div>
-        <p>Loading workspace...</p>
-    </div>
-
-    <!-- Main App -->
-    <div id="app" class="app" style="display: none;">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
                 <h1>Growth & Ops</h1>
-                <span class="quarter-badge">Q1 Y2 | Apr-Jun 2026</span>
+                <p>Team Workspace</p>
             </div>
 
-            <ul class="nav-links">
-                <li><a href="#dashboard" class="nav-link active" data-section="dashboard">
-                    <span class="nav-icon">&#9634;</span> Dashboard
-                </a></li>
-                <li><a href="#goals" class="nav-link" data-section="goals">
-                    <span class="nav-icon">&#9733;</span> Goals
-                </a></li>
-                <li><a href="#actions" class="nav-link" data-section="actions">
-                    <span class="nav-icon">&#10003;</span> Actions
-                </a></li>
-                <li><a href="#kpis" class="nav-link" data-section="kpis">
-                    <span class="nav-icon">&#9650;</span> KPIs
-                </a></li>
-                <li><a href="#ideas" class="nav-link" data-section="ideas">
-                    <span class="nav-icon">&#9889;</span> Ideation
-                </a></li>
-                <li><a href="#documents" class="nav-link" data-section="documents">
-                    <span class="nav-icon">&#128196;</span> Documents
-                </a></li>
-                <li><a href="#weekly" class="nav-link" data-section="weekly">
-                    <span class="nav-icon">&#128197;</span> Weekly Log
-                </a></li>
-                <li><a href="#activity" class="nav-link" data-section="activity">
-                    <span class="nav-icon">&#128336;</span> Activity
-                </a></li>
-                <li><a href="#team" class="nav-link" data-section="team">
-                    <span class="nav-icon">&#128101;</span> Team
-                </a></li>
-            </ul>
+            <form id="login-form" class="login-form" autocomplete="off">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required autocomplete="off">
+                </div>
 
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <span class="user-name" id="current-user-name">-</span>
-                    <span class="user-role" id="current-user-role">-</span>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required autocomplete="off">
                 </div>
-                <div class="sidebar-actions">
-                    <a href="views/leadership.html" class="btn-leadership">Leadership View</a>
-                    <button id="theme-toggle" class="btn-theme" title="Toggle dark mode">&#9790;</button>
-                    <button id="logout-btn" class="btn-logout" title="Logout">&#10140;</button>
-                </div>
+
+                <div id="login-error" class="error-message" style="display: none;"></div>
+
+                <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-loading" style="display: none;">Signing in...</span>
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p>First time? <a href="#" id="signup-link">Create account</a></p>
             </div>
-        </nav>
+        </div>
 
-        <!-- Main Content -->
-        <main class="content">
-            <!-- Dashboard Section -->
-            <section id="dashboard" class="section active">
-                <header class="section-header">
-                    <h2>Dashboard</h2>
-                    <span class="last-updated">Last updated: <span id="last-updated">-</span></span>
-                </header>
-
-                <div class="dashboard-grid">
-                    <!-- Today's Focus - Priority Action -->
-                    <div class="card focus-card" id="focus-card">
-                        <div class="focus-header">
-                            <h3>Today's Focus</h3>
-                            <span class="focus-date" id="focus-date"></span>
-                        </div>
-                        <div class="focus-content" id="focus-content">
-                            <div class="focus-action">
-                                <span class="focus-layer" id="focus-layer">-</span>
-                                <span class="focus-title" id="focus-title">No priority set</span>
-                            </div>
-                            <div class="focus-meta">
-                                <span class="focus-kpi" id="focus-kpi"></span>
-                            </div>
-                        </div>
-                        <button class="btn btn-sm" id="mark-focus-done" style="display:none;">Mark Done</button>
-                    </div>
-
-                    <!-- Quick Stats -->
-                    <div class="card stats-card">
-                        <h3>Quick Stats</h3>
-                        <div class="stats-grid">
-                            <div class="stat">
-                                <span class="stat-value" id="stat-done">0</span>
-                                <span class="stat-label">Done</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-value" id="stat-progress">0</span>
-                                <span class="stat-label">In Progress</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-value" id="stat-pending">0</span>
-                                <span class="stat-label">Pending</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-value" id="stat-goals">0</span>
-                                <span class="stat-label">Goals</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KRA Progress -->
-                    <div class="card progress-card">
-                        <h3>KRA Progress</h3>
-                        <div class="kra-progress" id="kra-progress">
-                            <!-- Populated by JS: 5 rows, one per KRA -->
-                        </div>
-                    </div>
-
-                    <!-- Team Snapshot -->
-                    <div class="card team-snapshot-card">
-                        <h3>Team Snapshot</h3>
-                        <div class="team-snapshot" id="team-snapshot">
-                            <!-- Populated by JS: 3 cards (Kavya/Ishita/Riya) -->
-                        </div>
-                    </div>
-
-                    <!-- KPI Summary -->
-                    <div class="card kpi-summary-card">
-                        <h3>KPI Summary</h3>
-                        <div class="kpi-gauges" id="kpi-gauges">
-                            <!-- Populated by JS -->
-                        </div>
-                        <div class="weighted-score">
-                            Weighted: <strong id="weighted-score">-</strong> / 4.0
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="card activity-card">
-                        <h3>Recent Activity</h3>
-                        <ul class="activity-list" id="recent-activity">
-                            <!-- Populated by JS -->
-                        </ul>
-                    </div>
+        <!-- Sign Up Modal -->
+        <div id="signup-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Create Account</h2>
+                    <button class="modal-close" id="close-signup">&times;</button>
                 </div>
-            </section>
-
-            <!-- Goals Section -->
-            <section id="goals" class="section">
-                <header class="section-header">
-                    <h2>Goals</h2>
-                    <button class="btn btn-primary" id="add-goal-btn">+ Add Goal</button>
-                </header>
-
-                <div class="goals-container" id="goals-container">
-                    <!-- Populated by JS -->
-                </div>
-            </section>
-
-            <!-- Actions Section -->
-            <section id="actions" class="section">
-                <header class="section-header">
-                    <h2>Action Tracker</h2>
-                    <div class="filters">
-                        <select id="filter-kra">
-                            <option value="all">All KRAs</option>
-                            <option value="kra1">KRA 1: Data Hygiene</option>
-                            <option value="kra2">KRA 2: Lead Flow</option>
-                            <option value="kra3">KRA 3: Events</option>
-                            <option value="kra4">KRA 4: Growth</option>
-                            <option value="kra5">KRA 5: Coordination</option>
-                        </select>
-                        <select id="filter-owner">
-                            <option value="all">All Owners</option>
-                            <option value="kavya">Kavya</option>
-                            <option value="ishita">Ishita</option>
-                            <option value="riya">Riya</option>
-                        </select>
-                        <select id="filter-status">
-                            <option value="all">All Status</option>
-                            <option value="not_started">Not Started</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="done">Done</option>
-                        </select>
+                <form id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" name="name" required>
                     </div>
-                </header>
-
-                <div class="actions-container" id="actions-container">
-                    <!-- Populated by JS -->
-                </div>
-            </section>
-
-            <!-- KPIs Section -->
-            <section id="kpis" class="section">
-                <header class="section-header">
-                    <h2>KPI Dashboard</h2>
-                    <div class="kpi-header-right">
-                        <span class="kpi-score-total">Weighted: <strong id="weighted-score-pill">-</strong> / 5.0</span>
-                        <button class="btn btn-primary" id="add-score-btn">+ Add Score</button>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" name="email" required>
                     </div>
-                </header>
-
-                <!-- Team tabs: Kavya / Ishita / Riya -->
-                <div class="tab-bar" id="kpi-tabs">
-                    <!-- Populated by JS -->
-                </div>
-
-                <!-- KPI cards for the selected member, grouped by KRA -->
-                <div class="kpi-grid" id="kpi-grid">
-                    <!-- Populated by JS -->
-                </div>
-
-                <div class="kpi-table-container">
-                    <h3>Monthly Scores <span class="text-muted">(click a cell to update)</span></h3>
-                    <table class="kpi-table" id="kpi-table">
-                        <thead>
-                            <tr>
-                                <th>KRA</th>
-                                <th>KPI</th>
-                                <th>Weight</th>
-                                <th>Apr</th>
-                                <th>May</th>
-                                <th>Jun</th>
-                                <th>Target</th>
-                            </tr>
-                        </thead>
-                        <tbody id="kpi-table-body">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Ideas Section -->
-            <section id="ideas" class="section">
-                <header class="section-header">
-                    <h2>Ideation</h2>
-                    <button class="btn btn-primary" id="add-idea-btn">+ New Idea</button>
-                </header>
-
-                <div class="ideas-filters">
-                    <input type="text" id="ideas-search" placeholder="Search ideas..." class="search-input">
-                    <select id="ideas-status-filter">
-                        <option value="all">All</option>
-                        <option value="active">Active</option>
-                        <option value="draft">Drafts</option>
-                        <option value="archived">Archived</option>
-                    </select>
-                </div>
-
-                <div class="ideas-grid" id="ideas-grid">
-                    <!-- Populated by JS -->
-                </div>
-            </section>
-
-            <!-- Documents Section -->
-            <section id="documents" class="section">
-                <header class="section-header">
-                    <h2>Documents</h2>
-                    <button class="btn btn-primary" id="add-doc-btn">+ Add Document</button>
-                </header>
-
-                <div class="docs-grid">
-                    <div class="docs-category">
-                        <h3>SOPs</h3>
-                        <ul class="docs-list" id="sops-list">
-                            <!-- Populated by JS -->
-                        </ul>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" name="password" required minlength="6">
+                        <small>At least 6 characters</small>
                     </div>
-                    <div class="docs-category">
-                        <h3>Reference</h3>
-                        <ul class="docs-list" id="refs-list">
-                            <!-- Populated by JS -->
-                        </ul>
-                    </div>
-                    <div class="docs-category">
-                        <h3>Reports</h3>
-                        <ul class="docs-list" id="reports-list">
-                            <!-- Populated by JS -->
-                        </ul>
-                    </div>
-                    <div class="docs-category">
-                        <h3>Data</h3>
-                        <ul class="docs-list" id="data-list">
-                            <!-- Populated by JS -->
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Weekly Log Section -->
-            <section id="weekly" class="section">
-                <header class="section-header">
-                    <h2>Weekly Log</h2>
-                    <div class="week-nav">
-                        <button id="prev-week" class="btn-nav">&larr;</button>
-                        <span id="current-week">Week 1, 2026</span>
-                        <button id="next-week" class="btn-nav">&rarr;</button>
-                    </div>
-                </header>
-
-                <div class="week-focus">
-                    <label>Focus:</label>
-                    <input type="text" id="week-focus-input" placeholder="This week's focus...">
-                    <button class="btn btn-small" id="save-focus-btn">Save</button>
-                </div>
-
-                <div class="weekly-grid" id="weekly-grid">
-                    <!-- Populated by JS -->
-                </div>
-
-                <div class="week-summary">
-                    <h4>Week Summary</h4>
-                    <textarea id="week-summary-input" placeholder="Summary of the week..."></textarea>
-                    <button class="btn btn-small" id="save-summary-btn">Save Summary</button>
-                </div>
-            </section>
-
-            <!-- Activity Log Section -->
-            <section id="activity" class="section">
-                <header class="section-header">
-                    <h2>Activity Log</h2>
-                    <div class="filters">
-                        <select id="activity-user-filter">
-                            <option value="all">All Users</option>
-                        </select>
-                        <select id="activity-type-filter">
-                            <option value="all">All Types</option>
-                            <option value="action">Actions</option>
-                            <option value="goal">Goals</option>
-                            <option value="kpi">KPIs</option>
-                            <option value="idea">Ideas</option>
-                        </select>
-                    </div>
-                </header>
-
-                <div class="activity-timeline" id="activity-timeline">
-                    <!-- Populated by JS -->
-                </div>
-            </section>
-
-            <!-- Team Section -->
-            <section id="team" class="section">
-                <header class="section-header">
-                    <h2>Team Management</h2>
-                </header>
-
-                <div class="team-layout">
-                    <!-- My Daily Work Log -->
-                    <div class="card">
-                        <h3>My Daily Work Log</h3>
-                        <p class="text-muted">Log what you worked on today</p>
-                        <div id="my-work-log-form">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Team Overview -->
-                    <div class="card">
-                        <h3>My Team</h3>
-                        <div id="team-overview">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Team Work Logs -->
-                    <div class="card full-width">
-                        <h3>Team Work Logs (Last 7 Days)</h3>
-                        <div id="team-work-logs">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+                    <div id="signup-error" class="error-message" style="display: none;"></div>
+                    <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <!-- Modal Container -->
-    <div id="modal-container"></div>
-
-    <!-- Toast Container -->
-    <div id="toast-container"></div>
-
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js?v=3"></script>
-    <script src="js/supabase-client.js?v=4"></script>
-    <script src="js/components/toast.js"></script>
-    <script src="js/components/modal.js"></script>
-    <script src="js/auth.js?v=3"></script>
-    <script src="js/modules/dashboard.js?v=3"></script>
-    <script src="js/modules/goals.js"></script>
-    <script src="js/modules/actions.js?v=3"></script>
-    <script src="js/modules/kpis.js?v=3"></script>
-    <script src="js/modules/ideas.js"></script>
-    <script src="js/modules/documents.js"></script>
-    <script src="js/modules/weekly.js"></script>
-    <script src="js/modules/activity.js"></script>
-    <script src="js/modules/team.js?v=3"></script>
-    <script src="js/app.js?v=3"></script>
+    <script>
+        // All-in-one login script
+        const SUPABASE_URL = 'https://glheaimbqdjgpufsclrr.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdsaGVhaW1icWRqZ3B1ZnNjbHJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwOTU5MjIsImV4cCI6MjA4OTY3MTkyMn0.DJoKsXfYQtoWbro7RBJbenD0ozptBUkfwkuGIUJok4k';
+
+        console.log('1. Script started');
+        console.log('2. window.supabase:', window.supabase);
+
+        // Create client
+        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('3. Client created:', client);
+        console.log('4. Client.auth:', client.auth);
+
+        // Clear inputs
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+
+        // Handle form
+        document.getElementById('login-form').onsubmit = async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('login-error');
+            const btn = document.getElementById('login-btn');
+
+            console.log('5. Attempting login:', email);
+
+            btn.disabled = true;
+            btn.querySelector('.btn-text').textContent = 'Signing in...';
+            errorDiv.style.display = 'none';
+
+            try {
+                console.log('6. Calling signInWithPassword...');
+                const { data, error } = await client.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                console.log('7. Response:', { data, error });
+
+                if (error) {
+                    errorDiv.textContent = error.message;
+                    errorDiv.style.display = 'block';
+                } else {
+                    console.log('8. Login successful!');
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (err) {
+                console.error('9. Catch error:', err);
+                errorDiv.textContent = err.message || 'Connection error';
+                errorDiv.style.display = 'block';
+            }
+
+            btn.disabled = false;
+            btn.querySelector('.btn-text').textContent = 'Sign In';
+        };
+    </script>
 </body>
 </html>
