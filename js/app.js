@@ -41,13 +41,18 @@ const app = {
     initUserInfo() {
         const nameEl = document.getElementById('current-user-name');
         const roleEl = document.getElementById('current-user-role');
+        const role = auth.currentProfile?.role || 'member';
 
         if (nameEl) {
             nameEl.textContent = auth.currentProfile?.full_name || auth.currentUser?.email || '-';
         }
         if (roleEl) {
-            roleEl.textContent = auth.currentProfile?.role || 'member';
+            roleEl.innerHTML = `<span class="role-badge ${role}">${role}</span>`;
         }
+
+        // Tag the body so CSS can gate UI elements by role
+        document.body.classList.remove('role-admin', 'role-member', 'role-intern');
+        document.body.classList.add('role-' + role);
     },
 
     initNavigation() {

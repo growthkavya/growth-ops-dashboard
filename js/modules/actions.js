@@ -113,10 +113,23 @@ const actionsModule = {
             ? new Date(action.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
             : '';
 
+        // Audit trail: who assigned this and when
+        let assignedTrail = '';
+        if (action.assigned_by_name) {
+            const date = action.assigned_at
+                ? new Date(action.assigned_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' })
+                : '';
+            const label = `Assigned by ${action.assigned_by_name}${date ? ' · ' + date : ''}`;
+            assignedTrail = `<div class="action-assigned-trail" title="${this.escape(label)}">↳ ${this.escape(label)}</div>`;
+        }
+
         return `
             <div class="action-item" data-id="${action.id}" data-status="${action.status}">
                 <span class="action-id">${action.action_id}</span>
-                <span class="action-title" title="${this.escape(action.notes || '')}">${this.escape(action.title)}</span>
+                <span class="action-title" title="${this.escape(action.notes || '')}">
+                    ${this.escape(action.title)}
+                    ${assignedTrail}
+                </span>
                 <span class="action-kpi">${this.escape(kpiName)}</span>
                 <span class="owner-badge badge-${owner}">${ownerLabel}</span>
                 <span class="action-due">${dueDate}</span>

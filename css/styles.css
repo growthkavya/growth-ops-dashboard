@@ -1942,3 +1942,43 @@ textarea {
     .tab-bar { overflow-x: auto; }
 }
 
+
+/* ============================================
+   RBAC: role-aware UI gating
+   ============================================ */
+
+/* Assigned-by-X audit trail line under action title */
+.action-assigned-trail {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-secondary, #6b7280);
+    margin-top: 0.2rem;
+    font-style: italic;
+    letter-spacing: 0.01em;
+}
+
+/* Role badge in the sidebar footer (next to user name) */
+.role-badge {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-left: 0.4rem;
+}
+.role-badge.admin  { background: #2563eb; color: white; }
+.role-badge.member { background: #16a34a; color: white; }
+.role-badge.intern { background: #eab308; color: #1f2937; }
+
+/* When body has .role-member, hide admin-only nav items + filters */
+body.role-member .nav-link[data-section="team"],
+body.role-member #filter-owner {
+    display: none !important;
+}
+
+/* Members shouldn't see the team-wide weekly log section either */
+body.role-member .nav-link[data-section="activity"] {
+    /* leave activity visible so they can audit their own log */
+}
