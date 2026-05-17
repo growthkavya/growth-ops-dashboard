@@ -1,18 +1,17 @@
 /**
- * Delegations Module
+ * Delegations Module — simplified
  *
- * The "manager view" for admins + members. NOT for interns.
+ * Goal: assign tasks to people in 3 seconds, then track them with the
+ * smallest possible UI surface.
  *
- * Shows everything THIS USER has assigned to others, grouped by assignee.
- * Includes a prominent quick-assign bar at the top so creating a task takes
- * 5 seconds (especially for Riya assigning small things to interns).
- *
- * Auto-flags actions that haven't moved in 7+ days as "needs attention".
- *
- * Filtering:
- *   - Admin (Kavya): can assign to Riya, any active intern, or self
- *   - Member (Riya): can assign to any active intern, or self
- *   - Self-assignments appear in their own "Things I owe myself" group
+ *  - Quick-assign: ONE row. Pick person + type title + Enter. Done.
+ *    KPI bucket auto-defaults to the most recent KPI used for that assignee
+ *    (falls back to their first KPI). No KPI picker in the quick form.
+ *    No due date in the quick form — Kavya/Riya add a date later if needed.
+ *  - Per-row: status circle (click to cycle), title (click to edit),
+ *    due date (click to set/change/clear), trash to delete.
+ *  - No auto "overdue" red flagging. No "last updated X days ago".
+ *  - No stuck callout.
  */
 
 const delegationsModule = {
@@ -25,7 +24,7 @@ const delegationsModule = {
 
     async init() {
         const role = auth.currentProfile?.role;
-        if (role === 'intern') return;     // hidden for interns
+        if (role === 'intern') return;
         if (this.initialized) return;
         this.initialized = true;
         await this.loadData();
@@ -49,44 +48,35 @@ const delegationsModule = {
                 db.getInterns(true),
                 db.getProfiles()
             ]);
-            // Only actions THIS user has assigned (assigned_by = me)
-            // OR if admin role + a deliberate "show everyone's assignments" toggle is on (future).
             this.actions = (actions || []).filter(a => a.assigned_by === me);
             this.interns = interns || [];
             this.profiles = profiles || [];
-            // Cache KPIs the current user can see
             this.kpis = await db.getKPIs();
         } catch (e) {
             console.error('Delegations loadData failed:', e);
         }
     },
 
-    // ---------- QUICK-ASSIGN BAR ----------
+    // ---------- QUICK ASSIGN ----------
     renderQuickAssignBar() {
         const role = auth.currentProfile?.role;
         const myKey = auth.currentProfile?.member_key;
         const myName = auth.currentProfile?.full_name || myKey;
 
-        // Build assignee options based on role
         let assigneeOpts = [];
         if (role === 'admin') {
             assigneeOpts = [
                 { value: 'kavya:', label: 'Kavya' },
                 { value: 'riya:',  label: 'Riya' },
-                ...this.interns.map(i => ({ value: `intern1:${i.id}`, label: `Intern: ${i.name}` }))
+                ...this.interns.map(i => ({ value: `intern1:${i.id}`, label: `Intern · ${i.name}` }))
             ];
         } else if (role === 'member') {
             assigneeOpts = [
-                { value: `${myKey}:`, label: `Myself (${myName})` },
-                ...this.interns.map(i => ({ value: `intern1:${i.id}`, label: `Intern: ${i.name}` }))
+                { value: `${myKey}:`, label: `Myself` },
+                ...this.interns.map(i => ({ value: `intern1:${i.id}`, label: `Intern · ${i.name}` }))
             ];
         }
-
         const optsHtml = assigneeOpts.map(o => `<option value="${o.value}">${this.escape(o.label)}</option>`).join('');
-        // KPIs the user can see — for admin this is all, for member this is their own + intern KPIs
-        const kpiOpts = (this.kpis || []).map(k =>
-            `<option value="${k.id}" data-kra-id="${k.kra_id}" data-kpi-code="${k.kpi_code}">${this.escape(k.kpi_code)} · ${this.escape(k.name)}</option>`
-        ).join('');
 
         const bar = document.getElementById('quick-assign-bar');
         if (!bar) return;
@@ -96,64 +86,59 @@ const delegationsModule = {
                     <option value="">Assign to…</option>
                     ${optsHtml}
                 </select>
-                <input type="text" name="title" placeholder="Task title…" required maxlength="200">
-                <select name="kpi_id" class="quick-kpi" required>
-                    <option value="">KPI bucket…</option>
-                    ${kpiOpts}
-                </select>
-                <input type="date" name="due_date" title="Due date">
+                <input type="text" name="title" placeholder="Type a task and hit Enter…" required maxlength="200">
                 <button type="submit" class="btn btn-primary btn-small">Assign</button>
             </form>
+            <div class="quick-assign-help">
+                Tip: due date is optional — add it later by clicking the date on a task row.
+            </div>
         `;
 
-        // Auto-suggest KPI when assignee changes (last KPI used for that assignee)
-        bar.querySelector('select[name="assignee"]').addEventListener('change', (e) => {
-            const val = e.target.value;
-            if (!val) return;
-            const [owner, internId] = val.split(':');
-            // Find the most recent action by this user that targeted the same assignee
-            const matches = this.actions.filter(a =>
-                a.owner_name === owner && (internId ? a.intern_id === internId : !a.intern_id)
-            ).sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-            if (matches.length) {
-                const kpiSel = bar.querySelector('select[name="kpi_id"]');
-                if (kpiSel) kpiSel.value = matches[0].kpi_id || '';
-            }
-        });
-
-        // Submit
         bar.querySelector('#quick-assign-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.handleQuickAssign(e.target);
         });
     },
 
+    pickDefaultKpi(owner, internId) {
+        // Most-recent assignment to this person → use the same KPI bucket
+        const matches = this.actions
+            .filter(a => a.owner_name === owner && (internId ? a.intern_id === internId : !a.intern_id))
+            .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+        if (matches.length) {
+            const k = this.kpis.find(x => x.id === matches[0].kpi_id);
+            if (k) return k;
+        }
+        // Otherwise the first KPI in that person's bucket
+        return this.kpis.find(k => k.member === owner) || this.kpis[0];
+    },
+
     async handleQuickAssign(form) {
         const fd = new FormData(form);
         const [owner, internId] = (fd.get('assignee') || ':').split(':');
-        const kpiSel = form.querySelector('select[name="kpi_id"]');
-        const opt = kpiSel.options[kpiSel.selectedIndex];
-        if (!owner || !fd.get('title') || !fd.get('kpi_id')) {
-            toast.show('Pick assignee, title, and KPI.', 'error');
+        if (!owner || !fd.get('title')) {
+            toast.show('Pick assignee and type a task.', 'error');
+            return;
+        }
+        const kpi = this.pickDefaultKpi(owner, internId);
+        if (!kpi) {
+            toast.show('No KPI available for that assignee. Try a different person.', 'error');
             return;
         }
 
-        // Generate a non-colliding action_id from the KPI's KRA
-        const kpiCode = opt.dataset.kpiCode || '';
-        const kraNum = kpiCode.split('_')[1] || 'x';
+        const kraNum = (kpi.kpi_code || '_x_').split('_')[1] || 'x';
         const sameKra = this.actions.filter(a => (a.kpi_code || '').split('_')[1] === kraNum);
-        const actionId = `${kraNum}.${500 + sameKra.length + 1}`;  // safe range outside the seed codes
+        const actionId = `${kraNum}.${500 + sameKra.length + 1}`;
 
         const newAction = {
             action_id: actionId,
             title: fd.get('title'),
-            kpi_id: fd.get('kpi_id'),
-            kpi_code: kpiCode,
-            kra_id: opt.dataset.kraId,
+            kpi_id: kpi.id,
+            kpi_code: kpi.kpi_code,
+            kra_id: kpi.kra_id,
             owner_name: owner,
             intern_id: internId || null,
             status: 'not_started',
-            due_date: fd.get('due_date') || null,
             assigned_by: auth.currentUser.id,
             assigned_by_name: auth.currentProfile?.full_name || 'Unknown',
             assigned_at: new Date().toISOString()
@@ -166,13 +151,10 @@ const delegationsModule = {
                 auth.currentProfile?.full_name || 'Unknown',
                 'created', 'action', created.id, newAction.title
             );
-            // Notification: if assigned to an intern, ping Kavya + Riya
             if (internId) {
                 await db.notifySupervisors({
                     event_type: 'action_assigned',
-                    entity_type: 'action',
-                    entity_id: created.id,
-                    entity_title: newAction.title,
+                    entity_type: 'action', entity_id: created.id, entity_title: newAction.title,
                     intern_id: internId,
                     message: `${auth.currentProfile?.full_name || 'Someone'} assigned a task to the intern`,
                     link: '#delegations'
@@ -190,38 +172,21 @@ const delegationsModule = {
     // ---------- RENDER ----------
     render() {
         const container = document.getElementById('delegations-container');
-        const callout = document.getElementById('stuck-callout');
         if (!container) return;
 
         const filtered = this.applyFilter(this.actions);
-
-        // Stuck: not done, last updated 7+ days ago
-        const now = Date.now();
-        const stuck = this.actions.filter(a => {
-            if (a.status === 'done') return false;
-            const t = new Date(a.updated_at || a.created_at || 0).getTime();
-            return (now - t) > 7 * 24 * 60 * 60 * 1000;
-        });
-        callout.innerHTML = stuck.length === 0 ? '' : `
-            <div class="stuck-callout">
-                <div class="stuck-callout-header">
-                    ⚠ Needs attention &mdash; ${stuck.length} task${stuck.length === 1 ? '' : 's'} haven't moved in 7+ days
-                </div>
-                ${stuck.slice(0, 8).map(a => this.renderRow(a, true)).join('')}
-            </div>
-        `;
 
         if (filtered.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
                     <h3>Nothing assigned by you yet</h3>
-                    <p>Use the quick-assign bar above to delegate a task. Pick an assignee, type a title, pick a KPI bucket, hit Assign.</p>
+                    <p>Use the bar above to assign a task. It takes 3 seconds.</p>
                 </div>
             `;
             return;
         }
 
-        // Group by assignee (owner_name + intern_id pair)
+        // Group by assignee
         const groups = new Map();
         filtered.forEach(a => {
             const key = a.intern_id ? `intern:${a.intern_id}` : a.owner_name;
@@ -231,17 +196,12 @@ const delegationsModule = {
 
         const groupHtml = Array.from(groups.entries()).map(([key, list]) => {
             const label = this.assigneeLabel(key, list[0]);
-            const counts = this.countByStatus(list);
+            const openCount = list.filter(a => a.status !== 'done').length;
             return `
                 <div class="delegation-group">
                     <div class="delegation-group-header">
                         <h3>${this.escape(label)}</h3>
-                        <span class="delegation-count">
-                            ${list.length} total
-                            · <span class="cnt cnt-done">${counts.done} done</span>
-                            · <span class="cnt cnt-ip">${counts.in_progress} in&nbsp;progress</span>
-                            · <span class="cnt cnt-ns">${counts.not_started} not&nbsp;started</span>
-                        </span>
+                        <span class="delegation-count">${list.length} task${list.length === 1 ? '' : 's'} · ${openCount} open</span>
                     </div>
                     <div class="delegation-list">
                         ${list.map(a => this.renderRow(a)).join('')}
@@ -253,34 +213,41 @@ const delegationsModule = {
         container.innerHTML = groupHtml;
     },
 
-    renderRow(a, isStuck = false) {
+    renderRow(a) {
         const due = a.due_date
             ? new Date(a.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
             : '';
-        const isOverdue = a.due_date && new Date(a.due_date) < new Date() && a.status !== 'done';
-        const lastChange = a.updated_at || a.created_at;
-        const daysAgo = lastChange ? Math.floor((Date.now() - new Date(lastChange).getTime()) / 86400000) : null;
-        const lastLabel = daysAgo === 0 ? 'today' : daysAgo === 1 ? '1d ago' : `${daysAgo}d ago`;
+        const statusIcon = ({ not_started: '○', in_progress: '◐', done: '✓' })[a.status] || '○';
 
         return `
-            <div class="delegation-row ${isStuck ? 'stuck' : ''}" data-id="${a.id}">
-                <button class="delegation-status status-${a.status}" data-id="${a.id}" data-status="${a.status}" title="Click to cycle status">
-                    ${this.statusLabel(a.status)}
+            <div class="delegation-row" data-id="${a.id}" data-status="${a.status}">
+                <button class="delegation-status-btn status-${a.status}"
+                        data-id="${a.id}" data-status="${a.status}" title="Click to cycle status">
+                    ${statusIcon}
                 </button>
-                <div class="delegation-title">
-                    ${this.escape(a.title)}
-                    ${a.kpis ? `<div class="delegation-kpi">${this.escape(a.kpis.name)}</div>` : ''}
+                <div class="delegation-title-cell">
+                    <span class="delegation-title-text"
+                          data-id="${a.id}"
+                          title="Click to edit"
+                          tabindex="0"
+                          ${a.status === 'done' ? 'style="text-decoration:line-through;color:var(--text-muted);"' : ''}>
+                        ${this.escape(a.title)}
+                    </span>
                 </div>
-                <div class="delegation-due ${isOverdue ? 'overdue' : ''}">${due}${isOverdue ? ' · overdue' : ''}</div>
-                <div class="delegation-update">${lastChange ? lastLabel : ''}</div>
+                <span class="delegation-date-cell"
+                      data-id="${a.id}"
+                      data-due="${a.due_date || ''}"
+                      title="${a.due_date ? 'Click to change date' : 'Click to set a date'}">
+                    ${due || '— add date'}
+                </span>
+                <button class="delegation-delete" data-id="${a.id}" title="Delete">&times;</button>
             </div>
         `;
     },
 
-    assigneeLabel(key, sampleAction) {
+    assigneeLabel(key) {
         if (key.startsWith('intern:')) {
-            const internId = key.slice('intern:'.length);
-            const intern = this.interns.find(i => i.id === internId);
+            const intern = this.interns.find(i => i.id === key.slice('intern:'.length));
             return intern ? `Intern · ${intern.name}` : 'Intern · (deleted)';
         }
         if (key === 'kavya') return 'Kavya';
@@ -288,23 +255,11 @@ const delegationsModule = {
         return key;
     },
 
-    countByStatus(list) {
-        return {
-            not_started: list.filter(a => a.status === 'not_started').length,
-            in_progress: list.filter(a => a.status === 'in_progress').length,
-            done:        list.filter(a => a.status === 'done').length,
-        };
-    },
-
-    statusLabel(s) {
-        return ({ not_started: 'Not started', in_progress: 'In progress', done: 'Done' })[s] || s;
-    },
-
     applyFilter(list) {
         switch (this.currentFilter) {
-            case 'open':         return list.filter(a => a.status !== 'done');
-            case 'all':          return list;
-            default:             return list.filter(a => a.status === this.currentFilter);
+            case 'open':  return list.filter(a => a.status !== 'done');
+            case 'all':   return list;
+            default:      return list.filter(a => a.status === this.currentFilter);
         }
     },
 
@@ -319,23 +274,36 @@ const delegationsModule = {
             });
         }
 
-        // Cycle status on click anywhere in the container
         const container = document.getElementById('delegations-container');
         if (container && !container._wired) {
             container._wired = true;
             container.addEventListener('click', async (e) => {
-                const btn = e.target.closest('.delegation-status');
-                if (!btn) return;
-                await this.cycleStatus(btn.dataset.id, btn.dataset.status);
-            });
-        }
-        const callout = document.getElementById('stuck-callout');
-        if (callout && !callout._wired) {
-            callout._wired = true;
-            callout.addEventListener('click', async (e) => {
-                const btn = e.target.closest('.delegation-status');
-                if (!btn) return;
-                await this.cycleStatus(btn.dataset.id, btn.dataset.status);
+                // Status cycle
+                const statusBtn = e.target.closest('.delegation-status-btn');
+                if (statusBtn) {
+                    e.stopPropagation();
+                    await this.cycleStatus(statusBtn.dataset.id, statusBtn.dataset.status);
+                    return;
+                }
+                // Title edit
+                const title = e.target.closest('.delegation-title-text');
+                if (title && !title.isContentEditable) {
+                    this.editTitle(title);
+                    return;
+                }
+                // Date edit
+                const dateCell = e.target.closest('.delegation-date-cell');
+                if (dateCell) {
+                    this.editDate(dateCell);
+                    return;
+                }
+                // Delete
+                const del = e.target.closest('.delegation-delete');
+                if (del) {
+                    e.stopPropagation();
+                    await this.deleteTask(del.dataset.id);
+                    return;
+                }
             });
         }
     },
@@ -348,6 +316,99 @@ const delegationsModule = {
             await this.refresh();
         } catch (e) {
             toast.show('Status update failed: ' + (e.message || e), 'error');
+        }
+    },
+
+    editTitle(span) {
+        const original = span.textContent.trim();
+        const actionId = span.dataset.id;
+        span.setAttribute('contenteditable', 'true');
+        span.classList.add('editing');
+        span.focus();
+        // Select all text for easy replacement
+        const range = document.createRange();
+        range.selectNodeContents(span);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        const commit = async () => {
+            span.removeAttribute('contenteditable');
+            span.classList.remove('editing');
+            const newText = span.textContent.trim();
+            if (!newText) {
+                span.textContent = original;
+                return;
+            }
+            if (newText === original) return;
+            try {
+                await db.updateAction(actionId, { title: newText });
+                toast.show('Saved.', 'success');
+            } catch (e) {
+                span.textContent = original;
+                toast.show('Save failed: ' + (e.message || e), 'error');
+            }
+        };
+        span.addEventListener('blur', commit, { once: true });
+        span.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); span.blur(); }
+            if (e.key === 'Escape') { span.textContent = original; span.blur(); }
+        });
+    },
+
+    editDate(cell) {
+        const actionId = cell.dataset.id;
+        const current = cell.dataset.due || '';
+        // Build a tiny inline picker
+        const input = document.createElement('input');
+        input.type = 'date';
+        input.value = current;
+        input.className = 'inline-date-input';
+        const wrap = document.createElement('span');
+        wrap.style.display = 'inline-flex';
+        wrap.style.gap = '0.3rem';
+        wrap.appendChild(input);
+
+        const clearBtn = document.createElement('button');
+        clearBtn.textContent = '×';
+        clearBtn.title = 'Clear date';
+        clearBtn.className = 'inline-date-clear';
+        wrap.appendChild(clearBtn);
+
+        cell.innerHTML = '';
+        cell.appendChild(wrap);
+        input.focus();
+
+        const commit = async (newValue) => {
+            try {
+                await db.updateAction(actionId, { due_date: newValue || null });
+                toast.show(newValue ? 'Date set.' : 'Date cleared.', 'success');
+                await this.refresh();
+            } catch (e) {
+                toast.show('Save failed: ' + (e.message || e), 'error');
+                await this.refresh();
+            }
+        };
+        input.addEventListener('change', () => commit(input.value));
+        input.addEventListener('blur', () => {
+            // Only commit if value changed; otherwise re-render
+            if (input.value !== current) commit(input.value);
+            else this.render();
+        });
+        clearBtn.addEventListener('click', (e) => { e.stopPropagation(); commit(''); });
+    },
+
+    async deleteTask(actionId) {
+        const a = this.actions.find(x => x.id === actionId);
+        if (!a) return;
+        if (!confirm(`Delete this task?\n\n"${a.title}"\n\nThis cannot be undone.`)) return;
+        try {
+            const { error } = await supabase.from('actions').delete().eq('id', actionId);
+            if (error) throw error;
+            toast.show('Deleted.', 'success');
+            await this.refresh();
+        } catch (e) {
+            toast.show('Delete failed: ' + (e.message || e), 'error');
         }
     },
 
