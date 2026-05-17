@@ -186,11 +186,55 @@
         }
         footer a { color: var(--primary); }
 
+        /* Wrap tables so they horizontally scroll on small screens
+           instead of breaking the layout */
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .table-wrap table { min-width: 540px; }
+
+        /* Tablet */
         @media (max-width: 768px) {
             body { padding: 1rem; }
-            .meta-strip { grid-template-columns: 1fr 1fr; }
-            .numbers-grid { grid-template-columns: 1fr 1fr; }
-            header h1 { font-size: 1.6rem; }
+            .meta-strip {
+                grid-template-columns: 1fr 1fr;
+                padding: 1rem;
+                gap: 0.85rem;
+            }
+            .meta-strip .item .value { font-size: 0.875rem; }
+            .numbers-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+            header h1 { font-size: 1.5rem; line-height: 1.25; }
+            header .subtitle { font-size: 1rem; }
+            .number-card { padding: 1rem; }
+            .number-card .num { font-size: 1.85rem; }
+            .method-step { padding: 1rem 1.1rem; }
+            .method-step h3 { font-size: 1rem; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 0.5rem 0.6rem; }
+            section { margin: 2rem 0; }
+            section h2 { font-size: 1.25rem; }
+            section h2 .num { font-size: 0.8rem; }
+            pre.folder { font-size: 0.72rem; }
+        }
+
+        /* Phone */
+        @media (max-width: 480px) {
+            body { padding: 0.85rem; }
+            header h1 { font-size: 1.25rem; }
+            header .subtitle { font-size: 0.92rem; }
+            .meta-strip {
+                grid-template-columns: 1fr;
+                gap: 0.65rem;
+                padding: 0.85rem 1rem;
+            }
+            .meta-strip .item { display: flex; gap: 0.6rem; align-items: baseline; }
+            .meta-strip .item .label { margin-bottom: 0; min-width: 5rem; }
+            .numbers-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+            .number-card { padding: 0.85rem 0.6rem; }
+            .number-card .num { font-size: 1.5rem; }
+            .number-card .lbl { font-size: 0.65rem; }
+            section h2 { font-size: 1.1rem; gap: 0.35rem; }
+            .method-step { padding: 0.9rem 1rem; }
+            .method-step .why { padding: 0.55rem 0.7rem; font-size: 0.85rem; }
+            footer { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
         }
     </style>
 </head>
@@ -231,7 +275,7 @@
     <section>
         <h2><span class="num">2.</span> Who provided what (content credits)</h2>
         <p>Content briefs are only as good as the source-of-truth inputs feeding them. Every fact in the master document traces back to a named subject-matter contributor.</p>
-        <table>
+        <div class="table-wrap"><table>
             <thead>
                 <tr>
                     <th style="width:18%">Contributor</th>
@@ -276,7 +320,7 @@
                     <td>Faculty + Mocks + Events + Careers + Media + Engagement sections</td>
                 </tr>
             </tbody>
-        </table>
+        </table></div>
         <p style="margin-top:0.85rem; font-size:0.9rem; color:var(--muted);"><em>The bigger point: nothing in the brief is invented. Every product fact is from a named source. Phrasing and SEO are mine. Facts are theirs.</em></p>
     </section>
 
@@ -387,7 +431,7 @@
 
     <section>
         <h2><span class="num">5.</span> Day-by-day</h2>
-        <table>
+        <div class="table-wrap"><table>
             <thead>
                 <tr><th style="width:20%">Day</th><th>What got done</th></tr>
             </thead>
@@ -417,7 +461,7 @@
                     <td>Workspace cleanup. Reorganised 171 files into 4 folders. Wrote vendor README. Rendered 37 individual per-page PDFs. Handover-ready.</td>
                 </tr>
             </tbody>
-        </table>
+        </table></div>
     </section>
 
     <section>
@@ -460,7 +504,7 @@
 
     <section>
         <h2><span class="num">9.</span> What is next</h2>
-        <table>
+        <div class="table-wrap"><table>
             <thead>
                 <tr><th style="width:25%">When</th><th>What</th><th style="width:25%">Owner</th></tr>
             </thead>
@@ -472,7 +516,7 @@
                 <tr><td>Launch</td><td>Hard launch with SEO redirects from old URLs</td><td>Tech</td></tr>
                 <tr><td>Post-launch</td><td>Indexation monitoring + organic traffic baseline</td><td>Growth &amp; Ops</td></tr>
             </tbody>
-        </table>
+        </table></div>
     </section>
 
     <footer>

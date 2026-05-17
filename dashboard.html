@@ -15,8 +15,14 @@
 
     <!-- Main App -->
     <div id="app" class="app" style="display: none;">
+        <!-- Mobile hamburger toggle (only visible on small screens) -->
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
         <!-- Sidebar -->
-        <nav class="sidebar">
+        <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h1>Growth & Ops</h1>
                 <span class="quarter-badge">Q1 Y2 | Apr-Jun 2026</span>

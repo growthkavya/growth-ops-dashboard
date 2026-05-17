@@ -179,4 +179,37 @@ document.addEventListener('DOMContentLoaded', () => {
     app.init().catch(error => {
         console.error('App initialization failed:', error);
     });
+
+    // Mobile menu toggle. The hamburger appears on small screens only (CSS).
+    const toggle = document.getElementById('mobile-menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    function closeMobileMenu() {
+        sidebar?.classList.remove('open');
+        overlay?.classList.remove('show');
+        document.body.classList.remove('sidebar-open');
+    }
+    function openMobileMenu() {
+        sidebar?.classList.add('open');
+        overlay?.classList.add('show');
+        document.body.classList.add('sidebar-open');
+    }
+
+    toggle?.addEventListener('click', () => {
+        if (sidebar?.classList.contains('open')) closeMobileMenu();
+        else openMobileMenu();
+    });
+
+    overlay?.addEventListener('click', closeMobileMenu);
+
+    // Close on nav link tap so the section appears after the menu closes
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
+
+    // Close if window resizes back to desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) closeMobileMenu();
+    });
 });
