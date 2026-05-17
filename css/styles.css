@@ -2266,3 +2266,148 @@ body.role-intern .admin-or-member-only { display: none !important; }
     margin-top: 1rem;
 }
 .empty-state h3 { color: var(--text); margin-bottom: 0.5rem; }
+
+/* ============================================
+   Delegations tab
+   ============================================ */
+
+/* Quick-assign bar */
+.quick-assign-bar {
+    background: linear-gradient(135deg, #eff6ff 0%, #f3f4ff 100%);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+.quick-assign-form {
+    display: grid;
+    grid-template-columns: 180px 1fr 200px 140px auto;
+    gap: 0.6rem;
+    align-items: center;
+}
+.quick-assign-form select,
+.quick-assign-form input {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+}
+.quick-assign-form button {
+    height: 100%;
+    padding: 0.6rem 1rem;
+    white-space: nowrap;
+}
+@media (max-width: 900px) {
+    .quick-assign-form { grid-template-columns: 1fr; }
+}
+
+/* Stuck callout */
+.stuck-callout {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid var(--warning);
+    border-radius: 0.6rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+.stuck-callout-header {
+    font-weight: 600;
+    color: #92400e;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+.stuck-callout .delegation-row { background: white; margin-top: 0.4rem; }
+
+/* Per-assignee groups */
+.delegation-group {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+.delegation-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.delegation-group-header h3 { margin: 0; font-size: 1.1rem; }
+.delegation-count {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+.delegation-count .cnt-done { color: var(--success); font-weight: 600; }
+.delegation-count .cnt-ip   { color: var(--warning); font-weight: 600; }
+.delegation-count .cnt-ns   { color: var(--text-muted); font-weight: 600; }
+
+.delegation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.delegation-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 90px 70px;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    font-size: 0.88rem;
+}
+.delegation-row.stuck {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+}
+
+.delegation-status {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    color: white;
+    text-align: center;
+}
+.delegation-status.status-not_started { background: var(--text-muted); }
+.delegation-status.status-in_progress { background: var(--warning); color: #1f2937; }
+.delegation-status.status-done        { background: var(--success); }
+
+.delegation-title {
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.35;
+}
+.delegation-kpi {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 0.2rem;
+}
+
+.delegation-due {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+.delegation-due.overdue { color: var(--danger); font-weight: 600; }
+
+.delegation-update {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .delegation-row {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+    }
+    .delegation-status { width: max-content; }
+}

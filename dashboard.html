@@ -38,6 +38,9 @@
                 <li><a href="#actions" class="nav-link" data-section="actions">
                     <span class="nav-icon">&#10003;</span> Actions
                 </a></li>
+                <li><a href="#delegations" class="nav-link admin-or-member-only" data-section="delegations">
+                    <span class="nav-icon">&#10145;</span> Delegations
+                </a></li>
                 <li><a href="#kpis" class="nav-link" data-section="kpis">
                     <span class="nav-icon">&#9650;</span> KPIs
                 </a></li>
@@ -391,6 +394,35 @@
                 </div>
             </section>
 
+            <!-- Delegations Section (admin + member only) -->
+            <section id="delegations" class="section">
+                <header class="section-header">
+                    <h2>Delegations</h2>
+                    <div class="filters">
+                        <select id="delegations-status-filter">
+                            <option value="open">Open (not done)</option>
+                            <option value="all">All</option>
+                            <option value="not_started">Not started</option>
+                            <option value="in_progress">In progress</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+                </header>
+
+                <!-- Quick-assign bar -->
+                <div class="quick-assign-bar" id="quick-assign-bar">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Stuck/overdue callout -->
+                <div id="stuck-callout"></div>
+
+                <!-- Per-assignee sections -->
+                <div id="delegations-container">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
             <!-- Interns Section (admin + member only) -->
             <section id="interns" class="section">
                 <header class="section-header">
@@ -440,6 +472,7 @@
     <script src="js/modules/team.js?v=3"></script>
     <script src="js/modules/intern.js?v=1"></script>
     <script src="js/modules/interns-admin.js?v=1"></script>
-    <script src="js/app.js?v=5"></script>
+    <script src="js/modules/delegations.js?v=1"></script>
+    <script src="js/app.js?v=6"></script>
 </body>
 </html>

@@ -216,6 +216,7 @@ const app = {
             await Promise.all([
                 dashboardModule.init(),
                 actionsModule.init(),
+                delegationsModule.init(),
                 goalsModule.init(),
                 kpisModule.init(),
                 ideasModule.init(),
@@ -261,6 +262,7 @@ const app = {
         const modules = {
             dashboard: dashboardModule,
             actions: actionsModule,
+            delegations: delegationsModule,
             goals: goalsModule,
             kpis: kpisModule,
             ideas: ideasModule,
