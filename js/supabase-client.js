@@ -25,9 +25,18 @@ const db = {
     // Actions
     // ========================================
     async getActions() {
+        // Disambiguate the FK from actions → profiles. Two FKs exist:
+        //   assignee_id (original) and assigned_by (RBAC migration).
+        // Without aliases PostgREST returns 406 'ambiguous relationship'.
         const { data, error } = await supabase
             .from('actions')
-            .select('*, kpis(name, member, kpi_code), kras(kra_code, name, short_name, sort_order), profiles(full_name)')
+            .select(`
+                *,
+                kpis(name, member, kpi_code),
+                kras(kra_code, name, short_name, sort_order),
+                assignee:assignee_id(full_name),
+                assigner:assigned_by(full_name)
+            `)
             .order('action_id');
         if (error) throw error;
         return data;
