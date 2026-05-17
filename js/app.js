@@ -222,7 +222,8 @@ const app = {
                 documentsModule.init(),
                 weeklyModule.init(),
                 activityModule.init(),
-                teamModule.init()
+                teamModule.init(),
+                internsAdminModule.init()
             ]);
 
             // Start notification polling for admins + members
@@ -266,7 +267,8 @@ const app = {
             documents: documentsModule,
             weekly: weeklyModule,
             activity: activityModule,
-            team: teamModule
+            team: teamModule,
+            interns: internsAdminModule
         };
 
         const module = modules[this.currentSection];
