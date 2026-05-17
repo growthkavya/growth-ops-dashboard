@@ -2075,7 +2075,8 @@ body.role-intern #filter-kra {
 .notif-count.hidden { display: none; }
 /* Pop the dropdown UP from the bell (which lives at the bottom of the
    sidebar). Using position: fixed so it isn't clipped by the sidebar's
-   bounds, and bottom-anchored so it never falls below the viewport. */
+   bounds, and bottom-anchored so it never falls below the viewport.
+   Reset inherited light text color from the dark sidebar parent. */
 .notif-dropdown {
     position: fixed;
     bottom: 6rem;
@@ -2085,12 +2086,14 @@ body.role-intern #filter-kra {
     max-height: min(70vh, 560px);
     overflow-y: auto;
     background: white;
+    color: var(--text);
     border: 1px solid var(--border);
     border-radius: 0.6rem;
     box-shadow: 0 10px 40px rgba(0,0,0,0.25);
     z-index: 1100;
 }
 .notif-dropdown.hidden { display: none; }
+.notif-dropdown a { color: var(--primary); }
 
 @media (max-width: 768px) {
     /* On mobile, the sidebar slides in from the left. The bell sits at the
@@ -2109,12 +2112,15 @@ body.role-intern #filter-kra {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border);
     cursor: pointer;
+    color: var(--text);
+    font-size: 0.88rem;
+    line-height: 1.4;
 }
 .notif-item:hover { background: var(--bg-secondary); }
-.notif-item.unread { background: #eff6ff; }
+.notif-item.unread { background: #eff6ff; font-weight: 500; }
 .notif-item .notif-meta {
     font-size: 0.72rem; color: var(--text-muted);
-    margin-top: 0.2rem;
+    margin-top: 0.2rem; font-weight: 400;
 }
 
 /* Onboarding checklist (intern view) */
