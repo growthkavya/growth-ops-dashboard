@@ -42,6 +42,16 @@ const db = {
         return data;
     },
 
+    async createAction(action) {
+        const { data, error } = await supabase
+            .from('actions')
+            .insert(action)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
     async updateAction(id, updates) {
         const { data, error } = await supabase
             .from('actions')
@@ -408,6 +418,156 @@ const db = {
             .order('action_id');
         if (error) throw error;
         return data || [];
+    },
+
+    // ========================================
+    // Interns
+    // ========================================
+    async getInterns(activeOnly = false) {
+        let q = supabase.from('interns').select('*').order('created_at');
+        if (activeOnly) q = q.in('status', ['onboarding', 'active']);
+        const { data, error } = await q;
+        if (error) throw error;
+        return data || [];
+    },
+
+    async createIntern(intern) {
+        const { data, error } = await supabase
+            .from('interns')
+            .insert(intern)
+            .select()
+            .single();
+        if (error) throw error;
+
+        // Clone the active onboarding template into onboarding_items for this intern
+        const { data: tmpls } = await supabase
+            .from('onboarding_templates')
+            .select('*')
+            .eq('is_active', true)
+            .order('sort_order');
+        if (tmpls && tmpls.length) {
+            const items = tmpls.map(t => ({
+                intern_id: data.id,
+                template_id: t.id,
+                title: t.title,
+                description: t.description,
+                category: t.category,
+                sort_order: t.sort_order
+            }));
+            await supabase.from('onboarding_items').insert(items);
+        }
+        return data;
+    },
+
+    async updateIntern(id, updates) {
+        const { data, error } = await supabase
+            .from('interns')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async getOnboardingItems(internId) {
+        const { data, error } = await supabase
+            .from('onboarding_items')
+            .select('*')
+            .eq('intern_id', internId)
+            .order('sort_order');
+        if (error) throw error;
+        return data || [];
+    },
+
+    async updateOnboardingItem(id, updates) {
+        const { data, error } = await supabase
+            .from('onboarding_items')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    // ========================================
+    // Notifications
+    // ========================================
+    async getNotifications(limit = 50) {
+        const { data, error } = await supabase
+            .from('notifications')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(limit);
+        if (error) throw error;
+        return data || [];
+    },
+
+    async getUnreadNotificationCount() {
+        const { count, error } = await supabase
+            .from('notifications')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_read', false);
+        if (error) return 0;
+        return count || 0;
+    },
+
+    async markNotificationRead(id) {
+        const { error } = await supabase
+            .from('notifications')
+            .update({ is_read: true })
+            .eq('id', id);
+        if (error) throw error;
+    },
+
+    async markAllNotificationsRead() {
+        const { error } = await supabase
+            .from('notifications')
+            .update({ is_read: true })
+            .eq('is_read', false);
+        if (error) throw error;
+    },
+
+    /**
+     * Write notification rows for Kavya + Riya (both supervise interns by default).
+     * Fields: event_type, entity_type, entity_id, entity_title, intern_id, message, link
+     */
+    async notifySupervisors(fields) {
+        // Get Kavya + Riya profile IDs
+        const { data: supervisors } = await supabase
+            .from('profiles')
+            .select('id, full_name')
+            .in('member_key', ['kavya', 'riya']);
+        if (!supervisors || supervisors.length === 0) return;
+
+        // Get intern name if intern_id provided
+        let internName = null;
+        if (fields.intern_id) {
+            const { data: i } = await supabase
+                .from('interns')
+                .select('name')
+                .eq('id', fields.intern_id)
+                .single();
+            internName = i?.name;
+        }
+
+        const actorName = (typeof auth !== 'undefined' && auth.currentProfile?.full_name) || 'Unknown';
+        const rows = supervisors.map(s => ({
+            recipient_id: s.id,
+            actor_id: (typeof auth !== 'undefined' && auth.currentUser?.id) || null,
+            actor_name: actorName,
+            intern_id: fields.intern_id || null,
+            intern_name: internName,
+            event_type: fields.event_type,
+            entity_type: fields.entity_type || null,
+            entity_id: fields.entity_id || null,
+            entity_title: fields.entity_title || null,
+            message: fields.message || null,
+            link: fields.link || null
+        }));
+        const { error } = await supabase.from('notifications').insert(rows);
+        if (error) console.error('notifySupervisors failed:', error);
     }
 };
 
@@ -415,56 +575,44 @@ const db = {
 const realtime = {
     subscriptions: [],
 
-    subscribeToActions(callback) {
+    /**
+     * Subscribe to a Supabase Realtime channel idempotently.
+     * If a channel with the same name already exists, it's removed first.
+     * Fixes 'cannot add postgres_changes callbacks after subscribe()' error
+     * when init() runs more than once (e.g. SPA navigation).
+     */
+    _subscribe(channelName, filter, callback) {
+        // Remove any existing channel with the same name
+        const existing = supabase.getChannels().find(c => c.topic === `realtime:${channelName}`);
+        if (existing) {
+            supabase.removeChannel(existing);
+        }
         const channel = supabase
-            .channel('actions-changes')
-            .on('postgres_changes', {
-                event: '*',
-                schema: 'public',
-                table: 'actions'
-            }, callback)
+            .channel(channelName)
+            .on('postgres_changes', filter, callback)
             .subscribe();
         this.subscriptions.push(channel);
         return channel;
+    },
+
+    subscribeToActions(callback) {
+        return this._subscribe('actions-changes',
+            { event: '*', schema: 'public', table: 'actions' }, callback);
     },
 
     subscribeToGoals(callback) {
-        const channel = supabase
-            .channel('goals-changes')
-            .on('postgres_changes', {
-                event: '*',
-                schema: 'public',
-                table: 'goals'
-            }, callback)
-            .subscribe();
-        this.subscriptions.push(channel);
-        return channel;
+        return this._subscribe('goals-changes',
+            { event: '*', schema: 'public', table: 'goals' }, callback);
     },
 
     subscribeToIdeas(callback) {
-        const channel = supabase
-            .channel('ideas-changes')
-            .on('postgres_changes', {
-                event: '*',
-                schema: 'public',
-                table: 'ideas'
-            }, callback)
-            .subscribe();
-        this.subscriptions.push(channel);
-        return channel;
+        return this._subscribe('ideas-changes',
+            { event: '*', schema: 'public', table: 'ideas' }, callback);
     },
 
     subscribeToActivity(callback) {
-        const channel = supabase
-            .channel('activity-changes')
-            .on('postgres_changes', {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'activity_log'
-            }, callback)
-            .subscribe();
-        this.subscriptions.push(channel);
-        return channel;
+        return this._subscribe('activity-changes',
+            { event: 'INSERT', schema: 'public', table: 'activity_log' }, callback);
     },
 
     unsubscribeAll() {

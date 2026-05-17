@@ -1982,3 +1982,145 @@ body.role-member #filter-owner {
 body.role-member .nav-link[data-section="activity"] {
     /* leave activity visible so they can audit their own log */
 }
+
+/* ============================================
+   RBAC: .admin-only elements (e.g. Add Action button)
+   ============================================ */
+.admin-only { display: inline-flex; }
+body.role-member .admin-only,
+body.role-intern .admin-only {
+    display: none !important;
+}
+/* Members CAN add actions (just assignable to themselves or interns) so unhide */
+body.role-member #add-action-btn { display: inline-flex !important; }
+
+/* ============================================
+   Intern role: hide sections that don't apply to them
+   ============================================ */
+body.role-intern .nav-link[data-section="goals"],
+body.role-intern .nav-link[data-section="kpis"],
+body.role-intern .nav-link[data-section="weekly"],
+body.role-intern .nav-link[data-section="team"],
+body.role-intern .nav-link[data-section="documents"],
+body.role-intern #filter-owner,
+body.role-intern #filter-kra {
+    display: none !important;
+}
+
+/* Intern picker — fullscreen overlay shown until they pick themselves */
+.intern-picker-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    background: linear-gradient(135deg, #1e3a8a 0%, #7c2d12 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+}
+.intern-picker-card {
+    background: white; border-radius: 1rem;
+    padding: 2rem; max-width: 480px; width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+.intern-picker-card h2 {
+    margin: 0 0 0.5rem; font-size: 1.5rem;
+}
+.intern-picker-card .sub {
+    color: var(--text-muted); margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+.intern-list {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 0.5rem;
+}
+.intern-list button {
+    width: 100%; text-align: left;
+    padding: 1rem 1.25rem; font-size: 1rem;
+    border: 2px solid var(--border); background: white;
+    border-radius: 0.6rem; cursor: pointer;
+    transition: all 0.15s;
+}
+.intern-list button:hover {
+    border-color: var(--primary);
+    transform: translateX(2px);
+    background: #f0f7ff;
+}
+.intern-list .intern-name { font-weight: 600; display: block; }
+.intern-list .intern-meta {
+    font-size: 0.8rem; color: var(--text-muted);
+    margin-top: 0.2rem; display: block;
+}
+.intern-picker-footer {
+    margin-top: 1.5rem; padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem; color: var(--text-muted);
+    text-align: center;
+}
+.intern-picker-footer a { color: var(--primary); cursor: pointer; }
+
+/* Notification bell */
+.notif-bell {
+    position: relative; display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: var(--radius); cursor: pointer;
+}
+.notif-bell .notif-icon { font-size: 1.1rem; }
+.notif-bell .notif-count {
+    position: absolute; top: -4px; right: -4px;
+    background: var(--danger); color: white;
+    font-size: 0.65rem; font-weight: 700;
+    min-width: 16px; height: 16px; padding: 0 4px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+}
+.notif-count.hidden { display: none; }
+.notif-dropdown {
+    position: absolute; top: calc(100% + 8px); right: 0;
+    width: 360px; max-width: 90vw;
+    background: white; border: 1px solid var(--border);
+    border-radius: 0.6rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    max-height: 480px; overflow-y: auto;
+    z-index: 1000;
+}
+.notif-dropdown.hidden { display: none; }
+.notif-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+}
+.notif-item:hover { background: var(--bg-secondary); }
+.notif-item.unread { background: #eff6ff; }
+.notif-item .notif-meta {
+    font-size: 0.72rem; color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+/* Onboarding checklist (intern view) */
+.onboarding-list { list-style: none; padding: 0; margin: 0; }
+.onboarding-item {
+    background: white; border: 1px solid var(--border);
+    border-radius: 0.6rem; padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+}
+.onboarding-item.done { opacity: 0.55; }
+.onboarding-item .check {
+    width: 24px; height: 24px;
+    border: 2px solid var(--border); border-radius: 50%;
+    flex-shrink: 0; cursor: pointer; margin-top: 0.15rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+}
+.onboarding-item.done .check {
+    background: var(--success); border-color: var(--success);
+    color: white;
+}
+.onboarding-item .content { flex: 1; }
+.onboarding-item h4 { margin: 0 0 0.25rem; font-size: 1rem; }
+.onboarding-item .desc { font-size: 0.88rem; color: var(--text-muted); }
+.onboarding-item .cat {
+    display: inline-block;
+    background: var(--bg-secondary);
+    padding: 0.1rem 0.5rem; border-radius: 0.25rem;
+    font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-top: 0.4rem;
+}

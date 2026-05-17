@@ -291,6 +291,7 @@ const actionsModule = {
         const kraFilter = document.getElementById('filter-kra');
         const ownerFilter = document.getElementById('filter-owner');
         const statusFilter = document.getElementById('filter-status');
+        const addBtn = document.getElementById('add-action-btn');
 
         if (kraFilter) {
             kraFilter.addEventListener('change', (e) => {
@@ -312,6 +313,163 @@ const actionsModule = {
                 this.render();
             });
         }
+
+        if (addBtn && !addBtn._wired) {
+            addBtn._wired = true;
+            addBtn.addEventListener('click', () => this.openAddActionModal());
+        }
+    },
+
+    /**
+     * "+ Add Action" modal. Admin sees full options (assign to Kavya / Riya /
+     * any intern). Members (Riya) can only assign to themselves or an intern.
+     * Interns can't open this dialog at all (the button is .admin-only, hidden
+     * by CSS for body.role-intern).
+     */
+    async openAddActionModal(presetOwner = null) {
+        const role = auth.currentProfile?.role;
+        const myMemberKey = auth.currentProfile?.member_key;
+
+        // Load interns list for the assign dropdown
+        const interns = await db.getInterns().catch(() => []);
+
+        // Owner options based on role
+        let ownerOptions = '';
+        if (role === 'admin') {
+            ownerOptions = `
+                <option value="kavya">Kavya</option>
+                <option value="riya">Riya</option>
+                ${interns.map(i => `<option value="intern1" data-intern-id="${i.id}">Intern: ${this.escape(i.name)}</option>`).join('')}
+            `;
+        } else if (role === 'member') {
+            ownerOptions = `
+                <option value="${myMemberKey}">Myself (${this.escape(auth.currentProfile.full_name || myMemberKey)})</option>
+                ${interns.map(i => `<option value="intern1" data-intern-id="${i.id}">Intern: ${this.escape(i.name)}</option>`).join('')}
+            `;
+        }
+
+        const kpis = this.kpis.filter(k =>
+            role === 'admin' || k.member === myMemberKey || k.member === 'intern1'
+        );
+
+        const kpiOptions = kpis.map(k =>
+            `<option value="${k.id}" data-kra-id="${k.kra_id}" data-kpi-code="${k.kpi_code}" data-member="${k.member}">${this.escape(k.name)} (${k.member})</option>`
+        ).join('');
+
+        const content = `
+            <form id="add-action-form" class="form">
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" name="title" required placeholder="What needs to be done?">
+                </div>
+
+                <div class="form-group">
+                    <label>Assign to *</label>
+                    <select name="owner_name" id="add-action-owner" required>
+                        <option value="">-- pick owner --</option>
+                        ${ownerOptions}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>KPI bucket *</label>
+                    <select name="kpi_id" required>
+                        <option value="">-- pick KPI --</option>
+                        ${kpiOptions}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Due date</label>
+                    <input type="date" name="due_date">
+                </div>
+
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea name="notes" rows="3" placeholder="Context, deliverables, dependencies..."></textarea>
+                </div>
+            </form>
+        `;
+
+        modal.show({
+            title: 'Add Action',
+            content,
+            saveText: 'Create Action',
+            onSave: async () => {
+                const form = document.getElementById('add-action-form');
+                const fd = new FormData(form);
+
+                if (!fd.get('title') || !fd.get('owner_name') || !fd.get('kpi_id')) {
+                    toast.show('Please fill all required fields.', 'error');
+                    return false;
+                }
+
+                // Look up KPI metadata (kra_id, kpi_code)
+                const kpiSelect = form.querySelector('select[name="kpi_id"]');
+                const selectedOpt = kpiSelect.options[kpiSelect.selectedIndex];
+                const kraId = selectedOpt.dataset.kraId;
+                const kpiCode = selectedOpt.dataset.kpiCode;
+
+                // Look up intern_id if the selected owner is an intern
+                const ownerSelect = form.querySelector('select[name="owner_name"]');
+                const selectedOwnerOpt = ownerSelect.options[ownerSelect.selectedIndex];
+                const internId = selectedOwnerOpt.dataset.internId || null;
+
+                // Generate next action_id based on the KRA
+                const kraNum = (selectedOpt.dataset.kpiCode || '_X_X').split('_')[1];
+                const existingInKra = this.actions.filter(a => a.kpi_code?.startsWith('_' + kraNum + '_') || a.action_id?.startsWith(kraNum + '.'));
+                const nextIdx = existingInKra.length + 1;
+                const actionCode = `${kraNum}.${100 + nextIdx}`;  // safe non-colliding number
+
+                const newAction = {
+                    action_id: actionCode,
+                    title: fd.get('title'),
+                    notes: fd.get('notes') || null,
+                    kpi_id: fd.get('kpi_id'),
+                    kpi_code: kpiCode,
+                    kra_id: kraId,
+                    owner_name: fd.get('owner_name'),
+                    intern_id: internId,
+                    status: 'not_started',
+                    due_date: fd.get('due_date') || null,
+                    assigned_by: auth.currentUser.id,
+                    assigned_by_name: auth.currentProfile?.full_name || 'Unknown',
+                    assigned_at: new Date().toISOString()
+                };
+
+                try {
+                    const created = await db.createAction(newAction);
+                    toast.show('Action created.', 'success');
+                    await db.logActivity(
+                        auth.currentUser.id,
+                        auth.currentProfile?.full_name || 'Unknown',
+                        'created',
+                        'action',
+                        created.id,
+                        newAction.title
+                    );
+                    // If assigned to an intern, write notifications for Kavya + Riya
+                    if (internId) {
+                        await db.notifySupervisors({
+                            event_type: 'action_assigned',
+                            entity_type: 'action',
+                            entity_id: created.id,
+                            entity_title: newAction.title,
+                            intern_id: internId,
+                            message: `New action assigned to intern`,
+                            link: '#actions'
+                        });
+                    }
+                    await this.loadData();
+                    this.render();
+                    return true;
+                } catch (err) {
+                    console.error('createAction failed:', err);
+                    toast.show('Failed to create action: ' + (err.message || err), 'error');
+                    return false;
+                }
+            }
+        });
     },
 
     setupRealtimeUpdates() {

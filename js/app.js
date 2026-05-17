@@ -53,6 +53,83 @@ const app = {
         // Tag the body so CSS can gate UI elements by role
         document.body.classList.remove('role-admin', 'role-member', 'role-intern');
         document.body.classList.add('role-' + role);
+
+        // Mount notification bell next to user info (admins + members only)
+        if (role !== 'intern') {
+            this.mountNotificationBell();
+        }
+    },
+
+    mountNotificationBell() {
+        const footer = document.querySelector('.sidebar-footer .user-info');
+        if (!footer || document.getElementById('notif-bell')) return;
+        const bell = document.createElement('div');
+        bell.style.cssText = 'margin-top:0.5rem;position:relative;display:inline-block;';
+        bell.innerHTML = `
+            <div class="notif-bell" id="notif-bell" title="Notifications">
+                <span class="notif-icon">🔔</span>
+                <span class="notif-count hidden" id="notif-count">0</span>
+            </div>
+            <div class="notif-dropdown hidden" id="notif-dropdown"></div>
+        `;
+        footer.appendChild(bell);
+
+        document.getElementById('notif-bell').addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const dd = document.getElementById('notif-dropdown');
+            const isOpen = !dd.classList.contains('hidden');
+            if (isOpen) { dd.classList.add('hidden'); return; }
+            // Load notifications
+            const notifs = await db.getNotifications(20);
+            dd.innerHTML = notifs.length === 0
+                ? `<div style="padding:1.5rem;text-align:center;color:var(--text-muted);">No notifications yet.</div>`
+                : notifs.map(n => `
+                    <div class="notif-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}" data-link="${n.link || '#dashboard'}">
+                        <div>${this.escapeHtml(n.message || n.event_type)}</div>
+                        <div class="notif-meta">
+                            ${n.intern_name ? this.escapeHtml(n.intern_name) + ' · ' : ''}
+                            ${new Date(n.created_at).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' })}
+                        </div>
+                    </div>
+                  `).join('')
+                  + `<div style="padding:0.6rem;text-align:center;border-top:1px solid var(--border);">
+                       <a id="notif-mark-all" style="cursor:pointer;font-size:0.85rem;">Mark all as read</a>
+                     </div>`;
+            dd.classList.remove('hidden');
+
+            dd.querySelectorAll('.notif-item').forEach(el => {
+                el.addEventListener('click', async () => {
+                    await db.markNotificationRead(el.dataset.id);
+                    const link = el.dataset.link;
+                    if (link) window.location.hash = link;
+                    dd.classList.add('hidden');
+                    this.refreshNotifCount();
+                });
+            });
+            document.getElementById('notif-mark-all')?.addEventListener('click', async (ev) => {
+                ev.stopPropagation();
+                await db.markAllNotificationsRead();
+                dd.classList.add('hidden');
+                this.refreshNotifCount();
+            });
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', () => {
+            document.getElementById('notif-dropdown')?.classList.add('hidden');
+        });
+    },
+
+    async refreshNotifCount() {
+        const count = await db.getUnreadNotificationCount();
+        const badge = document.getElementById('notif-count');
+        if (!badge) return;
+        if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
+        else { badge.classList.add('hidden'); }
+    },
+
+    escapeHtml(s) {
+        return String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
     },
 
     initNavigation() {
@@ -127,8 +204,15 @@ const app = {
     },
 
     async initModules() {
+        const role = auth.currentProfile?.role;
         try {
-            // Initialize all modules in parallel where possible
+            // Intern flow is different — they only get the intern dashboard
+            if (role === 'intern') {
+                await internModule.init();
+                return;
+            }
+
+            // Admin + member: initialize the full dashboard
             await Promise.all([
                 dashboardModule.init(),
                 actionsModule.init(),
@@ -140,10 +224,36 @@ const app = {
                 activityModule.init(),
                 teamModule.init()
             ]);
+
+            // Start notification polling for admins + members
+            this.initNotifications();
         } catch (error) {
             console.error('Failed to initialize modules:', error);
             toast.error('Failed to load data. Please refresh the page.');
         }
+    },
+
+    /**
+     * Polls notifications every 30s, updates the bell badge.
+     * The bell itself is in the sidebar (rendered in initUserInfo).
+     */
+    initNotifications() {
+        const tick = async () => {
+            try {
+                const count = await db.getUnreadNotificationCount();
+                const badge = document.getElementById('notif-count');
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+            } catch (e) { /* silent */ }
+        };
+        tick();
+        this.notifTimer = setInterval(tick, 30000);
     },
 
     refreshCurrentSection() {
