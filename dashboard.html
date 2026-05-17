@@ -281,6 +281,21 @@
                     <button class="btn btn-primary" id="add-doc-btn">+ Add Document</button>
                 </header>
 
+                <!-- Master Sheets hub: leadership entry point to every important Google Sheet -->
+                <div class="master-sheets-block">
+                    <div class="master-sheets-header">
+                        <div>
+                            <h3 class="master-sheets-title">Master Sheets</h3>
+                            <p class="master-sheets-subtitle">One stop for every operational sheet across SSEI. Click any row to open in a new tab.</p>
+                        </div>
+                        <button class="btn btn-secondary admin-only" id="add-sheet-btn" style="display:none;">+ Add Sheet</button>
+                    </div>
+                    <div id="master-sheets-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <h3 class="docs-section-title">Documents</h3>
                 <div class="docs-grid">
                     <div class="docs-category">
                         <h3>SOPs</h3>
@@ -464,12 +479,13 @@
     <script src="js/modules/kpis.js?v=3"></script>
     <script src="js/modules/ideas.js"></script>
     <script src="js/modules/documents.js"></script>
+    <script src="js/modules/master-sheets.js?v=1"></script>
     <script src="js/modules/weekly.js"></script>
     <script src="js/modules/activity.js"></script>
     <script src="js/modules/team.js?v=3"></script>
     <script src="js/modules/intern.js?v=1"></script>
     <script src="js/modules/interns-admin.js?v=1"></script>
     <script src="js/modules/delegations.js?v=1"></script>
-    <script src="js/app.js?v=6"></script>
+    <script src="js/app.js?v=7"></script>
 </body>
 </html>

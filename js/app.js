@@ -221,6 +221,7 @@ const app = {
                 kpisModule.init(),
                 ideasModule.init(),
                 documentsModule.init(),
+                masterSheetsModule.init(),
                 weeklyModule.init(),
                 activityModule.init(),
                 teamModule.init(),
@@ -272,6 +273,11 @@ const app = {
             team: teamModule,
             interns: internsAdminModule
         };
+
+        // Refresh master sheets too when on the Documents section
+        if (this.currentSection === 'documents' && typeof masterSheetsModule !== 'undefined') {
+            masterSheetsModule.refresh();
+        }
 
         const module = modules[this.currentSection];
         if (module && typeof module.refresh === 'function') {

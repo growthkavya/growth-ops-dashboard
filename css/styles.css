@@ -896,6 +896,206 @@ textarea {
 }
 
 /* ============================================
+   Master Sheets (leadership hub inside Documents)
+   ============================================ */
+.master-sheets-block {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.master-sheets-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.master-sheets-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: var(--text);
+}
+
+.master-sheets-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.master-sheets-empty {
+    padding: 1.5rem 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.master-sheets-empty .muted {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.sheet-vertical-group {
+    margin-bottom: 1.5rem;
+}
+
+.sheet-vertical-group:last-child {
+    margin-bottom: 0;
+}
+
+.sheet-vertical-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sheet-count {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.05rem 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.sheet-rows {
+    display: flex;
+    flex-direction: column;
+}
+
+.sheet-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.6rem 0.25rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.sheet-row:last-child {
+    border-bottom: none;
+}
+
+.sheet-row:hover {
+    background: var(--bg);
+    border-radius: var(--radius);
+}
+
+.sheet-row-main {
+    min-width: 0;
+}
+
+.sheet-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.sheet-name:hover {
+    color: var(--primary);
+}
+
+.sheet-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+    line-height: 1.35;
+}
+
+.sheet-row-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.sheet-owner {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 0.15rem 0.5rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+}
+
+.sheet-open-btn {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--primary);
+    text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+}
+
+.sheet-open-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.sheet-icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+
+.sheet-row:hover .sheet-icon-btn {
+    opacity: 1;
+}
+
+.sheet-icon-btn:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.sheet-delete:hover {
+    color: var(--danger, #ef4444);
+}
+
+.docs-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: var(--text);
+}
+
+@media (max-width: 768px) {
+    .sheet-row {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+    }
+    .sheet-row-meta {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    .sheet-icon-btn {
+        opacity: 1;
+    }
+}
+
+/* ============================================
    Weekly Log
    ============================================ */
 .week-nav {

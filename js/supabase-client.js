@@ -568,6 +568,52 @@ const db = {
         }));
         const { error } = await supabase.from('notifications').insert(rows);
         if (error) console.error('notifySupervisors failed:', error);
+    },
+
+    // ========================================
+    // Master Sheets (leadership hub)
+    // ========================================
+    async getMasterSheets() {
+        const { data, error } = await supabase
+            .from('master_sheets')
+            .select('*')
+            .order('vertical')
+            .order('sort_order')
+            .order('name');
+        if (error) throw error;
+        return data || [];
+    },
+
+    async createMasterSheet(sheet) {
+        const { data, error } = await supabase
+            .from('master_sheets')
+            .insert({
+                ...sheet,
+                created_by: auth.currentUser?.id || null
+            })
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async updateMasterSheet(id, updates) {
+        const { data, error } = await supabase
+            .from('master_sheets')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async deleteMasterSheet(id) {
+        const { error } = await supabase
+            .from('master_sheets')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
     }
 };
 
