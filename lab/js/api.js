@@ -327,12 +327,15 @@ const api = {
   // DOCS
   // ===================================================================
   async listDocsForIntern(internId, vertical) {
-    // Get docs shared directly OR docs shared to this vertical
-    const q1 = getSupabase().from('gl_doc').select('*').eq('intern_id', internId).order('created_at', { ascending: false });
-    const q2 = vertical ? getSupabase().from('gl_doc').select('*').or(`vertical.eq.${vertical},vertical.eq.all`).is('intern_id', null).order('created_at', { ascending: false }) : null;
-    const [{ data: a }, b] = await Promise.all([q1, q2]);
-    const teamData = b ? (await b).data || [] : [];
-    return [...(a || []), ...teamData].sort((x, y) => (y.created_at || '').localeCompare(x.created_at || ''));
+    // RLS does the filtering server-side. Just pull everything we're allowed to see.
+    // Direct shares (intern_id = me), vertical shares (my vertical), and cohort-wide ('all') all return.
+    const { data, error } = await getSupabase()
+      .from('gl_doc')
+      .select('*')
+      .or(`intern_id.eq.${internId},vertical.eq.${vertical || 'none'},vertical.eq.all`)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   },
   async listDocsForTeam(vertical) {
     // RM view: see all docs they shared OR all docs targeted at their vertical

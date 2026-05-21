@@ -908,18 +908,47 @@ const rmView = {
   },
 
   shareDocModal() {
+    const isAdmin = auth.isSuper();
+    const myTeamTag = internVerticalTag(this.team[0]);
+    const myTeamName = TAG_TO_VERTICAL[myTeamTag] || 'My team';
+
     const card = h('div');
     card.appendChild(h('h3', {}, '+ Share a doc'));
-    const title = h('input', { type: 'text', name: 'title', placeholder: 'e.g. Growth Ops onboarding brief' });
+    const title = h('input', { type: 'text', name: 'title', placeholder: 'e.g. Onboarding brief' });
     const link = h('input', { type: 'url', name: 'drive_link', placeholder: 'https://drive.google.com/...' });
     const type = h('select', { name: 'doc_type' }, ['brief','sop','reference','reading','template','other'].map((t) => h('option', { value: t }, t)));
-    const targetMode = h('select', {}, [h('option', { value: 'team' }, 'Whole team'), h('option', { value: 'intern' }, 'Specific intern')]);
+
+    // Share-with options:
+    //   - Specific intern (always)
+    //   - My team (always)
+    //   - Specific other team (admin only)
+    //   - All cohort (admin only)
+    const targetOpts = [
+      h('option', { value: 'team' }, `My team (${myTeamName})`),
+      h('option', { value: 'intern' }, 'Specific intern'),
+    ];
+    if (isAdmin) {
+      targetOpts.push(h('option', { value: 'other_team' }, 'Different team'));
+      targetOpts.push(h('option', { value: 'all' }, '🌐 Whole cohort (all teams)'));
+    }
+    const targetMode = h('select', {}, targetOpts);
+
     const internSel = h('select', { name: 'intern_id' }, this.team.map((i) => h('option', { value: i.id }, i.name)));
-    internSel.parentElement; // visual stub
     const internLbl = h('label', {}, [h('span', {}, 'Intern'), internSel]);
     internLbl.style.display = 'none';
-    targetMode.addEventListener('change', () => { internLbl.style.display = targetMode.value === 'intern' ? 'block' : 'none'; });
+
+    const teamSel = h('select', {}, ['growth_ops','performance','organic','product_content'].map(
+      (t) => h('option', { value: t }, TAG_TO_VERTICAL[t] || t)));
+    const teamLbl = h('label', {}, [h('span', {}, 'Which team'), teamSel]);
+    teamLbl.style.display = 'none';
+
+    targetMode.addEventListener('change', () => {
+      internLbl.style.display = targetMode.value === 'intern' ? 'block' : 'none';
+      teamLbl.style.display = targetMode.value === 'other_team' ? 'block' : 'none';
+    });
+
     const notes = h('textarea', { name: 'notes', placeholder: 'Optional context' });
+
     card.appendChild(h('label', {}, [h('span', {}, 'Title'), title]));
     card.appendChild(h('label', {}, [h('span', {}, 'Drive link'), link]));
     card.appendChild(h('div', { class: 'form-row' }, [
@@ -927,18 +956,24 @@ const rmView = {
       h('label', {}, [h('span', {}, 'Share with'), targetMode]),
     ]));
     card.appendChild(internLbl);
+    card.appendChild(teamLbl);
     card.appendChild(h('label', {}, [h('span', {}, 'Notes'), notes]));
     card.appendChild(h('div', { class: 'modal-actions' }, [
       h('button', { class: 'btn-ghost', onclick: closeModal }, 'Cancel'),
       h('button', { class: 'btn-primary', onclick: async () => {
         if (!title.value.trim()) { alert('Title required'); return; }
-        const vTag = internVerticalTag(this.team[0]);
+        // Resolve target
+        let intern_id = null, vertical = null;
+        if (targetMode.value === 'intern') intern_id = internSel.value;
+        else if (targetMode.value === 'team') vertical = myTeamTag;
+        else if (targetMode.value === 'other_team') vertical = teamSel.value;
+        else if (targetMode.value === 'all') vertical = 'all';
         const payload = {
-          title: title.value, drive_link: link.value || null, doc_type: type.value, notes: notes.value || null,
-          intern_id: targetMode.value === 'intern' ? internSel.value : null,
-          vertical: targetMode.value === 'team' ? vTag : null,
+          title: title.value, drive_link: link.value || null, doc_type: type.value,
+          notes: notes.value || null, intern_id, vertical,
         };
-        try { await api.shareDoc(payload); closeModal(); app.renderView(); } catch (e) { alert('Failed: ' + e.message); }
+        try { await api.shareDoc(payload); closeModal(); app.renderView(); }
+        catch (e) { alert('Failed: ' + e.message); }
       } }, 'Share'),
     ]));
     openModal(card);
