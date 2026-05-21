@@ -23,13 +23,40 @@ const app = {
       { id: 'docs', label: 'Docs' },
       { id: 'activity', label: 'Activity' },
     ];
-    if (role === 'admin') return [
-      { id: 'all', label: 'All Interns' },
-      { id: 'approvals', label: 'Approvals' },
-      { id: 'activity', label: 'Activity' },
-      { id: 'settings', label: 'Settings' },
-    ];
+    if (role === 'admin') {
+      // Admins who ALSO supervise interns get the RM tabs + org-wide tabs.
+      // Admins with no reportees (e.g. Vidyut without direct team) get org-only.
+      const orgTabs = [
+        { id: 'all', label: 'All Interns' },
+        { id: 'activity', label: 'Activity' },
+        { id: 'settings', label: 'Settings' },
+      ];
+      if (auth.hasReportees) {
+        return [
+          { id: 'team', label: 'My Team' },
+          { id: 'approvals', label: 'Approvals' },
+          { id: 'tasks', label: 'Tasks' },
+          { id: 'daily', label: 'Daily Logs' },
+          { id: 'goals', label: 'Goals' },
+          { id: 'ideas', label: 'Ideas' },
+          { id: 'docs', label: 'Docs' },
+          ...orgTabs,  // All Interns | Activity | Settings tacked on
+        ];
+      }
+      return [{ id: 'all', label: 'All Interns' }, { id: 'approvals', label: 'Approvals' }, ...orgTabs.slice(1)];
+    }
     return [];
+  },
+
+  // For admin users: which view should handle a given tab?
+  adminViewFor(tab) {
+    // RM-style tabs that operate on the admin's own team
+    const rmTabs = ['team', 'tasks', 'daily', 'goals', 'ideas', 'docs'];
+    if (rmTabs.includes(tab)) return 'rm';
+    // Approvals: if admin supervises interns, show team approvals; else org-wide
+    if (tab === 'approvals') return auth.hasReportees ? 'rm' : 'super';
+    // All other tabs ('all', 'activity', 'settings') are super-admin org-wide
+    return 'super';
   },
 
   async boot() {
@@ -144,7 +171,12 @@ const app = {
     try {
       if (auth.isIntern()) await internView.mount(mount);
       else if (auth.isRM()) await rmView.mount(mount);
-      else if (auth.isSuper()) await superView.mount(mount);
+      else if (auth.isSuper()) {
+        // Dispatch admins to the appropriate view per tab
+        const which = this.adminViewFor(this.currentTab || 'all');
+        if (which === 'rm') await rmView.mount(mount);
+        else await superView.mount(mount);
+      }
       else mount.innerHTML = '<div class="empty-state">No role assigned. Contact admin.</div>';
     } catch (e) {
       console.error(e);

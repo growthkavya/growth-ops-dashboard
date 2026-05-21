@@ -2,14 +2,34 @@
 const auth = {
   user: null,
   profile: null,
+  hasReportees: false,  // does this user supervise any Growth Lab interns?
 
   async init() {
     const { data: { session } } = await getSupabase().auth.getSession();
     if (session) {
       this.user = session.user;
       await this.loadProfile();
+      await this.checkSupervisor();
     }
     return this.user;
+  },
+
+  async checkSupervisor() {
+    if (!this.user) { this.hasReportees = false; return false; }
+    try {
+      const { count, error } = await getSupabase()
+        .from('interns')
+        .select('id', { count: 'exact', head: true })
+        .eq('supervisor_id', this.user.id)
+        .contains('tags', ['growth_lab'])
+        .eq('status', 'active');
+      if (error) throw error;
+      this.hasReportees = (count || 0) > 0;
+    } catch (e) {
+      console.debug('checkSupervisor failed:', e.message);
+      this.hasReportees = false;
+    }
+    return this.hasReportees;
   },
 
   async loadProfile() {
@@ -32,6 +52,7 @@ const auth = {
     if (error) throw error;
     this.user = data.user;
     await this.loadProfile();
+    await this.checkSupervisor();
     return data;
   },
 
