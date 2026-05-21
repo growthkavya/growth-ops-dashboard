@@ -1,0 +1,4 @@
+_credentials_INITIAL.txt
+.DS_Store
+node_modules/
+*.log

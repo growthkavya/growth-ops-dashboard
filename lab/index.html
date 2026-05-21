@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Growth Lab Dashboard — SSEI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="screen">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-mark">GL</div>
+      <h1>Growth Lab</h1>
+      <p class="brand-sub">SSEI · Internship Program</p>
+    </div>
+    <form id="login-form">
+      <label>
+        <span>Email</span>
+        <input type="email" id="login-email" autocomplete="email" required placeholder="you@ssei.co.in">
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" id="login-password" autocomplete="current-password" required>
+      </label>
+      <button type="submit" id="login-btn" class="btn-primary">Sign in</button>
+      <p id="login-error" class="error-text"></p>
+    </form>
+    <p class="login-foot">Forgot password? Ping Kavya or Vidyut on Slack.</p>
+  </div>
+</div>
+
+<!-- INTERN PICKER OVERLAY (for shared team mailboxes) -->
+<div id="picker-screen" class="screen hidden">
+  <div class="picker-card">
+    <h2>Who's using this account?</h2>
+    <p class="picker-sub">Pick yourself so your work gets attributed correctly.</p>
+    <div id="picker-list" class="picker-list"></div>
+  </div>
+</div>
+
+<!-- MAIN APP SHELL -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark small">GL</div>
+      <div>
+        <div class="topbar-title">Growth Lab</div>
+        <div class="topbar-sub" id="topbar-context"></div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span id="active-user" class="active-user"></span>
+      <button id="switch-intern" class="btn-ghost hidden">Switch person</button>
+      <button id="logout-btn" class="btn-ghost">Log out</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <!-- Tabs injected per role -->
+  </nav>
+
+  <main id="view-mount" class="view"></main>
+</div>
+
+<!-- Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/api.js"></script>
+<script src="js/views/intern.js"></script>
+<script src="js/views/rm.js"></script>
+<script src="js/views/super.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
