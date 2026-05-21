@@ -169,28 +169,33 @@ const rmView = {
   },
 
   openInternDrill(intern) {
-    // Show a modal with everything-about-this-intern
     const modal = h('div');
     modal.appendChild(h('h3', {}, intern.name));
     modal.appendChild(h('p', { class: 'help-text' }, intern.intern_code + ' · ' + internVertical(intern)));
-    modal.appendChild(h('p', {}, h('em', {}, 'Drill-down loading…')));
+    modal.appendChild(h('p', {}, h('em', {}, 'Loading…')));
     openModal(modal, { wide: true });
     (async () => {
       modal.innerHTML = '';
       modal.appendChild(h('h3', {}, intern.name + ' · ' + internVertical(intern)));
-      const [att, kras, kpis, tasks, ideas, learns] = await Promise.all([
-        api.getMonthSummaryForIntern(intern.id), api.listKRAs(intern.id), api.listKPIs(intern.id),
+      const [att, kras, tasks, ideas, learns, oos, reviews] = await Promise.all([
+        api.getMonthSummaryForIntern(intern.id), api.listKRAs(intern.id),
         api.listTasksForIntern(intern.id), api.listIdeasForIntern(intern.id), api.listLearnings(intern.id, 50),
+        api.list1on1s(intern.id).catch(() => []), api.listReviews(intern.id).catch(() => []),
       ]);
       modal.appendChild(h('div', { class: 'stat-row', style: 'margin-top:12px;' }, [
         statCard('Attendance', att.pct == null ? '—' : att.pct + '%', 'this month'),
         statCard('Open tasks', String(tasks.filter((t) => !['done','cancelled'].includes(t.status)).length), ''),
         statCard('Ideas', String(ideas.length), ''),
-        statCard('Learnings', String(learns.length), ''),
+        statCard('1:1s', String(oos.length), 'logged'),
+      ]));
+      // Quick actions
+      modal.appendChild(h('div', { class: 'card-actions', style: 'padding:14px 0;' }, [
+        h('button', { class: 'btn-accent', onclick: () => { closeModal(); this.openOneOnOne(intern); } }, '+ Log 1:1'),
+        h('button', { class: 'btn-accent', onclick: () => { closeModal(); this.openPerfReview(intern); } }, '+ Performance review'),
       ]));
       // KRAs progress
       if (kras.length) {
-        modal.appendChild(h('h4', { style: 'margin-top:18px;' }, 'KRAs progress'));
+        modal.appendChild(h('h4', { style: 'margin-top:14px;' }, 'KRAs progress'));
         kras.forEach((k) => modal.appendChild(h('div', { style: 'margin:8px 0;' }, [
           h('div', { style: 'display:flex; justify-content:space-between; font-size:13px;' }, [
             h('span', {}, `KRA ${k.kra_index}. ${k.title}`),
@@ -200,8 +205,116 @@ const rmView = {
             h('div', { class: 'bar', style: { width: (k.percent_done || 0) + '%' } })),
         ])));
       }
+      // Recent 1:1s
+      if (oos.length) {
+        modal.appendChild(h('h4', { style: 'margin-top:18px;' }, 'Recent 1:1s'));
+        oos.slice(0, 3).forEach((o) => modal.appendChild(h('div', { style: 'padding:8px 0; border-bottom:1px solid var(--border); font-size:13px;' }, [
+          h('div', { style: 'font-weight:500;' }, formatDate(o.meeting_date) + (o.intern_mood ? ' · mood: ' + o.intern_mood : '')),
+          o.discussion_notes ? h('div', { class: 'help-text' }, o.discussion_notes.slice(0, 200)) : null,
+        ])));
+      }
+      // Reviews
+      if (reviews.length) {
+        modal.appendChild(h('h4', { style: 'margin-top:18px;' }, 'Performance reviews'));
+        reviews.forEach((r) => modal.appendChild(h('div', { style: 'padding:8px 0; border-bottom:1px solid var(--border); font-size:13px;' }, [
+          h('div', { style: 'display:flex; justify-content:space-between;' }, [
+            h('span', { style: 'font-weight:500;' }, r.review_period),
+            h('span', { class: 'badge badge-' + (r.overall_rating >= 4 ? 'approved' : r.overall_rating >= 3 ? 'pending' : 'rejected') },
+              `${r.overall_rating || '—'}/5`),
+          ]),
+          r.rm_summary ? h('div', { class: 'help-text' }, r.rm_summary.slice(0, 200)) : null,
+        ])));
+      }
       modal.appendChild(h('div', { class: 'modal-actions' }, [h('button', { class: 'btn-ghost', onclick: closeModal }, 'Close')]));
     })();
+  },
+
+  openOneOnOne(intern) {
+    const card = h('div');
+    card.appendChild(h('h3', {}, `+ Log 1:1 with ${intern.name}`));
+    const date = h('input', { type: 'date', name: 'meeting_date', value: todayStr() });
+    const dur = h('input', { type: 'number', name: 'duration_minutes', value: '30', min: '5', step: '5' });
+    const mood = h('select', { name: 'intern_mood' }, [
+      h('option', { value: '' }, '— mood —'),
+      ...['great','good','ok','struggling','stuck'].map((m) => h('option', { value: m }, m)),
+    ]);
+    const disc = h('textarea', { name: 'discussion_notes', placeholder: 'What you talked about', style: 'min-height:80px;' });
+    const fb = h('textarea', { name: 'rm_feedback', placeholder: 'Your feedback to intern this week' });
+    const block = h('textarea', { name: 'blockers_raised', placeholder: 'Blockers intern raised' });
+    const act = h('textarea', { name: 'action_items', placeholder: 'Agreed next steps' });
+    card.appendChild(h('div', { class: 'form-row' }, [
+      h('label', {}, [h('span', {}, 'Date'), date]),
+      h('label', {}, [h('span', {}, 'Duration (min)'), dur]),
+    ]));
+    card.appendChild(h('label', {}, [h('span', {}, 'Intern mood'), mood]));
+    card.appendChild(h('label', {}, [h('span', {}, 'Discussion notes'), disc]));
+    card.appendChild(h('label', {}, [h('span', {}, 'Your feedback to intern'), fb]));
+    card.appendChild(h('label', {}, [h('span', {}, 'Blockers raised'), block]));
+    card.appendChild(h('label', {}, [h('span', {}, 'Action items'), act]));
+    card.appendChild(h('div', { class: 'modal-actions' }, [
+      h('button', { class: 'btn-ghost', onclick: closeModal }, 'Cancel'),
+      h('button', { class: 'btn-primary', onclick: async () => {
+        try {
+          await api.upsert1on1({
+            intern_id: intern.id, rm_id: auth.user.id, created_by_id: auth.user.id,
+            meeting_date: date.value, duration_minutes: Number(dur.value),
+            intern_mood: mood.value || null,
+            discussion_notes: disc.value || null, rm_feedback: fb.value || null,
+            blockers_raised: block.value || null, action_items: act.value || null,
+          });
+          closeModal(); app.renderView();
+        } catch (e) { alert('Failed: ' + e.message); }
+      } }, 'Save 1:1'),
+    ]));
+    openModal(card, { wide: true });
+  },
+
+  openPerfReview(intern) {
+    const card = h('div');
+    card.appendChild(h('h3', {}, `+ Performance review · ${intern.name}`));
+    card.appendChild(h('p', { class: 'help-text' }, 'Use this for monthly, mid-year, or end-of-internship review.'));
+    const period = h('input', { type: 'text', name: 'review_period', placeholder: 'e.g. May-2026 · Mid-Year · End-of-Internship' });
+    const rating = h('input', { type: 'number', name: 'overall_rating', min: '1', max: '5', step: '1', value: '4' });
+    const rec = h('select', { name: 'promotion_recommendation' }, [
+      h('option', { value: '' }, '— recommendation —'),
+      ...['strong_yes','yes','neutral','no','strong_no'].map((r) => h('option', { value: r }, r.replace('_', ' '))),
+    ]);
+    const strengths = h('textarea', { name: 'strengths', placeholder: 'What did they do really well?' });
+    const improve = h('textarea', { name: 'areas_to_improve', placeholder: 'Where can they grow?' });
+    const ach = h('textarea', { name: 'achievements', placeholder: 'Specific wins this period' });
+    const focus = h('textarea', { name: 'next_period_focus', placeholder: 'What should they focus on next?' });
+    const summary = h('textarea', { name: 'rm_summary', placeholder: 'Your one-paragraph summary', style: 'min-height:80px;' });
+    card.appendChild(h('div', { class: 'form-row' }, [
+      h('label', {}, [h('span', {}, 'Review period'), period]),
+      h('label', {}, [h('span', {}, 'Overall rating (1-5)'), rating]),
+    ]));
+    card.appendChild(h('label', {}, [h('span', {}, 'Promotion / continuation recommendation'), rec]));
+    card.appendChild(h('div', { class: 'form-row' }, [
+      h('label', {}, [h('span', {}, 'Strengths'), strengths]),
+      h('label', {}, [h('span', {}, 'Areas to improve'), improve]),
+    ]));
+    card.appendChild(h('div', { class: 'form-row' }, [
+      h('label', {}, [h('span', {}, 'Achievements'), ach]),
+      h('label', {}, [h('span', {}, 'Next period focus'), focus]),
+    ]));
+    card.appendChild(h('label', {}, [h('span', {}, 'RM summary'), summary]));
+    card.appendChild(h('div', { class: 'modal-actions' }, [
+      h('button', { class: 'btn-ghost', onclick: closeModal }, 'Cancel'),
+      h('button', { class: 'btn-primary', onclick: async () => {
+        if (!period.value.trim()) { alert('Review period required'); return; }
+        try {
+          await api.upsertReview({
+            intern_id: intern.id, rm_id: auth.user.id, review_period: period.value,
+            overall_rating: Number(rating.value), strengths: strengths.value || null,
+            areas_to_improve: improve.value || null, achievements: ach.value || null,
+            next_period_focus: focus.value || null, rm_summary: summary.value || null,
+            promotion_recommendation: rec.value || null,
+          });
+          closeModal(); app.renderView();
+        } catch (e) { alert('Failed: ' + e.message); }
+      } }, 'Save review'),
+    ]));
+    openModal(card, { wide: true });
   },
 
   // ============== APPROVALS ==============
@@ -532,6 +645,8 @@ const rmView = {
     ]));
     card.appendChild(h('label', {}, [h('span', {}, 'RM remarks'), rmrem]));
     card.appendChild(h('div', { class: 'modal-actions' }, [
+      h('button', { class: 'btn-ghost', onclick: () => openCommentThread('task', t.id, t.intern_id, t.title) }, '💬 Comments'),
+      h('div', { style: 'flex:1;' }),
       h('button', { class: 'btn-ghost', onclick: closeModal }, 'Cancel'),
       h('button', { class: 'btn-primary', onclick: async () => {
         try {

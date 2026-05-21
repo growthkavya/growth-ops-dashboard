@@ -93,3 +93,42 @@ const bus = {
 };
 
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Open a comment-thread modal for any entity (task, idea, checkin, kra, review, one_on_one).
+async function openCommentThread(entityType, entityId, internId, label) {
+  const card = h('div');
+  card.appendChild(h('h3', {}, `💬 ${label || entityType} · comments`));
+  const list = h('div', { style: 'max-height: 320px; overflow-y: auto; margin-bottom: 14px;' });
+  card.appendChild(list);
+  const input = h('textarea', { placeholder: 'Write a comment…', style: 'min-height:60px;' });
+  card.appendChild(h('label', {}, [h('span', {}, 'New comment'), input]));
+  const post = h('button', { class: 'btn-primary', onclick: async () => {
+    if (!input.value.trim()) return;
+    try {
+      await api.postComment({ entity_type: entityType, entity_id: entityId, intern_id: internId, body: input.value });
+      input.value = '';
+      await refresh();
+    } catch (e) { alert('Failed: ' + e.message); }
+  } }, 'Post');
+  card.appendChild(h('div', { class: 'modal-actions' }, [
+    h('button', { class: 'btn-ghost', onclick: closeModal }, 'Close'),
+    post,
+  ]));
+  openModal(card, { wide: true });
+
+  async function refresh() {
+    list.innerHTML = '';
+    let comments = [];
+    try { comments = await api.listComments(entityType, entityId); }
+    catch (e) { list.appendChild(h('div', { class: 'help-text' }, 'Failed to load: ' + e.message)); return; }
+    if (!comments.length) { list.appendChild(h('div', { class: 'empty-state' }, 'No comments yet. Start the thread.')); return; }
+    comments.forEach((c) => list.appendChild(h('div', { style: 'padding:10px 0; border-bottom:1px solid var(--border);' }, [
+      h('div', { style: 'display:flex; justify-content:space-between;' }, [
+        h('strong', { style: 'font-size:13px;' }, c.author_name || 'Someone'),
+        h('span', { class: 'help-text' }, timeAgo(c.created_at) + (c.author_role ? ' · ' + c.author_role : '')),
+      ]),
+      h('div', { style: 'font-size:13px; margin-top:4px; white-space:pre-wrap;' }, c.body),
+    ])));
+  }
+  refresh();
+}

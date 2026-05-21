@@ -477,6 +477,8 @@ const internView = {
     ]));
     card.appendChild(h('label', {}, [h('span', {}, 'Output link (optional)'), link]));
     card.appendChild(h('div', { class: 'modal-actions' }, [
+      h('button', { class: 'btn-ghost', onclick: () => openCommentThread('task', t.id, this.selectedIntern.id, t.title) }, '💬 Comments'),
+      h('div', { style: 'flex:1;' }),
       h('button', { class: 'btn-ghost', onclick: closeModal }, 'Cancel'),
       h('button', { class: 'btn-primary', onclick: async () => {
         try {

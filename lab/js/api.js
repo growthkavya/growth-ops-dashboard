@@ -410,6 +410,84 @@ const api = {
   },
 
   // ===================================================================
+  // 1:1 RECORDS
+  // ===================================================================
+  async list1on1s(internId) {
+    const { data, error } = await getSupabase().from('gl_one_on_one').select('*').eq('intern_id', internId).order('meeting_date', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+  async upsert1on1(payload) {
+    const { data, error } = await getSupabase().from('gl_one_on_one').upsert(payload).select().single();
+    if (error) throw error;
+    return data;
+  },
+
+  // ===================================================================
+  // PERFORMANCE REVIEWS
+  // ===================================================================
+  async listReviews(internId) {
+    const { data, error } = await getSupabase().from('gl_perf_review').select('*').eq('intern_id', internId).order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+  async upsertReview(payload) {
+    const { data, error } = await getSupabase().from('gl_perf_review').upsert(payload, { onConflict: 'intern_id,review_period' }).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async ackReview(id) {
+    const { data, error } = await getSupabase().from('gl_perf_review').update({ intern_acknowledged_at: new Date().toISOString() }).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
+  },
+
+  // ===================================================================
+  // TASK TEMPLATES
+  // ===================================================================
+  async listTaskTemplates(vertical) {
+    let q = getSupabase().from('gl_task_template').select('*').eq('is_archived', false).order('use_count', { ascending: false });
+    if (vertical) q = q.or(`vertical.eq.${vertical},vertical.is.null,owner_id.eq.${auth.user.id}`);
+    const { data, error } = await q;
+    if (error) throw error;
+    return data || [];
+  },
+  async createTaskTemplate(payload) {
+    const body = { owner_id: auth.user.id, ...payload };
+    const { data, error } = await getSupabase().from('gl_task_template').insert(body).select().single();
+    if (error) throw error;
+    return data;
+  },
+  async incrementTaskTemplateUse(id) {
+    // best-effort; ignore failure
+    try {
+      const { data } = await getSupabase().from('gl_task_template').select('use_count').eq('id', id).single();
+      if (data) await getSupabase().from('gl_task_template').update({ use_count: (data.use_count || 0) + 1 }).eq('id', id);
+    } catch {}
+  },
+
+  // ===================================================================
+  // COMMENTS (generic threading)
+  // ===================================================================
+  async listComments(entityType, entityId) {
+    const { data, error } = await getSupabase().from('gl_comment').select('*')
+      .eq('entity_type', entityType).eq('entity_id', entityId).order('created_at', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+  async postComment(payload) {
+    const body = {
+      author_id: auth.user.id,
+      author_name: auth.profile?.full_name,
+      author_role: auth.profile?.role,
+      ...payload,
+    };
+    const { data, error } = await getSupabase().from('gl_comment').insert(body).select().single();
+    if (error) throw error;
+    return data;
+  },
+
+  // ===================================================================
   // PROFILES (lookup helpers)
   // ===================================================================
   async profilesById(ids) {
