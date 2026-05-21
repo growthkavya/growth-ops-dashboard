@@ -12,6 +12,7 @@ const app = {
       { id: 'goals', label: 'Goals' },
       { id: 'submissions', label: 'Submissions' },
       { id: 'docs', label: 'Docs' },
+      { id: 'cohort', label: '🌟 Cohort' },
     ];
     if (role === 'member') return [
       { id: 'team', label: 'Team' },

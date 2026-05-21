@@ -4,27 +4,39 @@
  * ================================================================ */
 
 :root {
-  --bg: #f7f8fa;
+  /* SSEI BRAND PALETTE — locked, do not change */
+  --catalina: #09256B;          /* deep navy — primary */
+  --catalina-2: #1B3F8C;        /* lighter navy */
+  --aztec: #C99959;             /* warm gold — accent */
+  --aztec-2: #E8C892;            /* soft gold */
+  --gray-dark: #2D2D2D;
+  --gray-med: #718096;
+  --gray-light: #E2E8F0;
+  --brand-red: #C53030;
+  /* App tokens (alias into brand) */
+  --bg: #fafbfc;
   --surface: #ffffff;
   --surface-2: #f1f3f7;
   --surface-3: #e8ecf3;
   --border: #e4e7ee;
   --border-strong: #c8cfdb;
-  --text: #0e1729;
+  --text: var(--gray-dark);
   --text-soft: #5a6477;
-  --text-mute: #8a93a5;
-  --primary: #091a4a;
-  --primary-2: #1a2d6d;
-  --accent: #2563eb;
-  --accent-soft: #dbeafe;
+  --text-mute: var(--gray-med);
+  --primary: var(--catalina);
+  --primary-2: var(--catalina-2);
+  --accent: var(--catalina-2);
+  --accent-soft: #e0e7ff;
+  --gold: var(--aztec);
+  --gold-soft: #fef3e2;
   --good: #16a34a;
   --good-soft: #dcfce7;
-  --warn: #d97706;
-  --warn-soft: #fef3c7;
-  --bad: #dc2626;
-  --bad-soft: #fee2e2;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --warn: var(--aztec);
+  --warn-soft: var(--gold-soft);
+  --bad: var(--brand-red);
+  --bad-soft: #fde2e2;
+  --shadow-sm: 0 1px 2px rgba(9, 37, 107, 0.05), 0 1px 3px rgba(9, 37, 107, 0.07);
+  --shadow-md: 0 4px 14px rgba(9, 37, 107, 0.10);
   --radius: 10px;
 }
 
@@ -45,10 +57,17 @@ body {
 .screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
 .login-card { background: var(--surface); border-radius: 16px; padding: 40px; width: 100%; max-width: 380px; box-shadow: var(--shadow-md); }
 .brand { text-align: center; margin-bottom: 28px; }
-.brand-mark { display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: var(--primary); color: #fff; font-weight: 700; font-size: 22px; border-radius: 14px; letter-spacing: -0.5px; }
-.brand-mark.small { width: 36px; height: 36px; font-size: 14px; border-radius: 9px; }
-.brand h1 { font-size: 24px; margin: 14px 0 4px; font-weight: 700; }
+.brand-mark { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 14px; }
+.brand-mark.small { width: 40px; height: 40px; border-radius: 9px; }
+.brand-mark svg { display: block; width: 100%; height: 100%; border-radius: inherit; }
+.brand h1 { font-size: 24px; margin: 14px 0 4px; font-weight: 700; color: var(--catalina); }
 .brand-sub { color: var(--text-mute); margin: 0; font-size: 13px; }
+.brand-tagline { color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; margin: 6px 0 0; }
+
+/* Gold accent for CEO insights / hero metrics */
+.metric-gold { background: linear-gradient(135deg, var(--gold-soft) 0%, #fef9ed 100%); border-left-color: var(--gold) !important; }
+.metric-gold .stat-value { color: var(--catalina); }
+.metric-gold .stat-label { color: var(--gold); }
 
 form label { display: block; margin-bottom: 14px; }
 form label > span { display: block; font-size: 12px; color: var(--text-soft); font-weight: 500; margin-bottom: 6px; }

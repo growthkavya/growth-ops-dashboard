@@ -28,8 +28,74 @@ const internView = {
       case 'goals': await this.renderGoals(rootEl); break;
       case 'submissions': await this.renderSubmissions(rootEl); break;
       case 'docs': await this.renderDocs(rootEl); break;
+      case 'cohort': await this.renderCohort(rootEl); break;
       default: await this.renderHome(rootEl);
     }
+  },
+
+  // ============== COHORT (peer visibility) ==============
+  async renderCohort(root) {
+    root.appendChild(h('div', { class: 'greeting' }, '🌟 The Cohort'));
+    root.appendChild(h('div', { class: 'greeting-sub' }, "What the other 8 interns are shipping. See what's possible. Get inspired."));
+
+    const interns = await api.listInterns();
+    const past7 = new Date(); past7.setDate(past7.getDate() - 7);
+    const past7Str = past7.toISOString().slice(0, 10);
+    const internIds = interns.map((i) => i.id);
+
+    // Pull cohort-wide activity for past 7 days
+    const [ideas, learnings, tasksDone] = await Promise.all([
+      getSupabase().from('gl_idea').select('*, interns!inner(name, tags)').in('intern_id', internIds).gte('created_at', past7.toISOString()).order('created_at', { ascending: false }).then((r) => r.data || []),
+      getSupabase().from('gl_learning').select('*, interns!inner(name, tags)').in('intern_id', internIds).gte('learning_date', past7Str).order('learning_date', { ascending: false }).then((r) => r.data || []),
+      getSupabase().from('gl_task').select('*, interns!inner(name, tags)').in('intern_id', internIds).eq('status', 'done').gte('done_at', past7.toISOString()).order('done_at', { ascending: false }).then((r) => r.data || []),
+    ]);
+
+    // Stat row
+    root.appendChild(h('div', { class: 'stat-row' }, [
+      statCard('Active interns', String(interns.length), 'across the cohort'),
+      statCard('Tasks shipped this week', String(tasksDone.length), '7 days'),
+      statCard('Ideas submitted', String(ideas.length), '7 days'),
+      statCard('Learnings logged', String(learnings.length), '7 days'),
+    ]));
+
+    // Recent ideas
+    const ideasCard = h('div', { class: 'card' });
+    ideasCard.appendChild(h('h3', { class: 'section-h' }, '💡 Recent ideas from the cohort'));
+    if (!ideas.length) ideasCard.appendChild(h('div', { class: 'empty-state' }, 'No ideas this week. Be the first.'));
+    else ideas.slice(0, 10).forEach((i) => ideasCard.appendChild(h('div', { style: 'padding:10px 0; border-bottom:1px solid var(--border);' }, [
+      h('div', { style: 'display:flex; justify-content:space-between; align-items:center;' }, [
+        h('div', { style: 'font-weight:500;' }, i.title),
+        h('span', { class: 'help-text' }, i.interns?.name + ' · ' + (i.interns?.tags?.find((t) => TAG_TO_VERTICAL[t]) ? TAG_TO_VERTICAL[i.interns.tags.find((t) => TAG_TO_VERTICAL[t])] : '')),
+      ]),
+      i.description ? h('div', { class: 'help-text', style: 'margin-top:4px;' }, i.description) : null,
+    ])));
+    root.appendChild(ideasCard);
+
+    // Recent tasks shipped
+    const tasksCard = h('div', { class: 'card' });
+    tasksCard.appendChild(h('h3', { class: 'section-h' }, '✅ Shipped this week'));
+    if (!tasksDone.length) tasksCard.appendChild(h('div', { class: 'empty-state' }, 'Nothing shipped yet this week.'));
+    else tasksDone.slice(0, 15).forEach((t) => tasksCard.appendChild(h('div', { style: 'padding:8px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; gap:8px;' }, [
+      h('div', { style: 'font-size:13px;' }, [
+        h('strong', {}, t.interns?.name),
+        ': ', t.title,
+      ]),
+      h('span', { class: 'help-text', style: 'white-space:nowrap;' }, formatDate(t.done_at)),
+    ])));
+    root.appendChild(tasksCard);
+
+    // Recent learnings
+    const learnCard = h('div', { class: 'card' });
+    learnCard.appendChild(h('h3', { class: 'section-h' }, '📚 Things the cohort learnt'));
+    if (!learnings.length) learnCard.appendChild(h('div', { class: 'empty-state' }, 'Nothing logged this week.'));
+    else learnings.slice(0, 10).forEach((l) => learnCard.appendChild(h('div', { style: 'padding:8px 0; border-bottom:1px solid var(--border);' }, [
+      h('div', { style: 'font-size:13px;' }, [
+        h('strong', {}, l.interns?.name),
+        ': ', l.what_learnt,
+      ]),
+      h('div', { class: 'help-text', style: 'margin-top:2px;' }, (l.source || '—') + ' · ' + (l.category || 'general')),
+    ])));
+    root.appendChild(learnCard);
   },
 
   showPicker() {
@@ -149,7 +215,11 @@ const internView = {
     row.appendChild(statCard('Attendance', summary.pct == null ? '—' : `${summary.pct}%`, monthName));
     row.appendChild(statCard('Days Present', String(summary.present), monthName));
     row.appendChild(statCard('Approved', String(approved), monthName));
-    row.appendChild(statCard('Streak', String(streak) + ' day' + (streak === 1 ? '' : 's'), 'Consecutive'));
+    // Streak card with milestone badge
+    const badge = streak >= 90 ? '🏆' : streak >= 30 ? '💎' : streak >= 14 ? '⭐' : streak >= 7 ? '🔥' : '';
+    const nextMilestone = streak < 7 ? 7 : streak < 14 ? 14 : streak < 30 ? 30 : streak < 90 ? 90 : null;
+    const streakSub = nextMilestone ? `${nextMilestone - streak} more for next milestone` : 'legendary';
+    row.appendChild(statCard('Streak', `${badge} ${streak} day${streak === 1 ? '' : 's'}`, streakSub, streak >= 7 ? 'gold' : null));
   },
 
   async streak() {

@@ -33,35 +33,129 @@ const rmView = {
     root.appendChild(h('div', { class: 'greeting' }, `${vName} Interns`));
     root.appendChild(h('div', { class: 'greeting-sub' }, `${this.team.length} active intern${this.team.length===1?'':'s'} reporting to you.`));
 
-    // Pending approvals quick view
     const internIds = this.team.map((i) => i.id);
-    const [todayAttn, pending, openTasks, recentCheckins] = await Promise.all([
+    const [todayAttn, pending, openTasks, recentCheckins, flags] = await Promise.all([
       api.listTeamAttendanceToday(internIds).catch(() => []),
       api.listPendingForSupervisor(auth.user.id).catch(() => []),
       api.listTasksForTeam(internIds, { activeOnly: true }).catch(() => []),
-      api.listTeamCheckinsRecent(internIds, 3).catch(() => []),
+      api.listTeamCheckinsRecent(internIds, 14).catch(() => []),
+      this.computeFlagsForTeam(internIds).catch(() => ({})),
     ]);
+    const flaggedCount = Object.keys(flags).length;
 
     // Stat row
     const row = h('div', { class: 'stat-row' }, [
       statCard('Pending approvals', String(pending.length), 'click Approvals tab'),
       statCard('Open tasks', String(openTasks.length), 'across team'),
       statCard('Checked in today', String(todayAttn.length) + '/' + this.team.length, ''),
-      statCard('Check-ins last 3d', String(recentCheckins.length), 'submissions'),
+      statCard('At-risk', String(flaggedCount), flaggedCount ? '⚠️ needs attention' : 'all clear', flaggedCount ? 'bad' : null),
     ]);
     root.appendChild(row);
 
+    // Workload widget
+    root.appendChild(this.renderWorkloadWidget(openTasks));
+
+    // At-risk panel (if any)
+    if (flaggedCount) root.appendChild(this.renderAtRiskPanel(flags));
+
     // Intern cards
     const grid = h('div', { class: 'intern-grid' });
-    for (const intern of this.team) grid.appendChild(await this.buildInternCard(intern, todayAttn));
+    for (const intern of this.team) grid.appendChild(await this.buildInternCard(intern, todayAttn, flags[intern.id], openTasks));
     root.appendChild(grid);
   },
 
-  async buildInternCard(intern, todayEntries) {
+  renderWorkloadWidget(openTasks) {
+    const card = h('div', { class: 'card' });
+    card.appendChild(h('h3', { class: 'section-h' }, '⚖️ Workload balance'));
+    card.appendChild(h('p', { class: 'section-sub' }, 'Open task count per intern. Spot imbalance.'));
+    const counts = {};
+    this.team.forEach((i) => { counts[i.id] = 0; });
+    openTasks.forEach((t) => { if (counts[t.intern_id] != null) counts[t.intern_id]++; });
+    const max = Math.max(1, ...Object.values(counts));
+    this.team.forEach((i) => {
+      const c = counts[i.id] || 0;
+      const widthPct = Math.round((c / max) * 100);
+      const overload = c >= max && c >= 5;
+      card.appendChild(h('div', { style: 'margin:8px 0;' }, [
+        h('div', { style: 'display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;' }, [
+          h('span', { style: 'font-weight:500;' }, i.name),
+          h('span', { style: overload ? 'color:var(--bad); font-weight:600;' : '' }, `${c} task${c === 1 ? '' : 's'}${overload ? ' · 🔥 overloaded' : ''}`),
+        ]),
+        h('div', { class: 'progress' }, h('div', { class: 'bar' + (overload ? ' bad' : '') , style: { width: widthPct + '%' } })),
+      ]));
+    });
+    return card;
+  },
+
+  renderAtRiskPanel(flags) {
+    const card = h('div', { class: 'card' });
+    card.appendChild(h('h3', { class: 'section-h' }, '⚠️ At-risk interns'));
+    card.appendChild(h('p', { class: 'section-sub' }, 'Auto-flagged from signals. Act on these before they snowball.'));
+    Object.entries(flags).forEach(([internId, internFlags]) => {
+      const intern = this.team.find((i) => i.id === internId);
+      if (!intern) return;
+      card.appendChild(h('div', { style: 'padding:10px 0; border-bottom:1px solid var(--border);' }, [
+        h('div', { style: 'display:flex; align-items:center; justify-content:space-between;' }, [
+          h('div', { style: 'font-weight:500;' }, intern.name),
+          h('span', { class: 'badge badge-rejected' }, `${internFlags.length} flag${internFlags.length === 1 ? '' : 's'}`),
+        ]),
+        h('div', { style: 'display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;' },
+          internFlags.map((f) => h('span', { class: 'badge badge-' + (f.kind === 'no_checkin' || f.kind === 'low_attn' ? 'rejected' : 'pending') }, f.label)),
+        ),
+      ]));
+    });
+    return card;
+  },
+
+  async computeFlagsForTeam(internIds) {
+    const today = new Date();
+    const past14 = new Date(); past14.setDate(past14.getDate() - 14);
+    const past14Str = past14.toISOString().slice(0, 10);
+    const monthStart = monthStartStr();
+
+    const [monthEntries, todayEntries, checkinsRecent, kras, ideas] = await Promise.all([
+      getSupabase().from('gl_attendance').select('*').in('intern_id', internIds).gte('attendance_date', past14Str).then((r) => r.data || []),
+      api.listTeamAttendanceToday(internIds),
+      getSupabase().from('gl_daily_checkin').select('intern_id,checkin_date').in('intern_id', internIds).gte('checkin_date', past14Str).then((r) => r.data || []),
+      getSupabase().from('gl_kra').select('intern_id,percent_done').in('intern_id', internIds).eq('period_month', monthStart).then((r) => r.data || []),
+      getSupabase().from('gl_idea').select('intern_id,created_at').in('intern_id', internIds).then((r) => r.data || []),
+    ]);
+
+    const todayMap = {}; todayEntries.forEach((e) => { todayMap[e.intern_id] = e; });
+    const flagsByIntern = {};
+    for (const intern of this.team) {
+      const flags = [];
+      const monthly = monthEntries.filter((e) => e.intern_id === intern.id);
+      const present = monthly.filter((e) => e.status === 'present').length;
+      const half = monthly.filter((e) => e.status === 'half-day').length;
+      const absent = monthly.filter((e) => e.status === 'absent').length;
+      const totalCounted = present + absent + half;
+      const attnPct = totalCounted ? Math.round(((present + half * 0.5) / totalCounted) * 100) : null;
+      const myCheckins = checkinsRecent.filter((c) => c.intern_id === intern.id);
+      const lastCheckinDate = myCheckins.length ? myCheckins.sort((a, b) => b.checkin_date.localeCompare(a.checkin_date))[0].checkin_date : null;
+      const daysSince = lastCheckinDate ? daysBetween(today, lastCheckinDate) : 999;
+      if (daysSince >= 3) flags.push({ kind: 'no_checkin', label: `No check-in for ${daysSince}d` });
+      if (attnPct != null && attnPct < 80) flags.push({ kind: 'low_attn', label: `Attendance ${attnPct}%` });
+      const myKRAs = kras.filter((k) => k.intern_id === intern.id);
+      const kraAvg = myKRAs.length ? Math.round(myKRAs.reduce((s, k) => s + (k.percent_done || 0), 0) / myKRAs.length) : null;
+      if (kraAvg != null && kraAvg < 50 && today.getDate() > 15) flags.push({ kind: 'kra_behind', label: `KRA avg ${kraAvg}%` });
+      const myIdeas = ideas.filter((i) => i.intern_id === intern.id).length;
+      if (myIdeas === 0 && daysBetween(today, intern.start_date) > 14) flags.push({ kind: 'no_ideas', label: 'No ideas in 14d' });
+      if (today.getDay() !== 0 && !todayMap[intern.id]) flags.push({ kind: 'today_missing', label: 'Not checked in today' });
+      if (flags.length) flagsByIntern[intern.id] = flags;
+    }
+    return flagsByIntern;
+  },
+
+  async buildInternCard(intern, todayEntries, internFlags, openTasks) {
     const today = (todayEntries || []).find((e) => e.intern_id === intern.id);
     const summary = await api.getMonthSummaryForIntern(intern.id);
+    const taskCount = (openTasks || []).filter((t) => t.intern_id === intern.id).length;
     const card = h('div', { class: 'intern-card', onclick: () => this.openInternDrill(intern) });
-    card.appendChild(h('div', { class: 'name' }, intern.name));
+    card.appendChild(h('div', { class: 'name' }, [
+      intern.name,
+      internFlags?.length ? h('span', { class: 'badge badge-rejected', style: 'margin-left:8px; font-size:10px;' }, '⚠ ' + internFlags.length) : null,
+    ]));
     card.appendChild(h('div', { class: 'vertical' }, [
       intern.intern_code, ' · ',
       today ? h('span', { class: 'badge badge-' + today.approval_status }, today.approval_status) : h('span', { class: 'badge badge-pending' }, 'Not in yet'),
@@ -69,7 +163,7 @@ const rmView = {
     const pctCls = summary.pct == null ? '' : (summary.pct < 80 ? 'bad' : summary.pct < 95 ? 'warn' : 'good');
     card.appendChild(h('div', { class: 'metrics' }, [
       h('div', {}, [h('div', { class: 'metric-l' }, 'Attendance'), h('div', { class: 'metric-v ' + pctCls }, summary.pct == null ? '—' : `${summary.pct}%`)]),
-      h('div', {}, [h('div', { class: 'metric-l' }, 'Days present'), h('div', { class: 'metric-v' }, String(summary.present))]),
+      h('div', {}, [h('div', { class: 'metric-l' }, 'Open tasks'), h('div', { class: 'metric-v' }, String(taskCount))]),
     ]));
     return card;
   },
@@ -118,6 +212,20 @@ const rmView = {
     const pending = await api.listPendingForSupervisor(auth.user.id);
     const card = h('div', { class: 'table-card' });
     card.appendChild(h('h3', { class: 'section-h' }, `${pending.length} pending`));
+
+    // Bulk approve action — for entries that have a non-empty summary
+    if (pending.length > 0) {
+      const bulkable = pending.filter((e) => e.daily_work_summary && e.daily_work_summary.trim());
+      card.appendChild(h('div', { class: 'card-actions' }, [
+        h('button', {
+          class: 'btn-success',
+          disabled: !bulkable.length,
+          onclick: () => this.bulkApprove(bulkable),
+        }, `✓ Approve all ${bulkable.length} with summary`),
+        h('span', { class: 'help-text', style: 'align-self:center;' },
+          pending.length - bulkable.length > 0 ? `(${pending.length - bulkable.length} have empty summary — review individually)` : ''),
+      ]));
+    }
 
     if (!pending.length) card.appendChild(h('div', { class: 'empty-state' }, "✓ Caught up. No pending approvals."));
     else {
@@ -216,6 +324,18 @@ const rmView = {
     }
     try { await api.approveAttendance(id, action, remarks, auth.user.id); app.renderView(); }
     catch (e) { alert('Failed: ' + e.message); }
+  },
+
+  async bulkApprove(entries) {
+    if (!entries.length) return;
+    if (!confirm(`Approve ${entries.length} attendance entries in one go? (Only entries with non-empty summaries.)`)) return;
+    let ok = 0, fail = 0;
+    for (const e of entries) {
+      try { await api.approveAttendance(e.id, 'approved', null, auth.user.id); ok++; }
+      catch (err) { fail++; console.warn(err); }
+    }
+    alert(`✓ Approved ${ok}${fail ? ` · ${fail} failed` : ''}.`);
+    app.renderView();
   },
 
   editAttendanceModal(e) {
@@ -434,7 +554,13 @@ const rmView = {
     const checkins = await api.listTeamCheckinsRecent(this.team.map((i) => i.id), 14);
     if (!checkins.length) { root.appendChild(h('div', { class: 'card' }, h('div', { class: 'empty-state' }, 'No check-ins in the last 14 days.'))); return; }
 
+    const unread = checkins.filter((c) => !c.rm_acknowledged);
     const card = h('div', { class: 'table-card' });
+    if (unread.length) {
+      card.appendChild(h('div', { class: 'card-actions' }, [
+        h('button', { class: 'btn-success', onclick: () => this.bulkAckCheckins(unread) }, `✓ Acknowledge all ${unread.length} unread`),
+      ]));
+    }
     const table = h('table');
     table.appendChild(h('thead', {}, h('tr', {}, [
       h('th', {}, 'Date'), h('th', {}, 'Intern'), h('th', {}, 'What done'),
@@ -460,6 +586,17 @@ const rmView = {
       tb.appendChild(tr);
     });
     table.appendChild(tb); card.appendChild(table); root.appendChild(card);
+  },
+
+  async bulkAckCheckins(unread) {
+    if (!confirm(`Acknowledge ${unread.length} daily check-ins in bulk?`)) return;
+    let ok = 0;
+    for (const c of unread) {
+      try { await api.acknowledgeCheckin(c.id, null); ok++; }
+      catch (e) { console.warn(e); }
+    }
+    alert(`✓ Acknowledged ${ok}.`);
+    app.renderView();
   },
 
   // ============== GOALS (KRA + KPI setup) ==============

@@ -7,16 +7,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2309256B'/><text x='32' y='42' font-family='Inter,sans-serif' font-size='20' font-weight='700' text-anchor='middle' fill='%23C99959' letter-spacing='1'>SSEI</text></svg>">
 </head>
 <body>
 
 <div id="login-screen" class="screen">
   <div class="login-card">
     <div class="brand">
-      <div class="brand-mark">GL</div>
+      <div class="brand-mark">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="SSEI">
+          <rect width="64" height="64" rx="14" fill="#09256B"/>
+          <text x="32" y="42" font-family="Inter, sans-serif" font-size="20" font-weight="700"
+                text-anchor="middle" fill="#C99959" letter-spacing="1">SSEI</text>
+        </svg>
+      </div>
       <h1>Growth Lab</h1>
-      <p class="brand-sub">SSEI · Internship Program</p>
+      <p class="brand-sub">Internship Program</p>
+      <p class="brand-tagline">Sanjay Saraf Educational Institute</p>
     </div>
     <form id="login-form">
       <label><span>Email</span><input type="email" id="login-email" autocomplete="email" required placeholder="you@ssei.co.in"></label>
@@ -39,7 +47,13 @@
 <div id="app" class="hidden">
   <header class="topbar">
     <div class="topbar-left">
-      <div class="brand-mark small">GL</div>
+      <div class="brand-mark small">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="SSEI">
+          <rect width="64" height="64" rx="14" fill="#09256B"/>
+          <text x="32" y="42" font-family="Inter, sans-serif" font-size="20" font-weight="700"
+                text-anchor="middle" fill="#C99959" letter-spacing="1">SSEI</text>
+        </svg>
+      </div>
       <div>
         <div class="topbar-title">Growth Lab</div>
         <div class="topbar-sub" id="topbar-context"></div>
@@ -69,15 +83,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-<script src="js/config.js?v=2"></script>
-<script src="js/supabase.js?v=2"></script>
-<script src="js/auth.js?v=2"></script>
-<script src="js/api.js?v=2"></script>
-<script src="js/notifications.js?v=2"></script>
-<script src="js/views/intern.js?v=2"></script>
-<script src="js/views/rm.js?v=2"></script>
-<script src="js/views/super.js?v=2"></script>
-<script src="js/app.js?v=2"></script>
+<script src="js/config.js?v=3"></script>
+<script src="js/supabase.js?v=3"></script>
+<script src="js/auth.js?v=3"></script>
+<script src="js/api.js?v=3"></script>
+<script src="js/notifications.js?v=3"></script>
+<script src="js/views/intern.js?v=3"></script>
+<script src="js/views/rm.js?v=3"></script>
+<script src="js/views/super.js?v=3"></script>
+<script src="js/app.js?v=3"></script>
 
 </body>
 </html>
