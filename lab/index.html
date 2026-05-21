@@ -7,11 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
 <div id="login-screen" class="screen">
   <div class="login-card">
     <div class="brand">
@@ -20,22 +19,15 @@
       <p class="brand-sub">SSEI · Internship Program</p>
     </div>
     <form id="login-form">
-      <label>
-        <span>Email</span>
-        <input type="email" id="login-email" autocomplete="email" required placeholder="you@ssei.co.in">
-      </label>
-      <label>
-        <span>Password</span>
-        <input type="password" id="login-password" autocomplete="current-password" required>
-      </label>
-      <button type="submit" id="login-btn" class="btn-primary">Sign in</button>
+      <label><span>Email</span><input type="email" id="login-email" autocomplete="email" required placeholder="you@ssei.co.in"></label>
+      <label><span>Password</span><input type="password" id="login-password" autocomplete="current-password" required></label>
+      <button type="submit" id="login-btn" class="btn-primary full">Sign in</button>
       <p id="login-error" class="error-text"></p>
     </form>
     <p class="login-foot">Forgot password? Ping Kavya or Vidyut on Slack.</p>
   </div>
 </div>
 
-<!-- INTERN PICKER OVERLAY (for shared team mailboxes) -->
 <div id="picker-screen" class="screen hidden">
   <div class="picker-card">
     <h2>Who's using this account?</h2>
@@ -44,7 +36,6 @@
   </div>
 </div>
 
-<!-- MAIN APP SHELL -->
 <div id="app" class="hidden">
   <header class="topbar">
     <div class="topbar-left">
@@ -57,27 +48,36 @@
     <div class="topbar-right">
       <span id="active-user" class="active-user"></span>
       <button id="switch-intern" class="btn-ghost hidden">Switch person</button>
+      <button id="bell-btn" class="bell" title="Notifications" aria-label="Notifications">🔔<span id="bell-count" class="bell-count hidden">0</span></button>
       <button id="logout-btn" class="btn-ghost">Log out</button>
+      <div id="notif-panel" class="notif-panel hidden">
+        <div class="notif-panel-head">
+          <h4>Notifications</h4>
+          <button id="notif-mark-all" class="btn-ghost" style="padding:4px 10px; font-size:11px;">Mark all read</button>
+        </div>
+        <div id="notif-list" class="notif-list"></div>
+      </div>
     </div>
   </header>
 
-  <nav class="tabs" id="tabs">
-    <!-- Tabs injected per role -->
-  </nav>
-
+  <nav class="tabs" id="tabs"></nav>
   <main id="view-mount" class="view"></main>
 </div>
 
-<!-- Supabase JS SDK -->
+<div id="modal-mount"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js"></script>
-<script src="js/supabase.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/api.js"></script>
-<script src="js/views/intern.js"></script>
-<script src="js/views/rm.js"></script>
-<script src="js/views/super.js"></script>
-<script src="js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script src="js/config.js?v=2"></script>
+<script src="js/supabase.js?v=2"></script>
+<script src="js/auth.js?v=2"></script>
+<script src="js/api.js?v=2"></script>
+<script src="js/notifications.js?v=2"></script>
+<script src="js/views/intern.js?v=2"></script>
+<script src="js/views/rm.js?v=2"></script>
+<script src="js/views/super.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
 
 </body>
 </html>

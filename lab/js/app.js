@@ -1,24 +1,45 @@
-// Boot + router. Single-page: routes by user role.
+// Boot + router. Multi-tab per role.
 const app = {
   currentTab: null,
 
+  // Tab definitions per role
+  tabsFor(role) {
+    if (role === 'intern') return [
+      { id: 'home', label: 'Home' },
+      { id: 'attendance', label: 'Attendance' },
+      { id: 'daily', label: 'Daily Log' },
+      { id: 'tasks', label: 'Tasks' },
+      { id: 'goals', label: 'Goals' },
+      { id: 'submissions', label: 'Submissions' },
+      { id: 'docs', label: 'Docs' },
+    ];
+    if (role === 'member') return [
+      { id: 'team', label: 'Team' },
+      { id: 'approvals', label: 'Approvals' },
+      { id: 'tasks', label: 'Tasks' },
+      { id: 'daily', label: 'Daily Logs' },
+      { id: 'goals', label: 'Goals' },
+      { id: 'ideas', label: 'Ideas' },
+      { id: 'docs', label: 'Docs' },
+      { id: 'activity', label: 'Activity' },
+    ];
+    if (role === 'admin') return [
+      { id: 'all', label: 'All Interns' },
+      { id: 'approvals', label: 'Approvals' },
+      { id: 'activity', label: 'Activity' },
+      { id: 'settings', label: 'Settings' },
+    ];
+    return [];
+  },
+
   async boot() {
-    // Bind login form
-    $('#login-form').addEventListener('submit', (ev) => {
-      ev.preventDefault();
-      this.handleLogin();
-    });
+    $('#login-form').addEventListener('submit', (ev) => { ev.preventDefault(); this.handleLogin(); });
     $('#logout-btn').addEventListener('click', () => this.handleLogout());
-    $('#switch-intern').addEventListener('click', () => {
-      if (auth.isIntern()) internView.showPicker();
-    });
+    $('#switch-intern').addEventListener('click', () => { if (auth.isIntern()) internView.showPicker(); });
 
     await auth.init();
-    if (auth.user) {
-      await this.showApp();
-    } else {
-      this.showLogin();
-    }
+    if (auth.user) await this.showApp();
+    else this.showLogin();
   },
 
   showLogin() {
@@ -30,35 +51,28 @@ const app = {
   async handleLogin() {
     const email = $('#login-email').value.trim();
     const password = $('#login-password').value;
-    const btn = $('#login-btn');
-    const err = $('#login-error');
-    btn.disabled = true;
-    err.textContent = '';
-    try {
-      await auth.signIn(email, password);
-      await this.showApp();
-    } catch (e) {
-      err.textContent = e.message || 'Sign-in failed';
-    } finally {
-      btn.disabled = false;
-    }
+    const btn = $('#login-btn'); const err = $('#login-error');
+    btn.disabled = true; err.textContent = '';
+    try { await auth.signIn(email, password); await this.showApp(); }
+    catch (e) { err.textContent = e.message || 'Sign-in failed'; }
+    finally { btn.disabled = false; }
   },
 
   async handleLogout() {
     await auth.signOut();
+    this.currentTab = null;
     this.showLogin();
   },
 
   async showApp() {
     if (!auth.profile) {
-      $('#login-error').textContent = 'No profile linked to this account. Contact Kavya / Vidyut.';
-      this.showLogin();
-      return;
+      $('#login-error').textContent = 'No profile linked. Contact Kavya / Vidyut.';
+      this.showLogin(); return;
     }
     $('#login-screen').classList.add('hidden');
 
+    // Intern shared-mailbox picker
     if (auth.isIntern()) {
-      // Intern path may show picker if multiple intern rows linked
       const interns = await api.listInternsForAuthUser(auth.user.id);
       if (interns.length > 1 && !localStorage.getItem('gl_selected_intern_id')) {
         $('#app').classList.add('hidden');
@@ -76,69 +90,74 @@ const app = {
     }
 
     $('#app').classList.remove('hidden');
+    // Default tab if not yet set
+    const tabs = this.tabsFor(auth.role());
+    if (!this.currentTab && tabs.length) this.currentTab = tabs[0].id;
+
     this.refreshChrome();
+    await notifications.init();
     await this.renderView();
   },
 
   refreshChrome() {
-    // Topbar context + tabs
     const ctxEl = $('#topbar-context');
     const userEl = $('#active-user');
     const switchBtn = $('#switch-intern');
-    const tabs = $('#tabs');
-    tabs.innerHTML = '';
+    const tabsBar = $('#tabs');
+    tabsBar.innerHTML = '';
 
     if (auth.isIntern()) {
       ctxEl.textContent = APP_CONFIG.cohort;
       const sel = internView.selectedIntern;
       userEl.textContent = sel ? `${sel.name} · ${internVertical(sel)}` : '';
       switchBtn.classList.toggle('hidden', !(internView.myInterns && internView.myInterns.length > 1));
-      this.addTab('home', 'Home');
     } else if (auth.isRM()) {
-      ctxEl.textContent = `RM · ${auth.profile.full_name}`;
+      ctxEl.textContent = `Reporting Manager`;
       userEl.textContent = auth.profile.full_name;
       switchBtn.classList.add('hidden');
-      this.addTab('team', 'My Team');
     } else if (auth.isSuper()) {
       ctxEl.textContent = `Admin · ${auth.profile.full_name}`;
       userEl.textContent = auth.profile.full_name;
       switchBtn.classList.add('hidden');
-      this.addTab('all', 'All Interns');
     } else {
-      ctxEl.textContent = '';
-      userEl.textContent = auth.profile.full_name || '';
+      ctxEl.textContent = ''; userEl.textContent = auth.profile.full_name || '';
     }
+
+    const tabs = this.tabsFor(auth.role());
+    tabs.forEach((t) => {
+      const btn = h('button', { class: 'tab' + (this.currentTab === t.id ? ' active' : ''),
+        onclick: () => this.setTab(t.id),
+      }, t.label);
+      tabsBar.appendChild(btn);
+    });
   },
 
-  addTab(id, label) {
-    const btn = h('button', { class: 'tab' + (this.currentTab === id ? ' active' : ''), onclick: () => {
-      this.currentTab = id;
-      this.refreshChrome();
-      this.renderView();
-    } }, label);
-    if (!this.currentTab) { this.currentTab = id; btn.classList.add('active'); }
-    $('#tabs').appendChild(btn);
+  setTab(id) {
+    this.currentTab = id;
+    this.refreshChrome();
+    this.renderView();
   },
 
   async renderView() {
     const mount = $('#view-mount');
     mount.innerHTML = '<div class="empty-state">Loading…</div>';
     try {
-      if (auth.isIntern()) {
-        await internView.mount(mount);
-      } else if (auth.isRM()) {
-        await rmView.mount(mount);
-      } else if (auth.isSuper()) {
-        await superView.mount(mount);
-      } else {
-        mount.innerHTML = '<div class="empty-state">No role assigned. Contact admin.</div>';
-      }
+      if (auth.isIntern()) await internView.mount(mount);
+      else if (auth.isRM()) await rmView.mount(mount);
+      else if (auth.isSuper()) await superView.mount(mount);
+      else mount.innerHTML = '<div class="empty-state">No role assigned. Contact admin.</div>';
     } catch (e) {
       console.error(e);
-      mount.innerHTML = `<div class="empty-state" style="color:var(--bad);">Failed to render: ${e.message}</div>`;
+      const isMigrationMissing = e.message?.includes('schema cache') || e.message?.includes('not find');
+      mount.innerHTML = '';
+      if (isMigrationMissing) {
+        mount.appendChild(h('div', { class: 'banner bad' },
+          '⚠️ Database not yet initialized. Admin: paste lab/supabase/migration_growth_lab_v2.sql into Supabase SQL Editor and click RUN. Refresh after.'));
+      } else {
+        mount.appendChild(h('div', { class: 'banner bad' }, 'Failed to render: ' + e.message));
+      }
     }
   },
 };
 
-// Kick off
 document.addEventListener('DOMContentLoaded', () => app.boot());
