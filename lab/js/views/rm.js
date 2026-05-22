@@ -624,7 +624,7 @@ const rmView = {
     table.appendChild(h('thead', {}, h('tr', {}, [
       h('th', {}, 'Type'), h('th', {}, 'Intern'), h('th', {}, 'Task'),
       h('th', {}, 'Due'), h('th', {}, 'Priority'), h('th', {}, 'Status'),
-      h('th', {}, '%'), h('th', {}, ''),
+      h('th', {}, '%'), h('th', {}, 'Output'), h('th', {}, ''),
     ])));
     const tb = h('tbody');
     tasks.forEach((t) => {
@@ -639,6 +639,9 @@ const rmView = {
       tr.appendChild(h('td', {}, h('span', { class: 'badge badge-' + (t.priority || 'med') }, t.priority || 'med')));
       tr.appendChild(h('td', {}, h('span', { class: 'badge badge-' + t.status }, t.status)));
       tr.appendChild(h('td', {}, (t.percent_done || 0) + '%'));
+      tr.appendChild(h('td', {}, t.output_link
+        ? h('a', { href: t.output_link, target: '_blank', style: 'color:var(--accent); font-weight:500;' }, '📎 open ↗')
+        : h('span', { class: 'help-text' }, '—')));
       tr.appendChild(h('td', {}, readOnly ? null : h('div', { class: 'approve-actions' }, [
         h('button', { class: 'btn-tiny neutral', onclick: () => this.editRmTaskModal(t) }, 'Edit'),
         h('button', { class: 'btn-tiny no', onclick: () => {
