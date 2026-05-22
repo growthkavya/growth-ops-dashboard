@@ -42,6 +42,40 @@ function formatTime(iso) { if (!iso) return '—'; return new Date(iso).toLocale
 function formatDate(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }); }
 function formatDateTime(iso) { if (!iso) return '—'; return new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false }); }
 function daysBetween(a, b) { return Math.round((new Date(a) - new Date(b)) / 86400000); }
+
+// Working days = Mon-Sat (Sunday excluded). Inclusive of both endpoints.
+function workingDaysBetween(start, end) {
+  const s = new Date(start); s.setHours(0,0,0,0);
+  const e = new Date(end); e.setHours(0,0,0,0);
+  if (e < s) return 0;
+  let count = 0;
+  const cur = new Date(s);
+  while (cur <= e) {
+    if (cur.getDay() !== 0) count++; // skip Sundays
+    cur.setDate(cur.getDate() + 1);
+  }
+  return count;
+}
+
+// Friendly hours: 5 → "5h", 5.5 → "5.5h", 5.55 → "5.6h", null/undefined → "—"
+function formatHours(n) {
+  if (n == null || n === '') return '—';
+  const v = Number(n);
+  if (!isFinite(v)) return '—';
+  const r = Math.round(v * 10) / 10;
+  return (Number.isInteger(r) ? r.toString() : r.toFixed(1)) + 'h';
+}
+
+// Human-friendly status label
+function statusDisplay(s) {
+  return ({
+    on_track: 'On track', at_risk: 'Slipping', behind: 'Behind', done: 'Done', dropped: 'Dropped',
+    not_started: 'Not started', in_progress: 'In progress', blocked: 'Blocked', cancelled: 'Cancelled',
+    pending: 'Pending', approved: 'Approved', rejected: 'Rejected',
+    present: 'Present', 'half-day': 'Half-day', absent: 'Absent', leave: 'Leave', wfh: 'WFH', sick: 'Sick',
+    new: 'New', under_review: 'Under review', parked: 'Parked',
+  })[s] || s;
+}
 function timeAgo(iso) {
   if (!iso) return '';
   const d = new Date(iso);

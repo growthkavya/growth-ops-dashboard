@@ -87,14 +87,26 @@ const superView = {
     const flagsByIntern = {};
     const today = new Date();
 
-    // Per-intern composite + at-risk flags
+    // Per-intern health score + slipping flags
     for (const intern of this.interns) {
+      const daysSinceStart = daysBetween(today, new Date(intern.start_date));
+      const isWeekOne = daysSinceStart < 7;
+
       const monthly = monthEntries.filter((e) => e.intern_id === intern.id);
       const present = monthly.filter((e) => e.status === 'present').length;
       const half = monthly.filter((e) => e.status === 'half-day').length;
+      const wfh = monthly.filter((e) => e.status === 'wfh').length;
       const absent = monthly.filter((e) => e.status === 'absent').length;
-      const totalCounted = present + absent + half;
-      const attnPct = totalCounted ? Math.round(((present + half * 0.5) / totalCounted) * 100) : null;
+      const leave = monthly.filter((e) => e.status === 'leave').length;
+      const sick = monthly.filter((e) => e.status === 'sick').length;
+      // Use the SAME attendance formula as getMonthSummaryForIntern (single source of truth)
+      const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      const internStart = intern.start_date && new Date(intern.start_date) > monthStart ? new Date(intern.start_date) : monthStart;
+      const expectedDays = workingDaysBetween(internStart, today);
+      const covered = present + half * 0.5 + wfh;
+      const excused = leave + sick;
+      const denom = Math.max(0, expectedDays - excused);
+      const attnPct = denom === 0 ? null : Math.round((covered / denom) * 100);
 
       const myTasks = tasks.filter((t) => t.intern_id === intern.id);
       const tasksDone = myTasks.filter((t) => t.status === 'done').length;
@@ -109,16 +121,15 @@ const superView = {
       const kpiFillRate = myKPIs.length ? Math.round((kpiFilled / myKPIs.length) * 100) : null;
       const avgRmScore = (() => {
         const scored = myKPIs.filter((k) => k.rm_score != null);
-        return scored.length ? Math.round((scored.reduce((s, k) => s + k.rm_score, 0) / scored.length) * 20) : null;  // 1-5 → 0-100
+        return scored.length ? Math.round((scored.reduce((s, k) => s + k.rm_score, 0) / scored.length) * 20) : null;
       })();
 
       const myIdeas = ideas.filter((i) => i.intern_id === intern.id).length;
-
       const myCheckins = checkinsRecent.filter((c) => c.intern_id === intern.id);
       const lastCheckinDate = myCheckins.length ? myCheckins.sort((a, b) => b.checkin_date.localeCompare(a.checkin_date))[0].checkin_date : null;
 
-      // Composite score: weighted
-      // attn 25% · kra 30% · taskRate 20% · kpiFillRate 15% · rmScore 10%
+      // Health score: weighted
+      //   25% Attendance · 30% Goals · 20% Task completion · 15% Measures filled · 10% Manager rating
       const parts = [];
       if (attnPct != null)      parts.push({ w: 0.25, v: attnPct });
       if (kraAvg != null)       parts.push({ w: 0.30, v: kraAvg });
@@ -126,22 +137,25 @@ const superView = {
       if (kpiFillRate != null)  parts.push({ w: 0.15, v: kpiFillRate });
       if (avgRmScore != null)   parts.push({ w: 0.10, v: avgRmScore });
       const wSum = parts.reduce((s, p) => s + p.w, 0);
-      const composite = parts.length ? Math.round(parts.reduce((s, p) => s + p.w * p.v, 0) / (wSum || 1)) : null;
+      // SUPPRESS if intern joined <7 days ago OR <3 of 5 data points present
+      const composite = (isWeekOne || parts.length < 3) ? null
+        : Math.round(parts.reduce((s, p) => s + p.w * p.v, 0) / (wSum || 1));
 
       scoreByIntern[intern.id] = {
         attnPct, kraAvg, taskRate, kpiFillRate, avgRmScore, composite,
         tasksOpen: myTasks.filter((t) => !['done','cancelled'].includes(t.status)).length,
         ideasCount: myIdeas, daysPresent: present, daysAbsent: absent,
-        lastCheckinDate,
+        lastCheckinDate, isWeekOne,
       };
 
-      // At-risk flags
+      // Slipping flags — SUPPRESS in week 1 to avoid noise
+      if (isWeekOne) continue;
       const flags = [];
       const daysSinceCheckin = lastCheckinDate ? daysBetween(today, lastCheckinDate) : 999;
       if (daysSinceCheckin >= 3) flags.push({ kind: 'no_checkin', label: `No check-in for ${daysSinceCheckin}d` });
       if (attnPct != null && attnPct < 80) flags.push({ kind: 'low_attn', label: `Attendance ${attnPct}%` });
-      if (kraAvg != null && kraAvg < 50 && today.getDate() > 15) flags.push({ kind: 'kra_behind', label: `KRA avg ${kraAvg}%` });
-      if (myIdeas === 0 && daysBetween(today, intern.start_date) > 14) flags.push({ kind: 'no_ideas', label: 'No ideas in 14d' });
+      if (kraAvg != null && kraAvg < 50 && today.getDate() > 15) flags.push({ kind: 'kra_behind', label: `Goal avg ${kraAvg}%` });
+      if (myIdeas === 0 && daysSinceStart > 14) flags.push({ kind: 'no_ideas', label: 'No ideas in 14d' });
       const todayE = todayMap[intern.id];
       if (today.getDay() !== 0 && !todayE) flags.push({ kind: 'today_missing', label: 'Not checked in today' });
 
@@ -209,32 +223,45 @@ const superView = {
       const vals = Object.values(intel.scoreByIntern).map((s) => s.composite).filter((v) => v != null);
       return vals.length ? Math.round(vals.reduce((s, v) => s + v, 0) / vals.length) : null;
     })();
-    const atRiskCount = Object.keys(intel.flagsByIntern).length;
+    const slippingCount = Object.keys(intel.flagsByIntern).length;
     const ideasTotal = intel.ideas.length;
+    const rmCount = Object.values(intel.pending.reduce((m, e) => { m[e.interns.supervisor_id] = 1; return m; }, {})).length;
 
     return h('div', { class: 'stat-row', style: 'grid-template-columns: repeat(4, 1fr); gap:12px;' }, [
-      statCard('Composite score (avg)', avgComposite == null ? '—' : `${avgComposite}/100`, 'cohort overall', 'gold'),
-      statCard('Attendance today', `${checkedIn}/${total}`, `${approvedToday} approved`),
-      statCard('Pending approvals', String(pendingCount), `across ${Object.values(intel.pending.reduce((m, e) => { m[e.interns.supervisor_id] = 1; return m; }, {})).length} RMs`),
-      statCard('At-risk interns', String(atRiskCount), atRiskCount ? 'needs attention' : 'all clear', atRiskCount ? 'bad' : null),
-      statCard('Tasks shipped (7d)', String(tasksDoneThisWeek), 'cohort'),
-      statCard('Ideas submitted', String(ideasTotal), 'all-time'),
-      statCard('Active KRAs', String(intel.kras.length), 'this month'),
-      statCard('Days into cohort', String(daysBetween(todayStr(), '2026-05-22') + 1), 'started 22 May'),
+      statCard('Health score (avg)', avgComposite == null ? '—' : `${avgComposite}/100`, 'cohort overall', 'gold',
+        'Weighted: 25% Attendance + 30% Goals + 20% Tasks done + 15% Measures filled + 10% Manager rating. Suppressed for interns in their first week.'),
+      statCard('Attended today', `${checkedIn}/${total}`, `${approvedToday} approved`, null,
+        'Of the active interns, how many have checked in today. Approved = manager has signed off.'),
+      statCard('Pending approvals', String(pendingCount), rmCount ? `across ${rmCount} manager${rmCount === 1 ? '' : 's'}` : 'all caught up', null,
+        'Attendance entries waiting for a manager to approve.'),
+      statCard('Slipping', String(slippingCount), slippingCount ? 'needs attention' : 'all clear', slippingCount ? 'bad' : null,
+        'Interns auto-flagged for: no check-in 3+ days, attendance <80%, goals avg <50% past mid-month, no ideas in 14 days, or not in today. Suppressed for week-1 interns.'),
+      statCard('Tasks shipped (7d)', String(tasksDoneThisWeek), 'cohort', null,
+        'Tasks marked Done in the past 7 days across all interns.'),
+      statCard('Ideas submitted', String(ideasTotal), 'all-time', null,
+        'Total ideas the cohort has submitted (any status).'),
+      statCard('Active goals', String(intel.kras.length), 'this month', null,
+        'Total monthly goals (KRAs) set across all interns for this month.'),
+      statCard('Days into cohort', String(daysBetween(todayStr(), '2026-05-22') + 1), 'started 22 May', null,
+        'Calendar days since cohort 1 kicked off.'),
     ]);
   },
 
   renderTopPerformers(intel) {
     const card = h('div', { class: 'card' });
     card.appendChild(h('h3', { class: 'section-h' }, '🏆 Top performers'));
-    card.appendChild(h('p', { class: 'section-sub' }, 'Composite of attendance · KRAs · tasks · KPI fill rate · RM score.'));
+    card.appendChild(h('p', { class: 'section-sub' }, 'Health score = 25% Attendance + 30% Goals + 20% Tasks + 15% Measures filled + 10% Manager rating. Week-1 interns excluded.'));
 
     const ranked = this.interns
       .map((i) => ({ intern: i, score: intel.scoreByIntern[i.id] }))
-      .filter((r) => r.score.composite != null)
+      .filter((r) => r.score && r.score.composite != null)
       .sort((a, b) => b.score.composite - a.score.composite);
 
-    if (!ranked.length) { card.appendChild(h('div', { class: 'empty-state' }, 'Not enough data yet.')); return card; }
+    if (!ranked.length) {
+      card.appendChild(h('div', { class: 'empty-state' },
+        'No interns have enough data yet (all in their first week). Rankings appear after day 7 of each intern.'));
+      return card;
+    }
 
     const list = h('div');
     ranked.forEach((r, idx) => {
@@ -244,7 +271,7 @@ const superView = {
         h('div', { style: 'font-size:18px; text-align:center;' }, medal),
         h('div', {}, [
           h('div', { style: 'font-weight:500;' }, r.intern.name),
-          h('div', { style: 'color:var(--text-mute); font-size:11px;' }, `${internVertical(r.intern)} · attn ${r.score.attnPct ?? '—'}% · KRA ${r.score.kraAvg ?? '—'}%`),
+          h('div', { style: 'color:var(--text-mute); font-size:11px;' }, `${internVertical(r.intern)} · attendance ${r.score.attnPct ?? '—'}% · goals ${r.score.kraAvg ?? '—'}%`),
         ]),
         h('div', { style: `font-weight:700; font-size:20px; color:${compositeColor};` }, `${r.score.composite}`),
       ]));
@@ -255,15 +282,15 @@ const superView = {
 
   renderAtRisk(intel) {
     const card = h('div', { class: 'card' });
-    card.appendChild(h('h3', { class: 'section-h' }, '⚠️ At-risk interns'));
-    card.appendChild(h('p', { class: 'section-sub' }, 'Auto-flagged based on engagement signals. Drill in to act.'));
+    card.appendChild(h('h3', { class: 'section-h' }, '⚠️ Slipping'));
+    card.appendChild(h('p', { class: 'section-sub' }, 'Auto-flagged on engagement signals. Week-1 interns excluded so noise doesn\'t fire.'));
 
-    const atRisk = Object.entries(intel.flagsByIntern);
-    if (!atRisk.length) {
-      card.appendChild(h('div', { class: 'empty-state' }, '✓ No interns flagged. All on track.'));
+    const slipping = Object.entries(intel.flagsByIntern);
+    if (!slipping.length) {
+      card.appendChild(h('div', { class: 'empty-state' }, '✓ No one flagged. All on track.'));
       return card;
     }
-    atRisk.forEach(([internId, flags]) => {
+    slipping.forEach(([internId, flags]) => {
       const intern = this.interns.find((i) => i.id === internId);
       if (!intern) return;
       card.appendChild(h('div', { style: 'padding:10px 0; border-bottom:1px solid var(--border);', onclick: () => this.openInternDrill(intern), css: 'cursor:pointer;' }, [
@@ -283,12 +310,12 @@ const superView = {
   renderTeamScorecard(intel) {
     const card = h('div', { class: 'table-card' });
     card.appendChild(h('h3', { class: 'section-h' }, '🎯 Team scorecard'));
-    card.appendChild(h('p', { class: 'section-sub' }, 'How each vertical is performing relative to the others.'));
+    card.appendChild(h('p', { class: 'section-sub' }, 'How each team is performing this month.'));
 
     const table = h('table');
     table.appendChild(h('thead', {}, h('tr', {}, [
-      h('th', {}, 'Team'), h('th', {}, 'RM'), h('th', {}, 'Interns'),
-      h('th', {}, 'Avg attn'), h('th', {}, 'Avg KRA %'), h('th', {}, 'Tasks open'), h('th', {}, 'Avg score'),
+      h('th', {}, 'Team'), h('th', {}, 'Manager'), h('th', {}, 'Interns'),
+      h('th', {}, 'Avg attendance'), h('th', {}, 'Avg goals %'), h('th', {}, 'Tasks open'), h('th', {}, 'Avg health'),
     ])));
     const tb = h('tbody');
 
@@ -357,8 +384,14 @@ const superView = {
     ]));
     const compCls = score?.composite == null ? '' : (score.composite < 60 ? 'bad' : score.composite < 80 ? 'warn' : 'good');
     card.appendChild(h('div', { class: 'metrics' }, [
-      h('div', {}, [h('div', { class: 'metric-l' }, 'Score'), h('div', { class: 'metric-v ' + compCls }, score?.composite == null ? '—' : String(score.composite))]),
-      h('div', {}, [h('div', { class: 'metric-l' }, 'Attn'), h('div', { class: 'metric-v' }, score?.attnPct == null ? '—' : `${score.attnPct}%`)]),
+      h('div', { title: 'Weighted health score. Suppressed in week 1.' }, [
+        h('div', { class: 'metric-l' }, 'Health'),
+        h('div', { class: 'metric-v ' + compCls }, score?.composite == null ? (score?.isWeekOne ? 'wk 1' : '—') : String(score.composite)),
+      ]),
+      h('div', { title: 'Attendance % this month' }, [
+        h('div', { class: 'metric-l' }, 'Attendance'),
+        h('div', { class: 'metric-v' }, score?.attnPct == null ? '—' : `${score.attnPct}%`),
+      ]),
     ]));
     return card;
   },
@@ -372,29 +405,29 @@ const superView = {
     (async () => {
       modal.innerHTML = '';
       modal.appendChild(h('h3', {}, intern.name + ' · ' + internVertical(intern)));
-      modal.appendChild(h('p', { class: 'help-text' }, intern.intern_code + ' · RM: ' + (this.profilesById[intern.supervisor_id]?.full_name || '—')));
+      modal.appendChild(h('p', { class: 'help-text' }, intern.intern_code + ' · Manager: ' + (this.profilesById[intern.supervisor_id]?.full_name || '—')));
       const [att, kras, kpis, tasks, ideas, learns] = await Promise.all([
-        api.getMonthSummaryForIntern(intern.id), api.listKRAs(intern.id), api.listKPIs(intern.id),
+        api.getMonthSummaryForIntern(intern.id, intern.start_date), api.listKRAs(intern.id), api.listKPIs(intern.id),
         api.listTasksForIntern(intern.id), api.listIdeasForIntern(intern.id), api.listLearnings(intern.id, 50),
       ]);
       modal.appendChild(h('div', { class: 'stat-row', style: 'margin-top:12px;' }, [
-        statCard('Attendance', att.pct == null ? '—' : att.pct + '%', 'this month'),
-        statCard('Open tasks', String(tasks.filter((t) => !['done','cancelled'].includes(t.status)).length), ''),
-        statCard('Ideas', String(ideas.length), ''),
-        statCard('Learnings', String(learns.length), ''),
+        statCard('Attendance', att.pct == null ? '—' : att.pct + '%', 'this month', null, 'Working days covered / (expected - approved leave or sick)'),
+        statCard('Open tasks', String(tasks.filter((t) => !['done','cancelled'].includes(t.status)).length), '', null, 'Tasks not yet Done or Cancelled.'),
+        statCard('Ideas', String(ideas.length), '', null, 'Ideas submitted in this internship.'),
+        statCard('Learnings', String(learns.length), '', null, 'Learnings logged in this internship.'),
       ]));
       if (kras.length) {
-        modal.appendChild(h('h4', { style: 'margin-top:18px;' }, 'KRAs progress'));
+        modal.appendChild(h('h4', { style: 'margin-top:18px;' }, 'Goals progress'));
         kras.forEach((k) => modal.appendChild(h('div', { style: 'margin:8px 0;' }, [
           h('div', { style: 'display:flex; justify-content:space-between; font-size:13px;' }, [
-            h('span', {}, `KRA ${k.kra_index}. ${k.title}`),
-            h('span', { class: 'badge badge-' + (k.status || 'on_track') }, (k.status || 'on_track').replace('_', ' ')),
+            h('span', {}, `Goal ${k.kra_index}. ${k.title}`),
+            h('span', { class: 'badge badge-' + (k.status || 'on_track') }, statusDisplay(k.status || 'on_track')),
           ]),
           h('div', { class: 'progress', style: 'margin-top:4px;' }, h('div', { class: 'bar', style: { width: (k.percent_done || 0) + '%' } })),
         ])));
       }
       modal.appendChild(h('div', { class: 'modal-actions' }, [
-        h('button', { class: 'btn-accent', onclick: () => api.exportInternData ? api.exportInternData(intern.id) : alert('Export coming Phase 3b') }, 'Export data ↓'),
+        h('button', { class: 'btn-accent', onclick: () => this.exportIntern(intern) }, 'Export data ↓'),
         h('button', { class: 'btn-ghost', onclick: closeModal }, 'Close'),
       ]));
     })();
@@ -419,7 +452,7 @@ const superView = {
       tr.appendChild(h('td', { style: 'font-weight:500;' }, e.interns.name));
       tr.appendChild(h('td', {}, internVertical(e.interns)));
       tr.appendChild(h('td', {}, this.profilesById[e.interns.supervisor_id]?.full_name || '—'));
-      tr.appendChild(h('td', {}, e.hours_worked != null ? String(e.hours_worked) : '—'));
+      tr.appendChild(h('td', {}, formatHours(e.hours_worked)));
       tr.appendChild(h('td', { style: 'max-width:280px;' }, e.daily_work_summary || h('em', { style: 'color:var(--bad);' }, '(empty)')));
       tr.appendChild(h('td', {}, h('div', { class: 'approve-actions' }, [
         h('button', { class: 'btn-tiny ok', onclick: () => this.adminApprove(e.id, 'approved') }, 'Approve'),
@@ -496,12 +529,19 @@ const superView = {
   },
 };
 
-// statCard with optional variant ('gold' or 'bad')
-function statCard(label, value, sub, variant) {
+// Single source of truth for statCard. Used by intern, RM, super views.
+// label: short label (e.g. "Attendance")
+// value: the big number / text
+// sub:   small text below value (e.g. "May")
+// variant: 'gold' | 'bad' | null  — visual hint
+// tooltip: plain-English definition shown on hover (recommended for every metric)
+function statCard(label, value, sub, variant, tooltip) {
   const cls = 'stat-card' + (variant === 'gold' ? ' metric-gold' : '');
   const valStyle = variant === 'bad' ? 'color: var(--bad);' : '';
-  return h('div', { class: cls }, [
-    h('div', { class: 'stat-label' }, label),
+  const attrs = { class: cls };
+  if (tooltip) attrs.title = tooltip;
+  return h('div', attrs, [
+    h('div', { class: 'stat-label' }, label + (tooltip ? ' ⓘ' : '')),
     h('div', { class: 'stat-value', style: valStyle }, value),
     sub && h('div', { class: 'stat-sub' }, sub),
   ]);

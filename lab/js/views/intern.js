@@ -167,12 +167,12 @@ const internView = {
       info.appendChild(h('div', { class: 'checkin-status' }, "Today's attendance"));
       info.appendChild(h('div', { class: 'checkin-state' }, ['✓ Done for today ', approvalBadge(today.approval_status)]));
       info.appendChild(h('div', { class: 'checkin-meta' },
-        `In ${formatTime(today.check_in_time)} · Out ${formatTime(today.check_out_time)} · ${today.hours_worked || '?'} hrs`));
+        `In ${formatTime(today.check_in_time)} · Out ${formatTime(today.check_out_time)} · ${formatHours(today.hours_worked)}`));
       if (today.last_edited_at)
         info.appendChild(h('div', { class: 'checkin-meta', style: 'margin-top:6px; font-style:italic;' },
-          `✏️ Edited by RM · ${formatDateTime(today.last_edited_at)}`));
+          `✏️ Edited by Manager · ${formatDateTime(today.last_edited_at)}`));
       if (today.rm_remarks)
-        info.appendChild(h('div', { class: 'checkin-meta', style: 'margin-top:6px; font-style:italic;' }, `RM note: ${today.rm_remarks}`));
+        info.appendChild(h('div', { class: 'checkin-meta', style: 'margin-top:6px; font-style:italic;' }, `Manager note: ${today.rm_remarks}`));
     }
     card.appendChild(info); card.appendChild(btnCol);
   },
@@ -207,22 +207,35 @@ const internView = {
 
   async renderStats(row) {
     row.innerHTML = '';
-    const summary = await api.getMonthSummaryForIntern(this.selectedIntern.id);
+    const summary = await api.getMonthSummaryForIntern(this.selectedIntern.id, this.selectedIntern.start_date);
     const monthName = new Date().toLocaleDateString('en-IN', { month: 'long' });
     const streak = await this.streak();
     const records = await api.getMonthAttendance(this.selectedIntern.id, new Date().getFullYear(), new Date().getMonth() + 1);
     const approved = records.filter((r) => r.approval_status === 'approved').length;
-    row.appendChild(statCard('Attendance', summary.pct == null ? '—' : `${summary.pct}%`, monthName));
-    row.appendChild(statCard('Days Present', String(summary.present), monthName));
-    row.appendChild(statCard('Approved', String(approved), monthName));
-    // Streak card with milestone badge
+    row.appendChild(statCard(
+      'Attendance', summary.pct == null ? '—' : `${summary.pct}%`, monthName, null,
+      'Percentage of working days you showed up. Approved leave + sick days don\'t count against you. WFH counts as showed up.'
+    ));
+    row.appendChild(statCard(
+      'Days Present', String(summary.present), monthName, null,
+      'Days marked Present this month. Half-days and WFH are tracked separately.'
+    ));
+    row.appendChild(statCard(
+      'Approved', String(approved), monthName, null,
+      'Attendance entries your manager has approved this month.'
+    ));
     const badge = streak >= 90 ? '🏆' : streak >= 30 ? '💎' : streak >= 14 ? '⭐' : streak >= 7 ? '🔥' : '';
     const nextMilestone = streak < 7 ? 7 : streak < 14 ? 14 : streak < 30 ? 30 : streak < 90 ? 90 : null;
     const streakSub = nextMilestone ? `${nextMilestone - streak} more for next milestone` : 'legendary';
-    row.appendChild(statCard('Streak', `${badge} ${streak} day${streak === 1 ? '' : 's'}`, streakSub, streak >= 7 ? 'gold' : null));
+    row.appendChild(statCard(
+      'Streak', `${badge} ${streak} day${streak === 1 ? '' : 's'}`, streakSub, streak >= 7 ? 'gold' : null,
+      'Consecutive working days where your attendance has been approved. Pending entries don\'t count. Sundays skip.'
+    ));
   },
 
   async streak() {
+    // Streak = consecutive working days where attendance was APPROVED and status ∈ {present, half-day, wfh}.
+    // A pending or rejected entry breaks the streak. Sundays skipped (off day).
     const d = new Date();
     const records = await api.getMonthAttendance(this.selectedIntern.id, d.getFullYear(), d.getMonth() + 1);
     const byDate = {}; records.forEach((r) => { byDate[r.attendance_date] = r; });
@@ -231,7 +244,7 @@ const internView = {
       const ds = cur.toISOString().slice(0, 10);
       if (cur.getDay() === 0) { cur.setDate(cur.getDate() - 1); continue; }
       const rec = byDate[ds];
-      if (rec && rec.approval_status !== 'rejected' && ['present','half-day','wfh'].includes(rec.status)) {
+      if (rec && rec.approval_status === 'approved' && ['present','half-day','wfh'].includes(rec.status)) {
         streak++; cur.setDate(cur.getDate() - 1);
       } else break;
     }
@@ -369,7 +382,7 @@ const internView = {
         h('td', { style: 'max-width:180px;' }, c.what_learnt || '—'),
         h('td', { style: 'max-width:180px;' }, c.blockers || '—'),
         h('td', { style: 'max-width:180px;' }, c.tomorrow_plan || '—'),
-        h('td', {}, c.hours_spent != null ? String(c.hours_spent) : '—'),
+        h('td', {}, formatHours(c.hours_spent)),
         h('td', {}, c.linked_doc
           ? h('a', { href: c.linked_doc, target: '_blank', style: 'color:var(--accent); font-weight:500;' }, '📎 open ↗')
           : h('span', { class: 'help-text' }, '—')),
@@ -492,18 +505,18 @@ const internView = {
     openModal(card);
   },
 
-  // ============== GOALS (KRA + KPI) ==============
+  // ============== GOALS ==============
   async renderGoals(root) {
     const monthName = new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
     root.appendChild(h('div', { class: 'greeting' }, 'My Goals'));
-    root.appendChild(h('div', { class: 'greeting-sub' }, `Monthly KRAs and KPIs for ${monthName}.`));
+    root.appendChild(h('div', { class: 'greeting-sub' }, `Your monthly goals and what you'll measure — ${monthName}.`));
 
     const [kras, kpis] = await Promise.all([api.listKRAs(this.selectedIntern.id), api.listKPIs(this.selectedIntern.id)]);
 
     const kraCard = h('div', { class: 'card' });
-    kraCard.appendChild(h('h3', { class: 'section-h' }, 'Key Result Areas (KRAs)'));
-    kraCard.appendChild(h('p', { class: 'section-sub' }, "High-level goals for the month. RM sets these. Update progress as you go."));
-    if (!kras.length) kraCard.appendChild(h('div', { class: 'banner info' }, "Your RM hasn't set KRAs for this month yet. Once they do, you can update progress here."));
+    kraCard.appendChild(h('h3', { class: 'section-h' }, '🎯 Monthly goals'));
+    kraCard.appendChild(h('p', { class: 'section-sub' }, "Your 5 big areas this month. Your manager sets these. Update your progress as you go."));
+    if (!kras.length) kraCard.appendChild(h('div', { class: 'banner info' }, "Your manager hasn't set goals for this month yet. They will soon — check back."));
     else {
       const grid = h('div', { class: 'goal-grid' });
       kras.forEach((k) => grid.appendChild(this.buildKRAcard(k)));
@@ -512,9 +525,9 @@ const internView = {
     root.appendChild(kraCard);
 
     const kpiCard = h('div', { class: 'card' });
-    kpiCard.appendChild(h('h3', { class: 'section-h' }, 'KPIs'));
-    kpiCard.appendChild(h('p', { class: 'section-sub' }, "Measurable targets. Fill your actuals weekly."));
-    if (!kpis.length) kpiCard.appendChild(h('div', { class: 'banner info' }, 'KPIs not yet set for this month. Ask your RM.'));
+    kpiCard.appendChild(h('h3', { class: 'section-h' }, '📏 What you\'ll measure'));
+    kpiCard.appendChild(h('p', { class: 'section-sub' }, "Specific numbers to hit. Fill in your actual every week."));
+    if (!kpis.length) kpiCard.appendChild(h('div', { class: 'banner info' }, "Measures aren't set for this month yet. Ask your manager."));
     else kpis.forEach((k) => kpiCard.appendChild(this.buildKPIrow(k)));
     root.appendChild(kpiCard);
 
@@ -531,8 +544,8 @@ const internView = {
   buildKRAcard(k) {
     const card = h('div', { class: 'goal-card ' + (k.status || 'on_track') });
     card.appendChild(h('div', { class: 'goal-title' }, [
-      h('span', {}, `KRA ${k.kra_index}. ${k.title}`),
-      h('span', { class: 'badge badge-' + (k.status || 'on_track') }, (k.status || 'on_track').replace('_', ' ')),
+      h('span', {}, `Goal ${k.kra_index}. ${k.title}`),
+      h('span', { class: 'badge badge-' + (k.status || 'on_track') }, statusDisplay(k.status || 'on_track')),
     ]));
     if (k.description) card.appendChild(h('div', { class: 'goal-desc' }, k.description));
     if (k.target_outcome) card.appendChild(h('div', { class: 'goal-target' }, '🎯 ' + k.target_outcome));
@@ -541,18 +554,18 @@ const internView = {
       h('span', { class: 'pct' }, (k.percent_done || 0) + '%'),
     ]));
     if (k.progress_notes) card.appendChild(h('div', { class: 'help-text', style: 'margin-top:8px;' }, k.progress_notes));
-    if (k.rm_comments) card.appendChild(h('div', { class: 'help-text', style: 'margin-top:6px; font-style:italic;' }, 'RM: ' + k.rm_comments));
+    if (k.rm_comments) card.appendChild(h('div', { class: 'help-text', style: 'margin-top:6px; font-style:italic;' }, 'Manager: ' + k.rm_comments));
     card.appendChild(h('button', { class: 'btn-tiny neutral', style: 'margin-top:10px;', onclick: () => this.updateKRAModal(k) }, 'Update progress'));
     return card;
   },
 
   updateKRAModal(k) {
     const card = h('div');
-    card.appendChild(h('h3', {}, `Update KRA ${k.kra_index} progress`));
+    card.appendChild(h('h3', {}, `Update goal ${k.kra_index} progress`));
     card.appendChild(h('p', { class: 'help-text' }, k.title));
     const pct = h('input', { type: 'number', name: 'percent_done', min: 0, max: 100, step: 5, value: String(k.percent_done || 0) });
     const status = h('select', { name: 'status' }, ['on_track','at_risk','behind','done','dropped'].map((s) =>
-      h('option', { value: s, selected: k.status === s }, s.replace('_', ' '))));
+      h('option', { value: s, selected: k.status === s }, statusDisplay(s))));
     const notes = h('textarea', { name: 'progress_notes', placeholder: 'What progress this week / what changed?' });
     if (k.progress_notes) notes.value = k.progress_notes;
     card.appendChild(h('div', { class: 'form-row' }, [
@@ -579,8 +592,8 @@ const internView = {
   buildKPIrow(k) {
     const row = h('div', { class: 'kpi-row' });
     row.appendChild(h('div', { class: 'kpi-label' }, [
-      `KPI ${k.kpi_index}. ${k.label}`,
-      h('span', { class: 'sub' }, k.kra_index ? `Rolls up to KRA ${k.kra_index}` : ''),
+      `Measure ${k.kpi_index}. ${k.label}`,
+      h('span', { class: 'sub' }, k.kra_index ? `Rolls up to Goal ${k.kra_index}` : ''),
     ]));
     row.appendChild(h('div', { class: 'kpi-target' }, [h('strong', {}, 'Target: '), k.target || '—']));
     const input = h('input', { type: 'text', value: k.actual || '', placeholder: 'Your actual…' });
@@ -599,11 +612,11 @@ const internView = {
 
   renderProgressChart(canvas, kras) {
     if (!window.Chart) return;
-    const labels = kras.map((k) => `KRA ${k.kra_index}`);
+    const labels = kras.map((k) => `Goal ${k.kra_index}`);
     const data = kras.map((k) => k.percent_done || 0);
     this.charts.progress = new Chart(canvas, {
       type: 'bar',
-      data: { labels, datasets: [{ label: '% complete', data, backgroundColor: data.map((v) => v >= 80 ? '#16a34a' : v >= 50 ? '#2563eb' : '#d97706'), borderRadius: 6 }] },
+      data: { labels, datasets: [{ label: '% complete', data, backgroundColor: data.map((v) => v >= 80 ? '#16a34a' : v >= 50 ? '#1B3F8C' : '#C99959'), borderRadius: 6 }] },
       options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100, ticks: { callback: (v) => v + '%' } } }, plugins: { legend: { display: false } } },
     });
   },
@@ -787,13 +800,7 @@ function approvalBadge(status) {
   const [text, cls] = map[status] || ['—', 'badge-pending'];
   return h('span', { class: 'badge ' + cls, style: 'margin-left:8px; font-size:11px;' }, text);
 }
-function statCard(label, value, sub) {
-  return h('div', { class: 'stat-card' }, [
-    h('div', { class: 'stat-label' }, label),
-    h('div', { class: 'stat-value' }, value),
-    sub && h('div', { class: 'stat-sub' }, sub),
-  ]);
-}
+// Note: super.js redefines statCard with variant + tooltip support — that one wins (loads after this).
 function legendDot(color, label) {
   return h('span', {}, [h('span', { class: 'dot', style: { background: color } }), label]);
 }

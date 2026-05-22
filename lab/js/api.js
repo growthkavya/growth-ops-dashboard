@@ -151,14 +151,27 @@ const api = {
     if (error) throw error;
     return data || [];
   },
-  async getMonthSummaryForIntern(internId) {
+  async getMonthSummaryForIntern(internId, internStartDate = null) {
+    // Attendance % = (present + half×0.5 + wfh) / (expected working days - approved leave - sick)
+    //   - WFH counts as covered (intern was working)
+    //   - Leave/sick are EXCUSED — removed from denominator entirely
+    //   - Absent counts in denominator as a miss
+    //   - "Expected working days" = Mon-Sat between effective start and today (or month end if past)
     const d = new Date();
     const records = await this.getMonthAttendance(internId, d.getFullYear(), d.getMonth() + 1);
     const counts = { present: 0, 'half-day': 0, absent: 0, leave: 0, wfh: 0, sick: 0 };
     records.forEach((r) => { counts[r.status] = (counts[r.status] || 0) + 1; });
-    const totalCounted = counts.present + counts.absent + counts['half-day'];
-    const pct = totalCounted === 0 ? null : Math.round(((counts.present + counts['half-day'] * 0.5) / totalCounted) * 100);
-    return { ...counts, totalDays: records.length, pct };
+    // Effective window: max(month-start, intern's start date) to min(today, month-end)
+    const monthStart = new Date(d.getFullYear(), d.getMonth(), 1);
+    const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    const windowStart = internStartDate && new Date(internStartDate) > monthStart ? new Date(internStartDate) : monthStart;
+    const windowEnd = d < monthEnd ? d : monthEnd;
+    const expectedDays = workingDaysBetween(windowStart, windowEnd);
+    const covered = counts.present + counts['half-day'] * 0.5 + counts.wfh;
+    const excused = counts.leave + counts.sick;
+    const denominator = Math.max(0, expectedDays - excused);
+    const pct = denominator === 0 ? null : Math.round((covered / denominator) * 100);
+    return { ...counts, expectedDays, covered, excused, totalDays: records.length, pct };
   },
 
   // ===================================================================

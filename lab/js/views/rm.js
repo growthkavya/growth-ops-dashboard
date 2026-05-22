@@ -45,10 +45,14 @@ const rmView = {
 
     // Stat row
     const row = h('div', { class: 'stat-row' }, [
-      statCard('Pending approvals', String(pending.length), 'click Approvals tab'),
-      statCard('Open tasks', String(openTasks.length), 'across team'),
-      statCard('Checked in today', String(todayAttn.length) + '/' + this.team.length, ''),
-      statCard('At-risk', String(flaggedCount), flaggedCount ? '⚠️ needs attention' : 'all clear', flaggedCount ? 'bad' : null),
+      statCard('Pending approvals', String(pending.length), 'click Approvals tab', null,
+        'Attendance entries from your team waiting for you to approve or reject.'),
+      statCard('Open tasks', String(openTasks.length), 'across team', null,
+        'Tasks assigned to your team that are not yet Done or Cancelled.'),
+      statCard('Attended today', String(todayAttn.length) + '/' + this.team.length, '', null,
+        'How many of your interns have checked in today.'),
+      statCard('Slipping', String(flaggedCount), flaggedCount ? '⚠️ needs attention' : 'all clear', flaggedCount ? 'bad' : null,
+        'Auto-flagged interns: no check-in 3+ days · attendance <80% · goals avg <50% past mid-month · no ideas in 14 days · not in today. Week-1 interns excluded.'),
     ]);
     root.appendChild(row);
 
@@ -89,8 +93,8 @@ const rmView = {
 
   renderAtRiskPanel(flags) {
     const card = h('div', { class: 'card' });
-    card.appendChild(h('h3', { class: 'section-h' }, '⚠️ At-risk interns'));
-    card.appendChild(h('p', { class: 'section-sub' }, 'Auto-flagged from signals. Act on these before they snowball.'));
+    card.appendChild(h('h3', { class: 'section-h' }, '⚠️ Slipping'));
+    card.appendChild(h('p', { class: 'section-sub' }, 'Auto-flagged from engagement signals. Act before they snowball. Week-1 interns excluded.'));
     Object.entries(flags).forEach(([internId, internFlags]) => {
       const intern = this.team.find((i) => i.id === internId);
       if (!intern) return;
@@ -124,23 +128,35 @@ const rmView = {
     const todayMap = {}; todayEntries.forEach((e) => { todayMap[e.intern_id] = e; });
     const flagsByIntern = {};
     for (const intern of this.team) {
+      // Week-1 suppression: skip all flags for interns <7 days into their internship
+      const daysSinceStart = daysBetween(today, new Date(intern.start_date));
+      if (daysSinceStart < 7) continue;
+
       const flags = [];
       const monthly = monthEntries.filter((e) => e.intern_id === intern.id);
       const present = monthly.filter((e) => e.status === 'present').length;
       const half = monthly.filter((e) => e.status === 'half-day').length;
-      const absent = monthly.filter((e) => e.status === 'absent').length;
-      const totalCounted = present + absent + half;
-      const attnPct = totalCounted ? Math.round(((present + half * 0.5) / totalCounted) * 100) : null;
+      const wfh = monthly.filter((e) => e.status === 'wfh').length;
+      const leave = monthly.filter((e) => e.status === 'leave').length;
+      const sick = monthly.filter((e) => e.status === 'sick').length;
+      // Same formula as api.getMonthSummaryForIntern (single source of truth)
+      const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      const ws = intern.start_date && new Date(intern.start_date) > monthStart ? new Date(intern.start_date) : monthStart;
+      const expectedDays = workingDaysBetween(ws, today);
+      const covered = present + half * 0.5 + wfh;
+      const denom = Math.max(0, expectedDays - leave - sick);
+      const attnPct = denom === 0 ? null : Math.round((covered / denom) * 100);
+
       const myCheckins = checkinsRecent.filter((c) => c.intern_id === intern.id);
       const lastCheckinDate = myCheckins.length ? myCheckins.sort((a, b) => b.checkin_date.localeCompare(a.checkin_date))[0].checkin_date : null;
-      const daysSince = lastCheckinDate ? daysBetween(today, lastCheckinDate) : 999;
-      if (daysSince >= 3) flags.push({ kind: 'no_checkin', label: `No check-in for ${daysSince}d` });
+      const daysSinceCheckin = lastCheckinDate ? daysBetween(today, lastCheckinDate) : 999;
+      if (daysSinceCheckin >= 3) flags.push({ kind: 'no_checkin', label: `No check-in for ${daysSinceCheckin}d` });
       if (attnPct != null && attnPct < 80) flags.push({ kind: 'low_attn', label: `Attendance ${attnPct}%` });
-      const myKRAs = kras.filter((k) => k.intern_id === intern.id);
-      const kraAvg = myKRAs.length ? Math.round(myKRAs.reduce((s, k) => s + (k.percent_done || 0), 0) / myKRAs.length) : null;
-      if (kraAvg != null && kraAvg < 50 && today.getDate() > 15) flags.push({ kind: 'kra_behind', label: `KRA avg ${kraAvg}%` });
+      const myGoals = kras.filter((k) => k.intern_id === intern.id);
+      const kraAvg = myGoals.length ? Math.round(myGoals.reduce((s, k) => s + (k.percent_done || 0), 0) / myGoals.length) : null;
+      if (kraAvg != null && kraAvg < 50 && today.getDate() > 15) flags.push({ kind: 'kra_behind', label: `Goal avg ${kraAvg}%` });
       const myIdeas = ideas.filter((i) => i.intern_id === intern.id).length;
-      if (myIdeas === 0 && daysBetween(today, intern.start_date) > 14) flags.push({ kind: 'no_ideas', label: 'No ideas in 14d' });
+      if (myIdeas === 0 && daysSinceStart > 14) flags.push({ kind: 'no_ideas', label: 'No ideas in 14d' });
       if (today.getDay() !== 0 && !todayMap[intern.id]) flags.push({ kind: 'today_missing', label: 'Not checked in today' });
       if (flags.length) flagsByIntern[intern.id] = flags;
     }
@@ -193,12 +209,12 @@ const rmView = {
         h('button', { class: 'btn-accent', onclick: () => { closeModal(); this.openOneOnOne(intern); } }, '+ Log 1:1'),
         h('button', { class: 'btn-accent', onclick: () => { closeModal(); this.openPerfReview(intern); } }, '+ Performance review'),
       ]));
-      // KRAs progress
+      // Goals progress
       if (kras.length) {
-        modal.appendChild(h('h4', { style: 'margin-top:14px;' }, 'KRAs progress'));
+        modal.appendChild(h('h4', { style: 'margin-top:14px;' }, 'Goals progress'));
         kras.forEach((k) => modal.appendChild(h('div', { style: 'margin:8px 0;' }, [
           h('div', { style: 'display:flex; justify-content:space-between; font-size:13px;' }, [
-            h('span', {}, `KRA ${k.kra_index}. ${k.title}`),
+            h('span', {}, `Goal ${k.kra_index}. ${k.title}`),
             h('span', { class: 'badge badge-' + (k.status || 'on_track') }, (k.status || 'on_track').replace('_', ' ')),
           ]),
           h('div', { class: 'progress', style: 'margin-top:4px;' },
@@ -354,7 +370,7 @@ const rmView = {
         tr.appendChild(h('td', { style: 'font-weight:500;' }, e.interns.name));
         tr.appendChild(h('td', {}, formatTime(e.check_in_time)));
         tr.appendChild(h('td', {}, formatTime(e.check_out_time)));
-        tr.appendChild(h('td', {}, e.hours_worked != null ? String(e.hours_worked) : '—'));
+        tr.appendChild(h('td', {}, formatHours(e.hours_worked)));
         tr.appendChild(h('td', { style: 'max-width:340px;' }, e.daily_work_summary || h('em', { style: 'color:var(--bad);' }, '(empty)')));
         tr.appendChild(h('td', {}, h('a', { href: '#', onclick: (ev) => { ev.preventDefault(); this.showAuditModal(e.id); } }, 'view')));
         tr.appendChild(h('td', {}, h('div', { class: 'approve-actions' }, [
@@ -392,7 +408,7 @@ const rmView = {
         tr.appendChild(h('td', {}, h('span', { class: 'badge badge-' + (e.status || 'present') }, e.status)));
         tr.appendChild(h('td', {}, formatTime(e.check_in_time)));
         tr.appendChild(h('td', {}, formatTime(e.check_out_time)));
-        tr.appendChild(h('td', {}, e.hours_worked != null ? String(e.hours_worked) : '—'));
+        tr.appendChild(h('td', {}, formatHours(e.hours_worked)));
         tr.appendChild(h('td', {}, h('span', { class: 'badge badge-' + e.approval_status }, e.approval_status)));
         tr.appendChild(h('td', {}, h('button', { class: 'btn-tiny neutral', onclick: () => this.editAttendanceModal(e) }, 'Edit')));
         tb.appendChild(tr);
@@ -857,7 +873,7 @@ const rmView = {
       tr.appendChild(h('td', { style: 'max-width:180px;' }, c.what_learnt || '—'));
       tr.appendChild(h('td', { style: 'max-width:180px;' }, c.blockers || '—'));
       tr.appendChild(h('td', { style: 'max-width:180px;' }, c.tomorrow_plan || '—'));
-      tr.appendChild(h('td', {}, c.hours_spent != null ? String(c.hours_spent) : '—'));
+      tr.appendChild(h('td', {}, formatHours(c.hours_spent)));
       tr.appendChild(h('td', {}, c.linked_doc
         ? h('a', { href: c.linked_doc, target: '_blank', style: 'color:var(--accent); font-weight:500;' }, '📎 open ↗')
         : h('span', { class: 'help-text' }, '—')));
@@ -883,10 +899,10 @@ const rmView = {
     app.renderView();
   },
 
-  // ============== GOALS (KRA + KPI setup) ==============
+  // ============== GOALS (Goal + Measure setup) ==============
   async renderGoals(root) {
-    root.appendChild(h('div', { class: 'greeting' }, 'Goals — KRAs & KPIs'));
-    root.appendChild(h('div', { class: 'greeting-sub' }, 'Set monthly KRAs (high-level) and KPIs (measurable) per intern. Pre-fill from vertical template, then customize.'));
+    root.appendChild(h('div', { class: 'greeting' }, 'Goals & Measures'));
+    root.appendChild(h('div', { class: 'greeting-sub' }, 'Set monthly goals (the 5 big areas) and measures (the numbers) per intern. Pre-filled from your team\'s template — customize before saving.'));
 
     for (const intern of this.team) {
       const sect = h('div', { class: 'card' });
@@ -895,8 +911,8 @@ const rmView = {
       const [kras, kpis] = await Promise.all([api.listKRAs(intern.id), api.listKPIs(intern.id)]);
 
       const setupActions = h('div', { class: 'card-actions' }, [
-        h('button', { class: 'btn-accent', onclick: () => this.editKRAsModal(intern, kras) }, kras.length ? 'Edit KRAs' : 'Set up KRAs (5)'),
-        h('button', { class: 'btn-accent', onclick: () => this.editKPIsModal(intern, kpis) }, kpis.length ? 'Edit KPIs' : 'Set up KPIs (5)'),
+        h('button', { class: 'btn-accent', onclick: () => this.editGoalsModal(intern, kras) }, kras.length ? 'Edit Goals' : 'Set up Goals (5)'),
+        h('button', { class: 'btn-accent', onclick: () => this.editMeasuresModal(intern, kpis) }, kpis.length ? 'Edit Measures' : 'Set up Measures (5)'),
       ]);
       sect.appendChild(setupActions);
 
@@ -904,18 +920,18 @@ const rmView = {
       if (kras.length || kpis.length) {
         const tbl = h('table', { style: 'margin-top:10px;' });
         tbl.appendChild(h('thead', {}, h('tr', {}, [
-          h('th', {}, '#'), h('th', {}, 'Type'), h('th', {}, 'Title / KPI'),
+          h('th', {}, '#'), h('th', {}, 'Type'), h('th', {}, 'Title / Measure'),
           h('th', {}, 'Target / Status'), h('th', {}, 'Actual / Progress'),
         ])));
         const tb = h('tbody');
         kras.forEach((k) => tb.appendChild(h('tr', {}, [
-          h('td', {}, String(k.kra_index)), h('td', {}, 'KRA'),
+          h('td', {}, String(k.kra_index)), h('td', {}, 'Goal'),
           h('td', {}, [h('div', { style: 'font-weight:500;' }, k.title), h('div', { class: 'help-text' }, k.target_outcome || '')]),
           h('td', {}, h('span', { class: 'badge badge-' + (k.status || 'on_track') }, (k.status || 'on_track').replace('_', ' '))),
           h('td', {}, (k.percent_done || 0) + '%'),
         ])));
         kpis.forEach((k) => tb.appendChild(h('tr', {}, [
-          h('td', {}, String(k.kpi_index)), h('td', {}, 'KPI'),
+          h('td', {}, String(k.kpi_index)), h('td', {}, 'Measure'),
           h('td', {}, k.label),
           h('td', {}, k.target || '—'),
           h('td', {}, k.actual || '—'),
@@ -926,22 +942,22 @@ const rmView = {
     }
   },
 
-  editKRAsModal(intern, existing) {
+  editGoalsModal(intern, existing) {
     const card = h('div');
-    card.appendChild(h('h3', {}, `Set 5 KRAs · ${intern.name}`));
+    card.appendChild(h('h3', {}, `Set 5 Goals · ${intern.name}`));
     card.appendChild(h('p', { class: 'help-text' }, 'High-level monthly goals. Customize the vertical template below.'));
     const vertical = internVertical(intern);
-    const template = KRA_TEMPLATES[vertical] || [];
+    const template = Goal_TEMPLATES[vertical] || [];
     const month = monthStartStr();
     const rows = [];
     for (let i = 1; i <= 5; i++) {
       const ex = existing.find((k) => k.kra_index === i);
       const tpl = template[i - 1] || { title: '', target_outcome: '' };
-      const titleI = h('input', { type: 'text', value: (ex?.title) || tpl.title || '', placeholder: 'KRA title' });
+      const titleI = h('input', { type: 'text', value: (ex?.title) || tpl.title || '', placeholder: 'Goal title' });
       const targetI = h('textarea', { value: (ex?.target_outcome) || tpl.target_outcome || '', placeholder: 'Target outcome', style: 'min-height:50px;' });
       rows.push({ idx: i, titleI, targetI });
       card.appendChild(h('div', { style: 'border-top:1px solid var(--border); padding-top:10px; margin-top:10px;' }, [
-        h('div', { style: 'font-weight:600; margin-bottom:6px;' }, `KRA ${i}`),
+        h('div', { style: 'font-weight:600; margin-bottom:6px;' }, `Goal ${i}`),
         h('label', {}, [h('span', {}, 'Title'), titleI]),
         h('label', {}, [h('span', {}, 'Target outcome'), targetI]),
       ]));
@@ -952,7 +968,7 @@ const rmView = {
         try {
           for (const r of rows) {
             if (!r.titleI.value.trim()) continue;
-            await api.upsertKRA({
+            await api.upsertGoal({
               intern_id: intern.id, period_month: month, kra_index: r.idx,
               title: r.titleI.value, target_outcome: r.targetI.value || null,
               status: 'on_track',
@@ -965,27 +981,27 @@ const rmView = {
     openModal(card, { wide: true });
   },
 
-  editKPIsModal(intern, existing) {
+  editMeasuresModal(intern, existing) {
     const card = h('div');
-    card.appendChild(h('h3', {}, `Set 5 KPIs · ${intern.name}`));
+    card.appendChild(h('h3', {}, `Set 5 Measures · ${intern.name}`));
     card.appendChild(h('p', { class: 'help-text' }, 'Measurable indicators. Defaults from vertical template — edit as needed.'));
     const vertical = internVertical(intern);
-    const template = KPI_TEMPLATES[vertical] || [];
+    const template = Measure_TEMPLATES[vertical] || [];
     const month = monthStartStr();
     const rows = [];
     for (let i = 1; i <= 5; i++) {
       const ex = existing.find((k) => k.kpi_index === i);
       const tpl = template[i - 1] || { label: '', target: '' };
-      const labelI = h('input', { type: 'text', value: (ex?.label) || tpl.label || '', placeholder: 'KPI label' });
+      const labelI = h('input', { type: 'text', value: (ex?.label) || tpl.label || '', placeholder: 'Measure label' });
       const targetI = h('input', { type: 'text', value: (ex?.target) || tpl.target || '', placeholder: 'Target' });
-      const kraSel = h('select', {}, [h('option', { value: '' }, 'Roll up to KRA…'), ...[1,2,3,4,5].map((n) => h('option', { value: String(n), selected: ex?.kra_index === n }, `KRA ${n}`))]);
+      const kraSel = h('select', {}, [h('option', { value: '' }, 'Roll up to Goal…'), ...[1,2,3,4,5].map((n) => h('option', { value: String(n), selected: ex?.kra_index === n }, `Goal ${n}`))]);
       rows.push({ idx: i, labelI, targetI, kraSel });
       card.appendChild(h('div', { style: 'border-top:1px solid var(--border); padding-top:10px; margin-top:10px;' }, [
-        h('div', { style: 'font-weight:600; margin-bottom:6px;' }, `KPI ${i}`),
+        h('div', { style: 'font-weight:600; margin-bottom:6px;' }, `Measure ${i}`),
         h('label', {}, [h('span', {}, 'Label'), labelI]),
         h('div', { class: 'form-row' }, [
           h('label', {}, [h('span', {}, 'Target'), targetI]),
-          h('label', {}, [h('span', {}, 'Linked KRA (optional)'), kraSel]),
+          h('label', {}, [h('span', {}, 'Linked Goal (optional)'), kraSel]),
         ]),
       ]));
     }
@@ -995,7 +1011,7 @@ const rmView = {
         try {
           for (const r of rows) {
             if (!r.labelI.value.trim()) continue;
-            await api.upsertKPI({
+            await api.upsertMeasure({
               intern_id: intern.id, period_month: month, kpi_index: r.idx,
               label: r.labelI.value, target: r.targetI.value || null,
               kra_index: r.kraSel.value ? Number(r.kraSel.value) : null,
