@@ -277,8 +277,7 @@ const internView = {
   // ============== ATTENDANCE ==============
   async renderAttendance(root) {
     root.appendChild(h('div', { class: 'greeting' }, 'My Attendance'));
-    root.appendChild(h('div', { class: 'greeting-sub' }, 'Calendar of your attendance this month + audit trail.'));
-    const ci = h('div', { class: 'checkin-card' }); root.appendChild(ci); await this.renderCheckinCard(ci);
+    root.appendChild(h('div', { class: 'greeting-sub' }, 'Calendar view + audit trail. Check-in lives on the Home tab.'));
     const cal = h('div', { class: 'card' }); root.appendChild(cal); await this.renderCalendar(cal);
     const aud = h('div', { class: 'card' }); root.appendChild(aud); await this.renderAuditList(aud);
   },
@@ -361,7 +360,7 @@ const internView = {
     if (!list.length) hist.appendChild(h('div', { class: 'empty-state' }, "No entries yet."));
     else {
       const table = h('table'); table.appendChild(h('thead', {}, h('tr', {}, [
-        h('th', {}, 'Date'), h('th', {}, 'What done'), h('th', {}, 'Learnt'), h('th', {}, 'Blockers'), h('th', {}, 'Tomorrow'), h('th', {}, 'Hrs'), h('th', {}, 'Ack'),
+        h('th', {}, 'Date'), h('th', {}, 'What done'), h('th', {}, 'Learnt'), h('th', {}, 'Blockers'), h('th', {}, 'Tomorrow'), h('th', {}, 'Hrs'), h('th', {}, 'File'), h('th', {}, 'Ack'),
       ])));
       const tb = h('tbody');
       list.forEach((c) => tb.appendChild(h('tr', {}, [
@@ -371,6 +370,9 @@ const internView = {
         h('td', { style: 'max-width:180px;' }, c.blockers || '—'),
         h('td', { style: 'max-width:180px;' }, c.tomorrow_plan || '—'),
         h('td', {}, c.hours_spent != null ? String(c.hours_spent) : '—'),
+        h('td', {}, c.linked_doc
+          ? h('a', { href: c.linked_doc, target: '_blank', style: 'color:var(--accent); font-weight:500;' }, '📎 open ↗')
+          : h('span', { class: 'help-text' }, '—')),
         h('td', {}, c.rm_acknowledged ? h('span', { class: 'badge badge-approved' }, '✓ Ack') : h('span', { class: 'badge badge-pending' }, '—')),
       ])));
       table.appendChild(tb); hist.appendChild(table);

@@ -774,7 +774,7 @@ const rmView = {
     table.appendChild(h('thead', {}, h('tr', {}, [
       h('th', {}, 'Date'), h('th', {}, 'Intern'), h('th', {}, 'What done'),
       h('th', {}, 'Learnt'), h('th', {}, 'Blockers'), h('th', {}, 'Tomorrow'),
-      h('th', {}, 'Hrs'), h('th', {}, 'Ack'),
+      h('th', {}, 'Hrs'), h('th', {}, 'File / link'), h('th', {}, 'Ack'),
     ])));
     const tb = h('tbody');
     checkins.forEach((c) => {
@@ -786,6 +786,9 @@ const rmView = {
       tr.appendChild(h('td', { style: 'max-width:180px;' }, c.blockers || '—'));
       tr.appendChild(h('td', { style: 'max-width:180px;' }, c.tomorrow_plan || '—'));
       tr.appendChild(h('td', {}, c.hours_spent != null ? String(c.hours_spent) : '—'));
+      tr.appendChild(h('td', {}, c.linked_doc
+        ? h('a', { href: c.linked_doc, target: '_blank', style: 'color:var(--accent); font-weight:500;' }, '📎 open ↗')
+        : h('span', { class: 'help-text' }, '—')));
       tr.appendChild(h('td', {}, c.rm_acknowledged ?
         h('span', { class: 'badge badge-approved' }, '✓ Ack') :
         h('button', { class: 'btn-tiny ok', onclick: async () => {
