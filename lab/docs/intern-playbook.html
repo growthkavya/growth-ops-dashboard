@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Growth Lab Intern Playbook — Akash + Palak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --catalina: #09256B;
+    --aztec: #C99959;
+    --text: #2D2D2D;
+    --text-mute: #5a6477;
+    --surface: #fff;
+    --surface-2: #f1f3f7;
+    --border: #e4e7ee;
+    --good: #16a34a;
+    --bad: #C53030;
+    --good-soft: #dcfce7;
+    --bad-soft: #fee2e2;
+    --gold-soft: #fef3e2;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #fafbfc;
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; }
+  header.top { background: var(--catalina); color: #fff; padding: 32px; border-radius: 16px; margin-bottom: 32px; }
+  header.top .logo { display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: rgba(255,255,255,0.08); border-radius: 12px; margin-bottom: 14px; }
+  header.top .logo span { color: var(--aztec); font-weight: 700; font-size: 16px; letter-spacing: 1px; }
+  header.top h1 { font-size: 28px; margin: 0 0 4px; font-weight: 700; line-height: 1.2; }
+  header.top .sub { color: rgba(255,255,255,0.7); font-size: 14px; }
+  h2 { color: var(--catalina); font-size: 22px; margin: 40px 0 12px; }
+  h3 { color: var(--catalina); font-size: 17px; margin: 28px 0 8px; }
+  h4 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-mute); margin: 18px 0 6px; font-weight: 600; }
+  p { margin: 8px 0 14px; }
+  ul, ol { margin: 8px 0 14px; padding-left: 22px; }
+  li { margin: 4px 0; }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 36px 0; }
+  .callout { padding: 14px 16px; border-radius: 10px; margin: 16px 0; font-size: 14px; }
+  .callout.tip { background: var(--gold-soft); border-left: 4px solid var(--aztec); }
+  .callout.good { background: var(--good-soft); border-left: 4px solid var(--good); }
+  .callout.bad { background: var(--bad-soft); border-left: 4px solid var(--bad); }
+  .callout.info { background: #e0e7ff; border-left: 4px solid var(--catalina); }
+  .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin: 18px 0; box-shadow: 0 1px 3px rgba(9,37,107,0.04); }
+  .task-card.akash { border-left: 4px solid var(--catalina); }
+  .task-card.palak { border-left: 4px solid var(--aztec); }
+  .label { font-weight: 600; color: var(--catalina); }
+  .small { font-size: 13px; color: var(--text-mute); }
+  blockquote { background: var(--surface-2); padding: 12px 16px; border-left: 3px solid var(--catalina); border-radius: 6px; font-style: italic; margin: 12px 0; color: var(--text); }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { background: var(--surface-2); font-weight: 600; }
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 28px; }
+  .toc h3 { margin-top: 0; color: var(--catalina); }
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { padding: 2px 0; }
+  .toc a { color: var(--catalina); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .pill { display: inline-block; padding: 2px 8px; background: var(--surface-2); color: var(--text-mute); border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
+  .pill.akash { background: #e0e7ff; color: var(--catalina); }
+  .pill.palak { background: var(--gold-soft); color: #92400e; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="logo"><span>SSEI</span></div>
+  <h1>🎒 Growth Lab Intern Playbook</h1>
+  <div class="sub">Akash + Palak · Month 1 · Cohort 1, May 2026</div>
+</header>
+
+<div class="callout tip">
+  <strong>Read this once. Keep it bookmarked. Come back when stuck.</strong><br>
+  This is your job, explained in plain words. If something here doesn't make sense — that's normal. Drop a message in #growth-ops. Don't sit confused.
+</div>
+
+<div class="toc">
+  <h3>📍 Quick navigation</h3>
+  <ul>
+    <li><a href="#how-tasks-work">How your tasks work</a></li>
+    <li><a href="#akash">🟦 AKASH — 4 tasks this month</a></li>
+    <li><a href="#palak">🟪 PALAK — 5 tasks this month</a></li>
+    <li><a href="#how-to-ask">How to ask for help</a></li>
+    <li><a href="#daily-checkin">How to write a daily check-in</a></li>
+    <li><a href="#expectations">What we expect from you</a></li>
+  </ul>
+</div>
+
+<h2 id="how-tasks-work">How your tasks work</h2>
+<p>Every task in your dashboard has the same shape — each one tells you:</p>
+<ul>
+  <li><span class="label">What this means</span> — in plain words</li>
+  <li><span class="label">Why we do it</span> — so you know why this matters</li>
+  <li><span class="label">How to do it</span> — step by step</li>
+  <li><span class="label">What "done" looks like</span> — so you know when to stop</li>
+  <li><span class="label">Common mistakes</span> — what NOT to do</li>
+</ul>
+
+<div class="callout info">
+  <strong>If you're confused, you're not stupid.</strong> The work is genuinely new. Ask Kavya in #growth-ops within 2 minutes of being stuck. Don't wait 2 hours.
+</div>
+
+<hr>
+
+<h2 id="akash">🟦 AKASH — your 4 active tasks for May <span class="pill akash">L2</span></h2>
+
+<!-- ========== AKASH TASK 1 ========== -->
+<div class="task-card akash">
+  <h3>Task 1: Research 10 finance creators</h3>
+  <div class="small">Week 1 and Week 3</div>
+
+  <h4>What this means</h4>
+  <p>Find people online who teach finance, talk about CFA/CA exams, or do stock-market content. Write down who they are.</p>
+
+  <h4>Why we do it</h4>
+  <p>We want these people to tell their audience about SSEI. Before we can reach out, we need to know which ones are worth reaching out to.</p>
+
+  <h4>How to do it</h4>
+  <ol>
+    <li>Open YouTube, Instagram, and LinkedIn.</li>
+    <li>Search things like: "CFA prep India", "stock market for beginners", "finance career India", "FRM exam prep", "ICAI tips", "investing tutorial".</li>
+    <li>For each creator you find, ask yourself: <em>Would their audience be interested in SSEI's courses?</em> If yes, log them.</li>
+    <li>For each one, fill in these columns:
+      <ul>
+        <li>Name + handle (like @financewithprashant)</li>
+        <li>Platform (YouTube / IG / LinkedIn)</li>
+        <li>Follower count</li>
+        <li>Their 2 best posts (most views and likes)</li>
+        <li>Who their audience seems to be (college kids? working pros? CFA aspirants?)</li>
+        <li>Can we contact them? (email in bio? open DMs?)</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h4>What "done" looks like</h4>
+  <p>10 rows in your sheet, each filled in.</p>
+
+  <h4>Common mistakes</h4>
+  <div class="callout bad">
+    ❌ Picking creators with 50K followers but only 20 likes per post — those followers are fake or dead.<br>
+    ❌ Picking generic finance guys whose audience is 40-year-old traders — they won't buy a CFA course.
+  </div>
+  <div class="callout good">
+    ✅ Pick a creator with 8K followers who gets 300+ engaged comments from students.
+  </div>
+</div>
+
+<!-- ========== AKASH TASK 2 ========== -->
+<div class="task-card akash">
+  <h3>Task 2: Draft and send 5 outreach messages</h3>
+  <div class="small">Week 2</div>
+
+  <h4>What this means</h4>
+  <p>Pick 5 creators from your research sheet. Write a short message to each. Kavya sends them from her handle.</p>
+
+  <h4>Why we do it</h4>
+  <p>This is how we start conversations. Most creators won't reply — that's normal. Some will, and those become partnerships.</p>
+
+  <h4>How to do it</h4>
+  <ol>
+    <li>Pick 5 creators you've researched.</li>
+    <li>For each, write a 40-80 word message with 4 parts:
+      <ul>
+        <li><strong>Compliment something specific</strong> — mention which post/video, why it stood out (NOT "love your content!")</li>
+        <li><strong>Say who SSEI is</strong> in one line</li>
+        <li><strong>Say what you want from them</strong> — a mention? Free trial? Collab video?</li>
+        <li><strong>Make the next step concrete</strong> — "Open to a 15-min call this Friday?"</li>
+      </ul>
+    </li>
+    <li>Paste into a Google Doc. Share with Kavya.</li>
+    <li>Kavya sends from her handle.</li>
+    <li>Track replies in your sheet — column: "Reply? Yes/No/Date".</li>
+  </ol>
+
+  <h4>Example of a good outreach message</h4>
+  <blockquote>
+    Hi Prashant — saw your reel on "What I wish I knew before CFA L1" — the bit about audit ratios was 🔥. We're SSEI, the institute Sanjay Saraf founded — we train ~3,000 CFA/CA students a year. Would love to send you free access to our L1 course and hear what you'd improve. Got 15 min on Friday for a call?
+  </blockquote>
+
+  <h4>What "done" looks like</h4>
+  <p>5 messages drafted, Kavya has them, you've started tracking replies.</p>
+
+  <h4>Common mistakes</h4>
+  <div class="callout bad">
+    ❌ Generic compliments<br>
+    ❌ Long messages (over 100 words)<br>
+    ❌ Asking for "a quick chat" with no specific purpose<br>
+    ❌ Sending before Kavya reviews
+  </div>
+</div>
+
+<!-- ========== AKASH TASK 3 ========== -->
+<div class="task-card akash">
+  <h3>Task 3: Map the buyer journey</h3>
+  <div class="small">Weeks 1, 3, 4 · target: 12 steps by 20 June</div>
+
+  <h4>What this means</h4>
+  <p>Map the entire path from when someone first hears of SSEI to their first day of class. At each step, write down WHAT message we should send, WHEN, and on WHICH channel. You write the plan — not the actual message.</p>
+
+  <h4>Why we do it</h4>
+  <p>Right now SSEI's nurture messages are inconsistent. Some students get 5 emails. Some get nothing. We need ONE clean map so the team knows what to send when.</p>
+
+  <h4>How to do it</h4>
+  <ol>
+    <li>Imagine a student named Rahul. He's a B.Com 2nd year. He's searching YouTube for "CFA prep".</li>
+    <li>Trace his path:
+      <ul>
+        <li><strong>Day 0:</strong> He finds Sir's reel on Instagram. What should we do? → Save reel, follow account, lead magnet popup</li>
+        <li><strong>Day 1:</strong> He clicks our website. → WhatsApp welcome ("Hi Rahul, here's a free CFA L1 readiness quiz")</li>
+        <li><strong>Day 3:</strong> Hasn't bought yet. → Email with "5 CFA L1 mistakes" carousel</li>
+        <li><strong>Day 7:</strong> Still hasn't bought. → WhatsApp from Kavya with class schedule</li>
+        <li><strong>Day 14:</strong> Bought. → Welcome email + class joining link</li>
+        <li><strong>Day 17:</strong> First class. → Day-of "looking forward to seeing you" message</li>
+      </ul>
+    </li>
+    <li>For EACH step, fill a row with 5 columns: <strong>Stage · Day · Channel · Message theme · Suggested CTA</strong>.</li>
+  </ol>
+
+  <h4>Example row</h4>
+  <table>
+    <thead><tr><th>Stage</th><th>Day</th><th>Channel</th><th>Theme</th><th>Suggested CTA</th></tr></thead>
+    <tbody><tr><td>Interest</td><td>Day 3</td><td>WhatsApp</td><td>Free CFA prep quiz</td><td>"Take the quiz"</td></tr></tbody>
+  </table>
+
+  <h4>What "done" looks like</h4>
+  <p>A Google Sheet with 12+ rows by 20 June.</p>
+
+  <h4>Common mistakes</h4>
+  <div class="callout bad">
+    ❌ Writing the actual message ("Hi Rahul, I noticed you searched for CFA...") — <strong>NOT YOUR JOB.</strong> Just the theme.<br>
+    ❌ Skipping stages because they feel boring<br>
+    ❌ Only thinking about email — most journeys are multi-channel (IG, WhatsApp, email, phone)
+  </div>
+</div>
+
+<!-- ========== AKASH TASK 4 ========== -->
+<div class="task-card akash">
+  <h3>Task 4: Design 10 lead magnet concepts</h3>
+  <div class="small">Week 4</div>
+
+  <h4>What this means</h4>
+  <p>A "lead magnet" is a free thing we give people in exchange for their email/phone. Examples: free PDF, free quiz, free webinar. You design 10 ideas. The team picks 2-3 and builds them.</p>
+
+  <h4>Why we do it</h4>
+  <p>SSEI captures very few leads right now. The right lead magnet can 10x our top-of-funnel.</p>
+
+  <h4>How to do it</h4>
+  <p>For each idea, write a 1-paragraph concept (50-100 words) covering:</p>
+  <ul>
+    <li><strong>Title</strong> — what's the free thing called?</li>
+    <li><strong>Who it's for</strong> — what kind of student?</li>
+    <li><strong>What's inside</strong> — what will they actually get?</li>
+    <li><strong>Why they'd want it</strong> — the pain point we're solving</li>
+    <li><strong>How to deliver it</strong> — PDF? Email? Quiz on the website?</li>
+  </ul>
+
+  <h4>Examples of good lead magnet concepts</h4>
+  <div class="callout good">
+    "The CFA L1 study planner — 6-month week-by-week roadmap. PDF."<br>
+    "Am I ready for CFA L1? 10-question quiz that scores your readiness."<br>
+    "5 mistakes B.Com students make when picking CFA vs CA — short video."
+  </div>
+
+  <h4>What "done" looks like</h4>
+  <p>10 concepts in a Google Doc, shared with Kavya by end of Week 4.</p>
+
+  <h4>Common mistakes</h4>
+  <div class="callout bad">
+    ❌ Vague concepts ("a free finance guide")<br>
+    ❌ Things only Sir can write — we want lead magnets that don't need Sir's time<br>
+    ❌ Things that take 2 weeks to produce — keep them producible in 1-2 days
+  </div>
+</div>
+
+<hr>
+
+<h2 id="palak">🟪 PALAK — your 5 active tasks for May <span class="pill palak">L1</span></h2>
+
+<!-- ========== PALAK TASK 1 ========== -->
+<div class="task-card palak">
+  <h3>Task 1: Reply to Sir's IG and LinkedIn DMs + comments</h3>
+  <div class="small">Every day · target 95% response within 4 hours</div>
+
+  <h4>What this means</h4>
+  <p>Every working day, open Sir's IG and LinkedIn. Reply to comments and DMs from the last 24 hours. Goal: within 4 hours of someone reaching out.</p>
+
+  <h4>Why we do it</h4>
+  <p>When someone takes time to comment or DM Sir and we reply, it builds loyalty. When we ignore them, it kills loyalty. Engagement is the daily heartbeat.</p>
+
+  <h4>How to do it</h4>
+  <ol>
+    <li>Morning: open Sir's IG. Scroll DMs. Scroll comments on last 5 posts.</li>
+    <li>For each one, decide:
+      <ul>
+        <li><strong>Genuine question?</strong> Answer in Sir's voice (read <em>sir_voice.md</em> if you forget the tone)</li>
+        <li><strong>Compliment?</strong> Thank them warmly, 1-2 lines</li>
+        <li><strong>Spam/troll?</strong> Ignore. Delete if abusive.</li>
+        <li><strong>Sales inquiry?</strong> "Drop us a WhatsApp at +91-XXXX — our team will help" — then flag to Kavya</li>
+      </ul>
+    </li>
+    <li>Repeat for LinkedIn (less volume but more thoughtful).</li>
+    <li>Log in your daily check-in: "Responded to X DMs and Y comments today."</li>
+  </ol>
+
+  <h4>Common mistakes</h4>
+  <div class="callout bad">
+    ❌ Replying in YOUR voice, not Sir's<br>
+    ❌ Letting DMs pile up over the weekend<br>
+    ❌ Sales-pitching in comments (looks desperate)
+  </div>
+</div>
+
+<!-- ========== PALAK TASK 2 ========== -->
+<div class="task-card palak">
+  <h3>Task 2: Set up your influencer research sheet</h3>
+  <div class="small">Week 1</div>
+
+  <h4>What this means</h4>
+  <p>Build the Google Sheet where you'll log finance creators. This is the same template Akash will use.</p>
+
+  <h4>Why we do it</h4>
+  <p>You and Akash both need a consistent format. Random formats = wasted time later.</p>
+
+  <h4>How to do it</h4>
+  <ol>
+    <li>Open Google Sheets.</li>
+    <li>Create columns: Creator Name · Handle · Platform · Followers · Top Post 1 · Top Post 2 · Audience Type · Contactable? · Notes · Logged By · Date Logged.</li>
+    <li>Add 5 creators yourself (so you've tested it).</li>
+    <li>Share with Kavya. She'll approve the format.</li>
+    <li>Give the link to Akash.</li>
+  </ol>
+
+  <h4>What "done" looks like</h4>
+  <p>Sheet exists. 5 sample creators in it. Kavya has approved the format.</p>
+
+  <h4>Common mistakes</h4>
+  <div class="callout bad">
+    ❌ Making the sheet too complicated (20 columns)<br>
+    ❌ Not testing it yourself before handing to Akash<br>
+    ❌ Picking creators you "like" rather than ones that fit SSEI's audience
+  </div>
+</div>
+
+<!-- ========== PALAK TASK 3 ========== -->
+<div class="task-card palak">
+  <h3>Task 3: Add 12-13 public finance events to a calendar</h3>
+  <div class="small">Week 1</div>
+
+  <h4>What this means</h4>
+  <p>Build a list of public events related to finance education — CFA Society India events, GARP events, ICAI events, college finance fests. List them on a Google Doc/sheet for now (later we'll put on SSEI's website).</p>
+
+  <h4>Why we do it</h4>
+  <p>When students search "CFA event Mumbai August 2026", we want our website to show up. The calendar is bait for that intent traffic.</p>
+
+  <h4>How to do it</h4>
+  <ol>
+    <li>Search these terms on Google + LinkedIn + org websites:
+      <ul>
+        <li>CFA Society India events</li>
+        <li>GARP India events</li>
+        <li>ICAI events</li>
+        <li>"B.Com finance fest 2026"</li>
+        <li>"MBA finance conclave"</li>
+      </ul>
+    </li>
+    <li>For each event, log: Event name · Date · City/online · Who runs it · Public URL · Why an SSEI student would care.</li>
+    <li>12-13 events by end of Week 1.</li>
+  </ol>
+
+  <h4>What "done" looks like</h4>
+  <p>A Google Doc/sheet with 12+ events, each with all fields filled.</p>
+
+  <h4>Common mistakes</h4>
+  <div class="callout bad">
+    ❌ Private events (only members can attend) — don't drive intent traffic<br>
+    ❌ Old expired events<br>
+    ❌ Trader-focused events (SSEI is exam prep, not trading)
+  </div>
+</div>
+
+<!-- ========== PALAK TASK 4 ========== -->
+<div class="task-card palak">
+  <h3>Task 4: Research 20 finance creators for Akash</h3>
+  <div class="small">Week 1</div>
+
+  <h4>What this means</h4>
+  <p>Same as Akash's Task 1, but you do 20 instead of 10. Akash uses your list to send outreach.</p>
+
+  <h4>Why we do it</h4>
+  <p>Akash sends outreach. You feed his pipeline with raw research.</p>
+
+  <h4>How to do it</h4>
+  <p>Same process as Akash's Task 1 above. Use the sheet you built in Task 2.</p>
+
+  <h4>What "done" looks like</h4>
+  <p>20 rows in the research sheet, all columns filled.</p>
+</div>
+
+<!-- ========== PALAK TASK 5 ========== -->
+<div class="task-card palak">
+  <h3>Task 5: Ship 4 LinkedIn posts + 5 IG posts for Sir</h3>
+  <div class="small">Across Weeks 1-3 · Riya reviews drafts, Kavya approves before publish</div>
+
+  <h4>What this means</h4>
+  <p>Write Sir's posts in his voice. Schedule them. Riya reviews drafts. Kavya approves before they go live.</p>
+
+  <h4>Why we do it</h4>
+  <p>Sir's daily content is what keeps SSEI's brand alive on social. Without it, audience growth stops.</p>
+
+  <h4>How to do LinkedIn (longer-form, professional)</h4>
+  <ol>
+    <li>Read <em>sir_voice.md</em> for tone.</li>
+    <li>Pick a topic — something Sir cares about (finance education, why CFA matters, student stories, industry analysis).</li>
+    <li>Write 150-250 words with this structure:
+      <ul>
+        <li><strong>Hook</strong> — first 1-2 lines that make people stop scrolling</li>
+        <li><strong>Body</strong> — 3-5 short paragraphs (NOT walls of text)</li>
+        <li><strong>Takeaway</strong> — 1 line that summarizes the lesson</li>
+      </ul>
+    </li>
+    <li>Share draft with Riya in Slack DM. She reviews.</li>
+    <li>After her edits, share with Kavya for final approval.</li>
+    <li>Schedule it.</li>
+  </ol>
+
+  <h4>How to do IG (visual + caption)</h4>
+  <ol>
+    <li>Same voice study.</li>
+    <li>For each post, decide format: carousel? reel script? quote card? single image?</li>
+    <li>Write the caption (60-150 words). Strong hook + 3-4 lines + CTA.</li>
+    <li>Suggest the visual (don't design — just describe what the visual should show).</li>
+    <li>Same review path: Riya → Kavya → schedule.</li>
+  </ol>
+
+  <h4>Targets</h4>
+  <ul>
+    <li>1 LinkedIn post in Week 1</li>
+    <li>3 LinkedIn posts in Week 2</li>
+    <li>5 IG posts in Week 3</li>
+  </ul>
+
+  <h4>Example of a good Sir LinkedIn opening</h4>
+  <blockquote>
+    "I tell my CFA students this every batch — your prep isn't broken. Your study schedule is."
+  </blockquote>
+  <p class="small">First person. Specific audience. Hooks immediately.</p>
+
+  <h4>Common mistakes</h4>
+  <div class="callout bad">
+    ❌ Writing in YOUR voice instead of Sir's<br>
+    ❌ Corporate jargon ("synergies", "leverage", "ecosystem") — Sir doesn't talk like that<br>
+    ❌ No clear hook in first line<br>
+    ❌ Skipping Riya's review<br>
+    ❌ "ChatGPT-flavored" writing — Sir hates this
+  </div>
+</div>
+
+<hr>
+
+<h2 id="how-to-ask">🚨 How to ask for help</h2>
+<p>If you're stuck for more than 15 minutes:</p>
+<ol>
+  <li>Re-read the task in your dashboard.</li>
+  <li>Re-read this playbook.</li>
+  <li>Still stuck? Drop a message in #growth-ops with this format:</li>
+</ol>
+<blockquote>
+  Stuck on <em>[task name]</em>. I tried <em>[what you tried]</em>. The thing I don't understand is <em>[specific question]</em>.
+</blockquote>
+<div class="callout bad">❌ Don't ask: "How do I do this?" — too vague to answer.</div>
+
+<h2 id="daily-checkin">📝 How to write a daily check-in — good vs bad</h2>
+
+<h4>Bad check-in</h4>
+<div class="callout bad">
+  "Worked on stuff today. Will continue tomorrow."
+</div>
+
+<h4>Good check-in</h4>
+<div class="callout good">
+  <strong>What I did:</strong> Researched 5 finance creators on Instagram, found 3 strong candidates. Logged in sheet.<br>
+  <strong>What I learnt:</strong> Creators with 8-15k followers seem to have better engagement than larger ones.<br>
+  <strong>Blockers:</strong> None.<br>
+  <strong>Tomorrow:</strong> Continue research (5 more) + start drafting outreach for the top 3.
+</div>
+
+<h2 id="expectations">✅ What we expect from you</h2>
+<ul>
+  <li><strong>Show up every day.</strong> Check in by 10:30am.</li>
+  <li><strong>Ask questions early.</strong> Not knowing is fine. Pretending you know isn't.</li>
+  <li><strong>Submit your work to be reviewed.</strong> First drafts are supposed to suck. We'll edit.</li>
+  <li><strong>Read sir_voice.md</strong> if you're writing for Sir.</li>
+  <li><strong>Don't post anything as Sir without Kavya's approval.</strong> This is non-negotiable.</li>
+</ul>
+
+<hr>
+
+<p style="text-align: center; color: var(--text-mute); font-size: 13px; margin-top: 40px;">
+  Version 1 · Last updated 22 May 2026 · Updated by Growth Ops · Welcome to SSEI 🌱
+</p>
+
+</div>
+</body>
+</html>
