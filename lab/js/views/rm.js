@@ -585,6 +585,17 @@ const rmView = {
   newTaskModal(prefill = {}) {
     const card = h('div');
     card.appendChild(h('h3', {}, '+ Assign task'));
+
+    // ===== Template loader (top) =====
+    const myVTag = internVerticalTag(this.team[0]);
+    const tplSel = h('select', {}, [h('option', { value: '' }, '— Start from blank or pick a template —')]);
+    const tplBlock = h('div', { class: 'card-actions', style: 'padding:0 0 14px; border-bottom:1px solid var(--border); margin-bottom:14px;' }, [
+      h('label', { style: 'flex:1; margin:0;' }, [h('span', {}, '📋 Use template'), tplSel]),
+      h('button', { class: 'btn-ghost', onclick: async () => { closeModal(); this.openTemplatesManager(); } }, 'Manage templates'),
+    ]);
+    card.appendChild(tplBlock);
+
+    // ===== Main fields =====
     const internSel = h('select', { name: 'intern_id' }, this.team.map((i) =>
       h('option', { value: i.id, selected: prefill.intern_id === i.id }, i.name)));
     const type = h('select', { name: 'task_type' }, ['daily','weekly'].map((s) =>
@@ -604,21 +615,104 @@ const rmView = {
       h('label', {}, [h('span', {}, 'Due date'), due]),
       h('label', {}, [h('span', {}, 'Priority'), pri]),
     ]));
+
+    // Save-as-template checkbox + name
+    const saveTpl = h('input', { type: 'checkbox', id: 'gl-save-tpl' });
+    const tplName = h('input', { type: 'text', placeholder: 'Template name (defaults to task title)', style: 'flex:1;' });
+    const saveTplRow = h('div', { style: 'margin-top:14px; padding:12px; background:var(--surface-2); border-radius:8px;' }, [
+      h('label', { style: 'display:flex; align-items:center; gap:8px; margin:0;' }, [
+        saveTpl, h('span', { style: 'margin:0;' }, '💾 Save this as a template for next time'),
+      ]),
+      h('div', { style: 'display:flex; gap:8px; margin-top:8px;' }, [tplName]),
+    ]);
+    card.appendChild(saveTplRow);
+
     card.appendChild(h('div', { class: 'modal-actions' }, [
       h('button', { class: 'btn-ghost', onclick: closeModal }, 'Cancel'),
       h('button', { class: 'btn-primary', onclick: async () => {
         if (!title.value.trim()) { alert('Title required'); return; }
         try {
+          // Compute due date from template days_to_due if loaded
+          let dueDate = due.value || null;
           await api.createTask({
             intern_id: internSel.value, assigned_by_id: auth.user.id, task_type: type.value,
             title: title.value, description: desc.value || null,
-            due_date: due.value || null, priority: pri.value,
+            due_date: dueDate, priority: pri.value,
           });
+          // Optionally save as template
+          if (saveTpl.checked) {
+            const days = dueDate ? Math.max(1, Math.round((new Date(dueDate) - new Date()) / 86400000)) : 7;
+            try {
+              await api.createTaskTemplate({
+                title: tplName.value.trim() || title.value,
+                description: desc.value || null,
+                default_task_type: type.value,
+                default_priority: pri.value,
+                default_days_to_due: days,
+                vertical: myVTag,
+              });
+            } catch (e) { console.warn('Save template failed:', e.message); }
+          }
+          // Bump use_count if loaded from template
+          const chosenTplId = tplSel.value;
+          if (chosenTplId) api.incrementTaskTemplateUse(chosenTplId);
           closeModal(); app.renderView();
         } catch (e) { alert('Failed: ' + e.message); }
       } }, 'Assign'),
     ]));
+
     openModal(card);
+
+    // Load templates async + populate selector
+    (async () => {
+      try {
+        const tpls = await api.listTaskTemplates(myVTag);
+        tpls.forEach((t) => tplSel.appendChild(h('option', { value: t.id },
+          `${t.title}${t.use_count ? ` · used ${t.use_count}×` : ''}${t.vertical ? '' : ' (global)'}`)));
+        tplSel.addEventListener('change', () => {
+          const tpl = tpls.find((x) => x.id === tplSel.value);
+          if (!tpl) return;
+          if (!title.value) title.value = tpl.title;
+          if (!desc.value && tpl.description) desc.value = tpl.description;
+          type.value = tpl.default_task_type || 'weekly';
+          pri.value = tpl.default_priority || 'med';
+          if (!due.value && tpl.default_days_to_due) {
+            const d = new Date(); d.setDate(d.getDate() + tpl.default_days_to_due);
+            due.value = d.toISOString().slice(0, 10);
+          }
+        });
+      } catch (e) { console.debug('Templates load failed (run migration_v3?):', e.message); }
+    })();
+  },
+
+  openTemplatesManager() {
+    const card = h('div');
+    card.appendChild(h('h3', {}, '📋 Task templates'));
+    card.appendChild(h('p', { class: 'help-text' }, 'Templates you and other RMs have saved. Click to delete your own.'));
+    const list = h('div'); card.appendChild(list);
+    card.appendChild(h('div', { class: 'modal-actions' }, [h('button', { class: 'btn-ghost', onclick: closeModal }, 'Close')]));
+    openModal(card, { wide: true });
+    (async () => {
+      const tpls = await api.listTaskTemplates(internVerticalTag(this.team[0]));
+      list.innerHTML = '';
+      if (!tpls.length) { list.appendChild(h('div', { class: 'empty-state' }, 'No templates yet. When assigning a task, tick "Save as template".')); return; }
+      tpls.forEach((t) => list.appendChild(h('div', { style: 'padding:12px 0; border-bottom:1px solid var(--border);' }, [
+        h('div', { style: 'display:flex; justify-content:space-between; gap:8px;' }, [
+          h('div', { style: 'font-weight:500;' }, t.title),
+          h('div', { style: 'display:flex; gap:6px; align-items:center;' }, [
+            h('span', { class: 'badge', style: 'background:var(--surface-3); color:var(--text-soft);' }, `used ${t.use_count || 0}×`),
+            t.owner_id === auth.user.id ? h('button', { class: 'btn-tiny no', onclick: async () => {
+              if (!confirm('Delete this template? (does not affect tasks already assigned from it)')) return;
+              try { await getSupabase().from('gl_task_template').delete().eq('id', t.id); closeModal(); this.openTemplatesManager(); }
+              catch (e) { alert(e.message); }
+            } }, 'Delete') : null,
+          ]),
+        ]),
+        h('div', { class: 'help-text', style: 'margin-top:4px;' },
+          `${t.default_task_type} · ${t.default_priority} priority · due in ${t.default_days_to_due || 7}d · ${TAG_TO_VERTICAL[t.vertical] || 'global'}`),
+        t.description ? h('div', { style: 'font-size:13px; color:var(--text-soft); margin-top:6px;' }, t.description) : null,
+      ])));
+    })();
   },
 
   editRmTaskModal(t) {
