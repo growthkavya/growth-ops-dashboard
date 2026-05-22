@@ -89,6 +89,8 @@ const app = {
   async handleLogout() {
     await auth.signOut();
     this.currentTab = null;
+    const mount = $('#view-mount');
+    if (mount) { mount.innerHTML = ''; mount.dataset.hasContent = ''; }
     this.showLogin();
   },
 
@@ -162,13 +164,23 @@ const app = {
 
   setTab(id) {
     this.currentTab = id;
+    // Tab switch is a context change — show 'Loading…' and scroll to top.
+    const mount = $('#view-mount');
+    mount.dataset.hasContent = '';
+    window.scrollTo({ top: 0, left: 0 });
     this.refreshChrome();
     this.renderView();
   },
 
   async renderView() {
+    // Preserve scroll position so deletes/edits/approvals don't jump to top
+    const savedScroll = window.scrollY;
     const mount = $('#view-mount');
-    mount.innerHTML = '<div class="empty-state">Loading…</div>';
+    // Only show 'Loading…' on first render (cold mount). Subsequent re-renders
+    // happen in-place — the old content stays visible until the new content swaps in,
+    // so users don't see a flicker.
+    const isFirstRender = !mount.dataset.hasContent;
+    if (isFirstRender) mount.innerHTML = '<div class="empty-state">Loading…</div>';
     try {
       if (auth.isIntern()) await internView.mount(mount);
       else if (auth.isRM()) await rmView.mount(mount);
@@ -179,6 +191,9 @@ const app = {
         else await superView.mount(mount);
       }
       else mount.innerHTML = '<div class="empty-state">No role assigned. Contact admin.</div>';
+      mount.dataset.hasContent = '1';
+      // Restore scroll position after layout settles
+      requestAnimationFrame(() => window.scrollTo({ top: savedScroll, left: 0 }));
     } catch (e) {
       console.error(e);
       const isMigrationMissing = e.message?.includes('schema cache') || e.message?.includes('not find');
