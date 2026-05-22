@@ -980,22 +980,42 @@ const rmView = {
     const vTag = internVerticalTag(this.team[0]);
     const docs = await api.listDocsForTeam(vTag);
     if (!docs.length) { root.appendChild(h('div', { class: 'card' }, h('div', { class: 'empty-state' }, 'No docs shared yet.'))); return; }
+
+    // Fetch all sharer profile names in one go
+    const sharerIds = Array.from(new Set(docs.map((d) => d.shared_by_id).filter(Boolean)));
+    const sharersById = sharerIds.length ? await api.profilesById(sharerIds) : {};
+
     const card = h('div', { class: 'table-card' });
     const table = h('table');
     table.appendChild(h('thead', {}, h('tr', {}, [
       h('th', {}, 'Shared'), h('th', {}, 'Title'), h('th', {}, 'For'),
-      h('th', {}, 'Type'), h('th', {}, 'Link'), h('th', {}, 'Read receipts'),
+      h('th', {}, 'Shared by'), h('th', {}, 'Type'), h('th', {}, 'Link'),
+      h('th', {}, 'Read'), h('th', {}, ''),
     ])));
     const tb = h('tbody');
     for (const d of docs) {
       const acks = await api.listDocAcks(d.id);
+      const isMine = d.shared_by_id === auth.user.id;
+      const canDelete = isMine || auth.isSuper();
+      const sharerName = sharersById[d.shared_by_id]?.full_name || (isMine ? 'You' : '—');
+      const audience = d.intern_id ? (d.interns?.name || 'intern')
+                       : d.vertical === 'all' ? '🌐 Whole cohort'
+                       : d.vertical ? (TAG_TO_VERTICAL[d.vertical] || d.vertical)
+                       : '—';
       tb.appendChild(h('tr', {}, [
         h('td', { style: 'white-space:nowrap;' }, formatDate(d.created_at)),
         h('td', {}, [h('div', { style: 'font-weight:500;' }, d.title), d.notes ? h('div', { class: 'help-text' }, d.notes) : null]),
-        h('td', {}, d.intern_id ? (d.interns?.name || 'intern') : (d.vertical || '—')),
+        h('td', {}, audience),
+        h('td', { style: isMine ? 'font-weight:600;' : '' }, sharerName),
         h('td', {}, h('span', { class: 'badge', style: 'background:var(--surface-3); color:var(--text-soft);' }, d.doc_type)),
         h('td', {}, d.drive_link ? h('a', { href: d.drive_link, target: '_blank' }, 'open ↗') : '—'),
         h('td', {}, `${acks.length} read`),
+        h('td', {}, canDelete
+          ? h('button', { class: 'btn-tiny no', onclick: () => confirmModal(
+              `Delete "${d.title}"? Interns will lose access. This cannot be undone.`,
+              async () => { try { await api.deleteDoc(d.id); app.renderView(); } catch (e) { alert(e.message); } }
+            ) }, 'Delete')
+          : h('span', { class: 'help-text' }, '—')),
       ]));
     }
     table.appendChild(tb); card.appendChild(table); root.appendChild(card);

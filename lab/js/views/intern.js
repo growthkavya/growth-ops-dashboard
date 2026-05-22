@@ -749,20 +749,27 @@ const internView = {
     const [docs, acks] = await Promise.all([api.listDocsForIntern(this.selectedIntern.id, vTag), api.getMyDocAcks(this.selectedIntern.id)]);
     const ackedIds = new Set(acks.map((a) => a.doc_id));
     if (!docs.length) { root.appendChild(h('div', { class: 'card' }, h('div', { class: 'empty-state' }, 'No docs shared yet.'))); return; }
+    // Resolve sharer names
+    const sharerIds = Array.from(new Set(docs.map((d) => d.shared_by_id).filter(Boolean)));
+    const sharersById = sharerIds.length ? await api.profilesById(sharerIds) : {};
     const card = h('div', { class: 'table-card' });
     const table = h('table');
     table.appendChild(h('thead', {}, h('tr', {}, [
-      h('th', {}, 'Date'), h('th', {}, 'Title'), h('th', {}, 'Type'), h('th', {}, 'Link'), h('th', {}, 'Read?'),
+      h('th', {}, 'Date'), h('th', {}, 'Title'), h('th', {}, 'Shared by'),
+      h('th', {}, 'Type'), h('th', {}, 'Link'), h('th', {}, 'Read?'),
     ])));
     const tb = h('tbody');
     docs.forEach((d) => {
       const read = ackedIds.has(d.id);
+      const sharer = sharersById[d.shared_by_id]?.full_name || '—';
       const tr = h('tr');
       tr.appendChild(h('td', { style: 'white-space:nowrap;' }, formatDate(d.created_at)));
       tr.appendChild(h('td', {}, [
         h('div', { style: 'font-weight:500;' }, d.title),
         d.notes ? h('div', { style: 'font-size:12px; color:var(--text-mute); margin-top:2px;' }, d.notes) : null,
+        d.vertical === 'all' ? h('div', { style: 'font-size:11px; color:var(--text-mute); margin-top:2px;' }, '🌐 Shared with whole cohort') : null,
       ]));
+      tr.appendChild(h('td', {}, sharer));
       tr.appendChild(h('td', {}, h('span', { class: 'badge', style: 'background:var(--surface-3); color:var(--text-soft);' }, d.doc_type)));
       tr.appendChild(h('td', {}, d.drive_link ? h('a', { href: d.drive_link, target: '_blank' }, 'open ↗') : '—'));
       tr.appendChild(h('td', {}, read ? h('span', { class: 'badge badge-approved' }, '✓ Read') :

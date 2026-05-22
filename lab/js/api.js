@@ -351,6 +351,10 @@ const api = {
     if (error) throw error;
     return data;
   },
+  async deleteDoc(id) {
+    const { error } = await getSupabase().from('gl_doc').delete().eq('id', id);
+    if (error) throw error;
+  },
   async ackDoc(docId, internId) {
     const { data, error } = await getSupabase().from('gl_doc_ack').upsert({ doc_id: docId, intern_id: internId }, { onConflict: 'doc_id,intern_id' }).select().single();
     if (error) throw error;
