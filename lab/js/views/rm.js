@@ -534,18 +534,87 @@ const rmView = {
   },
 
   // ============== TASKS ==============
+  taskFilter: { internId: '', status: 'active', type: '' },
+
   async renderTasks(root) {
     root.appendChild(h('div', { class: 'greeting' }, 'Tasks'));
     root.appendChild(h('div', { class: 'greeting-sub' }, "Assign new tasks (daily or weekly), track progress, close completed ones."));
-    root.appendChild(h('div', { style: 'margin-bottom:16px;' }, h('button', { class: 'btn-accent', onclick: () => this.newTaskModal() }, '+ Assign new task')));
 
-    const tasks = await api.listTasksForTeam(this.team.map((i) => i.id));
-    const active = tasks.filter((t) => !['done','cancelled'].includes(t.status));
-    const recent = tasks.filter((t) => t.status === 'done').slice(0, 15);
+    // Top actions: + button + filters
+    const internOpts = [h('option', { value: '' }, 'All interns')].concat(
+      this.team.map((i) => h('option', { value: i.id, selected: this.taskFilter.internId === i.id }, i.name))
+    );
+    const statusOpts = [
+      ['active', 'Active only'], ['all', 'All statuses'],
+      ['not_started', 'Not started'], ['in_progress', 'In progress'],
+      ['blocked', 'Blocked'], ['done', 'Done'], ['cancelled', 'Cancelled'],
+    ].map(([v, l]) => h('option', { value: v, selected: this.taskFilter.status === v }, l));
+    const typeOpts = [['', 'All types'], ['weekly', 'Weekly'], ['daily', 'Daily']]
+      .map(([v, l]) => h('option', { value: v, selected: this.taskFilter.type === v }, l));
 
-    if (active.length) root.appendChild(this.tasksTable('Active tasks', active));
-    else root.appendChild(h('div', { class: 'card' }, h('div', { class: 'empty-state' }, 'No active tasks. Click + to assign one.')));
-    if (recent.length) root.appendChild(this.tasksTable('Recently completed', recent, true));
+    const internSel = h('select', {}, internOpts);
+    const statusSel = h('select', {}, statusOpts);
+    const typeSel = h('select', {}, typeOpts);
+
+    [internSel, statusSel, typeSel].forEach((s) => s.addEventListener('change', () => {
+      this.taskFilter.internId = internSel.value;
+      this.taskFilter.status = statusSel.value;
+      this.taskFilter.type = typeSel.value;
+      app.renderView();
+    }));
+
+    const toolbar = h('div', { style: 'display:flex; gap:10px; align-items:center; margin-bottom:18px; flex-wrap:wrap;' }, [
+      h('button', { class: 'btn-accent', onclick: () => this.newTaskModal() }, '+ Assign new task'),
+      h('div', { style: 'flex:1; min-width:14px;' }),
+      h('span', { class: 'help-text', style: 'margin:0;' }, 'Filter:'),
+      internSel, statusSel, typeSel,
+      (this.taskFilter.internId || this.taskFilter.status !== 'active' || this.taskFilter.type)
+        ? h('button', { class: 'btn-ghost', onclick: () => {
+            this.taskFilter = { internId: '', status: 'active', type: '' };
+            app.renderView();
+          } }, 'Clear filters')
+        : null,
+    ]);
+    root.appendChild(toolbar);
+
+    // Fetch + filter
+    let tasks = await api.listTasksForTeam(this.team.map((i) => i.id));
+    const totalCount = tasks.length;
+    if (this.taskFilter.internId) tasks = tasks.filter((t) => t.intern_id === this.taskFilter.internId);
+    if (this.taskFilter.type) tasks = tasks.filter((t) => t.task_type === this.taskFilter.type);
+
+    let active, recent, cancelled;
+    if (this.taskFilter.status === 'all') {
+      active = tasks.filter((t) => !['done','cancelled'].includes(t.status));
+      recent = tasks.filter((t) => t.status === 'done').slice(0, 15);
+      cancelled = tasks.filter((t) => t.status === 'cancelled').slice(0, 15);
+    } else if (this.taskFilter.status === 'active') {
+      active = tasks.filter((t) => !['done','cancelled'].includes(t.status));
+      recent = []; cancelled = [];
+    } else {
+      // single-status filter
+      const filtered = tasks.filter((t) => t.status === this.taskFilter.status);
+      const readOnly = this.taskFilter.status === 'done' || this.taskFilter.status === 'cancelled';
+      const labelMap = { not_started: 'Not started', in_progress: 'In progress', blocked: 'Blocked', done: 'Done', cancelled: 'Cancelled' };
+      if (filtered.length) {
+        root.appendChild(this.tasksTable(`${labelMap[this.taskFilter.status]} · ${filtered.length} task${filtered.length === 1 ? '' : 's'}`, filtered, readOnly));
+      } else {
+        root.appendChild(h('div', { class: 'card' }, h('div', { class: 'empty-state' }, `No tasks match (showing ${tasks.length} of ${totalCount} after filter).`)));
+      }
+      return;
+    }
+
+    // Result count line
+    const visibleN = (active || []).length + (recent || []).length + (cancelled || []).length;
+    if (visibleN !== totalCount) {
+      root.appendChild(h('div', { class: 'help-text', style: 'margin-bottom:12px;' },
+        `Showing ${visibleN} of ${totalCount} tasks (filtered).`));
+    }
+
+    if (active.length) root.appendChild(this.tasksTable(`Active · ${active.length}`, active));
+    else root.appendChild(h('div', { class: 'card' }, h('div', { class: 'empty-state' }, 'No active tasks for this filter.')));
+    if (recent.length) root.appendChild(this.tasksTable(`Recently completed · ${recent.length}`, recent, true));
+    if (cancelled.length) root.appendChild(this.tasksTable(`Cancelled · ${cancelled.length}`, cancelled, true));
   },
 
   tasksTable(title, tasks, readOnly = false) {
