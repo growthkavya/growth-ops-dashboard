@@ -129,6 +129,31 @@ const todayModule = {
             .slice(0, 6);
     },
 
+    // Time spent this week, grouped by KPI code or project_tag.
+    // Anything without either bucket falls under "Unassigned".
+    timeBreakdown() {
+        const cutoff = this.daysAgoISO(7);
+        const buckets = new Map();   // label -> { hours, count, kind }
+        for (const a of this.actions) {
+            if (!this.isMine(a)) continue;
+            if (!a.updated_at || a.updated_at.slice(0,10) < cutoff) continue;
+            if (!a.hours_spent) continue;
+            const label = a.project_tag
+                ? `#${a.project_tag}`
+                : (a.kpi_code || a.kpis?.kpi_code || 'Unassigned');
+            const kind = a.project_tag ? 'tag' : (a.kpi_code ? 'kpi' : 'none');
+            const b = buckets.get(label) || { hours: 0, count: 0, kind };
+            b.hours += parseFloat(a.hours_spent);
+            b.count += 1;
+            buckets.set(label, b);
+        }
+        const items = [...buckets.entries()]
+            .map(([label, b]) => ({ label, ...b }))
+            .sort((x, y) => y.hours - x.hours);
+        const total = items.reduce((s, i) => s + i.hours, 0);
+        return { items, total };
+    },
+
     // ----- rendering -------------------------------------------------------
 
     render() {
@@ -141,6 +166,7 @@ const todayModule = {
         const c = this.counters();
         const week = this.weekStrip();
         const activity = this.pickRecentActivity();
+        const time = this.timeBreakdown();
 
         const name = (auth.currentProfile?.full_name || 'there').split(' ')[0];
         const greeting = this.greeting();
@@ -192,6 +218,26 @@ const todayModule = {
                                 </div>
                             `).join('')}
                         </div>
+                    </section>
+
+                    <section class="rail-card">
+                        <div class="rail-head"><h3>Where time went</h3><span class="rail-meta">${time.total > 0 ? `${time.total.toFixed(1)}h logged · 7d` : '7d'}</span></div>
+                        ${time.items.length === 0
+                            ? `<p class="rail-empty">No hours logged yet. Add <strong>hours spent</strong> on any Action to start tracking — works for KPI buckets <em>and</em> ad-hoc projects (e.g. samadhan-website).</p>`
+                            : `<ul class="time-breakdown">
+                                ${time.items.slice(0, 6).map(it => {
+                                    const pctOfTotal = time.total > 0 ? (it.hours / time.total * 100) : 0;
+                                    return `
+                                        <li>
+                                            <div class="tb-row">
+                                                <span class="tb-label tb-${it.kind}" title="${it.count} action(s)">${escapeHtml(it.label)}</span>
+                                                <span class="tb-hours">${it.hours.toFixed(1)}h</span>
+                                            </div>
+                                            <div class="tb-bar"><div class="tb-fill tb-fill-${it.kind}" style="width:${pctOfTotal}%"></div></div>
+                                        </li>
+                                    `;
+                                }).join('')}
+                            </ul>`}
                     </section>
 
                     <section class="rail-card">
