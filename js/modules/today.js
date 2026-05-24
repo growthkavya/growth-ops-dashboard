@@ -1,17 +1,24 @@
 /**
- * Today module — the new daily landing page.
+ * Today module — the daily landing.
  *
- * Replaces the old "Dashboard" overview cards. Shows the three things
- * a user actually needs to open the workspace for:
- *   1. Top-3 priorities (overdue + due today + focus-KPI-linked)
- *      with inline percent-done sliders and a quick "mark done" button
- *   2. Quick win log — single input that creates an Action with
- *      status=done + percent_done=100 in one click (Kavya's "log a quick
- *      win" pattern, ported from the intern gl_task table)
- *   3. This week so far — auto-generated digest of Actions completed
- *      in the last 7 days, replaces the old standalone Weekly Log
- *   4. Recent activity (last 24h, scoped to my team) — replaces the
- *      old standalone Activity tab
+ * Layout (redesigned 24 May 2026 after first-pass UX feedback):
+ *
+ *   ┌───────────────────────────────────────────────────────────────┐
+ *   │  HERO BAND (gradient)                                         │
+ *   │  "Good morning, Kavya."  Mon · 24 May 2026                    │
+ *   │  ┌── 4 KPI counters ──┐                                       │
+ *   │  │ Done · Open · Blocked · Due today │                        │
+ *   │  └─────────────────────────────────────                       │
+ *   │  [ quick-win pill input ]                                     │
+ *   └───────────────────────────────────────────────────────────────┘
+ *
+ *   ┌───────────────────────────────────────────┐  ┌────────────────┐
+ *   │ FOCUS CARD (#1 priority, big)             │  │ THIS WEEK      │
+ *   │ + percent strip + output + done button    │  │ done strip     │
+ *   ├───────────────────────────────────────────┤  ├────────────────┤
+ *   │ SECONDARY PRIORITIES (1-2 short cards)    │  │ ACTIVITY       │
+ *   │                                           │  │ last 24h rail  │
+ *   └───────────────────────────────────────────┘  └────────────────┘
  */
 
 const todayModule = {
@@ -43,7 +50,6 @@ const todayModule = {
     // ----- helpers ---------------------------------------------------------
 
     myKey() {
-        // member_key on profile — same field RBAC policies use
         return auth.currentProfile?.member_key
             || (auth.currentProfile?.full_name || '').toLowerCase().split(' ')[0];
     },
@@ -55,55 +61,72 @@ const todayModule = {
     },
 
     todayISO() {
-        const d = new Date();
-        d.setHours(0,0,0,0);
-        return d.toISOString().slice(0,10);
+        const d = new Date(); d.setHours(0,0,0,0); return d.toISOString().slice(0,10);
     },
-
     daysAgoISO(n) {
-        const d = new Date();
-        d.setDate(d.getDate() - n);
-        d.setHours(0,0,0,0);
+        const d = new Date(); d.setDate(d.getDate() - n); d.setHours(0,0,0,0);
         return d.toISOString().slice(0,10);
     },
 
     priorityScore(a) {
-        // Higher score = more urgent for the Today list
         const today = this.todayISO();
         const due = a.due_date;
-        let score = 0;
-        if (a.status === 'blocked')      score += 80;   // blocked = needs attention
-        if (due && due < today)           score += 100;  // overdue
-        if (due && due === today)         score += 60;   // due today
-        if (a.status === 'in_progress')   score += 20;
-        if (a.kpi_code)                   score += 5;
-        return score;
+        let s = 0;
+        if (a.status === 'blocked')      s += 80;
+        if (due && due < today)           s += 100;
+        if (due && due === today)         s += 60;
+        if (a.status === 'in_progress')   s += 20;
+        if (a.kpi_code)                   s += 5;
+        return s;
     },
 
-    pickTop3() {
-        const mine = this.actions.filter(a => this.isMine(a) && a.status !== 'done');
-        return mine
+    mineOpen() {
+        return this.actions.filter(a => this.isMine(a) && a.status !== 'done');
+    },
+
+    pickPriorities() {
+        return this.mineOpen()
             .map(a => ({...a, _score: this.priorityScore(a)}))
-            .sort((x, y) => y._score - x._score || (x.due_date || '9') .localeCompare(y.due_date || '9'))
-            .slice(0, 3);
+            .sort((x, y) => y._score - x._score || (x.due_date || '9').localeCompare(y.due_date || '9'));
     },
 
-    pickDoneThisWeek() {
+    counters() {
+        const mine = this.actions.filter(a => this.isMine(a));
         const cutoff = this.daysAgoISO(7);
-        return this.actions
-            .filter(a => this.isMine(a) && a.status === 'done' && a.updated_at && a.updated_at.slice(0,10) >= cutoff)
-            .sort((x, y) => (y.updated_at || '').localeCompare(x.updated_at || ''));
+        const today = this.todayISO();
+        return {
+            doneWeek: mine.filter(a => a.status === 'done' && a.updated_at?.slice(0,10) >= cutoff).length,
+            open:     mine.filter(a => a.status === 'in_progress' || a.status === 'not_started').length,
+            blocked:  mine.filter(a => a.status === 'blocked').length,
+            dueToday: mine.filter(a => a.status !== 'done' && a.due_date === today).length,
+        };
+    },
+
+    weekStrip() {
+        // last 7 days, an item per day with count of completed
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(); d.setDate(d.getDate() - i); d.setHours(0,0,0,0);
+            const iso = d.toISOString().slice(0,10);
+            const count = this.actions.filter(a => this.isMine(a) && a.status === 'done' && a.updated_at?.slice(0,10) === iso).length;
+            days.push({
+                label: d.toLocaleDateString('en-IN', { weekday: 'short' })[0],
+                date: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+                count,
+                isToday: iso === this.todayISO(),
+            });
+        }
+        return days;
     },
 
     pickRecentActivity() {
         const cutoff = new Date(Date.now() - 24*60*60*1000).toISOString();
-        // scope: my team = admin sees everyone, members see only their own actions
         const role = auth.currentProfile?.role;
         const myId = auth.currentUser?.id;
         return this.activity
             .filter(e => e.timestamp > cutoff)
             .filter(e => role === 'admin' || e.user_id === myId)
-            .slice(0, 8);
+            .slice(0, 6);
     },
 
     // ----- rendering -------------------------------------------------------
@@ -112,126 +135,183 @@ const todayModule = {
         const container = document.getElementById('today-container');
         if (!container) return;
 
-        const top3 = this.pickTop3();
-        const done = this.pickDoneThisWeek();
+        const priorities = this.pickPriorities();
+        const focus = priorities[0];
+        const others = priorities.slice(1, 3);
+        const c = this.counters();
+        const week = this.weekStrip();
         const activity = this.pickRecentActivity();
 
         const name = (auth.currentProfile?.full_name || 'there').split(' ')[0];
         const greeting = this.greeting();
+        const todayLabel = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
 
         container.innerHTML = `
-            <div class="today-head">
-                <div>
-                    <h2 style="margin:0;">${greeting}, ${escapeHtml(name)}.</h2>
-                    <p style="margin:.35rem 0 0;color:var(--text-muted,#64748b);font-size:.92rem;">
-                        ${top3.length === 0
-                            ? 'No open priorities for you right now. Nice.'
-                            : `${top3.length} ${top3.length === 1 ? 'thing' : 'things'} to push today.`}
-                    </p>
+            <div class="today-hero">
+                <div class="today-hero-top">
+                    <div>
+                        <h1 class="today-greet">${greeting}, ${escapeHtml(name)}.</h1>
+                        <p class="today-date">${todayLabel}</p>
+                    </div>
+                    <div class="today-counters">
+                        ${this.renderCounter('Done · 7d', c.doneWeek, 'good')}
+                        ${this.renderCounter('Open', c.open, 'neutral')}
+                        ${this.renderCounter('Blocked', c.blocked, c.blocked > 0 ? 'bad' : 'neutral')}
+                        ${this.renderCounter('Due today', c.dueToday, c.dueToday > 0 ? 'warn' : 'neutral')}
+                    </div>
                 </div>
-                <div class="today-quickwin">
-                    <input id="quickwin-input" type="text" placeholder="Log a quick win you just shipped…" />
-                    <button id="quickwin-btn" class="btn btn-primary btn-sm">Log win</button>
-                </div>
+                <form class="today-quickwin-bar" id="quickwin-form" autocomplete="off">
+                    <span class="qw-plus">+</span>
+                    <input id="quickwin-input" type="text" placeholder="Log a win you just shipped — Enter to save" autocomplete="off"/>
+                    <button id="quickwin-btn" type="submit" class="qw-btn">Log</button>
+                </form>
             </div>
 
-            <section class="today-section">
-                <div class="today-section-head">
-                    <h3>Today's priorities</h3>
-                    <a href="#actions" class="link-muted">See all actions →</a>
+            <div class="today-grid">
+                <div class="today-main">
+                    ${focus ? this.renderFocus(focus) : this.renderFocusEmpty()}
+                    ${others.length > 0 ? `
+                        <div class="today-others-head">
+                            <h3>Up next</h3>
+                            <a href="#actions" class="today-link">All actions →</a>
+                        </div>
+                        <div class="today-others">
+                            ${others.map(a => this.renderOther(a)).join('')}
+                        </div>
+                    ` : ''}
                 </div>
-                <div class="today-priorities">
-                    ${top3.length === 0
-                        ? `<div class="empty-state">Nothing overdue or due today. Pick something from <a href="#actions">Actions</a> to push.</div>`
-                        : top3.map(a => this.renderPriorityCard(a)).join('')}
-                </div>
-            </section>
 
-            <div class="today-twocol">
-                <section class="today-section">
-                    <div class="today-section-head">
-                        <h3>This week so far</h3>
-                        <span class="badge badge-soft">${done.length} done</span>
-                    </div>
-                    ${done.length === 0
-                        ? `<div class="empty-state">No Actions marked done in the last 7 days yet.</div>`
-                        : `<ul class="today-done-list">${done.slice(0,8).map(a => `
-                            <li>
-                                <span class="check">&#10003;</span>
-                                <div>
-                                    <div class="title">${escapeHtml(a.title)}</div>
-                                    <div class="meta">${this.fmtDate(a.updated_at)}${a.output_link ? ` · <a href="${escapeAttr(a.output_link)}" target="_blank" class="link-muted">output ↗</a>` : ''}</div>
+                <aside class="today-rail">
+                    <section class="rail-card">
+                        <div class="rail-head"><h3>This week</h3><span class="rail-meta">${c.doneWeek} done</span></div>
+                        <div class="week-strip">
+                            ${week.map(d => `
+                                <div class="week-day ${d.isToday ? 'today' : ''} ${d.count > 0 ? 'has' : ''}" title="${d.date} · ${d.count} done">
+                                    <div class="week-dot">${d.count > 0 ? d.count : ''}</div>
+                                    <div class="week-label">${d.label}</div>
                                 </div>
-                            </li>
-                        `).join('')}</ul>`}
-                </section>
+                            `).join('')}
+                        </div>
+                    </section>
 
-                <section class="today-section">
-                    <div class="today-section-head">
-                        <h3>Recent activity</h3>
-                        <span class="badge badge-soft">Last 24h${auth.currentProfile?.role !== 'admin' ? ' · me' : ''}</span>
-                    </div>
-                    ${activity.length === 0
-                        ? `<div class="empty-state">Nothing in the last 24 hours.</div>`
-                        : `<ul class="today-activity-list">${activity.map(e => `
-                            <li>
-                                <div class="dot dot-${e.action}"></div>
-                                <div>
-                                    <div class="line">
-                                        <strong>${escapeHtml(e.user_name || '—')}</strong>
-                                        ${escapeHtml(e.action)}
-                                        ${escapeHtml(e.entity_type)}
-                                        ${e.entity_title ? `<em>"${escapeHtml(e.entity_title)}"</em>` : ''}
-                                    </div>
-                                    <div class="meta">${this.fmtAgo(e.timestamp)}</div>
-                                </div>
-                            </li>
-                        `).join('')}</ul>`}
-                </section>
+                    <section class="rail-card">
+                        <div class="rail-head"><h3>Recent</h3><span class="rail-meta">${auth.currentProfile?.role === 'admin' ? 'last 24h · team' : 'last 24h · me'}</span></div>
+                        ${activity.length === 0
+                            ? `<p class="rail-empty">Nothing in the last 24 hours.</p>`
+                            : `<ul class="rail-activity">
+                                ${activity.map(e => `
+                                    <li>
+                                        <span class="rail-dot rail-dot-${this.activityKind(e.action)}"></span>
+                                        <div>
+                                            <div class="rail-line">${escapeHtml(e.user_name || '—')} <span class="rail-verb">${escapeHtml(e.action)}</span> ${e.entity_title ? `<em>${escapeHtml(this.truncate(e.entity_title, 38))}</em>` : ''}</div>
+                                            <div class="rail-ago">${this.fmtAgo(e.timestamp)}</div>
+                                        </div>
+                                    </li>
+                                `).join('')}
+                            </ul>`}
+                    </section>
+                </aside>
             </div>
         `;
 
         this.attachHandlers();
     },
 
-    renderPriorityCard(a) {
+    renderCounter(label, value, tone) {
+        return `
+            <div class="counter counter-${tone}">
+                <div class="counter-val">${value}</div>
+                <div class="counter-lbl">${label}</div>
+            </div>
+        `;
+    },
+
+    renderFocusEmpty() {
+        return `
+            <div class="focus-empty">
+                <div class="focus-empty-mark">✓</div>
+                <div>
+                    <h2>Nothing on the board.</h2>
+                    <p>No open priorities for you right now. Open the <a href="#actions">Actions</a> tab to pick something up, or log a win above.</p>
+                </div>
+            </div>
+        `;
+    },
+
+    renderFocus(a) {
         const pct = Math.max(0, Math.min(100, a.percent_done || 0));
-        const overdue = a.due_date && a.due_date < this.todayISO();
-        const dueToday = a.due_date === this.todayISO();
-        const tagHtml = a.status === 'blocked'
-            ? '<span class="pill pill-red">Blocked</span>'
-            : overdue ? '<span class="pill pill-red">Overdue</span>'
-            : dueToday ? '<span class="pill pill-amber">Due today</span>'
-            : a.status === 'in_progress' ? '<span class="pill pill-blue">In progress</span>'
-            : '';
+        const today = this.todayISO();
+        const overdue = a.due_date && a.due_date < today;
+        const dueToday = a.due_date === today;
+
+        let urgency = '', urgencyClass = '';
+        if (a.status === 'blocked')     { urgency = 'Blocked'; urgencyClass = 'urg-red'; }
+        else if (overdue)               { urgency = 'Overdue'; urgencyClass = 'urg-red'; }
+        else if (dueToday)              { urgency = 'Due today'; urgencyClass = 'urg-amber'; }
+        else if (a.status === 'in_progress') { urgency = 'In progress'; urgencyClass = 'urg-blue'; }
 
         return `
-            <article class="prio-card" data-id="${a.id}">
-                <header>
-                    <div class="prio-head">
-                        ${tagHtml}
-                        ${a.kpi_code ? `<span class="pill pill-soft">${escapeHtml(a.kpi_code)}</span>` : ''}
-                        ${a.kras?.short_name ? `<span class="pill pill-soft">${escapeHtml(a.kras.short_name)}</span>` : ''}
-                    </div>
-                    <h4>${escapeHtml(a.title)}</h4>
-                    ${a.description ? `<p>${escapeHtml(a.description)}</p>` : ''}
+            <article class="focus-card-v2" data-id="${a.id}">
+                <header class="focus-head">
+                    <div class="focus-tag">YOUR #1 RIGHT NOW</div>
+                    ${urgency ? `<span class="urg ${urgencyClass}">${urgency}</span>` : ''}
+                    ${a.kpi_code ? `<span class="urg urg-soft">${escapeHtml(a.kpi_code)}</span>` : ''}
                 </header>
-                <div class="prio-progress">
-                    <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
-                    <input type="range" min="0" max="100" step="5" value="${pct}" class="prio-slider" data-id="${a.id}" aria-label="Percent done"/>
-                    <span class="prio-pct">${pct}%</span>
+                <h2 class="focus-title">${escapeHtml(a.title)}</h2>
+                ${a.description ? `<p class="focus-desc">${escapeHtml(a.description)}</p>` : ''}
+                ${a.rm_remarks ? `<div class="focus-rm"><strong>Note from RM:</strong> ${escapeHtml(a.rm_remarks)}</div>` : ''}
+
+                <div class="focus-progress">
+                    <div class="focus-progress-bar"><div class="fill" style="width:${pct}%"></div></div>
+                    <div class="focus-progress-chips">
+                        ${[0, 25, 50, 75, 100].map(p => `
+                            <button class="prog-chip ${pct === p ? 'sel' : ''}" data-id="${a.id}" data-pct="${p}">${p}%</button>
+                        `).join('')}
+                    </div>
                 </div>
-                <footer class="prio-footer">
-                    <div class="prio-due">${a.due_date ? `Due ${this.fmtDate(a.due_date)}` : 'No due date'}</div>
-                    <div class="prio-actions">
+
+                <footer class="focus-footer">
+                    <div class="focus-meta">
+                        <span class="focus-due">${a.due_date ? `Due ${this.fmtDate(a.due_date)}` : 'No due date set'}</span>
                         ${a.output_link
-                            ? `<a href="${escapeAttr(a.output_link)}" target="_blank" class="btn-link">Output ↗</a>`
-                            : `<button class="btn-link prio-add-output" data-id="${a.id}">+ Output link</button>`}
-                        <button class="btn-link prio-toggle-block" data-id="${a.id}">${a.status === 'blocked' ? 'Unblock' : 'Block'}</button>
-                        <button class="btn btn-sm btn-primary prio-mark-done" data-id="${a.id}">Mark done</button>
+                            ? `<a href="${escapeAttr(a.output_link)}" target="_blank" class="focus-output">Output ↗</a>`
+                            : `<button class="focus-output focus-output-add" data-id="${a.id}">+ Output link</button>`}
+                    </div>
+                    <div class="focus-cta">
+                        <button class="btn-ghost prio-toggle-block" data-id="${a.id}">
+                            ${a.status === 'blocked' ? 'Unblock' : 'Block'}
+                        </button>
+                        <button class="btn-primary prio-mark-done" data-id="${a.id}">Mark done</button>
                     </div>
                 </footer>
-                ${a.rm_remarks ? `<div class="prio-rm-remarks"><strong>Note from Kavya:</strong> ${escapeHtml(a.rm_remarks)}</div>` : ''}
+            </article>
+        `;
+    },
+
+    renderOther(a) {
+        const pct = Math.max(0, Math.min(100, a.percent_done || 0));
+        const today = this.todayISO();
+        const overdue = a.due_date && a.due_date < today;
+        const dueToday = a.due_date === today;
+
+        let urg = '', urgClass = '';
+        if (a.status === 'blocked')     { urg = 'Blocked'; urgClass = 'urg-red'; }
+        else if (overdue)               { urg = 'Overdue'; urgClass = 'urg-red'; }
+        else if (dueToday)              { urg = 'Today'; urgClass = 'urg-amber'; }
+        else if (a.status === 'in_progress') { urg = 'In flight'; urgClass = 'urg-blue'; }
+
+        return `
+            <article class="other-card" data-id="${a.id}">
+                <div class="other-head">
+                    ${urg ? `<span class="urg ${urgClass}">${urg}</span>` : ''}
+                    <span class="other-due">${a.due_date ? this.fmtDate(a.due_date) : '—'}</span>
+                </div>
+                <div class="other-title">${escapeHtml(a.title)}</div>
+                <div class="other-foot">
+                    <div class="other-bar"><div class="fill" style="width:${pct}%"></div></div>
+                    <span class="other-pct">${pct}%</span>
+                    <button class="other-done prio-mark-done" data-id="${a.id}" title="Mark done">✓</button>
+                </div>
             </article>
         `;
     },
@@ -239,23 +319,23 @@ const todayModule = {
     // ----- handlers --------------------------------------------------------
 
     attachHandlers() {
-        // Quick win
-        const qwBtn = document.getElementById('quickwin-btn');
-        const qwInp = document.getElementById('quickwin-input');
-        if (qwBtn && qwInp) {
-            const log = async () => {
+        const qwForm = document.getElementById('quickwin-form');
+        const qwInp  = document.getElementById('quickwin-input');
+        if (qwForm && qwInp) {
+            qwForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
                 const title = qwInp.value.trim();
                 if (!title) return;
-                qwBtn.disabled = true;
+                const btn = qwForm.querySelector('.qw-btn');
+                btn.disabled = true;
                 try {
-                    const today = this.todayISO();
                     const created = await db.createAction({
                         action_id: `qw-${Date.now()}`,
                         title,
                         owner_name: this.myKey(),
                         status: 'done',
                         percent_done: 100,
-                        due_date: today,
+                        due_date: this.todayISO(),
                         layer: 3,
                         assigned_by: auth.currentUser?.id,
                         assigned_by_name: auth.currentProfile?.full_name,
@@ -270,35 +350,40 @@ const todayModule = {
                         title
                     );
                     qwInp.value = '';
-                    toast.success('Quick win logged');
+                    toast.success('Win logged');
                     await this.refresh();
-                } catch (e) {
-                    console.error(e);
-                    toast.error(e.message || 'Failed to log win');
+                } catch (err) {
+                    console.error(err);
+                    toast.error(err.message || 'Failed to log win');
                 } finally {
-                    qwBtn.disabled = false;
+                    btn.disabled = false;
                 }
-            };
-            qwBtn.addEventListener('click', log);
-            qwInp.addEventListener('keydown', e => { if (e.key === 'Enter') log(); });
+            });
         }
 
-        // Percent-done sliders
-        document.querySelectorAll('.prio-slider').forEach(slider => {
-            let timer = null;
-            slider.addEventListener('input', e => {
-                const card = e.target.closest('.prio-card');
-                const pct = parseInt(e.target.value, 10);
-                if (card) {
-                    card.querySelector('.fill').style.width = pct + '%';
-                    card.querySelector('.prio-pct').textContent = pct + '%';
-                }
-                clearTimeout(timer);
-                timer = setTimeout(() => this.savePercent(slider.dataset.id, pct), 600);
+        // Progress chips (0/25/50/75/100)
+        document.querySelectorAll('.prog-chip').forEach(chip => {
+            chip.addEventListener('click', async () => {
+                const id = chip.dataset.id;
+                const pct = parseInt(chip.dataset.pct, 10);
+                try {
+                    const updates = { percent_done: pct, updated_at: new Date().toISOString() };
+                    if (pct === 100) updates.status = 'done';
+                    else if (pct > 0) {
+                        const a = this.actions.find(x => x.id === id);
+                        if (a && a.status === 'not_started') updates.status = 'in_progress';
+                    } else {
+                        const a = this.actions.find(x => x.id === id);
+                        if (a && a.status === 'in_progress') updates.status = 'in_progress';
+                    }
+                    await db.updateAction(id, updates);
+                    if (pct === 100) toast.success('Marked done');
+                    await this.refresh();
+                } catch (e) { toast.error(e.message || 'Failed to save'); }
             });
         });
 
-        // Mark done
+        // Mark done buttons (focus card + other cards)
         document.querySelectorAll('.prio-mark-done').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = btn.dataset.id;
@@ -306,21 +391,10 @@ const todayModule = {
                 try {
                     await db.updateAction(id, { status: 'done', percent_done: 100, updated_at: new Date().toISOString() });
                     const a = this.actions.find(x => x.id === id);
-                    await db.logActivity(
-                        auth.currentUser.id,
-                        auth.currentProfile?.full_name || 'Unknown',
-                        'completed',
-                        'action',
-                        id,
-                        a?.title || ''
-                    );
+                    await db.logActivity(auth.currentUser.id, auth.currentProfile?.full_name || 'Unknown', 'completed', 'action', id, a?.title || '');
                     toast.success('Marked done');
                     await this.refresh();
-                } catch (e) {
-                    console.error(e);
-                    toast.error(e.message || 'Failed to update');
-                    btn.disabled = false;
-                }
+                } catch (e) { toast.error(e.message || 'Failed'); btn.disabled = false; }
             });
         });
 
@@ -334,55 +408,25 @@ const todayModule = {
                 btn.disabled = true;
                 try {
                     await db.updateAction(id, { status: newStatus, updated_at: new Date().toISOString() });
-                    await db.logActivity(
-                        auth.currentUser.id,
-                        auth.currentProfile?.full_name || 'Unknown',
-                        newStatus === 'blocked' ? 'blocked' : 'unblocked',
-                        'action',
-                        id,
-                        a.title
-                    );
+                    await db.logActivity(auth.currentUser.id, auth.currentProfile?.full_name || 'Unknown', newStatus === 'blocked' ? 'blocked' : 'unblocked', 'action', id, a.title);
                     toast.success(newStatus === 'blocked' ? 'Marked blocked' : 'Unblocked');
                     await this.refresh();
-                } catch (e) {
-                    console.error(e);
-                    toast.error(e.message || 'Failed to update');
-                    btn.disabled = false;
-                }
+                } catch (e) { toast.error(e.message || 'Failed'); btn.disabled = false; }
             });
         });
 
-        // Add output link inline
-        document.querySelectorAll('.prio-add-output').forEach(btn => {
+        // Inline output-link add
+        document.querySelectorAll('.focus-output-add').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const url = prompt('Paste the output link (Google Doc, Sheet, etc.):');
                 if (!url) return;
-                const id = btn.dataset.id;
                 try {
-                    await db.updateAction(id, { output_link: url.trim(), updated_at: new Date().toISOString() });
-                    toast.success('Output link added');
+                    await db.updateAction(btn.dataset.id, { output_link: url.trim(), updated_at: new Date().toISOString() });
+                    toast.success('Output link saved');
                     await this.refresh();
-                } catch (e) {
-                    toast.error(e.message || 'Failed to add link');
-                }
+                } catch (e) { toast.error(e.message || 'Failed'); }
             });
         });
-    },
-
-    async savePercent(id, pct) {
-        try {
-            // If user dragged to 100, also flip status to done
-            const updates = { percent_done: pct, updated_at: new Date().toISOString() };
-            if (pct === 100) updates.status = 'done';
-            else if (pct > 0) {
-                const a = this.actions.find(x => x.id === id);
-                if (a && a.status === 'not_started') updates.status = 'in_progress';
-            }
-            await db.updateAction(id, updates);
-        } catch (e) {
-            console.error(e);
-            toast.error('Failed to save progress');
-        }
     },
 
     // ----- format helpers --------------------------------------------------
@@ -394,6 +438,19 @@ const todayModule = {
         if (h < 17) return 'Afternoon';
         if (h < 21) return 'Evening';
         return 'Late';
+    },
+
+    activityKind(action) {
+        const a = (action || '').toLowerCase();
+        if (a.includes('done') || a.includes('completed') || a.includes('win')) return 'good';
+        if (a.includes('block')) return 'bad';
+        if (a.includes('delete')) return 'muted';
+        return 'neutral';
+    },
+
+    truncate(s, n) {
+        s = String(s || '');
+        return s.length > n ? s.slice(0, n - 1) + '…' : s;
     },
 
     fmtDate(iso) {
@@ -414,7 +471,7 @@ const todayModule = {
     }
 };
 
-// Small escape helpers — only define if not already global
+// Escape helpers
 if (typeof escapeHtml === 'undefined') {
     window.escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
