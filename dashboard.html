@@ -29,41 +29,29 @@
             </div>
 
             <ul class="nav-links">
-                <li><a href="#dashboard" class="nav-link active" data-section="dashboard">
-                    <span class="nav-icon">&#9634;</span> Dashboard
-                </a></li>
-                <li><a href="#goals" class="nav-link" data-section="goals">
-                    <span class="nav-icon">&#9733;</span> Goals
+                <li><a href="#today" class="nav-link active" data-section="today">
+                    <span class="nav-icon">&#9728;</span> Today
                 </a></li>
                 <li><a href="#actions" class="nav-link" data-section="actions">
                     <span class="nav-icon">&#10003;</span> Actions
                 </a></li>
-                <li><a href="#delegations" class="nav-link admin-or-member-only" data-section="delegations">
-                    <span class="nav-icon">&#10145;</span> Delegations
-                </a></li>
                 <li><a href="#kpis" class="nav-link" data-section="kpis">
                     <span class="nav-icon">&#9650;</span> KPIs
                 </a></li>
-                <li><a href="#ideas" class="nav-link" data-section="ideas">
-                    <span class="nav-icon">&#9889;</span> Ideation
-                </a></li>
-                <li><a href="#documents" class="nav-link" data-section="documents">
-                    <span class="nav-icon">&#128196;</span> Documents
-                </a></li>
-                <li><a href="#weekly" class="nav-link" data-section="weekly">
-                    <span class="nav-icon">&#128197;</span> Weekly Log
-                </a></li>
-                <li><a href="#activity" class="nav-link" data-section="activity">
-                    <span class="nav-icon">&#128336;</span> Activity
-                </a></li>
-                <li><a href="#team" class="nav-link" data-section="team">
-                    <span class="nav-icon">&#128101;</span> Team
+                <li><a href="#delegations" class="nav-link admin-or-member-only" data-section="delegations">
+                    <span class="nav-icon">&#10145;</span> Delegations
                 </a></li>
                 <li><a href="#interns" class="nav-link admin-or-member-only" data-section="interns">
                     <span class="nav-icon">&#127891;</span> Interns
                 </a></li>
                 <li><a href="#growth-lab" class="nav-link admin-or-member-only" data-section="growth-lab">
                     <span class="nav-icon">&#127797;</span> Growth Lab
+                </a></li>
+                <li><a href="#team" class="nav-link" data-section="team">
+                    <span class="nav-icon">&#128101;</span> Team
+                </a></li>
+                <li><a href="#documents" class="nav-link" data-section="documents">
+                    <span class="nav-icon">&#128196;</span> Documents
                 </a></li>
             </ul>
 
@@ -82,103 +70,19 @@
 
         <!-- Main Content -->
         <main class="content">
-            <!-- Dashboard Section -->
-            <section id="dashboard" class="section active">
+            <!-- Today Section (new landing) -->
+            <section id="today" class="section active">
                 <header class="section-header">
-                    <h2>Dashboard</h2>
+                    <h2>Today</h2>
                     <span class="last-updated">Last updated: <span id="last-updated">-</span></span>
                 </header>
-
-                <div class="dashboard-grid">
-                    <!-- Today's Focus - Priority Action -->
-                    <div class="card focus-card" id="focus-card">
-                        <div class="focus-header">
-                            <h3>Today's Focus</h3>
-                            <span class="focus-date" id="focus-date"></span>
-                        </div>
-                        <div class="focus-content" id="focus-content">
-                            <div class="focus-action">
-                                <span class="focus-layer" id="focus-layer">-</span>
-                                <span class="focus-title" id="focus-title">No priority set</span>
-                            </div>
-                            <div class="focus-meta">
-                                <span class="focus-kpi" id="focus-kpi"></span>
-                            </div>
-                        </div>
-                        <button class="btn btn-sm" id="mark-focus-done" style="display:none;">Mark Done</button>
-                    </div>
-
-                    <!-- Quick Stats -->
-                    <div class="card stats-card">
-                        <h3>Quick Stats</h3>
-                        <div class="stats-grid">
-                            <div class="stat">
-                                <span class="stat-value" id="stat-done">0</span>
-                                <span class="stat-label">Done</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-value" id="stat-progress">0</span>
-                                <span class="stat-label">In Progress</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-value" id="stat-pending">0</span>
-                                <span class="stat-label">Pending</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-value" id="stat-goals">0</span>
-                                <span class="stat-label">Goals</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KRA Progress -->
-                    <div class="card progress-card">
-                        <h3>KRA Progress</h3>
-                        <div class="kra-progress" id="kra-progress">
-                            <!-- Populated by JS: 5 rows, one per KRA -->
-                        </div>
-                    </div>
-
-                    <!-- Team Snapshot -->
-                    <div class="card team-snapshot-card">
-                        <h3>Team Snapshot</h3>
-                        <div class="team-snapshot" id="team-snapshot">
-                            <!-- Populated by JS: 2 cards (Kavya/Riya) -->
-                        </div>
-                    </div>
-
-                    <!-- KPI Summary -->
-                    <div class="card kpi-summary-card">
-                        <h3>KPI Summary</h3>
-                        <div class="kpi-gauges" id="kpi-gauges">
-                            <!-- Populated by JS -->
-                        </div>
-                        <div class="weighted-score">
-                            Weighted: <strong id="weighted-score">-</strong> / 4.0
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="card activity-card">
-                        <h3>Recent Activity</h3>
-                        <ul class="activity-list" id="recent-activity">
-                            <!-- Populated by JS -->
-                        </ul>
-                    </div>
+                <div id="today-container">
+                    <p style="color:var(--text-muted,#64748b);">Loading…</p>
                 </div>
             </section>
 
             <!-- Goals Section -->
-            <section id="goals" class="section">
-                <header class="section-header">
-                    <h2>Goals</h2>
-                    <button class="btn btn-primary" id="add-goal-btn">+ Add Goal</button>
-                </header>
-
-                <div class="goals-container" id="goals-container">
-                    <!-- Populated by JS -->
-                </div>
-            </section>
+<!-- Goals section removed — KPIs are the single source of truth; weekly digest now lives in Today -->
 
             <!-- Actions Section -->
             <section id="actions" class="section">
@@ -255,27 +159,7 @@
                 </div>
             </section>
 
-            <!-- Ideas Section -->
-            <section id="ideas" class="section">
-                <header class="section-header">
-                    <h2>Ideation</h2>
-                    <button class="btn btn-primary" id="add-idea-btn">+ New Idea</button>
-                </header>
-
-                <div class="ideas-filters">
-                    <input type="text" id="ideas-search" placeholder="Search ideas..." class="search-input">
-                    <select id="ideas-status-filter">
-                        <option value="all">All</option>
-                        <option value="active">Active</option>
-                        <option value="draft">Drafts</option>
-                        <option value="archived">Archived</option>
-                    </select>
-                </div>
-
-                <div class="ideas-grid" id="ideas-grid">
-                    <!-- Populated by JS -->
-                </div>
-            </section>
+<!-- Ideation removed — graduate ideas into Actions directly -->
 
             <!-- Documents Section -->
             <section id="documents" class="section">
@@ -327,56 +211,8 @@
                 </div>
             </section>
 
-            <!-- Weekly Log Section -->
-            <section id="weekly" class="section">
-                <header class="section-header">
-                    <h2>Weekly Log</h2>
-                    <div class="week-nav">
-                        <button id="prev-week" class="btn-nav">&larr;</button>
-                        <span id="current-week">Week 1, 2026</span>
-                        <button id="next-week" class="btn-nav">&rarr;</button>
-                    </div>
-                </header>
-
-                <div class="week-focus">
-                    <label>Focus:</label>
-                    <input type="text" id="week-focus-input" placeholder="This week's focus...">
-                    <button class="btn btn-small" id="save-focus-btn">Save</button>
-                </div>
-
-                <div class="weekly-grid" id="weekly-grid">
-                    <!-- Populated by JS -->
-                </div>
-
-                <div class="week-summary">
-                    <h4>Week Summary</h4>
-                    <textarea id="week-summary-input" placeholder="Summary of the week..."></textarea>
-                    <button class="btn btn-small" id="save-summary-btn">Save Summary</button>
-                </div>
-            </section>
-
-            <!-- Activity Log Section -->
-            <section id="activity" class="section">
-                <header class="section-header">
-                    <h2>Activity Log</h2>
-                    <div class="filters">
-                        <select id="activity-user-filter">
-                            <option value="all">All Users</option>
-                        </select>
-                        <select id="activity-type-filter">
-                            <option value="all">All Types</option>
-                            <option value="action">Actions</option>
-                            <option value="goal">Goals</option>
-                            <option value="kpi">KPIs</option>
-                            <option value="idea">Ideas</option>
-                        </select>
-                    </div>
-                </header>
-
-                <div class="activity-timeline" id="activity-timeline">
-                    <!-- Populated by JS -->
-                </div>
-            </section>
+<!-- Weekly Log removed — now auto-generated inside Today from completed Actions -->
+<!-- Activity Log removed — last 24h scoped feed now lives inside Today -->
 
             <!-- Team Section -->
             <section id="team" class="section">
@@ -493,20 +329,16 @@
     <script src="js/components/toast.js"></script>
     <script src="js/components/modal.js"></script>
     <script src="js/auth.js?v=3"></script>
-    <script src="js/modules/dashboard.js?v=3"></script>
-    <script src="js/modules/goals.js"></script>
-    <script src="js/modules/actions.js?v=3"></script>
+    <script src="js/modules/today.js?v=1"></script>
+    <script src="js/modules/actions.js?v=4"></script>
     <script src="js/modules/kpis.js?v=3"></script>
-    <script src="js/modules/ideas.js"></script>
     <script src="js/modules/documents.js"></script>
     <script src="js/modules/master-sheets.js?v=1"></script>
-    <script src="js/modules/weekly.js"></script>
-    <script src="js/modules/activity.js"></script>
     <script src="js/modules/growth-lab.js?v=1"></script>
     <script src="js/modules/team.js?v=3"></script>
     <script src="js/modules/intern.js?v=1"></script>
     <script src="js/modules/interns-admin.js?v=1"></script>
     <script src="js/modules/delegations.js?v=1"></script>
-    <script src="js/app.js?v=7"></script>
+    <script src="js/app.js?v=8"></script>
 </body>
 </html>

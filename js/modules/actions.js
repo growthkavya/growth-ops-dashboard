@@ -123,12 +123,29 @@ const actionsModule = {
             assignedTrail = `<div class="action-assigned-trail" title="${this.escape(label)}">↳ ${this.escape(label)}</div>`;
         }
 
+        const pct = Math.max(0, Math.min(100, action.percent_done || 0));
+        const outputBadge = action.output_link
+            ? `<a class="action-output-link" href="${this.escape(action.output_link)}" target="_blank" title="Open output ↗" onclick="event.stopPropagation()">↗</a>`
+            : '';
+        const remarksBadge = action.rm_remarks
+            ? `<span class="action-rm-dot" title="Note from RM: ${this.escape(action.rm_remarks)}">●</span>`
+            : '';
+        const blockedTag = action.status === 'blocked'
+            ? `<span class="action-blocked-pill">Blocked</span>`
+            : '';
+
         return `
             <div class="action-item" data-id="${action.id}" data-status="${action.status}">
                 <span class="action-id">${action.action_id}</span>
                 <span class="action-title" title="${this.escape(action.notes || '')}">
                     ${this.escape(action.title)}
+                    ${blockedTag}
+                    ${outputBadge}
+                    ${remarksBadge}
                     ${assignedTrail}
+                    ${action.status !== 'done' && action.status !== 'not_started'
+                        ? `<div class="action-progress-mini"><div class="bar"><div class="fill" style="width:${pct}%"></div></div><span>${pct}%</span></div>`
+                        : ''}
                 </span>
                 <span class="action-kpi">${this.escape(kpiName)}</span>
                 <span class="owner-badge badge-${owner}">${ownerLabel}</span>
@@ -148,6 +165,7 @@ const actionsModule = {
         const labels = {
             'not_started': 'Not Started',
             'in_progress': 'In Progress',
+            'blocked': 'Blocked',
             'done': 'Done'
         };
         return labels[status] || status;
@@ -172,7 +190,7 @@ const actionsModule = {
 
         if (!action) return;
 
-        const statuses = ['not_started', 'in_progress', 'done'];
+        const statuses = ['not_started', 'in_progress', 'blocked', 'done'];
         const currentIndex = statuses.indexOf(action.status);
         const newStatus = statuses[(currentIndex + 1) % statuses.length];
 
@@ -229,8 +247,14 @@ const actionsModule = {
                     <select id="action-status" name="status">
                         <option value="not_started" ${action.status === 'not_started' ? 'selected' : ''}>Not Started</option>
                         <option value="in_progress" ${action.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="blocked" ${action.status === 'blocked' ? 'selected' : ''}>Blocked</option>
                         <option value="done" ${action.status === 'done' ? 'selected' : ''}>Done</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="action-percent">Progress (%)</label>
+                    <input type="range" id="action-percent" name="percent_done" min="0" max="100" step="5" value="${action.percent_done || 0}" oninput="document.getElementById('percent-display').textContent = this.value + '%'">
+                    <span id="percent-display" class="percent-display">${action.percent_done || 0}%</span>
                 </div>
                 <div class="form-group">
                     <label for="action-owner">Owner</label>
@@ -244,9 +268,24 @@ const actionsModule = {
                     <input type="date" id="action-due" name="due_date" value="${action.due_date || ''}">
                 </div>
                 <div class="form-group">
+                    <label for="action-output">Output link (Google Doc, Sheet, etc.)</label>
+                    <input type="url" id="action-output" name="output_link" placeholder="https://..." value="${this.escape(action.output_link || '')}">
+                </div>
+                <div class="form-group">
                     <label for="action-notes">Notes</label>
                     <textarea id="action-notes" name="notes">${this.escape(action.notes || '')}</textarea>
                 </div>
+                ${auth.currentProfile?.role === 'admin' ? `
+                <div class="form-group">
+                    <label for="action-rm-remarks">RM remarks (visible to owner)</label>
+                    <textarea id="action-rm-remarks" name="rm_remarks" placeholder="One-line feedback or correction for the owner...">${this.escape(action.rm_remarks || '')}</textarea>
+                </div>
+                ` : action.rm_remarks ? `
+                <div class="form-group">
+                    <label>RM remarks</label>
+                    <div class="readonly-note">${this.escape(action.rm_remarks)}</div>
+                </div>
+                ` : ''}
             </form>
         `;
 
@@ -260,10 +299,16 @@ const actionsModule = {
                 const updates = {
                     title: formData.get('title'),
                     status: formData.get('status'),
+                    percent_done: parseInt(formData.get('percent_done') || '0', 10),
                     owner_name: formData.get('owner_name') || null,
                     due_date: formData.get('due_date') || null,
+                    output_link: formData.get('output_link') || null,
                     notes: formData.get('notes')
                 };
+                // Only admins can set rm_remarks
+                if (auth.currentProfile?.role === 'admin' && formData.has('rm_remarks')) {
+                    updates.rm_remarks = formData.get('rm_remarks') || null;
+                }
 
                 await db.updateAction(actionId, updates);
 

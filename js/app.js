@@ -3,7 +3,7 @@
  */
 
 const app = {
-    currentSection: 'dashboard',
+    currentSection: 'today',
     initialized: false,
 
     async init() {
@@ -214,16 +214,12 @@ const app = {
 
             // Admin + member: initialize the full dashboard
             await Promise.all([
-                dashboardModule.init(),
+                todayModule.init(),
                 actionsModule.init(),
                 delegationsModule.init(),
-                goalsModule.init(),
                 kpisModule.init(),
-                ideasModule.init(),
                 documentsModule.init(),
                 masterSheetsModule.init(),
-                weeklyModule.init(),
-                activityModule.init(),
                 teamModule.init(),
                 internsAdminModule.init()
             ]);
@@ -261,15 +257,11 @@ const app = {
 
     refreshCurrentSection() {
         const modules = {
-            dashboard: dashboardModule,
+            today: todayModule,
             actions: actionsModule,
             delegations: delegationsModule,
-            goals: goalsModule,
             kpis: kpisModule,
-            ideas: ideasModule,
             documents: documentsModule,
-            weekly: weeklyModule,
-            activity: activityModule,
             team: teamModule,
             interns: internsAdminModule
         };
@@ -288,14 +280,10 @@ const app = {
     refreshAll() {
         if (!this.initialized) return;
 
-        dashboardModule.refresh();
+        todayModule.refresh();
         actionsModule.refresh();
-        goalsModule.refresh();
         kpisModule.refresh();
-        ideasModule.refresh();
         documentsModule.refresh();
-        weeklyModule.refresh();
-        activityModule.refresh();
     }
 };
 
