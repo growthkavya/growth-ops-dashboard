@@ -3,130 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Growth & Ops Workspace</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Sign in — Growth &amp; Ops</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;550;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css?v=1">
+
+    <style>
+        .signin {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: var(--s5);
+        }
+        .signin-card {
+            width: 100%;
+            max-width: 360px;
+        }
+        .signin-mark {
+            width: 34px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+            margin-bottom: var(--s4);
+        }
+        .signin-form {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: var(--s5);
+            margin-top: var(--s5);
+        }
+        .error-message {
+            display: none;
+            padding: var(--s3);
+            margin-bottom: var(--s4);
+            background: var(--bad-wash);
+            color: var(--bad);
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+        }
+    </style>
 </head>
-<body class="login-page">
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <h1>Growth & Ops</h1>
-                <p>Team Workspace</p>
+<body>
+
+<div class="signin">
+    <div class="signin-card">
+        <div class="signin-mark"></div>
+        <h1 class="h-page">Growth &amp; Ops</h1>
+        <p class="meta">Goals, scorecards and delegations for the SSEI growth team.</p>
+
+        <form class="signin-form" id="login-form" autocomplete="off">
+            <div id="login-error" class="error-message"></div>
+
+            <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required autocomplete="username">
             </div>
 
-            <form id="login-form" class="login-form" autocomplete="off">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required autocomplete="off">
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required autocomplete="off">
-                </div>
-
-                <div id="login-error" class="error-message" style="display: none;"></div>
-
-                <button type="submit" class="btn btn-primary btn-full" id="login-btn">
-                    <span class="btn-text">Sign In</span>
-                    <span class="btn-loading" style="display: none;">Signing in...</span>
-                </button>
-            </form>
-
-            <div class="login-footer">
-                <p>First time? <a href="#" id="signup-link">Create account</a></p>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
             </div>
-        </div>
 
-        <!-- Sign Up Modal -->
-        <div id="signup-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Create Account</h2>
-                    <button class="modal-close" id="close-signup">&times;</button>
-                </div>
-                <form id="signup-form">
-                    <div class="form-group">
-                        <label for="signup-name">Full Name</label>
-                        <input type="text" id="signup-name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signup-email">Email</label>
-                        <input type="email" id="signup-email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signup-password">Password</label>
-                        <input type="password" id="signup-password" name="password" required minlength="6">
-                        <small>At least 6 characters</small>
-                    </div>
-                    <div id="signup-error" class="error-message" style="display: none;"></div>
-                    <button type="submit" class="btn btn-primary btn-full">Create Account</button>
-                </form>
-            </div>
-        </div>
+            <button type="submit" class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center">
+                Sign in
+            </button>
+
+            <p class="meta" style="margin-top:var(--s4);text-align:center">
+                No account yet? <a href="#" id="signup-link">Create one</a>
+            </p>
+        </form>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // All-in-one login script
-        const SUPABASE_URL = 'https://glheaimbqdjgpufsclrr.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdsaGVhaW1icWRqZ3B1ZnNjbHJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwOTU5MjIsImV4cCI6MjA4OTY3MTkyMn0.DJoKsXfYQtoWbro7RBJbenD0ozptBUkfwkuGIUJok4k';
+<div class="modal-backdrop" id="signup-modal" style="display:none">
+    <div class="modal">
+        <form id="signup-form">
+            <div class="modal-head">
+                <h3 class="h-block">Create your account</h3>
+                <button type="button" class="icon-btn" id="close-signup" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="signup-error" class="error-message"></div>
+                <div class="field">
+                    <label for="signup-name">Full name</label>
+                    <input type="text" id="signup-name" name="name" required>
+                </div>
+                <div class="field">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" name="email" required>
+                </div>
+                <div class="field">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" name="password" required minlength="6">
+                    <p class="field-hint">At least 6 characters.</p>
+                </div>
+                <p class="field-hint">
+                    New accounts start with view access. Ask Kavya to set your role and
+                    link you to your KPIs.
+                </p>
+            </div>
+            <div class="modal-foot">
+                <button type="submit" class="btn btn-primary">Create account</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-        console.log('1. Script started');
-        console.log('2. window.supabase:', window.supabase);
-
-        // Create client
-        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('3. Client created:', client);
-        console.log('4. Client.auth:', client.auth);
-
-        // Clear inputs
-        document.getElementById('email').value = '';
-        document.getElementById('password').value = '';
-
-        // Handle form
-        document.getElementById('login-form').onsubmit = async function(e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('login-error');
-            const btn = document.getElementById('login-btn');
-
-            console.log('5. Attempting login:', email);
-
-            btn.disabled = true;
-            btn.querySelector('.btn-text').textContent = 'Signing in...';
-            errorDiv.style.display = 'none';
-
-            try {
-                console.log('6. Calling signInWithPassword...');
-                const { data, error } = await client.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                console.log('7. Response:', { data, error });
-
-                if (error) {
-                    errorDiv.textContent = error.message;
-                    errorDiv.style.display = 'block';
-                } else {
-                    console.log('8. Login successful!');
-                    // Respect ?next= query param (e.g. deep link from leadership view)
-                    const params = new URLSearchParams(window.location.search);
-                    const next = params.get('next');
-                    window.location.href = next || 'dashboard.html';
-                }
-            } catch (err) {
-                console.error('9. Catch error:', err);
-                errorDiv.textContent = err.message || 'Connection error';
-                errorDiv.style.display = 'block';
-            }
-
-            btn.disabled = false;
-            btn.querySelector('.btn-text').textContent = 'Sign In';
-        };
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js?v=10"></script>
+<script src="js/data.js?v=10"></script>
+<script src="js/auth.js?v=10"></script>
+<script>
+    // Match the theme the person last used on the dashboard.
+    document.documentElement.setAttribute('data-theme',
+        localStorage.getItem('go-theme') || 'light');
+</script>
 </body>
 </html>
