@@ -175,11 +175,17 @@ UPDATE public.master_sheets SET status = 'current' WHERE status IS NULL;
 -- team, but make it explicit so it doesn't read as an oversight.
 -- ================================================================
 
-DROP POLICY IF EXISTS "Goals viewable by authenticated users"  ON public.goals;
-DROP POLICY IF EXISTS "Goals modifiable by authenticated users" ON public.goals;
-DROP POLICY IF EXISTS "goals_select_policy" ON public.goals;
-DROP POLICY IF EXISTS "goals_modify_policy" ON public.goals;
-DROP POLICY IF EXISTS "goals_delete_policy" ON public.goals;
+-- Drop every existing policy on goals by name, whatever it's called. Listing
+-- them by hand is how a re-run breaks: miss one and the CREATE below fails.
+DO $$
+DECLARE r RECORD;
+BEGIN
+    FOR r IN SELECT policyname FROM pg_policies
+             WHERE schemaname = 'public' AND tablename = 'goals'
+    LOOP
+        EXECUTE format('DROP POLICY IF EXISTS %I ON public.goals', r.policyname);
+    END LOOP;
+END $$;
 
 -- Everyone on the team sees all goals. Alignment is the whole point.
 CREATE POLICY "goals_select_policy" ON public.goals

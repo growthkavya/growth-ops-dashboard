@@ -121,6 +121,23 @@ in filename order. All are safe to re-run.
 hasn't been run, the dashboard shows a banner saying so rather than
 silently rendering empty sections.
 
+### Testing a migration before running it on live data
+
+`supabase/verify.mjs` rebuilds the whole schema from scratch in a throwaway
+Postgres, applies every migration in order, and checks the result — that the
+backfills produce sane values, that triggers fire both ways, that every column
+the app queries exists, and that the migration survives being run twice.
+
+```bash
+npm i @electric-sql/pglite
+node supabase/verify.mjs
+```
+
+It found a real bug in `migration_v3_cleanup.sql` before that migration was
+ever run: two policies weren't dropped before being recreated, so a second run
+would have failed halfway through. Worth running for any migration that
+touches existing data.
+
 It also fixes two constraints that were rejecting writes:
 
 - `actions.owner_name` only allowed `kavya`/`ishita`/`riya`, so assigning a
