@@ -1001,6 +1001,99 @@ textarea { resize: vertical; min-height: 72px; }
 .doc-link:hover { color: var(--accent); }
 .doc-stale { color: var(--warn); }
 
+/* ---------- 18b. Calendar ---------------------------------- */
+
+/* Output by week. Bars are relative to the busiest week in view —
+   there is no correct number of tasks per week, so an absolute
+   scale would invent a target that doesn't exist. */
+.spark {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--s2);
+    height: 96px;
+}
+
+.spark-col {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 3px;
+}
+
+.spark-bar {
+    width: 100%;
+    max-width: 30px;
+    background: var(--accent);
+    border-radius: 3px 3px 0 0;
+    opacity: 0.55;
+    transition: opacity 0.12s;
+}
+.spark-col:hover .spark-bar { opacity: 1; }
+.spark-bar.now { opacity: 1; background: var(--accent-ink); }
+:root[data-theme="dark"] .spark-bar.now { background: var(--accent-ink); }
+
+.spark-n   { font-size: 10px; color: var(--ink-2); }
+.spark-lbl { font-size: 9px;  color: var(--ink-4); }
+
+.week-now { border-color: var(--line-strong); }
+
+.week-grid {
+    display: grid;
+    border-top: 1px solid var(--line);
+}
+
+.week-col {
+    padding: var(--s4);
+    border-right: 1px solid var(--line);
+    min-width: 0;
+}
+.week-col:last-child { border-right: none; }
+
+.week-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s2);
+    padding-bottom: var(--s2);
+    margin-bottom: var(--s3);
+    border-bottom: 1px solid var(--line);
+}
+
+.week-list { display: flex; flex-direction: column; gap: var(--s2); }
+
+.week-list li {
+    display: flex;
+    gap: var(--s2);
+    font-size: 12.5px;
+    line-height: 1.45;
+    align-items: flex-start;
+}
+
+.week-tick { color: var(--good); flex-shrink: 0; font-size: 11px; line-height: 1.6; }
+.week-tick-open { color: var(--ink-4); }
+.week-tick-open.is-blocked { color: var(--bad); }
+
+.week-none { padding: var(--s2) 0; }
+
+.week-open {
+    margin-top: var(--s4);
+    padding-top: var(--s3);
+    border-top: 1px dashed var(--line-strong);
+}
+.week-open .eyebrow { display: block; margin-bottom: var(--s2); }
+
+@media (max-width: 720px) {
+    .week-grid { grid-template-columns: 1fr !important; }
+    .week-col { border-right: none; border-bottom: 1px solid var(--line); }
+    .week-col:last-child { border-bottom: none; }
+    .spark { height: 72px; }
+    .spark-lbl { display: none; }
+}
+
 /* ---------- 19. People ------------------------------------- */
 
 .person {

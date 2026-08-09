@@ -109,6 +109,7 @@ const app = {
         goals:     () => goalsView,
         scorecard: () => scorecardView,
         work:      () => workView,
+        calendar:  () => calendarView,
         documents: () => documentsView,
         people:    () => peopleView
     },

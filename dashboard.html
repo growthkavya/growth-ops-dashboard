@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Growth &amp; Ops</title>
 
+    <!-- Inline so it needs no network request and can't 404. The mark is
+         the measure bar the whole product is built on: a track, a fill,
+         and the notch at the target. -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231e5f74'/%3E%3Crect x='6' y='14.5' width='20' height='3.4' rx='1.7' fill='%23ffffff' opacity='.28'/%3E%3Crect x='6' y='14.5' width='12' height='3.4' rx='1.7' fill='%23ffffff'/%3E%3Crect x='21' y='11.5' width='1.8' height='9.4' rx='.9' fill='%23ffffff'/%3E%3C/svg%3E">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;550;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/app.css?v=1">
+    <link rel="stylesheet" href="css/app.css?v=2">
 </head>
 <body>
 
@@ -33,6 +38,7 @@
             <a href="#work" class="rail-link" data-view="work">
                 Delegations <span class="rail-count hidden" id="count-work"></span>
             </a>
+            <a href="#calendar" class="rail-link" data-view="calendar">Calendar</a>
             <a href="#documents" class="rail-link" data-view="documents">
                 Documents <span class="rail-count hidden" id="count-documents"></span>
             </a>
@@ -155,6 +161,26 @@
             </div>
         </section>
 
+        <!-- Calendar: what got finished, week by week -->
+        <section class="view" id="view-calendar">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page">Calendar</h2>
+                    <p class="view-head-purpose">
+                        What each person actually finished, week by week. Delegations shows
+                        what's open now — this is the record of what got done.
+                    </p>
+                </div>
+                <div class="view-figure">
+                    <div class="view-figure-val" id="calendar-figure">—</div>
+                    <span class="eyebrow" id="calendar-figure-label">Finished</span>
+                </div>
+            </div>
+            <div id="calendar-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
+
         <!-- Documents: a tracker, not a link list -->
         <section class="view" id="view-documents">
             <div class="view-head">
@@ -201,16 +227,17 @@
 <div class="toast-stack" id="toast-stack"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=10"></script>
-<script src="js/data.js?v=10"></script>
-<script src="js/ui.js?v=10"></script>
-<script src="js/auth.js?v=10"></script>
-<script src="js/views/home.js?v=10"></script>
-<script src="js/views/goals.js?v=10"></script>
-<script src="js/views/scorecard.js?v=10"></script>
-<script src="js/views/work.js?v=10"></script>
-<script src="js/views/documents.js?v=10"></script>
-<script src="js/views/people.js?v=10"></script>
-<script src="js/app.js?v=10"></script>
+<script src="js/config.js?v=11"></script>
+<script src="js/data.js?v=11"></script>
+<script src="js/ui.js?v=11"></script>
+<script src="js/auth.js?v=11"></script>
+<script src="js/views/home.js?v=11"></script>
+<script src="js/views/goals.js?v=11"></script>
+<script src="js/views/scorecard.js?v=11"></script>
+<script src="js/views/work.js?v=11"></script>
+<script src="js/views/calendar.js?v=11"></script>
+<script src="js/views/documents.js?v=11"></script>
+<script src="js/views/people.js?v=11"></script>
+<script src="js/app.js?v=11"></script>
 </body>
 </html>
