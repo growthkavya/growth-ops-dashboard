@@ -1,65 +1,123 @@
 /**
- * Supabase Configuration
+ * Configuration and vocabulary.
  *
- * SETUP INSTRUCTIONS:
- * 1. Go to https://supabase.com and create an account
- * 2. Create a new project
- * 3. Go to Project Settings > API
- * 4. Copy your "Project URL" and paste it below as SUPABASE_URL
- * 5. Copy your "anon/public" key and paste it below as SUPABASE_ANON_KEY
+ * VOCABULARY lives here on purpose. Every user-facing word in the app
+ * is resolved through it, so the interface says one thing for one
+ * concept everywhere — the button that says "Mark done" produces a
+ * toast that says "Marked done", and a status never appears as
+ * "in_progress" in one place and "In flight" in another.
  */
 
-// Supabase project credentials
 const SUPABASE_URL = 'https://glheaimbqdjgpufsclrr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdsaGVhaW1icWRqZ3B1ZnNjbHJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwOTU5MjIsImV4cCI6MjA4OTY3MTkyMn0.DJoKsXfYQtoWbro7RBJbenD0ozptBUkfwkuGIUJok4k';
 
-// ============================================================
-// App configuration — Year 2 (CY2026) KRA framework
-// ============================================================
-const APP_CONFIG = {
-    quarter: 'Q1 Year 2 (Apr-Jun 2026)',
-    framework: 'Year 2 — 5 KRAs × 10 KPIs per member',
+const CONFIG = {
+    // Current review period. Update these two lines each quarter —
+    // everything that says "this quarter" reads from here.
+    year: 2026,
+    quarter: 3,
+    quarterLabel: 'Jul–Sep 2026',
+    yearLabel: 'Year 2 · CY2026',
 
-    // Team members (matches `member` enum in kpis + owner_name in actions)
-    // Ishita removed 16 May 2026 — exited SSEI. Team is now 2-person.
+    // KPI scoring runs 1–5. 4 is the target, and the target is what
+    // the notch on every measure bar points at.
+    scoreMin: 1,
+    scoreMax: 5,
+    scoreTarget: 4,
+
+    // Team. `key` matches actions.owner_name and kpis.member.
     team: [
-        { id: 'kavya', name: 'Kavya', role: 'Head of Growth & Ops', color: '#2563eb' },
-        { id: 'riya',  name: 'Riya',  role: 'Executor',             color: '#16a34a' }
+        { key: 'kavya', name: 'Kavya', role: 'Head of Growth & Ops', color: 'var(--p-kavya)' },
+        { key: 'riya',  name: 'Riya',  role: 'Executor',             color: 'var(--p-riya)'  }
     ],
 
-    // 5 Key Result Areas (matches kra_code in DB)
-    kras: {
-        kra1: { name: 'Data Hygiene, Database Mgmt & Reporting',        short: 'Data Hygiene',  order: 1 },
-        kra2: { name: 'Lead Flow Automation & Funnel Optimization',     short: 'Lead Flow',     order: 2 },
-        kra3: { name: 'Event Operationalisation & Execution',           short: 'Events',        order: 3 },
-        kra4: { name: 'Growth Initiatives, New Projects & Distribution',short: 'Growth',        order: 4 },
-        kra5: { name: 'Cross-Team Coordination, Stakeholder Mgmt',      short: 'Coordination',  order: 5 }
+    // Interns share one login; `intern1` is the owner_name they write under.
+    internKey: 'intern1',
+
+    growthLabUrl: 'lab/'
+};
+
+/**
+ * Every user-facing label. Nothing outside this object should contain
+ * a raw database value shown to a person.
+ */
+const VOCAB = {
+    status: {
+        not_started: 'Not started',
+        in_progress: 'In progress',
+        blocked:     'Blocked',
+        done:        'Done'
     },
 
-    // KPI rubric scale (1-5)
-    rubricScale: { min: 1, max: 5, target: 4 },
+    // Clicking a status advances it along this path.
+    statusCycle: ['not_started', 'in_progress', 'done'],
 
-    // Months tracked in Q1
-    quarterMonths: [
-        { num: 4, short: 'Apr', full: 'April'  },
-        { num: 5, short: 'May', full: 'May'    },
-        { num: 6, short: 'Jun', full: 'June'   }
-    ]
+    statusTone: {
+        not_started: 'idle',
+        in_progress: 'accent',
+        blocked:     'bad',
+        done:        'good'
+    },
+
+    docStatus: {
+        current:      'Current',
+        needs_review: 'Needs review',
+        draft:        'Draft',
+        retired:      'Retired'
+    },
+
+    docType: {
+        sop:       'Process',
+        reference: 'Reference',
+        report:    'Report',
+        data:      'Data'
+    },
+
+    // Google Sheets are grouped by the part of the business they serve.
+    vertical: {
+        growth:    'Growth',
+        sales:     'Sales',
+        academics: 'Academics',
+        tech:      'Tech',
+        hiring:    'Hiring',
+        finance:   'Finance',
+        other:     'Other'
+    },
+
+    goalScope: {
+        company: 'Company goal',
+        team:    'Team goal'
+    },
+
+    role: {
+        admin:  'Admin',
+        member: 'Team',
+        intern: 'Intern'
+    }
 };
 
-// Color lookup by member id
-const MEMBER_COLORS = {
-    kavya: '#2563eb',
-    riya:  '#16a34a'
-};
-
-// Helper: KRA short name from code
-function kraShort(kraCode) {
-    return APP_CONFIG.kras[kraCode]?.short || kraCode;
+/** Display name for a person key. */
+function personName(key) {
+    if (!key) return 'Unassigned';
+    if (key === CONFIG.internKey) return 'Intern';
+    const m = CONFIG.team.find(t => t.key === key);
+    return m ? m.name : key;
 }
 
-// Helper: member display name from id
-function memberName(memberId) {
-    const m = APP_CONFIG.team.find(t => t.id === memberId);
-    return m ? m.name : memberId;
+/** Identity colour for a person key. Identity, never status. */
+function personColor(key) {
+    if (key === CONFIG.internKey) return 'var(--p-intern)';
+    const m = CONFIG.team.find(t => t.key === key);
+    return m ? m.color : 'var(--idle)';
+}
+
+/** Initials for the avatar mark. */
+function personInitials(name) {
+    return String(name || '?')
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(w => w[0])
+        .join('')
+        .toUpperCase();
 }

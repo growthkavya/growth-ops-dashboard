@@ -1,328 +1,330 @@
 /**
- * Growth & Ops Workspace - Main App
+ * App shell: one store, one router.
+ *
+ * The old build had four modules each fetching `actions` independently,
+ * which is why the same work appeared in three places and could drift
+ * between them. Here there is one store. Views read from it and call
+ * store.reload() after a write, so every view is looking at the same
+ * rows at the same time.
  */
 
+const store = {
+    workItems: [],
+    goals: [],
+    kras: [],
+    kpis: [],
+    scores: [],
+    documents: [],
+    sheets: [],
+    interns: [],
+    profiles: [],
+    activity: [],
+    failed: [],
+
+    async load() {
+        this.failed = [];
+        const results = await Promise.allSettled([
+            data.workItems(), data.goals(), data.kras(), data.kpis(),
+            data.scores(), data.documents(), data.sheets(),
+            data.interns(), data.profiles(), data.activity(30)
+        ]);
+
+        const keys = ['workItems', 'goals', 'kras', 'kpis', 'scores',
+                      'documents', 'sheets', 'interns', 'profiles', 'activity'];
+
+        // One failing table shouldn't blank the whole dashboard — RLS can
+        // legitimately deny a member access to a slice. Keep what loaded.
+        results.forEach((r, i) => {
+            if (r.status === 'fulfilled') {
+                this[keys[i]] = r.value;
+            } else {
+                const message = r.reason?.message || String(r.reason);
+                console.error(`Could not load ${keys[i]}:`, message);
+                this.failed.push({ table: keys[i], message });
+            }
+        });
+    },
+
+    /**
+     * True when a load failed because a column this build expects isn't
+     * there yet — i.e. migration_v3_cleanup.sql hasn't been run. Worth
+     * distinguishing, because the symptom otherwise is empty screens
+     * with no explanation.
+     */
+    needsMigration() {
+        return this.failed.some(f =>
+            /column .* does not exist|could not find a relationship|schema cache/i.test(f.message));
+    },
+
+    async reload() {
+        await this.load();
+        app.renderAll();
+    },
+
+    /* ---------- Derived views over the same rows ------------ */
+
+    /** Work owned by, or handed out by, the signed-in person. */
+    mine() {
+        return this.workItems.filter(w =>
+            w.owner_name === auth.key || w.assigned_by === auth.userId);
+    },
+
+    open(items = this.workItems) {
+        return items.filter(w => w.status !== 'done');
+    },
+
+    /** Everything overdue or blocked, for whoever is looking. */
+    needsAttention(items = this.mine()) {
+        const today = dates.today();
+        return items.filter(w =>
+            w.status !== 'done' &&
+            (w.status === 'blocked' || (w.due_date && w.due_date <= today)));
+    },
+
+    kraByCode(code) {
+        return this.kras.find(k => k.kra_code === code);
+    },
+
+    kraById(id) {
+        return this.kras.find(k => k.id === id);
+    },
+
+    /** Documents and sheets whose review is overdue. */
+    staleDocs() {
+        const isStale = (d) => {
+            if (d.status === 'needs_review') return true;
+            if (d.status === 'retired' || !d.review_every_days) return false;
+            const since = dates.daysSince(d.last_reviewed_at);
+            return since === null || since > d.review_every_days;
+        };
+        return [...this.documents, ...this.sheets].filter(isStale);
+    }
+};
+
 const app = {
-    currentSection: 'today',
-    initialized: false,
+    view: 'home',
 
-    async init() {
-        // Check authentication
-        const isAuthenticated = await auth.init();
+    views: {
+        home:      () => homeView,
+        goals:     () => goalsView,
+        scorecard: () => scorecardView,
+        work:      () => workView,
+        documents: () => documentsView,
+        people:    () => peopleView
+    },
 
-        if (!isAuthenticated) {
-            // Redirect to login
+    async start() {
+        if (!await auth.init()) {
             window.location.href = 'index.html';
             return;
         }
 
-        // Hide loading, show app
-        document.getElementById('loading-screen').style.display = 'none';
+        this.paintIdentity();
+        this.wireNav();
+        this.wireTheme();
+        this.wireSession();
+        this.wireNotifications();
+
+        await store.load();
+        this.renderAll();
+        this.warnIfIncomplete();
+
         document.getElementById('app').style.display = 'flex';
-
-        // Initialize UI
-        this.initUserInfo();
-        this.initNavigation();
-        this.initTheme();
-        this.initLogout();
-
-        // Initialize all modules
-        await this.initModules();
-
-        this.initialized = true;
-
-        // Check URL hash
-        const hash = window.location.hash.replace('#', '');
-        if (hash) {
-            this.navigateTo(hash);
-        }
-    },
-
-    initUserInfo() {
-        const nameEl = document.getElementById('current-user-name');
-        const roleEl = document.getElementById('current-user-role');
-        const role = auth.currentProfile?.role || 'member';
-
-        if (nameEl) {
-            nameEl.textContent = auth.currentProfile?.full_name || auth.currentUser?.email || '-';
-        }
-        if (roleEl) {
-            roleEl.innerHTML = `<span class="role-badge ${role}">${role}</span>`;
-        }
-
-        // Tag the body so CSS can gate UI elements by role
-        document.body.classList.remove('role-admin', 'role-member', 'role-intern');
-        document.body.classList.add('role-' + role);
-
-        // Mount notification bell next to user info (admins + members only)
-        if (role !== 'intern') {
-            this.mountNotificationBell();
-        }
-    },
-
-    mountNotificationBell() {
-        const footer = document.querySelector('.sidebar-footer .user-info');
-        if (!footer || document.getElementById('notif-bell')) return;
-        const bell = document.createElement('div');
-        bell.style.cssText = 'margin-top:0.5rem;position:relative;display:inline-block;';
-        bell.innerHTML = `
-            <div class="notif-bell" id="notif-bell" title="Notifications">
-                <span class="notif-icon">🔔</span>
-                <span class="notif-count hidden" id="notif-count">0</span>
-            </div>
-            <div class="notif-dropdown hidden" id="notif-dropdown"></div>
-        `;
-        footer.appendChild(bell);
-
-        document.getElementById('notif-bell').addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const dd = document.getElementById('notif-dropdown');
-            const isOpen = !dd.classList.contains('hidden');
-            if (isOpen) { dd.classList.add('hidden'); return; }
-            // Load notifications
-            const notifs = await db.getNotifications(20);
-            dd.innerHTML = notifs.length === 0
-                ? `<div style="padding:1.5rem;text-align:center;color:var(--text-muted);">No notifications yet.</div>`
-                : notifs.map(n => `
-                    <div class="notif-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}" data-link="${n.link || '#dashboard'}">
-                        <div>${this.escapeHtml(n.message || n.event_type)}</div>
-                        <div class="notif-meta">
-                            ${n.intern_name ? this.escapeHtml(n.intern_name) + ' · ' : ''}
-                            ${new Date(n.created_at).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' })}
-                        </div>
-                    </div>
-                  `).join('')
-                  + `<div style="padding:0.6rem;text-align:center;border-top:1px solid var(--border);">
-                       <a id="notif-mark-all" style="cursor:pointer;font-size:0.85rem;">Mark all as read</a>
-                     </div>`;
-            dd.classList.remove('hidden');
-
-            dd.querySelectorAll('.notif-item').forEach(el => {
-                el.addEventListener('click', async () => {
-                    await db.markNotificationRead(el.dataset.id);
-                    const link = el.dataset.link;
-                    if (link) window.location.hash = link;
-                    dd.classList.add('hidden');
-                    this.refreshNotifCount();
-                });
-            });
-            document.getElementById('notif-mark-all')?.addEventListener('click', async (ev) => {
-                ev.stopPropagation();
-                await db.markAllNotificationsRead();
-                dd.classList.add('hidden');
-                this.refreshNotifCount();
-            });
-        });
-
-        // Close dropdown on outside click
-        document.addEventListener('click', () => {
-            document.getElementById('notif-dropdown')?.classList.add('hidden');
-        });
-    },
-
-    async refreshNotifCount() {
-        const count = await db.getUnreadNotificationCount();
-        const badge = document.getElementById('notif-count');
-        if (!badge) return;
-        if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
-        else { badge.classList.add('hidden'); }
-    },
-
-    escapeHtml(s) {
-        return String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-    },
-
-    initNavigation() {
-        const navLinks = document.querySelectorAll('.nav-link');
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = link.dataset.section;
-                this.navigateTo(section);
-            });
-        });
-
-        // Handle browser back/forward
-        window.addEventListener('popstate', () => {
-            const hash = window.location.hash.replace('#', '');
-            if (hash) {
-                this.showSection(hash);
-            }
-        });
-    },
-
-    navigateTo(section) {
-        // Update URL
-        window.history.pushState({}, '', `#${section}`);
-
-        // Show section
-        this.showSection(section);
-    },
-
-    showSection(section) {
-        // Update nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.toggle('active', link.dataset.section === section);
-        });
-
-        // Update sections
-        document.querySelectorAll('.section').forEach(s => {
-            s.classList.toggle('active', s.id === section);
-        });
-
-        this.currentSection = section;
-    },
-
-    initTheme() {
-        const toggle = document.getElementById('theme-toggle');
-        const savedTheme = localStorage.getItem('workspace-theme') || 'light';
-
-        document.documentElement.setAttribute('data-theme', savedTheme);
-
-        if (toggle) {
-            toggle.addEventListener('click', () => {
-                const current = document.documentElement.getAttribute('data-theme');
-                const newTheme = current === 'light' ? 'dark' : 'light';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('workspace-theme', newTheme);
-            });
-        }
-    },
-
-    initLogout() {
-        const logoutBtn = document.getElementById('logout-btn');
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', async () => {
-                if (confirm('Are you sure you want to log out?')) {
-                    await auth.signOut();
-                    window.location.href = 'index.html';
-                }
-            });
-        }
-    },
-
-    async initModules() {
-        const role = auth.currentProfile?.role;
-        try {
-            // Intern flow is different — they only get the intern dashboard
-            if (role === 'intern') {
-                await internModule.init();
-                return;
-            }
-
-            // Admin + member: initialize the full dashboard
-            await Promise.all([
-                todayModule.init(),
-                actionsModule.init(),
-                delegationsModule.init(),
-                kpisModule.init(),
-                documentsModule.init(),
-                masterSheetsModule.init(),
-                teamModule.init(),
-                internsAdminModule.init()
-            ]);
-
-            // Start notification polling for admins + members
-            this.initNotifications();
-        } catch (error) {
-            console.error('Failed to initialize modules:', error);
-            toast.error('Failed to load data. Please refresh the page.');
-        }
+        this.go(location.hash.replace('#', '') || 'home', { replace: true });
     },
 
     /**
-     * Polls notifications every 30s, updates the bell badge.
-     * The bell itself is in the sidebar (rendered in initUserInfo).
+     * If part of the data didn't load, say so. Silent partial failure is
+     * worse than an error: the dashboard looks fine and quietly under-reports.
      */
-    initNotifications() {
-        const tick = async () => {
+    warnIfIncomplete() {
+        if (store.failed.length === 0) return;
+
+        const banner = document.createElement('div');
+        banner.className = 'notice';
+        banner.innerHTML = store.needsMigration()
+            ? `<strong>The database is a version behind.</strong>
+               Run <code>supabase/migration_v3_cleanup.sql</code> in the Supabase SQL editor,
+               then refresh. Until then some sections will be empty.`
+            : `<strong>Some data didn't load.</strong>
+               ${esc(store.failed.map(f => f.table).join(', '))} — refresh, and if it
+               persists check the browser console.`;
+
+        document.querySelector('.main').prepend(banner);
+    },
+
+    paintIdentity() {
+        document.getElementById('user-name').textContent = auth.name;
+        document.getElementById('user-role').textContent = VOCAB.role[auth.role] || auth.role;
+        document.getElementById('rail-period').textContent =
+            `Q${CONFIG.quarter} · ${CONFIG.quarterLabel}`;
+
+        const mark = document.getElementById('user-mark');
+        mark.textContent = personInitials(auth.name);
+        mark.style.setProperty('--who-color', personColor(auth.key));
+
+        document.body.classList.add('role-' + auth.role);
+    },
+
+    wireNav() {
+        document.querySelectorAll('.rail-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.go(link.dataset.view);
+                this.closeRail();
+            });
+        });
+
+        window.addEventListener('popstate', () =>
+            this.show(location.hash.replace('#', '') || 'home'));
+
+        const toggle = document.getElementById('rail-toggle');
+        const scrim  = document.getElementById('rail-scrim');
+        toggle?.addEventListener('click', () => {
+            document.getElementById('rail').classList.toggle('open');
+            scrim.classList.toggle('show');
+        });
+        scrim?.addEventListener('click', () => this.closeRail());
+    },
+
+    closeRail() {
+        document.getElementById('rail').classList.remove('open');
+        document.getElementById('rail-scrim').classList.remove('show');
+    },
+
+    go(view, { replace = false } = {}) {
+        if (!this.views[view]) view = 'home';
+        history[replace ? 'replaceState' : 'pushState']({}, '', `#${view}`);
+        this.show(view);
+    },
+
+    show(view) {
+        if (!this.views[view]) view = 'home';
+        this.view = view;
+
+        document.querySelectorAll('.rail-link').forEach(l =>
+            l.classList.toggle('active', l.dataset.view === view));
+        document.querySelectorAll('.view').forEach(v =>
+            v.classList.toggle('active', v.id === 'view-' + view));
+
+        window.scrollTo({ top: 0 });
+    },
+
+    /** Every view re-renders from the store. Cheap — it's all in memory. */
+    renderAll() {
+        Object.values(this.views).forEach(get => {
             try {
-                const count = await db.getUnreadNotificationCount();
-                const badge = document.getElementById('notif-count');
-                if (badge) {
-                    if (count > 0) {
-                        badge.textContent = count;
-                        badge.classList.remove('hidden');
-                    } else {
-                        badge.classList.add('hidden');
-                    }
-                }
-            } catch (e) { /* silent */ }
-        };
-        tick();
-        this.notifTimer = setInterval(tick, 30000);
+                get().render();
+            } catch (err) {
+                console.error('Render failed:', err);
+            }
+        });
+        this.paintCounts();
     },
 
-    refreshCurrentSection() {
-        const modules = {
-            today: todayModule,
-            actions: actionsModule,
-            delegations: delegationsModule,
-            kpis: kpisModule,
-            documents: documentsModule,
-            team: teamModule,
-            interns: internsAdminModule
+    /**
+     * Rail counts mean "things waiting on you" — never a total. If a tab
+     * has no number, nothing there needs you.
+     */
+    paintCounts() {
+        const set = (id, n, urgent = false) => {
+            const el = document.getElementById('count-' + id);
+            if (!el) return;
+            el.textContent = n;
+            el.classList.toggle('hidden', !n);
+            el.classList.toggle('urgent', urgent);
         };
 
-        // Refresh master sheets too when on the Documents section
-        if (this.currentSection === 'documents' && typeof masterSheetsModule !== 'undefined') {
-            masterSheetsModule.refresh();
-        }
-
-        const module = modules[this.currentSection];
-        if (module && typeof module.refresh === 'function') {
-            module.refresh();
-        }
+        const attention = store.needsAttention().length;
+        set('home', attention, attention > 0);
+        set('work', store.open(store.mine()).length);
+        set('documents', store.staleDocs().length, false);
     },
 
-    refreshAll() {
-        if (!this.initialized) return;
+    wireTheme() {
+        const saved = localStorage.getItem('go-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
 
-        todayModule.refresh();
-        actionsModule.refresh();
-        kpisModule.refresh();
-        documentsModule.refresh();
+        document.getElementById('theme').addEventListener('click', () => {
+            const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('go-theme', next);
+        });
+    },
+
+    wireSession() {
+        document.getElementById('signout').addEventListener('click', async () => {
+            if (!confirm('Sign out of Growth & Ops?')) return;
+            await auth.signOut();
+            window.location.href = 'index.html';
+        });
+    },
+
+    wireNotifications() {
+        const bell  = document.getElementById('bell');
+        const panel = document.getElementById('notif-panel');
+        const badge = document.getElementById('bell-count');
+
+        const refreshBadge = async () => {
+            const n = await data.unreadCount();
+            badge.textContent = n;
+            badge.classList.toggle('hidden', n === 0);
+        };
+
+        bell.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (!panel.classList.contains('hidden')) {
+                panel.classList.add('hidden');
+                return;
+            }
+
+            const items = await data.notifications();
+            panel.innerHTML = items.length === 0
+                ? `<div class="empty" style="padding:var(--s5)">
+                       <p class="empty-body">Nothing new. You're up to date.</p>
+                   </div>`
+                : items.map(n => `
+                    <div class="notif-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}">
+                        <div>${esc(n.message || n.event_type)}</div>
+                        <div class="meta">${esc(n.intern_name ? n.intern_name + ' · ' : '')}${dates.ago(n.created_at)}</div>
+                    </div>`).join('')
+                  + `<div style="padding:var(--s3);text-align:center;border-top:1px solid var(--line)">
+                        <button class="btn btn-quiet btn-sm" id="mark-all">Mark all as read</button>
+                     </div>`;
+
+            panel.classList.remove('hidden');
+
+            panel.querySelectorAll('.notif-item').forEach(el => {
+                el.addEventListener('click', async () => {
+                    await data.markRead(el.dataset.id);
+                    panel.classList.add('hidden');
+                    refreshBadge();
+                });
+            });
+
+            document.getElementById('mark-all')?.addEventListener('click', async (ev) => {
+                ev.stopPropagation();
+                await data.markAllRead();
+                panel.classList.add('hidden');
+                refreshBadge();
+            });
+        });
+
+        document.addEventListener('click', () => panel.classList.add('hidden'));
+
+        refreshBadge();
+        setInterval(refreshBadge, 60000);
     }
 };
 
-// Start the app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    app.init().catch(error => {
-        console.error('App initialization failed:', error);
-    });
-
-    // Mobile menu toggle. The hamburger appears on small screens only (CSS).
-    const toggle = document.getElementById('mobile-menu-toggle');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-
-    function closeMobileMenu() {
-        sidebar?.classList.remove('open');
-        overlay?.classList.remove('show');
-        document.body.classList.remove('sidebar-open');
-    }
-    function openMobileMenu() {
-        sidebar?.classList.add('open');
-        overlay?.classList.add('show');
-        document.body.classList.add('sidebar-open');
-    }
-
-    toggle?.addEventListener('click', () => {
-        if (sidebar?.classList.contains('open')) closeMobileMenu();
-        else openMobileMenu();
-    });
-
-    overlay?.addEventListener('click', closeMobileMenu);
-
-    // Close on nav link tap so the section appears after the menu closes
-    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-        link.addEventListener('click', closeMobileMenu);
-    });
-
-    // Close if window resizes back to desktop
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) closeMobileMenu();
+    app.start().catch(err => {
+        console.error('Could not start:', err);
+        document.body.innerHTML = `
+            <div class="empty" style="padding:15vh var(--s5)">
+                <p class="empty-title">Growth &amp; Ops didn't load</p>
+                <p class="empty-body">Refresh the page. If it keeps happening, the
+                   database connection is likely down — check with Kavya.</p>
+            </div>`;
     });
 });

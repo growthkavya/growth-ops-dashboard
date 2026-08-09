@@ -1,189 +1,137 @@
 /**
- * Authentication Module
+ * Session and identity.
+ *
+ * Exposes flat accessors (auth.userId, auth.name, auth.key, auth.isAdmin)
+ * because almost every call site wants one field, not the profile object.
  */
 
 const auth = {
-    currentUser: null,
-    currentProfile: null,
+    user: null,
+    profile: null,
 
-    // Initialize auth state
+    get userId()  { return this.user?.id || null; },
+    get email()   { return this.user?.email || ''; },
+    get name()    { return this.profile?.full_name || this.email || 'Unknown'; },
+    get role()    { return this.profile?.role || 'member'; },
+    get isAdmin() { return this.role === 'admin'; },
+
+    /** The person key used by actions.owner_name and kpis.member. */
+    get key() {
+        return this.profile?.member_key
+            || (this.profile?.full_name || '').toLowerCase().split(' ')[0]
+            || null;
+    },
+
     async init() {
-        // Check for existing session
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-            this.currentUser = session.user;
-            await this.loadProfile();
-            return true;
-        }
-        return false;
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) return false;
+        this.user = session.user;
+
+        const { data: profile, error } = await sb
+            .from('profiles').select('*').eq('id', this.user.id).single();
+        if (error) console.error('Could not load profile:', error.message);
+        this.profile = profile || null;
+        return true;
     },
 
-    // Load user profile from database
-    async loadProfile() {
-        if (!this.currentUser) return null;
-        try {
-            this.currentProfile = await db.getProfile(this.currentUser.id);
-            return this.currentProfile;
-        } catch (error) {
-            console.error('Failed to load profile:', error);
-            return null;
-        }
-    },
-
-    // Sign in with email and password
     async signIn(email, password) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-        });
-
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
         if (error) throw error;
-
-        this.currentUser = data.user;
-        await this.loadProfile();
+        this.user = data.user;
         return data;
     },
 
-    // Sign up new user
     async signUp(email, password, fullName) {
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: {
-                    full_name: fullName
-                }
-            }
+        const { data, error } = await sb.auth.signUp({
+            email, password,
+            options: { data: { full_name: fullName } }
         });
-
         if (error) throw error;
-
-        // Note: Supabase may require email confirmation
-        // The profile will be created automatically by the database trigger
         return data;
     },
 
-    // Sign out
     async signOut() {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
-
-        this.currentUser = null;
-        this.currentProfile = null;
-        realtime.unsubscribeAll();
-    },
-
-    // Get current user
-    getUser() {
-        return this.currentUser;
-    },
-
-    // Get current profile
-    getProfile() {
-        return this.currentProfile;
-    },
-
-    // Check if user is admin
-    isAdmin() {
-        return this.currentProfile?.role === 'admin';
-    },
-
-    // Listen for auth state changes
-    onAuthStateChange(callback) {
-        return supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_IN') {
-                this.currentUser = session.user;
-                this.loadProfile().then(() => callback(event, session));
-            } else if (event === 'SIGNED_OUT') {
-                this.currentUser = null;
-                this.currentProfile = null;
-                callback(event, session);
-            } else {
-                callback(event, session);
-            }
-        });
+        await sb.auth.signOut();
+        this.user = null;
+        this.profile = null;
     }
 };
 
-// Login page specific code
-if (document.getElementById('login-form')) {
-    const loginForm = document.getElementById('login-form');
-    const signupModal = document.getElementById('signup-modal');
-    const signupForm = document.getElementById('signup-form');
-    const signupLink = document.getElementById('signup-link');
-    const closeSignup = document.getElementById('close-signup');
-    const loginError = document.getElementById('login-error');
-    const signupError = document.getElementById('signup-error');
+/* ---------- Login page ------------------------------------- */
 
-    // Check if already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-            window.location.href = 'dashboard.html';
-        }
+if (document.getElementById('login-form')) {
+    const form   = document.getElementById('login-form');
+    const errorEl = document.getElementById('login-error');
+    const btn     = document.getElementById('login-btn');
+
+    sb.auth.getSession().then(({ data: { session } }) => {
+        if (session) window.location.href = 'dashboard.html';
     });
 
-    // Login form submission
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const btn = document.getElementById('login-btn');
+    const showError = (msg) => {
+        errorEl.textContent = msg;
+        errorEl.style.display = 'block';
+    };
 
-        btn.querySelector('.btn-text').style.display = 'none';
-        btn.querySelector('.btn-loading').style.display = 'inline';
-        loginError.style.display = 'none';
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorEl.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'Signing in…';
 
         try {
-            await auth.signIn(email, password);
+            await auth.signIn(
+                document.getElementById('email').value,
+                document.getElementById('password').value
+            );
             window.location.href = 'dashboard.html';
-        } catch (error) {
-            loginError.textContent = error.message || 'Invalid email or password';
-            loginError.style.display = 'block';
-            btn.querySelector('.btn-text').style.display = 'inline';
-            btn.querySelector('.btn-loading').style.display = 'none';
+        } catch (err) {
+            // Supabase returns the same message for a wrong password and an
+            // unknown address, so say what to do rather than guessing which.
+            showError(
+                /invalid/i.test(err.message || '')
+                    ? 'That email and password don\'t match. Check both, or ask Kavya to reset it.'
+                    : err.message || 'Could not sign in. Try again.'
+            );
+            btn.disabled = false;
+            btn.textContent = 'Sign in';
         }
     });
 
-    // Show signup modal
-    signupLink.addEventListener('click', (e) => {
+    const signupModal = document.getElementById('signup-modal');
+    const signupForm  = document.getElementById('signup-form');
+    const signupError = document.getElementById('signup-error');
+
+    document.getElementById('signup-link')?.addEventListener('click', (e) => {
         e.preventDefault();
         signupModal.style.display = 'flex';
     });
 
-    // Close signup modal
-    closeSignup.addEventListener('click', () => {
+    document.getElementById('close-signup')?.addEventListener('click', () => {
         signupModal.style.display = 'none';
     });
 
-    // Close modal on outside click
-    signupModal.addEventListener('click', (e) => {
-        if (e.target === signupModal) {
-            signupModal.style.display = 'none';
-        }
+    signupModal?.addEventListener('click', (e) => {
+        if (e.target === signupModal) signupModal.style.display = 'none';
     });
 
-    // Signup form submission
-    signupForm.addEventListener('submit', async (e) => {
+    signupForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const name = document.getElementById('signup-name').value;
-        const email = document.getElementById('signup-email').value;
-        const password = document.getElementById('signup-password').value;
-
         signupError.style.display = 'none';
-
         try {
-            const { data } = await auth.signUp(email, password, name);
-
-            if (data.user && !data.session) {
-                // Email confirmation required
-                signupModal.style.display = 'none';
-                alert('Check your email for a confirmation link!');
-            } else if (data.session) {
-                // Auto-confirmed, redirect
+            const { user, session } = await auth.signUp(
+                document.getElementById('signup-email').value,
+                document.getElementById('signup-password').value,
+                document.getElementById('signup-name').value
+            );
+            if (session) {
                 window.location.href = 'dashboard.html';
+            } else if (user) {
+                signupModal.style.display = 'none';
+                alert('Account created. Check your email for the confirmation link, then sign in.');
             }
-        } catch (error) {
-            signupError.textContent = error.message || 'Failed to create account';
+        } catch (err) {
+            signupError.textContent = err.message || 'Could not create the account.';
             signupError.style.display = 'block';
         }
     });

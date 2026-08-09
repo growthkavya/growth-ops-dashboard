@@ -3,342 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth & Ops Workspace</title>
-    <link rel="stylesheet" href="css/styles.css?v=6">
+    <title>Growth &amp; Ops</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;550;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css?v=1">
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="loading-spinner"></div>
-        <p>Loading workspace...</p>
-    </div>
 
-    <!-- Main App -->
-    <div id="app" class="app" style="display: none;">
-        <!-- Mobile hamburger toggle (only visible on small screens) -->
-        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
-            <span></span><span></span><span></span>
-        </button>
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+<button class="rail-toggle" id="rail-toggle" aria-label="Open menu">&#9776;</button>
+<div class="rail-scrim" id="rail-scrim"></div>
 
-        <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h1>Growth & Ops</h1>
-                <span class="quarter-badge">Q1 Y2 | Apr-Jun 2026</span>
-            </div>
+<div class="app" id="app" style="display:none">
 
-            <ul class="nav-links">
-                <li><a href="#today" class="nav-link active" data-section="today">
-                    <span class="nav-icon">&#9728;</span> Today
-                </a></li>
-                <li><a href="#actions" class="nav-link" data-section="actions">
-                    <span class="nav-icon">&#10003;</span> Actions
-                </a></li>
-                <li><a href="#kpis" class="nav-link" data-section="kpis">
-                    <span class="nav-icon">&#9650;</span> KPIs
-                </a></li>
-                <li><a href="#delegations" class="nav-link admin-or-member-only" data-section="delegations">
-                    <span class="nav-icon">&#10145;</span> Delegations
-                </a></li>
-                <li><a href="#interns" class="nav-link admin-or-member-only" data-section="interns">
-                    <span class="nav-icon">&#127891;</span> Interns
-                </a></li>
-                <li><a href="#growth-lab" class="nav-link admin-or-member-only" data-section="growth-lab">
-                    <span class="nav-icon">&#127797;</span> Growth Lab
-                </a></li>
-                <li><a href="#team" class="nav-link" data-section="team">
-                    <span class="nav-icon">&#128101;</span> Team
-                </a></li>
-                <li><a href="#documents" class="nav-link" data-section="documents">
-                    <span class="nav-icon">&#128196;</span> Documents
-                </a></li>
-            </ul>
+    <!-- ============ Navigation ============ -->
+    <nav class="rail" id="rail">
+        <div class="rail-brand">
+            <h1>Growth &amp; Ops</h1>
+            <span class="rail-period num" id="rail-period">—</span>
+        </div>
 
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <span class="user-name" id="current-user-name">-</span>
-                    <span class="user-role" id="current-user-role">-</span>
-                </div>
-                <div class="sidebar-actions">
-                    <a href="views/leadership.html" class="btn-leadership">Leadership View</a>
-                    <button id="theme-toggle" class="btn-theme" title="Toggle dark mode">&#9790;</button>
-                    <button id="logout-btn" class="btn-logout" title="Logout">&#10140;</button>
+        <div class="rail-nav">
+            <a href="#home" class="rail-link active" data-view="home">
+                Home <span class="rail-count hidden" id="count-home"></span>
+            </a>
+            <a href="#goals" class="rail-link" data-view="goals">Goals</a>
+            <a href="#scorecard" class="rail-link" data-view="scorecard">KRAs &amp; KPIs</a>
+            <a href="#work" class="rail-link" data-view="work">
+                Delegations <span class="rail-count hidden" id="count-work"></span>
+            </a>
+            <a href="#documents" class="rail-link" data-view="documents">
+                Documents <span class="rail-count hidden" id="count-documents"></span>
+            </a>
+            <a href="#people" class="rail-link" data-view="people">People</a>
+        </div>
+
+        <div class="rail-foot">
+            <div class="rail-user">
+                <div class="person-mark" id="user-mark" style="width:28px;height:28px;font-size:11px">—</div>
+                <div>
+                    <div class="rail-user-name" id="user-name">—</div>
+                    <div class="rail-user-role" id="user-role">—</div>
                 </div>
             </div>
-        </nav>
+            <div class="rail-tools">
+                <button class="icon-btn" id="bell" title="Notifications" aria-label="Notifications">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 6.5a4 4 0 1 1 8 0c0 3 1 4 1 4H3s1-1 1-4Z"/>
+                        <path d="M6.5 13a1.6 1.6 0 0 0 3 0"/>
+                    </svg>
+                    <span class="notif-badge hidden" id="bell-count">0</span>
+                </button>
+                <div class="notif-panel hidden" id="notif-panel"></div>
 
-        <!-- Main Content -->
-        <main class="content">
-            <!-- Today Section (new landing) -->
-            <section id="today" class="section active">
-                <header class="section-header">
-                    <h2>Today</h2>
-                    <span class="last-updated">Last updated: <span id="last-updated">-</span></span>
-                </header>
-                <div id="today-container">
-                    <p style="color:var(--text-muted,#64748b);">Loading…</p>
+                <button class="icon-btn" id="theme" title="Switch between light and dark" aria-label="Switch between light and dark">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                        <circle cx="8" cy="8" r="5"/>
+                        <path d="M8 3a5 5 0 0 0 0 10Z" fill="currentColor" stroke="none"/>
+                    </svg>
+                </button>
+
+                <button class="icon-btn" id="signout" title="Sign out" aria-label="Sign out">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 13.5H3.5v-11H6"/>
+                        <path d="M10 10.5 13 8l-3-2.5M13 8H6.5"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============ Views ============ -->
+    <main class="main">
+
+        <!-- Home: what needs you today -->
+        <section class="view active" id="view-home">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page" id="home-greeting">Home</h2>
+                    <p class="view-head-purpose">What needs you today, and what the team shipped recently.</p>
                 </div>
-            </section>
-
-            <!-- Goals Section -->
-<!-- Goals section removed — KPIs are the single source of truth; weekly digest now lives in Today -->
-
-            <!-- Actions Section -->
-            <section id="actions" class="section">
-                <header class="section-header">
-                    <h2>Action Tracker</h2>
-                    <div class="filters">
-                        <select id="filter-kra">
-                            <option value="all">All KRAs</option>
-                            <option value="kra1">KRA 1: Data Hygiene</option>
-                            <option value="kra2">KRA 2: Lead Flow</option>
-                            <option value="kra3">KRA 3: Events</option>
-                            <option value="kra4">KRA 4: Growth</option>
-                            <option value="kra5">KRA 5: Coordination</option>
-                        </select>
-                        <select id="filter-owner">
-                            <option value="all">All Owners</option>
-                            <option value="kavya">Kavya</option>
-                            <option value="riya">Riya</option>
-                            <option value="intern1">Interns</option>
-                        </select>
-                        <select id="filter-status">
-                            <option value="all">All Status</option>
-                            <option value="not_started">Not Started</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="done">Done</option>
-                        </select>
-                        <button class="btn btn-primary btn-small admin-only" id="add-action-btn">+ Add Action</button>
-                    </div>
-                </header>
-
-                <div class="actions-container" id="actions-container">
-                    <!-- Populated by JS -->
+                <div class="view-figure">
+                    <div class="view-figure-val" id="home-figure">—</div>
+                    <span class="eyebrow" id="home-figure-label">Open items</span>
                 </div>
-            </section>
+            </div>
+            <div id="home-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
 
-            <!-- KPIs Section -->
-            <section id="kpis" class="section">
-                <header class="section-header">
-                    <h2>KPI Dashboard</h2>
-                    <div class="kpi-header-right">
-                        <span class="kpi-score-total">Weighted: <strong id="weighted-score-pill">-</strong> / 5.0</span>
-                        <button class="btn btn-primary" id="add-score-btn">+ Add Score</button>
-                    </div>
-                </header>
-
-                <!-- Team tabs: Kavya / Riya -->
-                <div class="tab-bar" id="kpi-tabs">
-                    <!-- Populated by JS -->
+        <!-- Goals: company year → team quarter -->
+        <section class="view" id="view-goals">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page">Goals</h2>
+                    <p class="view-head-purpose">
+                        What SSEI is trying to achieve this year, and what Growth &amp; Ops is doing
+                        this quarter to get there. Every quarterly goal sits under the company goal it serves.
+                    </p>
                 </div>
-
-                <!-- KPI cards for the selected member, grouped by KRA -->
-                <div class="kpi-grid" id="kpi-grid">
-                    <!-- Populated by JS -->
+                <div class="view-figure">
+                    <div class="view-figure-val" id="goals-figure">—<small>%</small></div>
+                    <span class="eyebrow">Quarter progress</span>
                 </div>
+            </div>
+            <div class="view-actions" id="goals-actions" style="margin-bottom:var(--s4)"></div>
+            <div id="goals-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
 
-                <div class="kpi-table-container">
-                    <h3>Monthly Scores <span class="text-muted">(click a cell to update)</span></h3>
-                    <table class="kpi-table" id="kpi-table">
-                        <thead>
-                            <tr>
-                                <th>KRA</th>
-                                <th>KPI</th>
-                                <th>Weight</th>
-                                <th>Apr</th>
-                                <th>May</th>
-                                <th>Jun</th>
-                                <th>Target</th>
-                            </tr>
-                        </thead>
-                        <tbody id="kpi-table-body">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
+        <!-- Scorecard: KRAs and KPIs -->
+        <section class="view" id="view-scorecard">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page">KRAs &amp; KPIs</h2>
+                    <p class="view-head-purpose">
+                        How each person is performing across their five responsibility areas.
+                        Scored 1–5 every month against a written standard, weighted to 100.
+                    </p>
                 </div>
-            </section>
-
-<!-- Ideation removed — graduate ideas into Actions directly -->
-
-            <!-- Documents Section -->
-            <section id="documents" class="section">
-                <header class="section-header">
-                    <h2>Documents</h2>
-                    <button class="btn btn-primary" id="add-doc-btn">+ Add Document</button>
-                </header>
-
-                <!-- Master Sheets hub: leadership entry point to every important Google Sheet -->
-                <div class="master-sheets-block">
-                    <div class="master-sheets-header">
-                        <div>
-                            <h3 class="master-sheets-title">Master Sheets</h3>
-                            <p class="master-sheets-subtitle">One stop for every operational sheet across SSEI. Click any row to open in a new tab.</p>
-                        </div>
-                        <button class="btn btn-secondary admin-only" id="add-sheet-btn" style="display:none;">+ Add Sheet</button>
-                    </div>
-                    <div id="master-sheets-list">
-                        <!-- Populated by JS -->
-                    </div>
+                <div class="view-figure">
+                    <div class="view-figure-val" id="scorecard-figure">—<small>/5</small></div>
+                    <span class="eyebrow" id="scorecard-figure-label">Weighted score</span>
                 </div>
+            </div>
+            <div id="scorecard-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
 
-                <h3 class="docs-section-title">Documents</h3>
-                <div class="docs-grid">
-                    <div class="docs-category">
-                        <h3>SOPs</h3>
-                        <ul class="docs-list" id="sops-list">
-                            <!-- Populated by JS -->
-                        </ul>
-                    </div>
-                    <div class="docs-category">
-                        <h3>Reference</h3>
-                        <ul class="docs-list" id="refs-list">
-                            <!-- Populated by JS -->
-                        </ul>
-                    </div>
-                    <div class="docs-category">
-                        <h3>Reports</h3>
-                        <ul class="docs-list" id="reports-list">
-                            <!-- Populated by JS -->
-                        </ul>
-                    </div>
-                    <div class="docs-category">
-                        <h3>Data</h3>
-                        <ul class="docs-list" id="data-list">
-                            <!-- Populated by JS -->
-                        </ul>
-                    </div>
+        <!-- Delegations: the single work tracker -->
+        <section class="view" id="view-work">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page">Delegations</h2>
+                    <p class="view-head-purpose">
+                        Every piece of work the team is carrying — yours, what you handed to
+                        someone else, and what interns are doing. One list, filtered four ways.
+                    </p>
                 </div>
-            </section>
-
-<!-- Weekly Log removed — now auto-generated inside Today from completed Actions -->
-<!-- Activity Log removed — last 24h scoped feed now lives inside Today -->
-
-            <!-- Team Section -->
-            <section id="team" class="section">
-                <header class="section-header">
-                    <h2>Team Management</h2>
-                </header>
-
-                <div class="team-layout">
-                    <!-- My Daily Work Log -->
-                    <div class="card">
-                        <h3>My Daily Work Log</h3>
-                        <p class="text-muted">Log what you worked on today</p>
-                        <div id="my-work-log-form">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Team Overview -->
-                    <div class="card">
-                        <h3>My Team</h3>
-                        <div id="team-overview">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Team Work Logs -->
-                    <div class="card full-width">
-                        <h3>Team Work Logs (Last 7 Days)</h3>
-                        <div id="team-work-logs">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
+                <div class="view-figure">
+                    <div class="view-figure-val" id="work-figure">—</div>
+                    <span class="eyebrow" id="work-figure-label">Showing</span>
                 </div>
-            </section>
+            </div>
+            <div id="work-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
 
-            <!-- Delegations Section (admin + member only) -->
-            <section id="delegations" class="section">
-                <header class="section-header">
-                    <h2>Delegations</h2>
-                    <div class="filters">
-                        <select id="delegations-status-filter">
-                            <option value="open">Open (not done)</option>
-                            <option value="all">All</option>
-                            <option value="not_started">Not started</option>
-                            <option value="in_progress">In progress</option>
-                            <option value="done">Done</option>
-                        </select>
-                    </div>
-                </header>
-
-                <!-- Quick-assign bar -->
-                <div class="quick-assign-bar" id="quick-assign-bar">
-                    <!-- Populated by JS -->
+        <!-- Documents: a tracker, not a link list -->
+        <section class="view" id="view-documents">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page">Documents</h2>
+                    <p class="view-head-purpose">
+                        Every sheet, process note and report the team relies on — who owns it,
+                        when it was last checked, and whether it's still trustworthy.
+                    </p>
                 </div>
-
-                <!-- Per-assignee sections -->
-                <div id="delegations-container">
-                    <!-- Populated by JS -->
+                <div class="view-figure">
+                    <div class="view-figure-val" id="documents-figure">—</div>
+                    <span class="eyebrow">Need a review</span>
                 </div>
-            </section>
+            </div>
+            <div id="documents-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
 
-            <!-- Interns Section (admin + member only) -->
-            <section id="interns" class="section">
-                <header class="section-header">
-                    <h2>Manage Interns</h2>
-                    <div class="filters">
-                        <select id="interns-status-filter">
-                            <option value="active_pool">Active / Onboarding</option>
-                            <option value="all">All</option>
-                            <option value="onboarding">Onboarding only</option>
-                            <option value="active">Active only</option>
-                            <option value="completed">Completed</option>
-                            <option value="archived">Archived</option>
-                        </select>
-                        <button class="btn btn-primary btn-small" id="add-intern-btn">+ Add Intern</button>
-                        <button class="btn btn-secondary btn-small" id="edit-template-btn">Edit Onboarding Template</button>
-                    </div>
-                </header>
-
-                <div id="interns-container">
-                    <!-- Populated by JS -->
+        <!-- People: team, interns, Growth Lab -->
+        <section class="view" id="view-people">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page">People</h2>
+                    <p class="view-head-purpose">
+                        The team and the interns — what each person is carrying, and how
+                        onboarding is going for anyone new.
+                    </p>
                 </div>
-            </section>
-
-            <!-- Growth Lab Section (Growth Ops intern reflection) -->
-            <section id="growth-lab" class="section">
-                <header class="section-header">
-                    <h2>Growth Lab — Growth Ops Interns</h2>
-                    <div class="filters">
-                        <a href="lab/" target="_blank" class="btn btn-secondary btn-small">Open full Growth Lab Dashboard ↗</a>
-                    </div>
-                </header>
-                <p style="color: var(--text-muted, #64748b); margin: 0 0 16px;">
-                    Akash &amp; Palak — what they've been doing, attendance, tasks, KRAs/KPIs progress, ideas, learnings.
-                    All actions reflect here automatically. Click anything to drill into the full Lab dashboard.
-                </p>
-                <div id="growth-lab-container">
-                    <!-- Populated by JS -->
+                <div class="view-actions">
+                    <a href="lab/" target="_blank" rel="noopener" class="btn">Growth Lab &#8599;</a>
                 </div>
-            </section>
-        </main>
-    </div>
+            </div>
+            <div id="people-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
 
-    <!-- Modal Container -->
-    <div id="modal-container"></div>
+    </main>
+</div>
 
-    <!-- Toast Container -->
-    <div id="toast-container"></div>
+<div id="modal-host"></div>
+<div class="toast-stack" id="toast-stack"></div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js?v=3"></script>
-    <script src="js/supabase-client.js?v=4"></script>
-    <script src="js/components/toast.js"></script>
-    <script src="js/components/modal.js"></script>
-    <script src="js/auth.js?v=3"></script>
-    <script src="js/modules/today.js?v=3"></script>
-    <script src="js/modules/actions.js?v=5"></script>
-    <script src="js/modules/kpis.js?v=3"></script>
-    <script src="js/modules/documents.js"></script>
-    <script src="js/modules/master-sheets.js?v=1"></script>
-    <script src="js/modules/growth-lab.js?v=1"></script>
-    <script src="js/modules/team.js?v=3"></script>
-    <script src="js/modules/intern.js?v=1"></script>
-    <script src="js/modules/interns-admin.js?v=1"></script>
-    <script src="js/modules/delegations.js?v=1"></script>
-    <script src="js/app.js?v=8"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js?v=10"></script>
+<script src="js/data.js?v=10"></script>
+<script src="js/ui.js?v=10"></script>
+<script src="js/auth.js?v=10"></script>
+<script src="js/views/home.js?v=10"></script>
+<script src="js/views/goals.js?v=10"></script>
+<script src="js/views/scorecard.js?v=10"></script>
+<script src="js/views/work.js?v=10"></script>
+<script src="js/views/documents.js?v=10"></script>
+<script src="js/views/people.js?v=10"></script>
+<script src="js/app.js?v=10"></script>
 </body>
 </html>
