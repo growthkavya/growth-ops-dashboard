@@ -149,7 +149,49 @@ CREATE INDEX IF NOT EXISTS idx_documents_status ON public.documents (status, typ
 
 -- ================================================================
 -- 5. MASTER SHEETS — same treatment
+--
+-- This table is created here rather than assumed, because
+-- migration_master_sheets_v1.sql was never actually run against the
+-- live database (confirmed 9 Aug 2026 — PostgREST reported the table
+-- missing from the schema cache). The old dashboard's Master Sheets
+-- block has therefore been failing silently since it shipped.
+--
+-- CREATE TABLE IF NOT EXISTS makes this safe either way: a no-op where
+-- the table already exists, and the fix where it doesn't.
 -- ================================================================
+
+CREATE TABLE IF NOT EXISTS public.master_sheets (
+    id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name        text NOT NULL,
+    vertical    text NOT NULL CHECK (vertical IN ('growth','sales','academics','tech','hiring','finance','other')),
+    owner       text,
+    url         text NOT NULL,
+    description text,
+    sort_order  integer DEFAULT 0,
+    created_at  timestamptz DEFAULT now(),
+    created_by  uuid REFERENCES auth.users(id)
+);
+
+ALTER TABLE public.master_sheets ENABLE ROW LEVEL SECURITY;
+
+DO $$
+DECLARE r RECORD;
+BEGIN
+    FOR r IN SELECT policyname FROM pg_policies
+             WHERE schemaname = 'public' AND tablename = 'master_sheets'
+    LOOP
+        EXECUTE format('DROP POLICY IF EXISTS %I ON public.master_sheets', r.policyname);
+    END LOOP;
+END $$;
+
+CREATE POLICY "master_sheets_admin_all" ON public.master_sheets
+    FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+CREATE POLICY "master_sheets_member_read" ON public.master_sheets
+    FOR SELECT USING (public.current_user_role() IN ('admin','member'));
+
+CREATE INDEX IF NOT EXISTS idx_master_sheets_vertical
+    ON public.master_sheets (vertical, sort_order);
 
 ALTER TABLE public.master_sheets
     ADD COLUMN IF NOT EXISTS owner_id          uuid REFERENCES public.profiles(id),
