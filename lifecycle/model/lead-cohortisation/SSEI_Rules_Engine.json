@@ -1,0 +1,393 @@
+{
+  "$schema": "https://ssei.internal/schemas/lead-rules-engine/v1.json",
+  "config_version": "1.0.0",
+  "generated_on": "2026-08-17",
+  "owner": "Growth Ops",
+  "target_platforms": {
+    "crm": "LeadSquared",
+    "whatsapp": "Gupshup WhatsApp Business API",
+    "ads": ["Meta", "Google"],
+    "attribution": "SSEI UTM Tracking Framework v1.0",
+    "payments": "to_confirm",
+    "lms": "to_confirm"
+  },
+  "compliance_flags": [
+    "All WhatsApp templates require Meta template approval and correct category selection before use",
+    "Marketing category templates require a captured opt in. Utility templates must not carry promotional content",
+    "DND and TRAI commercial communication rules apply to SMS and voice and require legal verification",
+    "DPDP Act 2023 consent notice retention and erasure workflows require legal review",
+    "Minor consent handling for the school_9_10 and school_11 cohorts requires legal review"
+  ],
+
+  "taxonomies": {
+    "life_stage": ["school_9_10","school_11","school_12","class12_completed","college_ug_y1","college_ug_y2","college_ug_final","pg_student","recent_graduate","job_seeker","working_prof_0_2","working_prof_3_5","working_prof_5_plus","career_switcher","finance_specialist","parent_enquirer","existing_candidate_ca","existing_candidate_cfa","existing_candidate_acca","existing_candidate_frm","exam_failed_deferred","comparing_qualifications","decided_course_attempt","unknown"],
+    "course": ["cfa_l1","cfa_l2","cfa_l3","frm_p1","frm_p2","acca_knowledge","acca_skills","acca_professional","acca_full","ca_foundation","ca_inter_fm","ca_final_afm","financial_modelling","analyst_stack","prudentia","equity_research","combo_cert_analyst","combo_course_finmodel","combo_cfa_cafoundation","scholarship_exam","general_finance_career","unknown"],
+    "course_specificity": ["transactional","specific","category","directional","unknown"],
+    "source_group": ["organic","paid","referral","campus_partnership","direct_inbound","existing_database","cross_sell","reactivation","unknown"],
+    "acquisition_category": ["organic","paid_performance","referral","partnership_campus","direct_inbound","existing_database","existing_student_crosssell","reactivation"],
+    "awareness_level": ["unaware","problem_aware","career_aware","qualification_aware","course_aware","ssei_aware","faculty_aware","comparing_providers","ready_to_buy"],
+    "intent_temperature": ["exploratory","low","medium","high","transactional","blocked","dormant","disqualified"],
+    "lead_state": ["new","data_incomplete","cohort_assigned","first_contact_pending","first_contact_sent","engaged","resource_consumed","marketing_qualified","counselling_requested","counselling_booked","counselling_completed","demo_requested","demo_attended","sales_qualified","objection_pending","payment_link_sent","checkout_started","payment_failed","converted","nurture","dormant","lost","disqualified","invalid","opted_out","cross_sell_eligible"],
+    "journey": ["school_discovery","college_employability","professional_fasttrack","exam_retaker","unknown_course_discovery","transactional","no_response_recovery","dormant_reactivation","cross_sell","parent_guidance","redirect_ineligible","suppressed"],
+    "priority_band": ["P0","P1","P2","P3","P4","R0","X0"]
+  },
+
+  "event_taxonomy": [
+    {"event": "lead_created", "payload": ["lead_id","source_detail","campaign_id","consent_marketing"], "triggers": ["dedup_check","enrichment","cohort_assignment","scoring"]},
+    {"event": "message_sent", "payload": ["lead_id","message_id","channel","template_id"], "triggers": ["frequency_counter_increment"]},
+    {"event": "message_delivered", "payload": ["lead_id","message_id","status"], "triggers": ["no_response_timer_start"]},
+    {"event": "message_read", "payload": ["lead_id","message_id","read_at"], "triggers": ["read_no_reply_timer_start"]},
+    {"event": "message_failed", "payload": ["lead_id","message_id","error_code"], "triggers": ["invalid_number_counter"]},
+    {"event": "inbound_message", "payload": ["lead_id","text","received_at"], "triggers": ["response_classification","decay_reset","session_window_open"]},
+    {"event": "link_clicked", "payload": ["lead_id","resource_id","url"], "triggers": ["intent_scoring"]},
+    {"event": "resource_opened", "payload": ["lead_id","resource_id"], "triggers": ["intent_scoring","state_resource_consumed"]},
+    {"event": "resource_completed", "payload": ["lead_id","resource_id","completion_pct"], "triggers": ["intent_scoring","next_step_selection"]},
+    {"event": "event_attended", "payload": ["lead_id","event_id","watch_minutes"], "triggers": ["intent_scoring","journey_branch"]},
+    {"event": "counselling_booked", "payload": ["lead_id","slot_at","counsellor_id"], "triggers": ["reminder_sequence"]},
+    {"event": "demo_attended", "payload": ["lead_id","class_id","watch_pct"], "triggers": ["counsellor_task","state_sales_qualified"]},
+    {"event": "payment_link_sent", "payload": ["lead_id","order_id","amount_inr"], "triggers": ["recovery_timer"]},
+    {"event": "checkout_started", "payload": ["lead_id","order_id"], "triggers": ["abandonment_timer"]},
+    {"event": "payment_failed", "payload": ["lead_id","order_id","reason_code"], "triggers": ["p0_counsellor_task","recovery_sequence"]},
+    {"event": "payment_completed", "payload": ["lead_id","order_id","amount_inr"], "triggers": ["conversion","suppression","onboarding"]},
+    {"event": "opt_out", "payload": ["lead_id","channel","keyword"], "triggers": ["global_suppression"]},
+    {"event": "score_recalculated", "payload": ["lead_id","fit_score","intent_score","priority_band"], "triggers": ["queue_reorder"]}
+  ],
+
+  "rule_priority_order": [
+    {"layer": 1, "name": "consent_and_suppression", "description": "Consent opt out DND invalid number converted duplicate quiet hours and frequency caps. Nothing overrides this layer."},
+    {"layer": 2, "name": "payment_and_conversion_event", "description": "Any live payment state takes precedence over all marketing logic."},
+    {"layer": 3, "name": "explicit_customer_request", "description": "What the lead actually asked for is answered before anything the system wants to say."},
+    {"layer": 4, "name": "promised_resource_fulfilment", "description": "Deliver what was promised before asking any qualification question."},
+    {"layer": 5, "name": "eligibility", "description": "Structural eligibility gates the entire journey and blocks payment links."},
+    {"layer": 6, "name": "transactional_intent", "description": "High intent suppresses educational nurture."},
+    {"layer": 7, "name": "human_escalation", "description": "Conditions where automation must stop and a person takes over."},
+    {"layer": 8, "name": "course_fit", "description": "Course and variant selection given the profile."},
+    {"layer": 9, "name": "life_stage_need", "description": "The need the message must speak to."},
+    {"layer": 10, "name": "source_context", "description": "How the message opens and what must not be repeated."},
+    {"layer": 11, "name": "geography", "description": "Logistics language mode and timing only. Never scoring."},
+    {"layer": 12, "name": "generic_fallback", "description": "Discovery journey plus a logged fallback event."}
+  ],
+
+  "conflict_resolution": {
+    "field_level": [
+      {"rule": "most_recent_explicit_statement_wins", "detail": "An explicit statement by the lead beats any inference regardless of age, unless it is more than 180 days old and contradicted by newer behaviour."},
+      {"rule": "source_precedence", "order": ["lead_explicit_statement","counsellor_verified","form_submission","campaign_mapping","behavioural_inference","third_party_enrichment","default"]},
+      {"rule": "conflict_flagging", "detail": "When two sources of equal precedence disagree, write the field to field_conflict_flags, suppress every message block that references that field, and create a verification task if the field is decision critical."},
+      {"rule": "decision_critical_fields", "value": ["life_stage","course_interest_primary","eligibility_status","city","exam_attempt_target","decision_maker"]},
+      {"rule": "never_reference_uncertain_data", "detail": "A block whose input field is flagged as conflicting must fall back to its neutral copy variant, not to a guess."}
+    ],
+    "rule_level": [
+      {"rule": "lowest_layer_number_wins"},
+      {"rule": "within_layer_highest_specificity_wins", "detail": "Count the number of matched conditions. More conditions matched wins."},
+      {"rule": "within_layer_tie_break", "detail": "Lower rule_id string sort order wins and the tie is logged for review."},
+      {"rule": "override_flag", "detail": "A rule marked overrides=true cancels all lower layer message selection but never cancels layer 1."}
+    ]
+  },
+
+  "dimension_effect_map": [
+    {"dimension": "life_stage", "changes": ["journey","resource","wording","cta","cadence"], "does_not_change": ["eligibility"]},
+    {"dimension": "course_specificity", "changes": ["journey","cadence","human_escalation"], "does_not_change": ["proof_type"]},
+    {"dimension": "course_identity", "changes": ["resource","wording","proof_type","variant"], "does_not_change": ["journey"]},
+    {"dimension": "source_context", "changes": ["opening_block","promised_resource","sla","priority"], "does_not_change": ["journey except direct_inbound and walk_in and cross_sell"]},
+    {"dimension": "city_tier", "changes": ["wording","cta_offline_option","call_timing","proof_selection"], "does_not_change": ["fit_score","intent_score","priority_band","journey"]},
+    {"dimension": "intent_temperature", "changes": ["journey","cta","cadence","priority","human_escalation"], "does_not_change": ["eligibility"]},
+    {"dimension": "awareness_level", "changes": ["wording","explanation_depth","proof_type"], "does_not_change": ["journey"]},
+    {"dimension": "eligibility", "changes": ["journey","cta","payment_permission"], "does_not_change": ["tone"]},
+    {"dimension": "preferred_language", "changes": ["template_variant","counsellor_routing"], "does_not_change": ["content"]},
+    {"dimension": "engagement_behaviour", "changes": ["intent_score","next_resource","human_escalation"], "does_not_change": ["fit_score"]},
+    {"dimension": "gender_and_college_name_and_pin_code", "changes": [], "does_not_change": ["everything"], "note": "Captured for reporting and logistics only. Never used to alter communication."}
+  ],
+
+  "message_assembly": {
+    "block_order": ["B1_context_acknowledgement","B2_life_stage_relevance","B3_course_value","B4_resource_offer","B5_diagnostic_or_cta"],
+    "max_words_first_message": 65,
+    "max_questions": 2,
+    "max_links": 1,
+    "blocks": {
+      "B1_context_acknowledgement": {
+        "inputs": ["source_detail","event_topic","college_name","referrer_name","campaign_promise_ref","last_campaign"],
+        "selection": "Exact source_detail match in the opening register, else source_group default, else neutral greeting",
+        "omit_when": ["source_detail is unknown","field_conflict_flags contains any input","source is retargeting and no explicit prior interaction exists"],
+        "fallback": "Hi {{first_name}},",
+        "max_words": 20,
+        "guardrails": ["Never reference more than one context fact","Never say we noticed you visited our website","Never combine an event location with a different residence city"]
+      },
+      "B2_life_stage_relevance": {
+        "inputs": ["life_stage","life_stage_confidence","primary_need"],
+        "selection": "life_stage plus primary_need lookup in the relevance register",
+        "omit_when": ["life_stage_confidence is inferred_low or unknown","intent_temperature is transactional"],
+        "fallback": "",
+        "max_words": 30,
+        "guardrails": ["Never state a life stage as fact when confidence is inferred_low","Never use placement language for school cohorts"]
+      },
+      "B3_course_value": {
+        "inputs": ["course_interest_primary","course_variant","awareness_level","current_qualification","current_role"],
+        "selection": "course plus awareness lookup. Depth increases with awareness level",
+        "omit_when": ["course_interest_primary is unknown","stage_suitability is premature","eligibility_status is ineligible"],
+        "fallback": "",
+        "max_words": 35,
+        "guardrails": ["Never claim an outcome that is not documented","Never name a competitor","Never use best or number one language"]
+      },
+      "B4_resource_offer": {
+        "inputs": ["recommended_resource","resource_opened_ids","intent_temperature"],
+        "selection": "Resource matrix lookup on life_stage plus course plus intent plus source",
+        "omit_when": ["the resource is already in resource_opened_ids","intent_temperature is transactional and the resource is educational","a promised resource is pending"],
+        "fallback": "",
+        "max_words": 20,
+        "guardrails": ["Exactly one resource per message","Never attach a brochure to a discovery message"]
+      },
+      "B5_diagnostic_or_cta": {
+        "inputs": ["missing_critical_fields","intent_temperature","priority_band","profiling_questions_asked"],
+        "selection": "Highest value missing field if intent is below high, else the transactional CTA",
+        "omit_when": ["profiling_questions_asked is 3 or more","the answer is already evidenced by behaviour"],
+        "fallback": "Want me to send it here?",
+        "max_words": 25,
+        "guardrails": ["One CTA only","Offer tappable options when the question has fewer than four sensible answers","Never end with our counsellor will contact you soon"]
+      }
+    },
+    "awkward_combination_guards": [
+      {"id": "G1", "condition": "event city is not equal to residence city", "action": "Drop the geography reference entirely"},
+      {"id": "G2", "condition": "life_stage is a working professional and source is a school or college event", "action": "Use the event reference without any student framing and create a verification task"},
+      {"id": "G3", "condition": "existing_student_status is active_student", "action": "Never use an acquisition opening. Use the relationship opening register"},
+      {"id": "G4", "condition": "previous_ssei_interaction is not none", "action": "Never open as if this is a first contact"},
+      {"id": "G5", "condition": "two or more personalisation tokens are unresolved", "action": "Fall back to the neutral variant of the whole message rather than sending partial personalisation"},
+      {"id": "G6", "condition": "intent_temperature is transactional", "action": "Suppress B2 and B4 educational content entirely"},
+      {"id": "G7", "condition": "is_parent_enquiry is true", "action": "Suppress peer proof and any student slang register"}
+    ]
+  },
+
+  "scoring": {
+    "fit_components": {"life_stage_fit": 25, "eligibility": 20, "stage_suitability": 15, "time_availability": 10, "budget_readiness": 10, "decision_maker": 10, "relationship": 10},
+    "intent_components": {"source_intent": 20, "course_specificity": 10, "purchase_timeline": 15, "transactional_request": 25, "behaviour": 20, "response_quality": 10, "attempt_proximity": 10},
+    "intent_cap": 100,
+    "fit_cap": 100,
+    "decay": {"starts_after_days": 7, "points_per_day": 2, "floor_if_ever_replied": 10, "floor_if_never_replied": 0, "reset_on": "any inbound event", "hard_reset_at_days": 30, "hard_reset_value": 25},
+    "bands": [
+      {"band": "P4", "intent_min": 0, "intent_max": 20, "owner": "automation", "sla_minutes": null},
+      {"band": "P3", "intent_min": 21, "intent_max": 40, "owner": "automation", "sla_minutes": null},
+      {"band": "P2", "intent_min": 41, "intent_max": 60, "owner": "counsellor", "sla_minutes": 1440},
+      {"band": "P1", "intent_min": 61, "intent_max": 80, "owner": "counsellor", "sla_minutes": 240},
+      {"band": "P0", "intent_min": 81, "intent_max": 100, "owner": "counsellor", "sla_minutes": 30}
+    ],
+    "band_overrides": [
+      {"condition": "eligibility_status == 'ineligible'", "band": "R0", "note": "Redirect. No payment link under any circumstance."},
+      {"condition": "fit_score < 35 && intent_score >= 61", "band": "R0", "note": "Eager but structurally wrong. Redirect rather than sell."},
+      {"condition": "suppression_reason != 'none'", "band": "X0", "note": "No outbound of any kind."},
+      {"condition": "fit_score >= 60 && intent_score >= 41", "band_uplift": 1, "note": "Best use of counsellor time."},
+      {"condition": "fit_score >= 60 && intent_score <= 20", "band": "P3", "cadence": "dated_re_entry", "note": "Right person wrong moment."}
+    ]
+  },
+
+  "sla": {
+    "first_response_minutes_by_acquisition": {
+      "paid_performance": 5,
+      "direct_inbound": 15,
+      "referral": 60,
+      "organic": 120,
+      "partnership_campus": 1440,
+      "existing_student_crosssell": 1440,
+      "reactivation": 1440,
+      "existing_database": 1440
+    },
+    "quiet_hours_local": {"start": "21:00", "end": "08:00", "timezone_source_field": "time_zone"},
+    "sla_clock_rule": "The SLA clock starts at the first permitted send window. Quiet hours always win over the SLA.",
+    "call_windows": {
+      "working_professional": ["12:30-14:30", "18:30-20:45"],
+      "student": ["16:00-20:45"],
+      "parent": ["18:30-20:45"],
+      "weekend": ["10:00-13:00", "16:00-20:00"],
+      "note": "Windows are IST and require confirmation against current counsellor shift patterns."
+    },
+    "frequency_caps": {
+      "nurture_messages_per_day": 1,
+      "nurture_messages_per_week": 3,
+      "transactional_messages_per_day": 3,
+      "call_attempts_per_week": 3,
+      "channel_cooldown_minutes_after_any_send": 240,
+      "exam_period_rule": "Reduce nurture cadence to one message per fortnight in the 21 days before a target exam for that course cohort."
+    }
+  },
+
+  "decision_tables": [
+    {
+      "table": "first_resource_selection",
+      "inputs": ["life_stage","course_specificity","intent_temperature","source_group"],
+      "rows": [
+        {"life_stage": "school_11|school_12", "course_specificity": "unknown|directional", "intent_temperature": "any", "source_group": "any", "primary_resource": "R01", "backup_resource": "R03", "cta": "question"},
+        {"life_stage": "class12_completed", "course_specificity": "category", "intent_temperature": "low|medium", "source_group": "any", "primary_resource": "R03", "backup_resource": "R04", "cta": "question"},
+        {"life_stage": "college_ug_y1", "course_specificity": "unknown", "intent_temperature": "any", "source_group": "any", "primary_resource": "R02", "backup_resource": "R01", "cta": "question"},
+        {"life_stage": "college_ug_y2|college_ug_final", "course_specificity": "unknown|directional", "intent_temperature": "low|medium", "source_group": "campus_partnership", "primary_resource": "R07", "backup_resource": "R06", "cta": "offer"},
+        {"life_stage": "college_ug_final", "course_specificity": "specific", "intent_temperature": "medium|high", "source_group": "any", "primary_resource": "R09", "backup_resource": "R08", "cta": "offer"},
+        {"life_stage": "recent_graduate|job_seeker", "course_specificity": "category", "intent_temperature": "medium", "source_group": "any", "primary_resource": "R19", "backup_resource": "R06", "cta": "offer"},
+        {"life_stage": "working_prof_0_2|working_prof_3_5|working_prof_5_plus", "course_specificity": "specific", "intent_temperature": "medium|high", "source_group": "any", "primary_resource": "R09", "backup_resource": "R29", "cta": "offer"},
+        {"life_stage": "any", "course_specificity": "transactional", "intent_temperature": "transactional", "source_group": "any", "primary_resource": "R12", "backup_resource": "R11", "cta": "confirm"},
+        {"life_stage": "parent_enquirer", "course_specificity": "any", "intent_temperature": "any", "source_group": "any", "primary_resource": "R20", "backup_resource": "R21", "cta": "choice"},
+        {"life_stage": "exam_failed_deferred", "course_specificity": "specific", "intent_temperature": "any", "source_group": "any", "primary_resource": "R27", "backup_resource": "R26", "cta": "offer"},
+        {"life_stage": "existing_candidate_cfa|existing_candidate_frm|existing_candidate_acca", "course_specificity": "specific", "intent_temperature": "medium|high", "source_group": "cross_sell", "primary_resource": "R34", "backup_resource": "R33", "cta": "offer"},
+        {"life_stage": "unknown", "course_specificity": "unknown", "intent_temperature": "any", "source_group": "any", "primary_resource": "R01", "backup_resource": "R02", "cta": "choice"}
+      ]
+    },
+    {
+      "table": "journey_selection",
+      "inputs": ["life_stage","course_specificity","intent_temperature","eligibility_status","existing_student_status"],
+      "rows": [
+        {"when": "existing_student_status == 'active_student'", "journey": "cross_sell", "owner": "student_success"},
+        {"when": "eligibility_status == 'ineligible' || stage_suitability == 'premature'", "journey": "redirect_ineligible", "owner": "automation"},
+        {"when": "intent_temperature == 'transactional' || payment_link_requested == true", "journey": "transactional", "owner": "counsellor"},
+        {"when": "is_parent_enquiry == true", "journey": "parent_guidance", "owner": "counsellor"},
+        {"when": "previous_attempt_history in ['one_fail','two_plus_fails']", "journey": "exam_retaker", "owner": "automation"},
+        {"when": "life_stage in ['school_9_10','school_11','school_12','class12_completed','college_ug_y1']", "journey": "school_discovery", "owner": "automation"},
+        {"when": "life_stage in ['college_ug_y2','college_ug_final','recent_graduate','job_seeker']", "journey": "college_employability", "owner": "automation"},
+        {"when": "life_stage in ['working_prof_0_2','working_prof_3_5','working_prof_5_plus','career_switcher','finance_specialist','decided_course_attempt'] && course_specificity in ['specific','transactional']", "journey": "professional_fasttrack", "owner": "counsellor"},
+        {"when": "course_interest_primary == 'unknown'", "journey": "unknown_course_discovery", "owner": "automation"},
+        {"when": "days_since_last_engagement > 60", "journey": "dormant_reactivation", "owner": "automation"},
+        {"when": "default", "journey": "unknown_course_discovery", "owner": "automation"}
+      ]
+    },
+    {
+      "table": "human_handoff_triggers",
+      "rows": [
+        {"trigger": "payment_link_requested", "priority": "P0", "sla_minutes": 30, "objective": "Confirm variant and price then issue the link"},
+        {"trigger": "payment_failed", "priority": "P0", "sla_minutes": 30, "objective": "Resolve the payment method and confirm no double debit"},
+        {"trigger": "walk_in", "priority": "P0", "sla_minutes": 30, "objective": "Close on the batch discussed at the centre"},
+        {"trigger": "fee_or_emi_question_unresolved_4h", "priority": "P1", "sla_minutes": 240, "objective": "Establish whether the constraint is amount or timing"},
+        {"trigger": "competitor_named", "priority": "P1", "sla_minutes": 240, "objective": "Honest comparison using the internal brief"},
+        {"trigger": "intent_score>=61_and_silent_72h", "priority": "P1", "sla_minutes": 240, "objective": "Name the blocker directly"},
+        {"trigger": "parent_requests_conversation", "priority": "P1", "sla_minutes": 1440, "objective": "Answer outcomes cost and timeline in one call"},
+        {"trigger": "demo_attended", "priority": "P1", "sla_minutes": 1440, "objective": "Convert the teaching experience into an attempt decision"},
+        {"trigger": "specific_attempt_and_batch_enquiry", "priority": "P1", "sla_minutes": 240, "objective": "Fix the attempt and the batch"},
+        {"trigger": "order_value_above_40000_or_analyst_stack_or_combo", "priority": "P1", "sla_minutes": 240, "objective": "Scope and outcome conversation"},
+        {"trigger": "negative_sentiment", "priority": "P1", "sla_minutes": 120, "objective": "De escalate and decide whether to close the file"},
+        {"trigger": "classifier_confidence_below_0.7", "priority": "P2", "sla_minutes": 240, "objective": "Read the message and reply as a human"},
+        {"trigger": "eligibility_complex_or_conflicting", "priority": "P2", "sla_minutes": 480, "objective": "Verify eligibility before any commercial step"},
+        {"trigger": "same_question_asked_three_times", "priority": "P1", "sla_minutes": 240, "objective": "Answer properly on a call"}
+      ]
+    }
+  ],
+
+  "pseudocode": {
+    "evaluate_lead": [
+      "load lead, master_match, attribution, history",
+      "if suppression_check(lead) is blocked: log_decision('layer1_suppressed'); return NO_ACTION",
+      "if payment_state(lead) is active: return transactional_action(lead)",
+      "if explicit_request(lead) is present: return answer_request(lead)",
+      "if promised_resource_pending(lead): return deliver_promise(lead)",
+      "eligibility = check_eligibility(lead); if eligibility == 'ineligible': return redirect_action(lead)",
+      "scores = score(lead); band = band_of(scores)",
+      "if band in ['P0','P1'] or human_trigger(lead): create_counsellor_task(lead, band)",
+      "journey = select_journey(lead)",
+      "resource = select_resource(lead, journey)",
+      "message = assemble_message(lead, journey, resource)",
+      "if guard_violation(message): message = neutral_variant(journey)",
+      "schedule(message, next_permitted_window(lead))",
+      "write_decision_trace(lead, rules_fired, scores, journey, resource, message_id)"
+    ],
+    "assemble_message": [
+      "blocks = []",
+      "for block in ['B1','B2','B3','B4','B5']:",
+      "  if omit_condition(block, lead): continue",
+      "  copy = lookup(block, lead) or fallback(block)",
+      "  if references_conflicted_field(copy, lead): copy = neutral_variant(block)",
+      "  blocks.append(truncate(copy, max_words(block)))",
+      "text = join(blocks)",
+      "assert count_questions(text) <= 2 and count_links(text) <= 1 and word_count(text) <= 65",
+      "return text"
+    ],
+    "no_response_decision": [
+      "if last_message_status == 'failed': return retry_or_invalidate(lead)",
+      "if delivered and not read and hours_since >= 72: return resend_shorter_in_new_daypart(lead)",
+      "if read and no_reply and hours_since >= 72: return switch_to_tappable_options(lead)",
+      "if resource_opened and no_reply and hours_since >= 48: return question_about_resource(lead)",
+      "if intent_score >= 61 and hours_since >= 72: return counsellor_task_P1_with_blocker_message(lead)",
+      "if followup_count_current_stage >= 3: return exit_message_then_dormant(lead)"
+    ]
+  },
+
+  "sample_lead": {
+    "lead_id": "SSEI-2026-000123",
+    "full_name": "Aarav Mehta",
+    "mobile_e164": "+9198XXXXXX21",
+    "life_stage": "college_ug_final",
+    "life_stage_confidence": "declared",
+    "current_qualification": "bcom",
+    "graduation_year": 2027,
+    "course_interest_primary": "unknown",
+    "course_specificity": "directional",
+    "city": "Indore",
+    "city_tier": "tier_2",
+    "nearest_offline_centre": "none",
+    "offline_accessible": false,
+    "source_group": "campus_partnership",
+    "source_detail": "college_seminar",
+    "campaign_id": "ERC_SEMINAR_2026",
+    "event_topic": "Careers in Finance Beyond B.Com",
+    "acquisition_category": "partnership_campus",
+    "awareness_level": "career_aware",
+    "intent_temperature": "medium",
+    "fit_score": 66,
+    "intent_score": 41,
+    "priority_band": "P2",
+    "lead_state": "cohort_assigned",
+    "primary_need": "placement_differentiation",
+    "recommended_resource": "R07",
+    "backup_resource": "R06",
+    "recommended_cta": "offer_skills_assessment",
+    "assigned_journey": "college_employability",
+    "first_response_sla_minutes": 1440,
+    "missing_critical_fields": ["course_interest_primary","purchase_timeline","weekly_study_hours"],
+    "rules_fired": ["CR030_not_applicable","CR095","CR110","CR132","CR141_not_reached"],
+    "decision_trace_id": "trace_7f1c9a24"
+  },
+
+  "api_examples": {
+    "inbound_lead_webhook": {
+      "method": "POST",
+      "path": "/v1/leads",
+      "body": {
+        "source_detail": "college_seminar",
+        "campaign_id": "ERC_SEMINAR_2026",
+        "full_name": "Aarav Mehta",
+        "mobile_e164": "+9198XXXXXX21",
+        "consent_marketing": true,
+        "consent_timestamp": "2026-08-17T06:40:00Z",
+        "consent_source_artifact": "seminar_signup_form_v3",
+        "event_topic": "Careers in Finance Beyond B.Com",
+        "declared_fields": {"life_stage": "college_ug_final", "college_name": "Redacted College", "city": "Indore", "primary_concern": "placement"}
+      }
+    },
+    "decision_response": {
+      "lead_id": "SSEI-2026-000123",
+      "journey": "college_employability",
+      "message_id": "M006",
+      "resource_id": "R07",
+      "send_at": "2026-08-17T12:30:00+05:30",
+      "channel": "whatsapp",
+      "template_id": "ssei_campus_placement_v1",
+      "variables": {"first_name": "Aarav", "college_name": "Redacted College", "event_topic": "Careers in Finance Beyond B.Com"},
+      "counsellor_task": null,
+      "decision_trace_id": "trace_7f1c9a24"
+    },
+    "inbound_reply_classification": {
+      "method": "POST",
+      "path": "/v1/events/inbound_message",
+      "body": {"lead_id": "SSEI-2026-000123", "text": "what are the fees", "received_at": "2026-08-17T13:02:00+05:30"},
+      "response": {"response_class": "wants_fees", "confidence": 0.94, "intent_delta": 16, "new_state": "sales_qualified", "next_message_id": "M012", "counsellor_task": {"priority": "P1", "sla_minutes": 240}}
+    }
+  },
+
+  "audit_requirements": {
+    "decision_trace": ["lead_id","timestamp","rules_engine_version","input_snapshot_hash","rules_evaluated","rules_fired","scores_before","scores_after","journey_selected","resource_selected","message_id","template_id","variables_resolved","guards_triggered","send_window_applied","suppressed_reason"],
+    "retention_days": 730,
+    "immutability": "Append only. Corrections are new entries referencing the original trace id.",
+    "replayability": "Any past decision must be reproducible by replaying the input snapshot against the stored rules_engine_version.",
+    "access_control": ["growth_ops_admin write","counsellor read own leads","analyst read anonymised","legal read all"]
+  },
+
+  "versioning": {
+    "scheme": "semver on the rules pack",
+    "change_types": {"major": "Taxonomy or state machine change", "minor": "New rules journeys or resources", "patch": "Copy fixes and thresholds"},
+    "rollout": "Shadow mode for 7 days, then 10 percent of new leads for 7 days, then full",
+    "rollback": "Previous rules pack version is retained and can be reactivated in a single configuration change",
+    "content_versioning": {"fee_master": "versioned with an effective date", "batch_calendar": "versioned per launch", "templates": "versioned and re approved on every copy change"}
+  }
+}

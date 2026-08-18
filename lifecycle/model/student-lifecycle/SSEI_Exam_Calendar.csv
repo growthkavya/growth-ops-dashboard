@@ -1,0 +1,12 @@
+course,exam_windows_per_year,typical_months,result_lag_after_window,who_publishes_the_dates,students_in_master,confirm_from,status
+CFA Level 1,4,"February, May, August, November",About 6 to 8 weeks,CFA Institute,"18,093",cfainstitute.org exam calendar,Cadence known. Exact dates to be loaded each year.
+CFA Level 2,3,"May, August, November",About 6 to 8 weeks,CFA Institute,"5,526",cfainstitute.org exam calendar,Cadence known. Exact dates to be loaded each year.
+CFA Level 3,3,"February, May, August",About 8 weeks,CFA Institute,"2,471",cfainstitute.org exam calendar,Cadence known. Exact dates to be loaded each year.
+FRM Part 1,3,"May, August, November",About 6 weeks,GARP,"2,083",garp.org exam schedule,Cadence known. Exact dates to be loaded each year.
+FRM Part 2,3,"May, August, November",About 6 weeks,GARP,652,garp.org exam schedule,Cadence known. Exact dates to be loaded each year.
+CA Foundation,Confirm,ICAI has changed this cadence recently,About 2 months,ICAI,"1,767",icai.org examination notification,Do not assume. Load from the ICAI notification each cycle.
+CA Intermediate,Confirm,ICAI has changed this cadence recently,About 2 months,ICAI,"8,266",icai.org examination notification,Do not assume. Load from the ICAI notification each cycle.
+CA Final,Confirm,ICAI has changed this cadence recently,About 2 months,ICAI,"43,057",icai.org examination notification,Do not assume. Load from the ICAI notification each cycle.
+Analyst Stack,Not applicable,No external exam,Not applicable,SSEI,466,Internal batch calendar,"Runs on batch dates, not exam dates."
+Stock Market,Not applicable,No external exam,Not applicable,SSEI,"1,633",Internal batch calendar,"Runs on batch dates, not exam dates."
+EXCEL/Python/R/SQL,Not applicable,No external exam,Not applicable,SSEI,"1,938",Internal batch calendar,"Runs on batch dates, not exam dates."

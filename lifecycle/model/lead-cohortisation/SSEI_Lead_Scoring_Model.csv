@@ -1,0 +1,102 @@
+factor_id,category,score_type,condition,fit_points,intent_points,cap_rule,decay_rule,recalculation_event,notes
+F01,life_stage_fit,fit,life_stage in working_prof_0_2 or working_prof_3_5 or recent_graduate AND course_interest_primary in cfa_l1 or frm_p1 or analyst_stack or financial_modelling,25,0,Component F max 25,No decay,On life_stage or course change,Textbook fit between stage and product
+F02,life_stage_fit,fit,life_stage in college_ug_final or pg_student AND course_interest_primary in cfa_l1 or analyst_stack or financial_modelling or acca_full,22,0,Component F max 25,No decay,On life_stage or course change,Strong fit. Timeline overlaps final year
+F03,life_stage_fit,fit,life_stage in college_ug_y2 AND course_interest_primary in cfa_l1 or acca_full or financial_modelling,18,0,Component F max 25,No decay,On life_stage or course change,Fit but longer decision cycle
+F04,life_stage_fit,fit,life_stage in class12_completed or college_ug_y1 AND course_interest_primary in acca_knowledge or acca_full or ca_foundation or prudentia,20,0,Component F max 25,No decay,On life_stage or course change,These are the genuinely age appropriate entry products
+F05,life_stage_fit,fit,life_stage in school_11 or school_12 AND course_interest_primary in ca_foundation or acca_knowledge or general_finance_career,14,0,Component F max 25,No decay,On life_stage or course change,Fit exists but purchase is parent gated
+F06,life_stage_fit,fit,life_stage in school_9_10,4,0,Component F max 25,No decay,On life_stage change,Long horizon. Nurture only. Never a sales queue
+F07,life_stage_fit,fit,life_stage in working_prof_5_plus or finance_specialist AND course_interest_primary in frm_p1 or frm_p2 or cfa_l2 or cfa_l3 or analyst_stack,24,0,Component F max 25,No decay,On life_stage or course change,Specialisation buyers
+F08,life_stage_fit,fit,life_stage is parent_enquirer,12,0,Component F max 25,No decay,On life_stage change,Fit is carried by the student record not the parent record
+F09,life_stage_fit,fit,life_stage is unknown,8,0,Component F max 25,No decay,On life_stage discovery,Neutral placeholder. Never treat unknown as poor fit
+F10,life_stage_fit,fit,life_stage in existing_candidate_cfa or existing_candidate_frm or existing_candidate_acca or existing_candidate_ca AND course is the next level of the same track,25,0,Component F max 25,No decay,On course change,Highest structural fit in the entire model
+F11,eligibility,fit,eligibility_status is eligible,20,0,Component F max 20,No decay,On eligibility recheck,Awarding body entry criteria met
+F12,eligibility,fit,eligibility_status is eligible_with_condition,14,0,Component F max 20,No decay,On eligibility recheck,Conditional such as final year enrolment windows
+F13,eligibility,fit,eligibility_status is not_yet_eligible,4,0,Component F max 20,No decay,On eligibility recheck,Keep in nurture with a dated re entry
+F14,eligibility,fit,eligibility_status is ineligible,0,0,Hard cap. fit_score capped at 25 and priority_band forced to R0,No decay,On eligibility recheck,Redirect journey. Never a payment link
+F15,eligibility,fit,eligibility_status is unknown,10,0,Component F max 20,No decay,On eligibility recheck,Neutral until verified
+F16,stage_suitability,fit,stage_suitability is suitable,15,0,Component F max 15,No decay,On course or life_stage change,Requested course matches current stage
+F17,stage_suitability,fit,stage_suitability is premature,5,0,Component F max 15,No decay,On course or life_stage change,Recommend the correct entry product first
+F18,stage_suitability,fit,stage_suitability is overqualified,8,0,Component F max 15,No decay,On course or life_stage change,Route to the higher level or the skills stack
+F19,stage_suitability,fit,stage_suitability is needs_review,7,0,Component F max 15,No decay,On counsellor review,Creates a verification task
+F20,time_availability,fit,weekly_study_hours at 15 or above,10,0,Component F max 10,No decay,On declared hours,Supports the full immersion variants
+F21,time_availability,fit,weekly_study_hours between 8 and 14,7,0,Component F max 10,No decay,On declared hours,Route to accelerate or fast track variants
+F22,time_availability,fit,weekly_study_hours below 8,3,0,Component F max 10,No decay,On declared hours,Feasibility conversation required before sale
+F23,time_availability,fit,weekly_study_hours unknown,5,0,Component F max 10,No decay,On declared hours,Neutral placeholder
+F24,budget_readiness,fit,budget_range matches or exceeds the quoted variant price,10,0,Component F max 10,No decay,On budget or variant change,Structural affordability not eagerness
+F25,budget_readiness,fit,budget_range below variant price AND emi_required is true,7,0,Component F max 10,No decay,On budget or variant change,Financing makes this workable
+F26,budget_readiness,fit,budget_range is price_sensitive AND no financing accepted,3,0,Component F max 10,No decay,On budget change,Consider a lower priced variant not a discount
+F27,budget_readiness,fit,budget_range is not_disclosed,5,0,Component F max 10,No decay,On budget change,Neutral placeholder
+F28,decision_maker,fit,decision_maker is self,10,0,Component F max 10,No decay,On decision maker capture,Single signatory
+F29,decision_maker,fit,decision_maker is self_with_parent_input,7,0,Component F max 10,No decay,On decision maker capture,Add the parent asset to the journey
+F30,decision_maker,fit,decision_maker is parent AND parent contact is available,6,0,Component F max 10,No decay,On decision maker capture,Parent must be reachable for this to hold
+F31,decision_maker,fit,decision_maker is parent AND parent contact is not available,2,0,Component F max 10,No decay,On decision maker capture,Sale cannot close through the student alone
+F32,decision_maker,fit,decision_maker is employer,5,0,Component F max 10,No decay,On decision maker capture,Longer cycle. Needs an invoice and approval path
+F33,relationship,fit,existing_student_status is active_student,10,0,Component F max 10,No decay,On master sync,Known payer with a live relationship
+F34,relationship,fit,existing_student_status is past_student,8,0,Component F max 10,No decay,On master sync,Prior purchase proven
+F35,relationship,fit,previous_ssei_interaction is prior_lead_lost with reason price,3,0,Component F max 10,No decay,On history load,Known constraint carried forward
+F36,relationship,fit,existing_student_status is never_purchased,4,0,Component F max 10,No decay,On master sync,Neutral baseline
+F37,relationship,fit,previous_ssei_interaction is scholarship_exam_only,6,0,Component F max 10,No decay,On history load,Verified real person with demonstrated effort
+I01,source_intent,intent,source_detail in inbound_call or whatsapp_inbound or walk_in,0,20,Component I max 20,No decay on the baseline,On lead create,The lead initiated contact with a question
+I02,source_intent,intent,source_detail in google_search_ad or organic_search or website_course_page,0,16,Component I max 20,No decay on the baseline,On lead create,Active search behaviour
+I03,source_intent,intent,source_detail in demo_class_registration or free_class_registration or webinar_attendee,0,14,Component I max 20,No decay on the baseline,On lead create,Committed time already
+I04,source_intent,intent,source_detail in student_referral or alumni_referral or faculty_referral or counsellor_referral,0,13,Component I max 20,No decay on the baseline,On lead create,Trust arrives pre built
+I05,source_intent,intent,source_detail in retargeting or website_form or website_chat,0,11,Component I max 20,No decay on the baseline,On lead create,Repeat exposure
+I06,source_intent,intent,source_detail in webinar_registration or youtube_live or resource_download,0,8,Component I max 20,No decay on the baseline,On lead create,Interest without commitment
+I07,source_intent,intent,source_detail in college_seminar or college_activation or education_fair or campus_ambassador,0,6,Component I max 20,No decay on the baseline,On lead create,Attendance was often incidental to the venue
+I08,source_intent,intent,source_detail in meta_leadgen_ad or meta_conversion_ad or organic_instagram or youtube_ad or linkedin_ad or organic_x,0,4,Component I max 20,No decay on the baseline,On lead create,Interruption sourced. Matches the observed 2 to 3 percent Meta conversion rate
+I09,source_intent,intent,source_detail in webinar_noshow or resource_forwarded_by_friend or unknown,0,2,Component I max 20,No decay on the baseline,On lead create,Weakest starting signal
+I10,course_specificity,intent,course_specificity is transactional such as a named variant plus attempt plus a price or link question,0,10,Component I max 10,No decay,On any reply parse,Strongest declarative signal short of payment
+I11,course_specificity,intent,course_specificity is specific such as a named course and level,0,8,Component I max 10,No decay,On any reply parse,Knows the product
+I12,course_specificity,intent,course_specificity is category such as finance certification or analyst skills,0,4,Component I max 10,No decay,On any reply parse,Direction without a decision
+I13,course_specificity,intent,course_specificity is directional or unknown,0,1,Component I max 10,No decay,On any reply parse,Discovery required
+I14,purchase_timeline,intent,purchase_timeline is immediate,0,15,Component I max 15,Reduce to 8 if unchanged after 14 days,On declaration and on the 14 day timer,Declared urgency must be re verified
+I15,purchase_timeline,intent,purchase_timeline is within_7_days,0,13,Component I max 15,Reduce to 7 after 21 days,On declaration and on the timer,Same principle
+I16,purchase_timeline,intent,purchase_timeline is within_30_days,0,10,Component I max 15,Reduce to 5 after 45 days,On declaration and on the timer,Same principle
+I17,purchase_timeline,intent,purchase_timeline is 1_3_months,0,5,Component I max 15,No decay,On declaration,Plan a dated re entry rather than weekly follow up
+I18,purchase_timeline,intent,purchase_timeline is 3_plus_months or undecided,0,1,Component I max 15,No decay,On declaration,Nurture cadence only
+I19,transactional_request,intent,payment_link_requested is true,0,25,Component I max 25,No decay while state is transactional,On classification,Immediate override to the transactional journey
+I20,transactional_request,intent,Lead asked for fees or price,0,16,Component I max 25,Minus 4 after 7 days with no further engagement,On classification,Fee questions are the single most reliable intent proxy at SSEI
+I21,transactional_request,intent,Lead asked for batch start date or seat availability,0,14,Component I max 25,Minus 4 after 7 days with no further engagement,On classification,Timing questions indicate planning
+I22,transactional_request,intent,Lead requested a demo or sample class,0,13,Component I max 25,Minus 4 after 10 days,On classification,Evaluating teaching
+I23,transactional_request,intent,Lead requested EMI or financing,0,15,Component I max 25,Minus 4 after 10 days,On classification,Financing questions come from people intending to buy
+I24,transactional_request,intent,Lead requested a callback,0,12,Component I max 25,Minus 6 if the call is not answered twice,On classification,Verbal intent
+I25,transactional_request,intent,Lead named a competitor and asked for a comparison,0,12,Component I max 25,No decay for 7 days then minus 6,On classification,Active evaluation. Time sensitive
+I26,behaviour,intent,checkout_started is true,0,20,Component I max 20,No decay for 72 hours,On gateway webhook,Highest behavioural signal
+I27,behaviour,intent,fees_page_viewed is true,0,12,Component I max 20,Minus 4 after 14 days,On tracking event,Self serve price research
+I28,behaviour,intent,brochure_viewed is true,0,8,Component I max 20,Minus 3 after 14 days,On tracking event,Detail seeking
+I29,behaviour,intent,resource_completion_pct at 75 or above,0,10,Component I max 20,Minus 3 after 21 days,On tracking event,Completion beats opening by a wide margin
+I30,behaviour,intent,demo_attended is true,0,18,Component I max 20,Minus 5 after 10 days with no reply,On attendance sync,Attendance is scarce and expensive to earn
+I31,behaviour,intent,counselling_attended is true,0,16,Component I max 20,Minus 5 after 10 days,On disposition,Human contact completed
+I32,behaviour,intent,event_watch_minutes at 30 or above,0,9,Component I max 20,Minus 3 after 21 days,On webinar export,Sustained attention
+I33,behaviour,intent,link_click_count at 2 or above within 7 days,0,6,Component I max 20,Minus 2 after 14 days,On tracking event,Repeat clicking
+I34,response_quality,intent,Lead replied with a specific answer to the diagnostic question,0,10,Component I max 10,Minus 4 after 14 days of silence,On reply parse,A real answer is worth more than a click
+I35,response_quality,intent,Lead asked two or more distinct product questions,0,8,Component I max 10,Minus 3 after 14 days,On reply parse,Evaluation behaviour
+I36,response_quality,intent,Lead replied with a single word or emoji acknowledgement,0,2,Component I max 10,Minus 2 after 7 days,On reply parse,Politeness is not intent
+I37,attempt_proximity,intent,days_to_target_exam between 60 and 180,0,10,Component I max 10,Recalculated daily,Daily batch job,The genuine decision window for most SSEI products
+I38,attempt_proximity,intent,days_to_target_exam between 30 and 59,0,7,Component I max 10,Recalculated daily,Daily batch job,Tight but workable
+I39,attempt_proximity,intent,days_to_target_exam between 181 and 365,0,4,Component I max 10,Recalculated daily,Daily batch job,Early planner
+I40,attempt_proximity,intent,days_to_target_exam below 30,0,2,Component I max 10,Recalculated daily,Daily batch job,Often too late to start honestly. Counsellor must say so
+N01,negative,intent,Message delivered but unread for 72 hours,0,-3,Floor 0,Applies once per occurrence,On delivery status check,Distinguish from read and ignored
+N02,negative,intent,Message read with no reply for 72 hours,0,-5,Floor 0,Applies once per occurrence,On read receipt timer,Read and ignored is a stronger negative than unread
+N03,negative,intent,Third consecutive follow up with no reply,0,-10,Floor 0,Once,On follow up counter,Signal to change approach not to increase frequency
+N04,negative,intent,Call unanswered on two separate days,0,-6,Floor 0,Once,On telephony sync,Try a different window before scoring again
+N05,negative,intent,Lead replied not interested,0,-25,Floor 0,Immediate,On classification,Also forces state change to lost with a reason
+N06,negative,intent,Lead replied with irritation or asked to be left alone,0,-40,Floor 0,Immediate,On classification,Human review before any further contact
+N07,negative,intent,Lead said already enrolled with another provider,0,-20,Floor 0,Immediate,On classification,Move to a dated reactivation for the next level
+N08,negative,intent,opt_out_flag is true,0,-100,Score set to 0 and suppression applied,Immediate and permanent until re consent,On keyword or classification,No further communication of any category
+N09,negative,intent,invalid_number_flag is true,0,-100,Score set to 0 and state set to invalid,Immediate,On delivery failure threshold,Data quality reporting counts these separately
+N10,negative,fit,duplicate_status is duplicate_merged,0,0,No score change. Records merge and the higher scores survive,Not applicable,On dedup run,Never double count a person in the funnel
+D01,decay,intent,No inbound engagement for 7 consecutive days,0,-2 per day from day 8,Floor 10 for leads that ever replied. Floor 0 for leads that never replied,Daily batch at 02:00 IST,Daily batch job,Prevents a stale score from holding a sales slot
+D02,decay,intent,No inbound engagement for 30 consecutive days,0,Set intent_score to the lower of the current value and 25,Floor as above,Daily batch,Daily batch job,Also transitions the state to dormant
+D03,decay,intent,Any inbound engagement,0,Decay counter resets to zero,Not applicable,On any inbound event,Real time,Engagement always resets the clock
+D04,decay,fit,Fit score never decays,0,0,Not applicable,Fit changes only when profile data changes,On profile update,Structural suitability is not a function of time
+B01,band,derived,intent_score 0 to 20,0,0,Band P4 early exploration,Not applicable,On any score change,Automation only. No counsellor time
+B02,band,derived,intent_score 21 to 40,0,0,Band P3 nurture,Not applicable,On any score change,Automation with a monthly counsellor sweep
+B03,band,derived,intent_score 41 to 60,0,0,Band P2 marketing qualified,Not applicable,On any score change,Counsellor task within 24 working hours
+B04,band,derived,intent_score 61 to 80,0,0,Band P1 sales qualified,Not applicable,On any score change,Counsellor call within 4 working hours
+B05,band,derived,intent_score 81 to 100,0,0,Band P0 transaction ready,Not applicable,On any score change,Counsellor call within 30 minutes inside calling hours
+B06,band,derived,fit_score below 35 AND intent_score at 61 or above,0,0,Band R0 redirect. Overrides P1 and P0,Not applicable,On any score change,Eager but structurally wrong. Redirect rather than sell
+B07,band,derived,eligibility_status is ineligible,0,0,Band R0 redirect regardless of intent,Not applicable,On eligibility recheck,Hard rule. No payment link may be issued
+B08,band,derived,suppression_reason is not none,0,0,Band X0 suppressed. No outbound of any kind,Not applicable,On suppression,Overrides every other band
+B09,band,derived,fit_score at 60 or above AND intent_score at 41 or above,0,0,Priority uplift of one band inside the counsellor queue,Not applicable,On any score change,High fit plus real intent is the best use of counsellor time
+B10,band,derived,fit_score at 60 or above AND intent_score at 20 or below,0,0,Band P3 with a dated re entry rather than weekly contact,Not applicable,On any score change,Right person wrong moment. Do not burn them with cadence

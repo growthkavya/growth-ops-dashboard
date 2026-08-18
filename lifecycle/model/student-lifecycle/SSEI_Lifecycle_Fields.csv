@@ -1,0 +1,14 @@
+field,layer,plain_meaning,where_it_comes_from,do_we_have_it_today,coverage_today,what_breaks_without_it,priority
+attempt_window,Normalised,"The exact exam sitting they are studying for, as course plus month plus year.",Asked at checkout. Backfilled from the course name.,Partly,38.5 percent of students,Stages S3 to S8 cannot be computed. Playbooks SP-03 and SP-05 to SP-10 cannot run.,1. Blocks everything.
+result_status,Classification,"Passed, did not pass, did not sit, or not known yet.",The student tells us on result day. Nobody sends this to us.,No,Zero,"Playbooks SP-08, SP-09 and SP-10 cannot run. The single largest revenue moment stays invisible.",2. Blocks the biggest lever.
+validity_expiry_date,Raw,The date their access stops.,Purchase date plus the validity term of the product.,Not on the student record,"Extensions are recorded, expiry dates are not",SP-11 cannot run. We only sell extensions to students who think to ask.,3. Cheapest to fix.
+last_active_on,Raw,The last time they opened the course.,The learning platform.,Only for the free scholarship test export,Effectively zero for paid students,"Momentum cannot be scored. SP-02, SP-03 and SP-04 cannot run.",4. Needed for the study half.
+consumption_pct,Derived,How much of the course they have actually watched.,The learning platform.,No,Zero,Cannot tell a student who is on track from one who has vanished.,4. Same feed as last_active_on.
+exam_date,Derived,The real date of their sitting.,Attempt window matched against the exam calendar.,No,Zero,Every countdown in the system.,1. Falls out of attempt_window.
+result_date,Derived,The date the result is published.,Exam calendar.,No,Zero,SP-07 cannot be scheduled.,1. Falls out of the exam calendar.
+ladder_next_step,Derived,The next course this student could buy.,"Course held, matched against the ladder.","No, but computable today","Computable for all 85,802",SP-08 has no pitch.,2. No new data needed.
+lifetime_spend,Derived,Everything they have paid us.,Sum of the purchase history already on the record.,"No, but computable today","Computable for 42,414 with dated purchases",Headroom cannot be scored.,3. No new data needed.
+months_since_last_purchase,Derived,How long since they last bought.,Latest purchase date.,"No, but computable today","Computable for 42,414",S9 and SP-12 cannot be targeted.,3. No new data needed.
+momentum_score,Classification,Are they studying enough to pass.,"Watch time, mocks, replies, doubts asked.",No,Zero,No way to spot a student about to fail before they fail.,4.
+headroom_score,Classification,What this student could still buy from us.,"Ladder position, lifetime spend, courses held.","No, but computable today","Computable for all 85,802",No way to rank students against each other or against leads.,2. No new data needed.
+student_playbook,Journey,Which of the twelve plans this student is on.,The rules engine.,No,Zero,The team has no queue to work.,Falls out of the rest.

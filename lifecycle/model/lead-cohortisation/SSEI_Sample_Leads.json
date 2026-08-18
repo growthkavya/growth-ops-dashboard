@@ -1,0 +1,2298 @@
+[
+ {
+  "lead_id": "SSEI-2026-000123",
+  "name": "Aarav Mehta",
+  "initials": "AM",
+  "snapshot": {
+   "Life stage": "College final year",
+   "Course": "Not named yet",
+   "City": "Indore (Tier 2, no centre)",
+   "Source": "College seminar",
+   "Language": "English",
+   "With us since": "11 days"
+  },
+  "raw": {
+   "full_name": "Aarav Mehta",
+   "mobile_e164": "+9198XXXXXX21",
+   "source_detail": "college_seminar",
+   "event_topic": "Careers in Finance Beyond B.Com",
+   "city": "Indore",
+   "current_qualification": "B.Com",
+   "graduation_year": "2027",
+   "consent_marketing": "true",
+   "stated_concern": "placements"
+  },
+  "normalised": {
+   "mobile_last10": "98XXXXXX21",
+   "city_tier": "Tier 2",
+   "distance_to_centre_km": "780",
+   "acquisition_category": "Campus",
+   "life_stage": "College final year",
+   "course_interest_primary": "Unknown"
+  },
+  "dimensions": [
+   {
+    "id": "D1",
+    "name": "Life stage",
+    "value": "College final year",
+    "confidence": "Declared",
+    "why": "Stated on the seminar sign up sheet."
+   },
+   {
+    "id": "D2",
+    "name": "Course interest",
+    "value": "Direction only",
+    "confidence": "Declared",
+    "why": "He said finance and placements. He named no course."
+   },
+   {
+    "id": "D3",
+    "name": "Eligibility and stage fit",
+    "value": "Unknown",
+    "confidence": "Unknown",
+    "why": "Cannot be checked until a course is named."
+   },
+   {
+    "id": "D4",
+    "name": "Capacity",
+    "value": "Unknown",
+    "confidence": "Unknown",
+    "why": "Hours, budget and decision maker have not been asked yet."
+   },
+   {
+    "id": "D5",
+    "name": "Relationship",
+    "value": "New",
+    "confidence": "Verified",
+    "why": "No match in the student master or lead history."
+   },
+   {
+    "id": "D6",
+    "name": "Source context",
+    "value": "Campus seminar",
+    "confidence": "Verified",
+    "why": "Attended the Careers in Finance Beyond B.Com session."
+   },
+   {
+    "id": "D7",
+    "name": "Engagement",
+    "value": "Deep",
+    "confidence": "Verified",
+    "why": "Completed the skills check in full and opened the role map."
+   },
+   {
+    "id": "D8",
+    "name": "Stated urgency",
+    "value": "Undecided",
+    "confidence": "Declared",
+    "why": "No timeline given. Graduates in about six months."
+   },
+   {
+    "id": "D9",
+    "name": "Location",
+    "value": "Tier 2, no centre within reach",
+    "confidence": "Verified",
+    "why": "Indore is 780 km from the nearest classroom."
+   }
+  ],
+  "fit": {
+   "score": 66,
+   "confidence": "Medium",
+   "components": [
+    {
+     "name": "Life stage suits employability products",
+     "points": 22,
+     "max": 25,
+     "why": "Final year is the right moment for a skills programme.",
+     "positive": true
+    },
+    {
+     "name": "Eligibility",
+     "points": 10,
+     "max": 20,
+     "why": "Neutral. No course named, so nothing to check yet.",
+     "positive": null
+    },
+    {
+     "name": "Right step for him",
+     "points": 15,
+     "max": 15,
+     "why": "Both routes we would offer are appropriate for final year.",
+     "positive": true
+    },
+    {
+     "name": "Time available",
+     "points": 5,
+     "max": 10,
+     "why": "Not asked yet. Scored neutral, not negative.",
+     "positive": null
+    },
+    {
+     "name": "Budget",
+     "points": 5,
+     "max": 10,
+     "why": "Not asked yet. Scored neutral.",
+     "positive": null
+    },
+    {
+     "name": "Decision maker",
+     "points": 5,
+     "max": 10,
+     "why": "Likely himself with parent input, not confirmed.",
+     "positive": true
+    },
+    {
+     "name": "Prior relationship",
+     "points": 4,
+     "max": 10,
+     "why": "New to us.",
+     "positive": null
+    }
+   ]
+  },
+  "intent": {
+   "score": 41,
+   "confidence": "High",
+   "components": [
+    {
+     "name": "Came from a campus seminar",
+     "points": 6,
+     "max": 20,
+     "why": "Attendance was partly incidental to the venue.",
+     "positive": null
+    },
+    {
+     "name": "How specific the ask is",
+     "points": 4,
+     "max": 10,
+     "why": "Category only. He knows finance, not which course.",
+     "positive": null
+    },
+    {
+     "name": "Stated timeline",
+     "points": 1,
+     "max": 15,
+     "why": "Undecided.",
+     "positive": null
+    },
+    {
+     "name": "What he has asked for",
+     "points": 0,
+     "max": 25,
+     "why": "No fee, batch or link question yet.",
+     "positive": null
+    },
+    {
+     "name": "What he has done",
+     "points": 20,
+     "max": 20,
+     "why": "Completed the skills check and opened the role map.",
+     "positive": true
+    },
+    {
+     "name": "Quality of his replies",
+     "points": 10,
+     "max": 10,
+     "why": "Named a specific target role, unprompted.",
+     "positive": true
+    },
+    {
+     "name": "Exam proximity",
+     "points": 0,
+     "max": 10,
+     "why": "No exam target.",
+     "positive": null
+    }
+   ],
+   "decay": 0
+  },
+  "priority": "Call this week",
+  "guardrails": [
+   {
+    "id": "GR-016",
+    "name": "Course was guessed, never confirmed",
+    "severity": "Info",
+    "explanation": "No course has been inferred. Nothing is being assumed."
+   },
+   {
+    "id": "GR-039",
+    "name": "Missing the one field this cohort needs",
+    "severity": "Warning",
+    "explanation": "Weekly hours and budget are unknown. Ask on the call, not by message."
+   }
+  ],
+  "cohort": {
+   "name": "College, worried about placements",
+   "playbook_id": "PB-02",
+   "why": "Final year, no course named, and the concern captured at the seminar was placements.",
+   "rule": "CR095"
+  },
+  "other_cohorts": [
+   "We do not know what they want yet (PB-05)"
+  ],
+  "journey": {
+   "stage": "Interested",
+   "since": "2 days ago",
+   "events": [
+    {
+     "when": "Day 0",
+     "stage": "New",
+     "what": "Signed up at the Careers in Finance Beyond B.Com seminar at his college",
+     "channel": "Campus event",
+     "captured": "Name, number, year, degree, concern",
+     "fit": "+66",
+     "intent": "8",
+     "owner": "System"
+    },
+    {
+     "when": "Day 1",
+     "stage": "Contacted",
+     "what": "First message sent, referencing the session and offering the skills check",
+     "channel": "WhatsApp",
+     "captured": "Delivered and read",
+     "fit": "66",
+     "intent": "8",
+     "owner": "System"
+    },
+    {
+     "when": "Day 3",
+     "stage": "Engaged",
+     "what": "Replied asking which course gives the best placement",
+     "channel": "WhatsApp",
+     "captured": "Reply classified as career guidance with a false premise",
+     "fit": "66",
+     "intent": "24",
+     "owner": "System"
+    },
+    {
+     "when": "Day 4",
+     "stage": "Engaged",
+     "what": "Answered honestly that no course places you, asked which of three roles he wants",
+     "channel": "WhatsApp",
+     "captured": "Role named: investment banking",
+     "fit": "66",
+     "intent": "34",
+     "owner": "System"
+    },
+    {
+     "when": "Day 9",
+     "stage": "Engaged",
+     "what": "Sent the skills check",
+     "channel": "WhatsApp",
+     "captured": "Opened",
+     "fit": "66",
+     "intent": "38",
+     "owner": "System"
+    },
+    {
+     "when": "Day 11",
+     "stage": "Interested",
+     "what": "Completed the skills check in full",
+     "channel": "Web",
+     "captured": "Gap report generated. Counsellor task created",
+     "fit": "66",
+     "intent": "41",
+     "owner": "Counsellor"
+    }
+   ]
+  },
+  "next_action": {
+   "what": "Call and confirm the target role, then present Analyst Stack against CFA Level 1 honestly for a six month horizon",
+   "when": "Within 24 working hours",
+   "owner": "Counsellor"
+  },
+  "risk": "Placement season starts in about six weeks. If he is not converted before it starts, he goes quiet for three months.",
+  "do_not": "Do not pitch CFA as a placement solution for a six month timeline."
+ },
+ {
+  "lead_id": "SSEI-2026-000341",
+  "name": "Priya Nair",
+  "initials": "PN",
+  "snapshot": {
+   "Life stage": "Working, 3 years",
+   "Course": "FRM Part 1",
+   "City": "Bengaluru (Tier 1)",
+   "Source": "Google Search ad",
+   "Language": "English",
+   "With us since": "2 days"
+  },
+  "raw": {
+   "full_name": "Priya Nair",
+   "source_detail": "google_search_ad",
+   "current_role": "Risk Analyst",
+   "work_experience_years": "3",
+   "course_interest_primary": "FRM Part 1",
+   "purchase_timeline": "Within 7 days",
+   "weekly_study_hours": "10",
+   "consent_marketing": "true"
+  },
+  "normalised": {
+   "life_stage": "Working 3 to 5 yrs",
+   "acquisition_category": "Paid",
+   "city_tier": "Tier 1",
+   "course_specificity": "Exact ask"
+  },
+  "dimensions": [
+   {
+    "id": "D1",
+    "name": "Life stage",
+    "value": "Working 3 to 5 years",
+    "confidence": "Declared",
+    "why": "Stated three years of experience as a risk analyst."
+   },
+   {
+    "id": "D2",
+    "name": "Course interest",
+    "value": "Exact ask",
+    "confidence": "Declared",
+    "why": "Named FRM Part 1 and asked about fees and the next batch."
+   },
+   {
+    "id": "D3",
+    "name": "Eligibility and stage fit",
+    "value": "Eligible",
+    "confidence": "Verified",
+    "why": "GARP has no degree bar for Part 1."
+   },
+   {
+    "id": "D4",
+    "name": "Capacity",
+    "value": "10 hours a week, budget covers it, decides herself",
+    "confidence": "Declared",
+    "why": "All three answered directly."
+   },
+   {
+    "id": "D5",
+    "name": "Relationship",
+    "value": "New",
+    "confidence": "Verified",
+    "why": "No prior record."
+   },
+   {
+    "id": "D6",
+    "name": "Source context",
+    "value": "Google search",
+    "confidence": "Verified",
+    "why": "Searched for FRM coaching and clicked an ad."
+   },
+   {
+    "id": "D7",
+    "name": "Engagement",
+    "value": "Active",
+    "confidence": "Verified",
+    "why": "Viewed the fee page and replied twice within an hour."
+   },
+   {
+    "id": "D8",
+    "name": "Stated urgency",
+    "value": "Within 7 days",
+    "confidence": "Declared",
+    "why": "Said she wants to enrol this week."
+   },
+   {
+    "id": "D9",
+    "name": "Location",
+    "value": "Tier 1, no centre needed",
+    "confidence": "Verified",
+    "why": "Wants online. Location is not a constraint."
+   }
+  ],
+  "fit": {
+   "score": 91,
+   "confidence": "High",
+   "components": [
+    {
+     "name": "Life stage suits FRM",
+     "points": 25,
+     "max": 25,
+     "why": "A working risk professional is the textbook FRM candidate.",
+     "positive": true
+    },
+    {
+     "name": "Eligibility",
+     "points": 20,
+     "max": 20,
+     "why": "Eligible with no conditions.",
+     "positive": true
+    },
+    {
+     "name": "Right step for her",
+     "points": 15,
+     "max": 15,
+     "why": "Part 1 is the correct entry point.",
+     "positive": true
+    },
+    {
+     "name": "Time available",
+     "points": 7,
+     "max": 10,
+     "why": "10 hours a week suits the accelerate variant, not full immersion.",
+     "positive": true
+    },
+    {
+     "name": "Budget",
+     "points": 10,
+     "max": 10,
+     "why": "Budget covers the quoted price.",
+     "positive": true
+    },
+    {
+     "name": "Decision maker",
+     "points": 10,
+     "max": 10,
+     "why": "Decides herself.",
+     "positive": true
+    },
+    {
+     "name": "Prior relationship",
+     "points": 4,
+     "max": 10,
+     "why": "New to us.",
+     "positive": null
+    }
+   ]
+  },
+  "intent": {
+   "score": 92,
+   "confidence": "High",
+   "components": [
+    {
+     "name": "Came from a search ad",
+     "points": 16,
+     "max": 20,
+     "why": "She was actively looking for exactly this.",
+     "positive": true
+    },
+    {
+     "name": "How specific the ask is",
+     "points": 10,
+     "max": 10,
+     "why": "Named the course, the part and the sitting.",
+     "positive": true
+    },
+    {
+     "name": "Stated timeline",
+     "points": 13,
+     "max": 15,
+     "why": "Wants to enrol within 7 days.",
+     "positive": true
+    },
+    {
+     "name": "What she has asked for",
+     "points": 25,
+     "max": 25,
+     "why": "Fee, batch date and instalment options, all in one message.",
+     "positive": true
+    },
+    {
+     "name": "What she has done",
+     "points": 12,
+     "max": 20,
+     "why": "Viewed the fee page twice.",
+     "positive": true
+    },
+    {
+     "name": "Quality of her replies",
+     "points": 8,
+     "max": 10,
+     "why": "Specific product questions.",
+     "positive": true
+    },
+    {
+     "name": "Exam proximity",
+     "points": 8,
+     "max": 10,
+     "why": "Target sitting is 4 months away.",
+     "positive": true
+    }
+   ],
+   "decay": 0
+  },
+  "priority": "Call now",
+  "guardrails": [
+   {
+    "id": "GR-011",
+    "name": "Not enough hours for the variant",
+    "severity": "Conflict",
+    "explanation": "10 hours a week does not suit full immersion. Offer the accelerate variant instead of agreeing to the wrong one."
+   },
+   {
+    "id": "GR-008",
+    "name": "Payment link before the price is agreed",
+    "severity": "Blocking",
+    "explanation": "Confirm which variant before any link goes out."
+   }
+  ],
+  "cohort": {
+   "name": "Working professional who knows what they want",
+   "playbook_id": "PB-03",
+   "why": "Job, named course, named sitting, and a timeline inside 7 days.",
+   "rule": "CR052"
+  },
+  "other_cohorts": [
+   "Ready to buy (PB-06) once the variant is confirmed"
+  ],
+  "journey": {
+   "stage": "Ready to buy",
+   "since": "4 hours ago",
+   "events": [
+    {
+     "when": "Day 0, 10:02",
+     "stage": "New",
+     "what": "Clicked a Google search ad for FRM coaching and filled the form",
+     "channel": "Website",
+     "captured": "Name, number, course, role, experience",
+     "fit": "91",
+     "intent": "66",
+     "owner": "System"
+    },
+    {
+     "when": "Day 0, 10:06",
+     "stage": "Contacted",
+     "what": "First message sent within the 5 minute target, framed around the overlap with her risk role",
+     "channel": "WhatsApp",
+     "captured": "Delivered and read in 3 minutes",
+     "fit": "91",
+     "intent": "66",
+     "owner": "System"
+    },
+    {
+     "when": "Day 0, 10:19",
+     "stage": "Engaged",
+     "what": "Replied asking for the fee, the next batch and whether instalments are possible",
+     "channel": "WhatsApp",
+     "captured": "Three transactional questions",
+     "fit": "91",
+     "intent": "88",
+     "owner": "System"
+    },
+    {
+     "when": "Day 0, 10:24",
+     "stage": "Ready to buy",
+     "what": "Fee answered with both variant prices and the next start date",
+     "channel": "WhatsApp",
+     "captured": "Fee page viewed twice after",
+     "fit": "91",
+     "intent": "92",
+     "owner": "Counsellor"
+    }
+   ]
+  },
+  "next_action": {
+   "what": "Call now. Confirm the accelerate variant given 10 hours a week, then issue the link on the call and stay on the line through checkout",
+   "when": "Within 30 minutes",
+   "owner": "Counsellor"
+  },
+  "risk": "She asked three transactional questions in one message. Every hour without a call is a real risk of her buying elsewhere.",
+  "do_not": "Do not send any educational content. Do not defer the fee answer to a call."
+ },
+ {
+  "lead_id": "SSEI-2026-000502",
+  "name": "Rohan Gupta",
+  "initials": "RG",
+  "snapshot": {
+   "Life stage": "Class 12",
+   "Course": "CFA Level 1 (requested)",
+   "City": "Delhi (Tier 1)",
+   "Source": "Instagram",
+   "Language": "English",
+   "With us since": "5 days"
+  },
+  "raw": {
+   "full_name": "Rohan Gupta",
+   "source_detail": "organic_instagram",
+   "life_stage": "Class 12",
+   "course_interest_primary": "CFA Level 1",
+   "purchase_timeline": "Immediate",
+   "payment_link_requested": "true",
+   "consent_marketing": "true"
+  },
+  "normalised": {
+   "life_stage": "School class 12",
+   "course_specificity": "Exact ask",
+   "eligibility_status": "Ineligible",
+   "city_tier": "Tier 1"
+  },
+  "dimensions": [
+   {
+    "id": "D1",
+    "name": "Life stage",
+    "value": "Class 12",
+    "confidence": "Declared",
+    "why": "Said he is in class 12 and awaiting board results."
+   },
+   {
+    "id": "D2",
+    "name": "Course interest",
+    "value": "Exact ask",
+    "confidence": "Declared",
+    "why": "Named CFA Level 1 and asked for a payment link."
+   },
+   {
+    "id": "D3",
+    "name": "Eligibility and stage fit",
+    "value": "Ineligible",
+    "confidence": "Verified",
+    "why": "CFA registration requires final year of a bachelors degree or work experience."
+   },
+   {
+    "id": "D4",
+    "name": "Capacity",
+    "value": "Parent decides",
+    "confidence": "Declared",
+    "why": "Said his father would pay."
+   },
+   {
+    "id": "D5",
+    "name": "Relationship",
+    "value": "New",
+    "confidence": "Verified",
+    "why": "No prior record."
+   },
+   {
+    "id": "D6",
+    "name": "Source context",
+    "value": "Organic Instagram",
+    "confidence": "Verified",
+    "why": "Direct message after a reel."
+   },
+   {
+    "id": "D7",
+    "name": "Engagement",
+    "value": "Active",
+    "confidence": "Verified",
+    "why": "Replied four times in two days."
+   },
+   {
+    "id": "D8",
+    "name": "Stated urgency",
+    "value": "Ready now",
+    "confidence": "Declared",
+    "why": "Asked for the payment link twice."
+   },
+   {
+    "id": "D9",
+    "name": "Location",
+    "value": "Tier 1",
+    "confidence": "Verified",
+    "why": "Delhi. A centre is reachable."
+   }
+  ],
+  "fit": {
+   "score": 25,
+   "confidence": "High",
+   "components": [
+    {
+     "name": "Life stage suits CFA",
+     "points": 0,
+     "max": 25,
+     "why": "Class 12 is not a CFA entry point.",
+     "positive": false
+    },
+    {
+     "name": "Eligibility",
+     "points": 0,
+     "max": 20,
+     "why": "Cannot register. This caps the whole fit score at 25.",
+     "positive": false
+    },
+    {
+     "name": "Right step for him",
+     "points": 5,
+     "max": 15,
+     "why": "Too early. A graduation plan comes first.",
+     "positive": false
+    },
+    {
+     "name": "Time available",
+     "points": 5,
+     "max": 10,
+     "why": "Not asked.",
+     "positive": null
+    },
+    {
+     "name": "Budget",
+     "points": 5,
+     "max": 10,
+     "why": "Parent funded, not confirmed.",
+     "positive": null
+    },
+    {
+     "name": "Decision maker",
+     "points": 6,
+     "max": 10,
+     "why": "Parent, not yet contacted.",
+     "positive": null
+    },
+    {
+     "name": "Prior relationship",
+     "points": 4,
+     "max": 10,
+     "why": "New to us.",
+     "positive": null
+    }
+   ]
+  },
+  "intent": {
+   "score": 62,
+   "confidence": "Medium",
+   "components": [
+    {
+     "name": "Came from Instagram",
+     "points": 4,
+     "max": 20,
+     "why": "Interruption sourced.",
+     "positive": null
+    },
+    {
+     "name": "How specific the ask is",
+     "points": 10,
+     "max": 10,
+     "why": "Named the exact course.",
+     "positive": true
+    },
+    {
+     "name": "Stated timeline",
+     "points": 15,
+     "max": 15,
+     "why": "Said immediate.",
+     "positive": true
+    },
+    {
+     "name": "What he has asked for",
+     "points": 25,
+     "max": 25,
+     "why": "Asked for a payment link, twice.",
+     "positive": true
+    },
+    {
+     "name": "What he has done",
+     "points": 0,
+     "max": 20,
+     "why": "No resource opened.",
+     "positive": null
+    },
+    {
+     "name": "Quality of his replies",
+     "points": 8,
+     "max": 10,
+     "why": "Specific and repeated.",
+     "positive": true
+    },
+    {
+     "name": "Exam proximity",
+     "points": 0,
+     "max": 10,
+     "why": "No valid exam target.",
+     "positive": null
+    }
+   ],
+   "decay": 0
+  },
+  "priority": "Redirect",
+  "guardrails": [
+   {
+    "id": "GR-006",
+    "name": "Not eligible for the course requested",
+    "severity": "Blocking",
+    "explanation": "CFA registration needs final year of a degree or work experience. He cannot register, so no payment link may be issued at any point."
+   },
+   {
+    "id": "GR-037",
+    "name": "The lead is a minor",
+    "severity": "Blocking",
+    "explanation": "He may be under 18. Communication should involve the parent and legal review applies."
+   },
+   {
+    "id": "GR-009",
+    "name": "The person who pays has not been spoken to",
+    "severity": "Conflict",
+    "explanation": "His father signs off and has never been contacted."
+   }
+  ],
+  "cohort": {
+   "name": "Cannot take this course",
+   "playbook_id": "PB-11",
+   "why": "He is eager and specific, but the awarding body rule closes this course to him. Fit is capped at 25 by the eligibility rule.",
+   "rule": "CR040"
+  },
+  "other_cohorts": [
+   "School and just finished school (PB-01)"
+  ],
+  "journey": {
+   "stage": "Engaged",
+   "since": "1 day ago",
+   "events": [
+    {
+     "when": "Day 0",
+     "stage": "New",
+     "what": "Direct message on Instagram asking if CFA can be done after class 12",
+     "channel": "Instagram",
+     "captured": "Name, number, class, course",
+     "fit": "25 (capped)",
+     "intent": "22",
+     "owner": "System"
+    },
+    {
+     "when": "Day 0",
+     "stage": "Contacted",
+     "what": "Answered the eligibility question plainly and offered the two routes that are open",
+     "channel": "WhatsApp",
+     "captured": "Delivered and read",
+     "fit": "25",
+     "intent": "22",
+     "owner": "System"
+    },
+    {
+     "when": "Day 2",
+     "stage": "Engaged",
+     "what": "Replied asking for the payment link anyway",
+     "channel": "WhatsApp",
+     "captured": "Transactional request. Blocked by the eligibility rule",
+     "fit": "25",
+     "intent": "52",
+     "owner": "System"
+    },
+    {
+     "when": "Day 4",
+     "stage": "Engaged",
+     "what": "Asked a second time. Redirect message sent with the two year sequence",
+     "channel": "WhatsApp",
+     "captured": "Opened the eligibility sheet",
+     "fit": "25",
+     "intent": "62",
+     "owner": "System"
+    }
+   ]
+  },
+  "next_action": {
+   "what": "Send the two year sequence with real attempt dates, and offer a parent call. Do not issue a link",
+   "when": "Within 8 working hours",
+   "owner": "Counsellor"
+  },
+  "risk": "He is keen enough to buy from someone who will sell it to him. That sale would end in a refund.",
+  "do_not": "Never issue a payment link. Never suggest a workaround to an awarding body rule."
+ },
+ {
+  "lead_id": "SSEI-2026-000618",
+  "name": "Meera Shah (parent of Dhruv)",
+  "initials": "MS",
+  "snapshot": {
+   "Life stage": "Parent enquiry",
+   "Course": "ACCA",
+   "City": "Ahmedabad (Tier 2)",
+   "Source": "Website form",
+   "Language": "English",
+   "With us since": "6 days"
+  },
+  "raw": {
+   "full_name": "Meera Shah",
+   "student_name_if_parent": "Dhruv",
+   "source_detail": "website_form",
+   "course_interest_primary": "ACCA",
+   "is_parent_enquiry": "true",
+   "consent_marketing": "true"
+  },
+  "normalised": {
+   "life_stage": "Parent",
+   "decision_maker": "Parent",
+   "city_tier": "Tier 2",
+   "course_specificity": "Named course"
+  },
+  "dimensions": [
+   {
+    "id": "D1",
+    "name": "Life stage",
+    "value": "Parent enquiring for a student",
+    "confidence": "Declared",
+    "why": "She named her son and asked on his behalf."
+   },
+   {
+    "id": "D2",
+    "name": "Course interest",
+    "value": "Named course",
+    "confidence": "Declared",
+    "why": "Asked about ACCA specifically."
+   },
+   {
+    "id": "D3",
+    "name": "Eligibility and stage fit",
+    "value": "Eligible with condition",
+    "confidence": "Assumed",
+    "why": "Depends on Dhruv's board results, which are not out."
+   },
+   {
+    "id": "D4",
+    "name": "Capacity",
+    "value": "She decides and pays",
+    "confidence": "Declared",
+    "why": "Stated directly."
+   },
+   {
+    "id": "D5",
+    "name": "Relationship",
+    "value": "New",
+    "confidence": "Verified",
+    "why": "No prior record for either of them."
+   },
+   {
+    "id": "D6",
+    "name": "Source context",
+    "value": "Website form",
+    "confidence": "Verified",
+    "why": "Filled the ACCA course page form in the evening."
+   },
+   {
+    "id": "D7",
+    "name": "Engagement",
+    "value": "Passive",
+    "confidence": "Verified",
+    "why": "Opened the parent guide, no reply since."
+   },
+   {
+    "id": "D8",
+    "name": "Stated urgency",
+    "value": "1 to 3 months",
+    "confidence": "Declared",
+    "why": "Waiting for results before deciding."
+   },
+   {
+    "id": "D9",
+    "name": "Location",
+    "value": "Tier 2, no centre",
+    "confidence": "Verified",
+    "why": "Online only is realistic."
+   }
+  ],
+  "fit": {
+   "score": 61,
+   "confidence": "Medium",
+   "components": [
+    {
+     "name": "Life stage",
+     "points": 12,
+     "max": 25,
+     "why": "Fit sits with the student, not the parent record.",
+     "positive": null
+    },
+    {
+     "name": "Eligibility",
+     "points": 14,
+     "max": 20,
+     "why": "Conditional on board results.",
+     "positive": true
+    },
+    {
+     "name": "Right step for him",
+     "points": 15,
+     "max": 15,
+     "why": "ACCA after class 12 alongside a degree is a standard route.",
+     "positive": true
+    },
+    {
+     "name": "Time available",
+     "points": 5,
+     "max": 10,
+     "why": "Not asked.",
+     "positive": null
+    },
+    {
+     "name": "Budget",
+     "points": 5,
+     "max": 10,
+     "why": "Not disclosed.",
+     "positive": null
+    },
+    {
+     "name": "Decision maker",
+     "points": 6,
+     "max": 10,
+     "why": "Parent, reachable and engaged.",
+     "positive": true
+    },
+    {
+     "name": "Prior relationship",
+     "points": 4,
+     "max": 10,
+     "why": "New to us.",
+     "positive": null
+    }
+   ]
+  },
+  "intent": {
+   "score": 45,
+   "confidence": "Medium",
+   "components": [
+    {
+     "name": "Came from a course page form",
+     "points": 11,
+     "max": 20,
+     "why": "Deliberate action on a specific course page.",
+     "positive": true
+    },
+    {
+     "name": "How specific the ask is",
+     "points": 8,
+     "max": 10,
+     "why": "Named ACCA.",
+     "positive": true
+    },
+    {
+     "name": "Stated timeline",
+     "points": 5,
+     "max": 15,
+     "why": "1 to 3 months, waiting on results.",
+     "positive": null
+    },
+    {
+     "name": "What she has asked for",
+     "points": 16,
+     "max": 25,
+     "why": "Asked about total fees across all levels.",
+     "positive": true
+    },
+    {
+     "name": "What she has done",
+     "points": 4,
+     "max": 20,
+     "why": "Opened the parent guide, did not finish it.",
+     "positive": null
+    },
+    {
+     "name": "Quality of her replies",
+     "points": 5,
+     "max": 10,
+     "why": "One reply, polite but not specific.",
+     "positive": null
+    },
+    {
+     "name": "Exam proximity",
+     "points": 0,
+     "max": 10,
+     "why": "No exam target yet.",
+     "positive": null
+    }
+   ],
+   "decay": 4
+  },
+  "priority": "Call this week",
+  "guardrails": [
+   {
+    "id": "GR-032",
+    "name": "Their exam is imminent",
+    "severity": "Warning",
+    "explanation": "Dhruv's board results are pending. Reduce contact rather than increasing it."
+   },
+   {
+    "id": "GR-039",
+    "name": "Missing the one field this cohort needs",
+    "severity": "Warning",
+    "explanation": "Dhruv's stream and result timing are unknown. Ask on the call."
+   }
+  ],
+  "cohort": {
+   "name": "Parent asking for their child",
+   "playbook_id": "PB-10",
+   "why": "A parent is the enquirer and the decision maker.",
+   "rule": "CR100"
+  },
+  "other_cohorts": [
+   "School and just finished school (PB-01) once Dhruv joins the conversation"
+  ],
+  "journey": {
+   "stage": "Engaged",
+   "since": "3 days ago",
+   "events": [
+    {
+     "when": "Day 0",
+     "stage": "New",
+     "what": "Filled the ACCA course page form at 21:40",
+     "channel": "Website",
+     "captured": "Name, number, course, parent flag",
+     "fit": "61",
+     "intent": "34",
+     "owner": "System"
+    },
+    {
+     "when": "Day 1",
+     "stage": "Contacted",
+     "what": "Evening message offering the parent guide or an evening call, her choice",
+     "channel": "WhatsApp",
+     "captured": "Delivered and read",
+     "fit": "61",
+     "intent": "34",
+     "owner": "System"
+    },
+    {
+     "when": "Day 3",
+     "stage": "Engaged",
+     "what": "Replied asking what ACCA costs across all levels",
+     "channel": "WhatsApp",
+     "captured": "Fee question classified",
+     "fit": "61",
+     "intent": "49",
+     "owner": "System"
+    },
+    {
+     "when": "Day 3",
+     "stage": "Engaged",
+     "what": "Parent guide sent with the full route cost",
+     "channel": "WhatsApp",
+     "captured": "Opened, 40 percent read",
+     "fit": "61",
+     "intent": "45",
+     "owner": "System"
+    }
+   ]
+  },
+  "next_action": {
+   "what": "Evening call. Answer total cost, outcomes and how it runs alongside a degree in one call, then offer a joint slot with Dhruv",
+   "when": "Within 24 hours, 18:30 to 20:45",
+   "owner": "Counsellor"
+  },
+  "risk": "Parents drop out of conversations quietly. Two attempts is the cap, and one is already used.",
+  "do_not": "No urgency language. No discount talk. No student slang or peer proof."
+ },
+ {
+  "lead_id": "SSEI-2026-000733",
+  "name": "Kabir Sethi",
+  "initials": "KS",
+  "snapshot": {
+   "Life stage": "Unknown",
+   "Course": "Unknown",
+   "City": "Unknown",
+   "Source": "Meta lead ad",
+   "Language": "Unknown",
+   "With us since": "21 days"
+  },
+  "raw": {
+   "full_name": "Kabir Sethi",
+   "source_detail": "meta_leadgen_ad",
+   "campaign_id": "FIN_GUIDE_AUG26",
+   "promised_resource_id": "R02",
+   "consent_marketing": "true"
+  },
+  "normalised": {
+   "acquisition_category": "Paid",
+   "life_stage": "Unknown",
+   "course_interest_primary": "Unknown"
+  },
+  "dimensions": [
+   {
+    "id": "D1",
+    "name": "Life stage",
+    "value": "Unknown",
+    "confidence": "Unknown",
+    "why": "Never answered. Two questions asked, both ignored."
+   },
+   {
+    "id": "D2",
+    "name": "Course interest",
+    "value": "Unknown",
+    "confidence": "Unknown",
+    "why": "Nothing named."
+   },
+   {
+    "id": "D3",
+    "name": "Eligibility and stage fit",
+    "value": "Unknown",
+    "confidence": "Unknown",
+    "why": "Nothing to check."
+   },
+   {
+    "id": "D4",
+    "name": "Capacity",
+    "value": "Unknown",
+    "confidence": "Unknown",
+    "why": "Never asked. Profiling cap reached."
+   },
+   {
+    "id": "D5",
+    "name": "Relationship",
+    "value": "New",
+    "confidence": "Verified",
+    "why": "No prior record."
+   },
+   {
+    "id": "D6",
+    "name": "Source context",
+    "value": "Meta lead form, promised a career guide",
+    "confidence": "Verified",
+    "why": "The guide was delivered within 5 minutes."
+   },
+   {
+    "id": "D7",
+    "name": "Engagement",
+    "value": "None",
+    "confidence": "Verified",
+    "why": "Messages delivered and read. No click, no reply."
+   },
+   {
+    "id": "D8",
+    "name": "Stated urgency",
+    "value": "Unknown",
+    "confidence": "Unknown",
+    "why": "Nothing stated."
+   },
+   {
+    "id": "D9",
+    "name": "Location",
+    "value": "Unknown",
+    "confidence": "Unknown",
+    "why": "Never provided."
+   }
+  ],
+  "fit": {
+   "score": 39,
+   "confidence": "Low",
+   "components": [
+    {
+     "name": "Life stage",
+     "points": 8,
+     "max": 25,
+     "why": "Unknown. Scored neutral, not zero.",
+     "positive": null
+    },
+    {
+     "name": "Eligibility",
+     "points": 10,
+     "max": 20,
+     "why": "Unknown.",
+     "positive": null
+    },
+    {
+     "name": "Right step for him",
+     "points": 7,
+     "max": 15,
+     "why": "Cannot be assessed.",
+     "positive": null
+    },
+    {
+     "name": "Time available",
+     "points": 5,
+     "max": 10,
+     "why": "Unknown.",
+     "positive": null
+    },
+    {
+     "name": "Budget",
+     "points": 5,
+     "max": 10,
+     "why": "Unknown.",
+     "positive": null
+    },
+    {
+     "name": "Decision maker",
+     "points": 0,
+     "max": 10,
+     "why": "Unknown.",
+     "positive": null
+    },
+    {
+     "name": "Prior relationship",
+     "points": 4,
+     "max": 10,
+     "why": "New to us.",
+     "positive": null
+    }
+   ]
+  },
+  "intent": {
+   "score": 1,
+   "confidence": "Low",
+   "components": [
+    {
+     "name": "Came from a Meta lead ad",
+     "points": 4,
+     "max": 20,
+     "why": "Weakest starting signal in the model.",
+     "positive": null
+    },
+    {
+     "name": "How specific the ask is",
+     "points": 1,
+     "max": 10,
+     "why": "Nothing named.",
+     "positive": null
+    },
+    {
+     "name": "Stated timeline",
+     "points": 1,
+     "max": 15,
+     "why": "Nothing stated.",
+     "positive": null
+    },
+    {
+     "name": "What he has asked for",
+     "points": 0,
+     "max": 25,
+     "why": "Nothing.",
+     "positive": null
+    },
+    {
+     "name": "What he has done",
+     "points": 0,
+     "max": 20,
+     "why": "Read two messages. No click, no reply.",
+     "positive": false
+    },
+    {
+     "name": "Quality of his replies",
+     "points": 0,
+     "max": 10,
+     "why": "No replies.",
+     "positive": false
+    },
+    {
+     "name": "Exam proximity",
+     "points": 0,
+     "max": 10,
+     "why": "No exam target.",
+     "positive": null
+    }
+   ],
+   "decay": 5
+  },
+  "priority": "Automated only",
+  "guardrails": [
+   {
+    "id": "GR-040",
+    "name": "Asked the same question three times",
+    "severity": "Warning",
+    "explanation": "Three profiling questions have gone unanswered. Stop asking and park."
+   },
+   {
+    "id": "GR-035",
+    "name": "No cohort matched",
+    "severity": "Warning",
+    "explanation": "Nothing is known beyond the source, so the discovery playbook is being used."
+   }
+  ],
+  "cohort": {
+   "name": "We do not know what they want yet",
+   "playbook_id": "PB-05",
+   "why": "Nothing is known except where he came from.",
+   "rule": "CR140"
+  },
+  "other_cohorts": [],
+  "journey": {
+   "stage": "Parked",
+   "since": "6 days ago",
+   "events": [
+    {
+     "when": "Day 0",
+     "stage": "New",
+     "what": "Submitted a Meta lead form for the free career guide",
+     "channel": "Meta",
+     "captured": "Name and number only",
+     "fit": "39",
+     "intent": "4",
+     "owner": "System"
+    },
+    {
+     "when": "Day 0",
+     "stage": "Contacted",
+     "what": "Career guide delivered within 5 minutes as promised, plus one question",
+     "channel": "WhatsApp",
+     "captured": "Delivered and read. Guide not opened",
+     "fit": "39",
+     "intent": "4",
+     "owner": "System"
+    },
+    {
+     "when": "Day 3",
+     "stage": "Contacted",
+     "what": "Second attempt: binary choice, studying or working",
+     "channel": "WhatsApp",
+     "captured": "Read, no reply",
+     "fit": "39",
+     "intent": "1",
+     "owner": "System"
+    },
+    {
+     "when": "Day 10",
+     "stage": "Contacted",
+     "what": "Third attempt with an explicit exit offered",
+     "channel": "WhatsApp",
+     "captured": "Read, no reply",
+     "fit": "39",
+     "intent": "0",
+     "owner": "System"
+    },
+    {
+     "when": "Day 15",
+     "stage": "Parked",
+     "what": "Parked. Added to a campaign level retargeting audience",
+     "channel": "System",
+     "captured": "Park reason: three attempts, no reply",
+     "fit": "39",
+     "intent": "1",
+     "owner": "System"
+    }
+   ]
+  },
+  "next_action": {
+   "what": "No one to one contact. Retargeting audience only. Revisit if a genuinely new fact appears",
+   "when": "No date",
+   "owner": "System"
+  },
+  "risk": "None. This is the correct outcome. The cost of this lead is a marketing question, not a sales one.",
+  "do_not": "Do not send a fourth message. Do not give this to a counsellor."
+ },
+ {
+  "lead_id": "SSEI-2025-004412",
+  "name": "Ananya Rao",
+  "initials": "AR",
+  "snapshot": {
+   "Life stage": "Working, 2 years",
+   "Course": "Owns CFA Level 1",
+   "City": "Pune (Tier 1)",
+   "Source": "Existing student",
+   "Language": "English",
+   "With us since": "7 months"
+  },
+  "raw": {
+   "full_name": "Ananya Rao",
+   "existing_student_status": "Active student",
+   "existing_courses_owned": "CFA Level 1",
+   "resource_completion_pct": "72",
+   "source_detail": "existing_student_crosssell"
+  },
+  "normalised": {
+   "life_stage": "Already studying a qualification",
+   "course_interest_primary": "Analyst Stack",
+   "acquisition_category": "Cross sell"
+  },
+  "dimensions": [
+   {
+    "id": "D1",
+    "name": "Life stage",
+    "value": "Already studying a qualification",
+    "confidence": "Verified",
+    "why": "Active CFA Level 1 student, working two years."
+   },
+   {
+    "id": "D2",
+    "name": "Course interest",
+    "value": "Category only",
+    "confidence": "Inferred low",
+    "why": "Visited the Analyst Stack and Financial Modelling pages twice. She has not said anything."
+   },
+   {
+    "id": "D3",
+    "name": "Eligibility and stage fit",
+    "value": "Eligible",
+    "confidence": "Verified",
+    "why": "No bar on either programme."
+   },
+   {
+    "id": "D4",
+    "name": "Capacity",
+    "value": "Known from her original purchase",
+    "confidence": "Declared",
+    "why": "Budget and hours on record from enrolment."
+   },
+   {
+    "id": "D5",
+    "name": "Relationship",
+    "value": "Active student, 72 percent complete",
+    "confidence": "Verified",
+    "why": "Matched in the student master. On schedule, no open tickets."
+   },
+   {
+    "id": "D6",
+    "name": "Source context",
+    "value": "Internal, not an acquisition source",
+    "confidence": "Verified",
+    "why": "Triggered by course progress, not by a campaign."
+   },
+   {
+    "id": "D7",
+    "name": "Engagement",
+    "value": "Passive",
+    "confidence": "Verified",
+    "why": "Page visits only. No enquiry."
+   },
+   {
+    "id": "D8",
+    "name": "Stated urgency",
+    "value": "Nothing stated",
+    "confidence": "Unknown",
+    "why": "She has not raised it herself."
+   },
+   {
+    "id": "D9",
+    "name": "Location",
+    "value": "Tier 1",
+    "confidence": "Verified",
+    "why": "Not a constraint."
+   }
+  ],
+  "fit": {
+   "score": 94,
+   "confidence": "High",
+   "components": [
+    {
+     "name": "Life stage suits a skills add on",
+     "points": 25,
+     "max": 25,
+     "why": "Certification plus practical skills is the standard progression.",
+     "positive": true
+    },
+    {
+     "name": "Eligibility",
+     "points": 20,
+     "max": 20,
+     "why": "No bar.",
+     "positive": true
+    },
+    {
+     "name": "Right step for her",
+     "points": 15,
+     "max": 15,
+     "why": "72 percent through Level 1 is the right moment.",
+     "positive": true
+    },
+    {
+     "name": "Time available",
+     "points": 7,
+     "max": 10,
+     "why": "Known from her original enrolment.",
+     "positive": true
+    },
+    {
+     "name": "Budget",
+     "points": 7,
+     "max": 10,
+     "why": "Paid full price once already.",
+     "positive": true
+    },
+    {
+     "name": "Decision maker",
+     "points": 10,
+     "max": 10,
+     "why": "Decides herself.",
+     "positive": true
+    },
+    {
+     "name": "Prior relationship",
+     "points": 10,
+     "max": 10,
+     "why": "Active paying student. The strongest possible relationship signal.",
+     "positive": true
+    }
+   ]
+  },
+  "intent": {
+   "score": 25,
+   "confidence": "Medium",
+   "components": [
+    {
+     "name": "Internal trigger, not a campaign",
+     "points": 0,
+     "max": 20,
+     "why": "No acquisition source. Baseline is zero by design.",
+     "positive": null
+    },
+    {
+     "name": "How specific the ask is",
+     "points": 4,
+     "max": 10,
+     "why": "Category only, and inferred from page visits.",
+     "positive": null
+    },
+    {
+     "name": "Stated timeline",
+     "points": 1,
+     "max": 15,
+     "why": "Nothing stated.",
+     "positive": null
+    },
+    {
+     "name": "What she has asked for",
+     "points": 0,
+     "max": 25,
+     "why": "Nothing. She has not enquired.",
+     "positive": null
+    },
+    {
+     "name": "What she has done",
+     "points": 12,
+     "max": 20,
+     "why": "Two visits to the Analyst Stack page in one week.",
+     "positive": true
+    },
+    {
+     "name": "Quality of her replies",
+     "points": 0,
+     "max": 10,
+     "why": "No replies yet.",
+     "positive": null
+    },
+    {
+     "name": "Exam proximity",
+     "points": 8,
+     "max": 10,
+     "why": "Her Level 1 sitting is 10 weeks away.",
+     "positive": true
+    }
+   ],
+   "decay": 0
+  },
+  "priority": "Call this week",
+  "guardrails": [
+   {
+    "id": "GR-016",
+    "name": "Course was guessed, never confirmed",
+    "severity": "Warning",
+    "explanation": "Her interest in Analyst Stack was inferred from page visits. Confirm before quoting a combined price."
+   },
+   {
+    "id": "GR-032",
+    "name": "Their exam is imminent",
+    "severity": "Warning",
+    "explanation": "Her CFA sitting is 10 weeks away. Frame this as after the exam, not instead of studying."
+   },
+   {
+    "id": "GR-004",
+    "name": "Already a paying student",
+    "severity": "Info",
+    "explanation": "Correctly routed to cross sell. Student Success owns her, not a new lead counsellor."
+   }
+  ],
+  "cohort": {
+   "name": "Existing student",
+   "playbook_id": "PB-09",
+   "why": "Active student past 60 percent completion, on schedule, no open support tickets.",
+   "rule": "CR105"
+  },
+  "other_cohorts": [
+   "Working professional who knows what they want (PB-03) if she enquires directly"
+  ],
+  "journey": {
+   "stage": "Interested",
+   "since": "4 days ago",
+   "events": [
+    {
+     "when": "7 months ago",
+     "stage": "Enrolled",
+     "what": "Bought CFA Level 1 Full Immersion",
+     "channel": "Payment",
+     "captured": "Order value, variant, attempt",
+     "fit": "94",
+     "intent": "Frozen",
+     "owner": "Student Success"
+    },
+    {
+     "when": "Day -14",
+     "stage": "Enrolled",
+     "what": "Passed 60 percent course completion. Cross sell eligibility timer fired",
+     "channel": "LMS",
+     "captured": "Progress on schedule, no open tickets",
+     "fit": "94",
+     "intent": "8",
+     "owner": "System"
+    },
+    {
+     "when": "Day -7",
+     "stage": "Enrolled",
+     "what": "Visited the Analyst Stack page",
+     "channel": "Website",
+     "captured": "Page view",
+     "fit": "94",
+     "intent": "14",
+     "owner": "System"
+    },
+    {
+     "when": "Day -4",
+     "stage": "Interested",
+     "what": "Visited the Analyst Stack page again and the Financial Modelling page",
+     "channel": "Website",
+     "captured": "Two more page views",
+     "fit": "94",
+     "intent": "25",
+     "owner": "Student Success"
+    }
+   ]
+  },
+  "next_action": {
+   "what": "Student Success call. Confirm the interest is real, frame it as after the exam, and quote the combined price only if a genuine combo exists",
+   "when": "Within 72 hours",
+   "owner": "Student Success"
+  },
+  "risk": "Low. The relationship is the asset. Pushing during exam preparation is the only way to damage it.",
+  "do_not": "Do not use an acquisition opening. Do not sell instead of her exam preparation."
+ },
+ {
+  "lead_id": "SSEI-2026-000891",
+  "name": "Vikram Iyer",
+  "initials": "VI",
+  "snapshot": {
+   "Life stage": "Disputed",
+   "Course": "CFA Level 1 retake",
+   "City": "Chennai (Tier 1)",
+   "Source": "WhatsApp inbound",
+   "Language": "English",
+   "With us since": "4 days"
+  },
+  "raw": {
+   "full_name": "Vikram Iyer",
+   "source_detail": "whatsapp_inbound",
+   "course_interest_primary": "CFA Level 1",
+   "previous_attempt_history": "One fail",
+   "form_life_stage": "College final year",
+   "reply_life_stage": "Working 0 to 2 years"
+  },
+  "normalised": {
+   "life_stage": "DISPUTED",
+   "course_specificity": "Named course",
+   "acquisition_category": "Direct inbound"
+  },
+  "dimensions": [
+   {
+    "id": "D1",
+    "name": "Life stage",
+    "value": "Disputed",
+    "confidence": "Unknown",
+    "why": "The form says final year student. His reply says he started work six months ago. Both are recent and neither wins."
+   },
+   {
+    "id": "D2",
+    "name": "Course interest",
+    "value": "Named course",
+    "confidence": "Declared",
+    "why": "CFA Level 1, retaking after one fail."
+   },
+   {
+    "id": "D3",
+    "name": "Eligibility and stage fit",
+    "value": "Eligible",
+    "confidence": "Verified",
+    "why": "Eligible on either reading of his life stage."
+   },
+   {
+    "id": "D4",
+    "name": "Capacity",
+    "value": "Unknown",
+    "confidence": "Unknown",
+    "why": "Hours depend on which life stage is true, so it has not been assumed."
+   },
+   {
+    "id": "D5",
+    "name": "Relationship",
+    "value": "New to us",
+    "confidence": "Verified",
+    "why": "He studied elsewhere for his first attempt."
+   },
+   {
+    "id": "D6",
+    "name": "Source context",
+    "value": "Messaged us directly",
+    "confidence": "Verified",
+    "why": "Inbound WhatsApp asking whether we can help with a retake."
+   },
+   {
+    "id": "D7",
+    "name": "Engagement",
+    "value": "Active",
+    "confidence": "Verified",
+    "why": "Three replies in four days."
+   },
+   {
+    "id": "D8",
+    "name": "Stated urgency",
+    "value": "1 to 3 months",
+    "confidence": "Declared",
+    "why": "Deciding whether to sit the next window."
+   },
+   {
+    "id": "D9",
+    "name": "Location",
+    "value": "Tier 1",
+    "confidence": "Verified",
+    "why": "Chennai."
+   }
+  ],
+  "fit": {
+   "score": 59,
+   "confidence": "Low",
+   "components": [
+    {
+     "name": "Life stage",
+     "points": 0,
+     "max": 25,
+     "why": "Cannot be scored while the value is disputed. Held at zero rather than guessed.",
+     "positive": false
+    },
+    {
+     "name": "Eligibility",
+     "points": 20,
+     "max": 20,
+     "why": "Eligible either way.",
+     "positive": true
+    },
+    {
+     "name": "Right step for him",
+     "points": 15,
+     "max": 15,
+     "why": "A retake of Level 1 is the correct step.",
+     "positive": true
+    },
+    {
+     "name": "Time available",
+     "points": 5,
+     "max": 10,
+     "why": "Unknown.",
+     "positive": null
+    },
+    {
+     "name": "Budget",
+     "points": 5,
+     "max": 10,
+     "why": "Not disclosed.",
+     "positive": null
+    },
+    {
+     "name": "Decision maker",
+     "points": 10,
+     "max": 10,
+     "why": "Decides himself either way.",
+     "positive": true
+    },
+    {
+     "name": "Prior relationship",
+     "points": 4,
+     "max": 10,
+     "why": "New to us.",
+     "positive": null
+    }
+   ]
+  },
+  "intent": {
+   "score": 49,
+   "confidence": "Medium",
+   "components": [
+    {
+     "name": "Messaged us directly",
+     "points": 20,
+     "max": 20,
+     "why": "Inbound contact is the strongest source signal in the model.",
+     "positive": true
+    },
+    {
+     "name": "How specific the ask is",
+     "points": 8,
+     "max": 10,
+     "why": "Named the course and the situation.",
+     "positive": true
+    },
+    {
+     "name": "Stated timeline",
+     "points": 5,
+     "max": 15,
+     "why": "1 to 3 months.",
+     "positive": null
+    },
+    {
+     "name": "What he has asked for",
+     "points": 0,
+     "max": 25,
+     "why": "No fee, batch or link question yet.",
+     "positive": null
+    },
+    {
+     "name": "What he has done",
+     "points": 4,
+     "max": 20,
+     "why": "Opened the diagnostic, has not completed it.",
+     "positive": null
+    },
+    {
+     "name": "Quality of his replies",
+     "points": 8,
+     "max": 10,
+     "why": "Named his two weakest topics unprompted.",
+     "positive": true
+    },
+    {
+     "name": "Exam proximity",
+     "points": 4,
+     "max": 10,
+     "why": "Next window is about 5 months away.",
+     "positive": null
+    }
+   ],
+   "decay": 0
+  },
+  "priority": "Call this week",
+  "guardrails": [
+   {
+    "id": "GR-013",
+    "name": "Two sources disagree on life stage",
+    "severity": "Conflict",
+    "explanation": "The form says final year, his reply says working. Until a person resolves it, no message will mention either. A verification task has been raised."
+   },
+   {
+    "id": "GR-025",
+    "name": "Message names a disputed detail",
+    "severity": "Blocking",
+    "explanation": "Any copy that names his life stage is blocked. The neutral variant is used instead."
+   }
+  ],
+  "cohort": {
+   "name": "Retaking an exam",
+   "playbook_id": "PB-04",
+   "why": "One recorded fail. The retaker playbook does not depend on life stage, so the dispute does not block it.",
+   "rule": "CR101"
+  },
+  "other_cohorts": [
+   "College, worried about placements (PB-02)",
+   "Working professional who knows what they want (PB-03)"
+  ],
+  "journey": {
+   "stage": "Engaged",
+   "since": "1 day ago",
+   "events": [
+    {
+     "when": "Day 0",
+     "stage": "New",
+     "what": "Messaged us directly asking whether we can help with a Level 1 retake",
+     "channel": "WhatsApp",
+     "captured": "Course, prior attempt",
+     "fit": "59",
+     "intent": "36",
+     "owner": "System"
+    },
+    {
+     "when": "Day 0",
+     "stage": "Contacted",
+     "what": "Diagnostic offered, with no mention of the failure",
+     "channel": "WhatsApp",
+     "captured": "Delivered and read",
+     "fit": "59",
+     "intent": "36",
+     "owner": "System"
+    },
+    {
+     "when": "Day 2",
+     "stage": "Engaged",
+     "what": "Replied naming quant and derivatives as his weak areas, and mentioned he started work six months ago",
+     "channel": "WhatsApp",
+     "captured": "Weak topics recorded. Life stage conflict detected against the form",
+     "fit": "59",
+     "intent": "45",
+     "owner": "System"
+    },
+    {
+     "when": "Day 3",
+     "stage": "Engaged",
+     "what": "Neutral variant sent with sessions on his two named topics. Life stage not mentioned",
+     "channel": "WhatsApp",
+     "captured": "Opened, not completed",
+     "fit": "59",
+     "intent": "49",
+     "owner": "Counsellor"
+    }
+   ]
+  },
+  "next_action": {
+   "what": "Call to resolve whether he is studying or working, then confirm whether partial topics are enough given only two weak areas",
+   "when": "Within 8 working hours",
+   "owner": "Counsellor"
+  },
+  "risk": "He named his weak topics already. Making him take a diagnostic to tell us what he just told us will lose him.",
+  "do_not": "Do not mention the failure. Do not name his life stage in any message until the conflict is resolved."
+ },
+ {
+  "lead_id": "SSEI-2026-000904",
+  "name": "Sana Qureshi",
+  "initials": "SQ",
+  "snapshot": {
+   "Life stage": "Working, 4 years",
+   "Course": "CFA Level 1 Accelerate",
+   "City": "Hyderabad (Tier 1)",
+   "Source": "Retargeting",
+   "Language": "English",
+   "With us since": "9 days"
+  },
+  "raw": {
+   "full_name": "Sana Qureshi",
+   "source_detail": "retargeting",
+   "course_variant": "CFA Level 1 Accelerate",
+   "payment_link_sent_at": "Day 8",
+   "payment_failure_count": "1"
+  },
+  "normalised": {
+   "life_stage": "Working 3 to 5 yrs",
+   "course_specificity": "Exact ask",
+   "acquisition_category": "Paid"
+  },
+  "dimensions": [
+   {
+    "id": "D1",
+    "name": "Life stage",
+    "value": "Working 3 to 5 years",
+    "confidence": "Declared",
+    "why": "Four years in corporate finance."
+   },
+   {
+    "id": "D2",
+    "name": "Course interest",
+    "value": "Exact ask",
+    "confidence": "Declared",
+    "why": "Variant and attempt both confirmed on a call."
+   },
+   {
+    "id": "D3",
+    "name": "Eligibility and stage fit",
+    "value": "Eligible",
+    "confidence": "Verified",
+    "why": "Graduate with four years of experience."
+   },
+   {
+    "id": "D4",
+    "name": "Capacity",
+    "value": "12 hours a week, decides herself",
+    "confidence": "Declared",
+    "why": "Confirmed on the counselling call."
+   },
+   {
+    "id": "D5",
+    "name": "Relationship",
+    "value": "New",
+    "confidence": "Verified",
+    "why": "First purchase attempt."
+   },
+   {
+    "id": "D6",
+    "name": "Source context",
+    "value": "Retargeting after two earlier visits",
+    "confidence": "Verified",
+    "why": "Third touch before converting."
+   },
+   {
+    "id": "D7",
+    "name": "Engagement",
+    "value": "Deep",
+    "confidence": "Verified",
+    "why": "Watched the full sample class, attended a counselling call, started checkout."
+   },
+   {
+    "id": "D8",
+    "name": "Stated urgency",
+    "value": "Ready now",
+    "confidence": "Declared",
+    "why": "Attempting the February sitting."
+   },
+   {
+    "id": "D9",
+    "name": "Location",
+    "value": "Tier 1",
+    "confidence": "Verified",
+    "why": "Online, not a constraint."
+   }
+  ],
+  "fit": {
+   "score": 91,
+   "confidence": "High",
+   "components": [
+    {
+     "name": "Life stage suits CFA",
+     "points": 25,
+     "max": 25,
+     "why": "Working professional, the core CFA cohort.",
+     "positive": true
+    },
+    {
+     "name": "Eligibility",
+     "points": 20,
+     "max": 20,
+     "why": "Eligible with no conditions.",
+     "positive": true
+    },
+    {
+     "name": "Right step for her",
+     "points": 15,
+     "max": 15,
+     "why": "Level 1 is correct.",
+     "positive": true
+    },
+    {
+     "name": "Time available",
+     "points": 7,
+     "max": 10,
+     "why": "12 hours a week fits the accelerate variant.",
+     "positive": true
+    },
+    {
+     "name": "Budget",
+     "points": 10,
+     "max": 10,
+     "why": "Confirmed on the call.",
+     "positive": true
+    },
+    {
+     "name": "Decision maker",
+     "points": 10,
+     "max": 10,
+     "why": "Decides herself.",
+     "positive": true
+    },
+    {
+     "name": "Prior relationship",
+     "points": 4,
+     "max": 10,
+     "why": "New to us.",
+     "positive": null
+    }
+   ]
+  },
+  "intent": {
+   "score": 100,
+   "confidence": "High",
+   "components": [
+    {
+     "name": "Retargeting, third touch",
+     "points": 11,
+     "max": 20,
+     "why": "Repeat exposure before converting.",
+     "positive": true
+    },
+    {
+     "name": "How specific the ask is",
+     "points": 10,
+     "max": 10,
+     "why": "Variant and sitting both confirmed.",
+     "positive": true
+    },
+    {
+     "name": "Stated timeline",
+     "points": 15,
+     "max": 15,
+     "why": "Immediate.",
+     "positive": true
+    },
+    {
+     "name": "What she has asked for",
+     "points": 25,
+     "max": 25,
+     "why": "Requested the payment link herself.",
+     "positive": true
+    },
+    {
+     "name": "What she has done",
+     "points": 20,
+     "max": 20,
+     "why": "Full sample class watched, counselling attended, checkout started.",
+     "positive": true
+    },
+    {
+     "name": "Quality of her replies",
+     "points": 10,
+     "max": 10,
+     "why": "Detailed product questions throughout.",
+     "positive": true
+    },
+    {
+     "name": "Exam proximity",
+     "points": 9,
+     "max": 10,
+     "why": "February sitting, 5 months out.",
+     "positive": true
+    }
+   ],
+   "decay": 0
+  },
+  "priority": "Call now",
+  "guardrails": [
+   {
+    "id": "GR-008",
+    "name": "Payment link before the price is agreed",
+    "severity": "Info",
+    "explanation": "Satisfied. Variant and price were confirmed on the call before the link was issued."
+   }
+  ],
+  "cohort": {
+   "name": "Ready to buy",
+   "playbook_id": "PB-06",
+   "why": "Link issued, checkout started, one payment failure. Everything educational is suppressed.",
+   "rule": "CR010"
+  },
+  "other_cohorts": [
+   "Working professional who knows what they want (PB-03)"
+  ],
+  "journey": {
+   "stage": "Paying",
+   "since": "6 hours ago",
+   "events": [
+    {
+     "when": "Day 0",
+     "stage": "New",
+     "what": "Returned through a retargeting ad and filled the form",
+     "channel": "Website",
+     "captured": "Name, number, course, role",
+     "fit": "91",
+     "intent": "48",
+     "owner": "System"
+    },
+    {
+     "when": "Day 1",
+     "stage": "Engaged",
+     "what": "Sample class sent. Watched in full",
+     "channel": "WhatsApp",
+     "captured": "100 percent completion",
+     "fit": "91",
+     "intent": "66",
+     "owner": "System"
+    },
+    {
+     "when": "Day 4",
+     "stage": "In conversation",
+     "what": "Counselling call. Hours, budget, variant and attempt all established",
+     "channel": "Call",
+     "captured": "12 hrs a week, accelerate variant, Feb sitting",
+     "fit": "91",
+     "intent": "82",
+     "owner": "Counsellor"
+    },
+    {
+     "when": "Day 8",
+     "stage": "Ready to buy",
+     "what": "Asked for the payment link. Variant and price confirmed in writing first",
+     "channel": "WhatsApp",
+     "captured": "Confirmation received",
+     "fit": "91",
+     "intent": "95",
+     "owner": "Counsellor"
+    },
+    {
+     "when": "Day 8",
+     "stage": "Paying",
+     "what": "Link issued. Checkout started",
+     "channel": "Payment",
+     "captured": "Checkout event",
+     "fit": "91",
+     "intent": "95",
+     "owner": "Counsellor"
+    },
+    {
+     "when": "Day 9",
+     "stage": "Paying",
+     "what": "Payment failed. Reassurance sent within 5 minutes with a fresh link",
+     "channel": "WhatsApp",
+     "captured": "Gateway reason: card limit. No reply yet",
+     "fit": "91",
+     "intent": "100 (frozen)",
+     "owner": "Counsellor"
+    }
+   ]
+  },
+  "next_action": {
+   "what": "Call within 30 minutes. Confirm nothing was debited, then complete the payment by UPI or bank transfer on the call",
+   "when": "Within 30 minutes",
+   "owner": "Counsellor"
+  },
+  "risk": "Money anxiety. Until she knows nothing was charged, no sales conversation can continue.",
+  "do_not": "Do not resend the same link a third time. Do not send any marketing content while a payment is unresolved."
+ }
+]

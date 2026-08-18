@@ -1,0 +1,21 @@
+term,plain_meaning,not_to_be_confused_with,where_used
+Cohort,"The group a person belongs to, such as college final year worried about placements. It is what selects the plan.","Not a segment, persona or audience. We use one word: cohort.","Cohorts, Impact, Individual lead"
+Playbook,"Our plan for a cohort: what we send, when, who calls and what we never say.",Not the journey. The playbook is what we do. The journey is where they are.,"Playbooks, Individual lead"
+Journey stage,"Where a person currently is, from New to Enrolled. Nine stages.","Not the playbook, and not the CRM state. The CRM has 26 technical states which map into these 9.","Journey, Individual lead"
+Fit,"How well the course suits this person, out of 100. Based on facts about them.",Not intent. Someone can be a perfect fit and completely uninterested.,"Impact, Individual lead"
+Intent,"How close this person is to acting, out of 100. Based on what they do and say.",Not fit. Someone can be desperate to buy a course they cannot take.,"Impact, Individual lead"
+Priority,"What to do about them now, in plain words: Call now, Call today, Call this week, Automated only, Redirect, Do not contact.",Not the intent score. Priority combines fit and intent and then applies the hard rules.,"Impact, Individual lead"
+Dimension,One of the nine things we reason about. Each has a defined list of what it may and may not change.,Not a field. A dimension is worked out from several fields.,Dimensions
+Guardrail,"A check that stops something contradictory, impossible or commercially pointless from happening.","Not a scoring rule. A guardrail blocks or warns, it does not add points.",Guardrails
+Signal,"A raw piece of evidence: a form answer, a click, a reply, an event attendance.",Not a dimension. Signals feed dimensions.,Methodology
+Raw field,Information exactly as it was captured.,Not a derived field. Raw fields are never overwritten by calculations.,Data dictionary
+Normalised field,A cleaned or standardised version of a raw field.,"Not derived. Normalising tidies a value, it does not calculate a new one.",Data dictionary
+Derived field,A value the system calculates from other fields.,Not raw. Derived fields are recalculated and should never be typed in by hand.,Data dictionary
+Classification field,"An output of the model: cohort, playbook, priority.","Not derived. Classifications are decisions, not measurements.",Data dictionary
+Confidence,"How much the system trusts a value: whether it was declared, inferred or unknown.","Not the score itself. A high score with low confidence is a warning, not a green light.","Impact, Individual lead"
+Parked,"Not active right now, with a stated reason and usually a return date.",Not lost. Parked leads have a reason and many have a date to come back.,Journey
+Silence ladder,The fixed sequence of what to do when someone stops replying.,Not a follow up schedule. Each rung responds to a different kind of silence.,Playbooks
+Promise,"Whatever the ad, form or event told them they would get.",Not a resource. The promise is the obligation. The resource is the thing.,Methodology
+Resource,"A thing we send: a guide, a class, a calendar, a fee sheet, a link.",Not a message. The message is the words. The resource is the attachment.,Library
+Source,"The exact place a lead came from, one of 45 values.","Not the UTM first or last touch, which are for marketing reporting only.",Data dictionary
+Evaluation,One full pass of the 18 steps that turns raw data into a cohort and an action.,Not a score update. A score update is one step inside an evaluation.,Methodology

@@ -1,0 +1,590 @@
+[
+ {
+  "student_id": "ST-01",
+  "name": "Aditya Rao",
+  "initials": "AR",
+  "course": "CFA Level 1",
+  "attempt": "August 2026",
+  "owns": [
+   "CFA Level 1"
+  ],
+  "spend": 32100,
+  "stage": "S4",
+  "stage_name": "Exam run-up",
+  "clock": [
+   [
+    "Exam day",
+    "4 days",
+    "fixed"
+   ]
+  ],
+  "headroom": {
+   "score": 78,
+   "band": "High",
+   "components": [
+    [
+     "Two levels left on the ladder",
+     "Owns Level 1 only. Level 2 and Level 3 both unowned.",
+     50,
+     50,
+     true
+    ],
+    [
+     "Spend band",
+     "Rs 32,100 so far. Middle band.",
+     14,
+     25,
+     null
+    ],
+    [
+     "Nothing adjacent owned",
+     "No Analyst Stack, no Stock Market, no Excel and Python.",
+     14,
+     25,
+     true
+    ]
+   ]
+  },
+  "momentum": {
+   "score": 82,
+   "band": "Strong",
+   "components": [
+    [
+     "Active in the last 14 days",
+     "Watched on 9 of the last 14 days.",
+     27,
+     30,
+     true
+    ],
+    [
+     "On pace",
+     "81 percent of the course watched with 4 days to go.",
+     28,
+     30,
+     true
+    ],
+    [
+     "Mocks attempted",
+     "Three of four full mocks done.",
+     17,
+     20,
+     true
+    ],
+    [
+     "Replies and doubts",
+     "Answered the last two messages. Asked two doubts.",
+     10,
+     20,
+     null
+    ]
+   ],
+   "decay": 0
+  },
+  "playbook": "SP-05",
+  "priority": "Automated only",
+  "next_action": "Automated run-up message today. Nothing else. He is doing everything right.",
+  "then": "On 3 days after the exam he moves to SP-06. On result day, SP-07, then SP-08 if he passed.",
+  "blocked_by": [],
+  "do_not": [
+   "Do not pitch Level 2 before result day. He has not passed anything yet."
+  ],
+  "queue_days": 4,
+  "queue_reason": "Exam in 4 days. The run-up message sends itself. No human needed."
+ },
+ {
+  "student_id": "ST-02",
+  "name": "Shreya Kulkarni",
+  "initials": "SK",
+  "course": "CFA Level 1",
+  "attempt": "November 2026",
+  "owns": [
+   "CFA Level 1"
+  ],
+  "spend": 36100,
+  "stage": "S3",
+  "stage_name": "Studying",
+  "clock": [
+   [
+    "Exam day",
+    "92 days",
+    "fixed"
+   ]
+  ],
+  "headroom": {
+   "score": 78,
+   "band": "High",
+   "components": [
+    [
+     "Two levels left on the ladder",
+     "Owns Level 1 only.",
+     50,
+     50,
+     true
+    ],
+    [
+     "Spend band",
+     "Rs 36,100. Bought the Platinum variant.",
+     14,
+     25,
+     null
+    ],
+    [
+     "Nothing adjacent owned",
+     "No second product.",
+     14,
+     25,
+     true
+    ]
+   ]
+  },
+  "momentum": {
+   "score": 18,
+   "band": "Weak",
+   "components": [
+    [
+     "Active in the last 14 days",
+     "Nothing opened in 26 days.",
+     0,
+     30,
+     false
+    ],
+    [
+     "On pace",
+     "19 percent watched. Should be near 45 percent by now.",
+     6,
+     30,
+     false
+    ],
+    [
+     "Mocks attempted",
+     "None.",
+     0,
+     20,
+     false
+    ],
+    [
+     "Replies and doubts",
+     "Replied once, six weeks ago.",
+     4,
+     20,
+     null
+    ]
+   ],
+   "decay": 36
+  },
+  "playbook": "SP-04",
+  "priority": "Call this week",
+  "next_action": "Counsellor call. One question: what got in the way. Do not sell on this call.",
+  "then": "If the reason is time, offer an extension. If it is life, move her to the February 2027 sitting now rather than let her fail in November.",
+  "blocked_by": [],
+  "do_not": [
+   "Do not send another study reminder. Four have gone unanswered.",
+   "Do not sell Level 2. She has not cleared Level 1."
+  ],
+  "queue_days": null,
+  "queue_reason": "No fixed date for 92 days, but headroom 78 and momentum 18. The most valuable person we are currently losing."
+ },
+ {
+  "student_id": "ST-03",
+  "name": "Farhan Ali",
+  "initials": "FA",
+  "course": "CFA Level 1",
+  "attempt": "May 2026",
+  "owns": [
+   "CFA Level 1"
+  ],
+  "spend": 32100,
+  "stage": "S6",
+  "stage_name": "Passed",
+  "clock": [
+   [
+    "SP-08 window closes",
+    "9 days",
+    "fixed"
+   ]
+  ],
+  "headroom": {
+   "score": 88,
+   "band": "High",
+   "components": [
+    [
+     "Two levels left, and he just earned the right to the next one",
+     "Cleared Level 1. Level 2 is now open to him.",
+     50,
+     50,
+     true
+    ],
+    [
+     "Spend band",
+     "Rs 32,100.",
+     14,
+     25,
+     null
+    ],
+    [
+     "Nothing adjacent owned",
+     "No second product.",
+     24,
+     25,
+     true
+    ]
+   ]
+  },
+  "momentum": null,
+  "momentum_note": "Momentum does not apply after the result. He is not studying anything right now. Headroom decides the pitch.",
+  "playbook": "SP-08",
+  "priority": "Call now",
+  "next_action": "Counsellor call today. Congratulate, then Level 2 for the November 2026 sitting at the loyalty price.",
+  "then": "Day 3, day 7, day 14, day 21. If he has not bought by day 21 he moves to the ladder gap list and gets no more calls.",
+  "blocked_by": [
+   "We only know he passed because he messaged us. Nobody asked. Without SP-07 this student is invisible."
+  ],
+  "do_not": [
+   "Do not let this sit past 21 days. The window closes when he starts studying with somebody else."
+  ],
+  "queue_days": 9,
+  "queue_reason": "Passed 12 days ago. The 21 day window closes in 9. Highest value with the nearest hard edge."
+ },
+ {
+  "student_id": "ST-04",
+  "name": "Divya Menon",
+  "initials": "DM",
+  "course": "CFA Level 2",
+  "attempt": "May 2026",
+  "owns": [
+   "CFA Level 1",
+   "CFA Level 2"
+  ],
+  "spend": 69100,
+  "stage": "S7",
+  "stage_name": "Did not pass",
+  "clock": [
+   [
+    "SP-10 window closes",
+    "16 days",
+    "fixed"
+   ]
+  ],
+  "headroom": {
+   "score": 64,
+   "band": "Medium",
+   "components": [
+    [
+     "One level left",
+     "Owns Level 1 and Level 2. Level 3 unowned, but she has to clear Level 2 first.",
+     30,
+     50,
+     null
+    ],
+    [
+     "Spend band",
+     "Rs 69,100 across two levels. Proven willingness to pay.",
+     25,
+     25,
+     true
+    ],
+    [
+     "Nothing adjacent owned",
+     "No second product.",
+     9,
+     25,
+     true
+    ]
+   ]
+  },
+  "momentum": null,
+  "momentum_note": "Not studying at the moment. She stopped after the result.",
+  "playbook": "SP-10",
+  "priority": "Call today",
+  "next_action": "Counsellor call. The offer is a validity extension into the November 2026 sitting, not a fresh enrolment.",
+  "then": "Day 10, day 25, day 45. If she commits she goes back to S3 and picks up SP-03.",
+  "blocked_by": [
+   "Result status only exists because she told the counsellor. Nothing recorded it."
+  ],
+  "do_not": [
+   "Do not sell Level 3. She has not cleared Level 2.",
+   "Do not quote a full price. She has already paid for this level once."
+  ],
+  "queue_days": 16,
+  "queue_reason": "Did not pass 29 days ago. The 45 day window closes in 16."
+ },
+ {
+  "student_id": "ST-05",
+  "name": "Rohit Agarwal",
+  "initials": "RA",
+  "course": "CFA Level 3",
+  "attempt": "May 2026",
+  "owns": [
+   "CFA Level 1",
+   "CFA Level 2",
+   "CFA Level 3"
+  ],
+  "spend": 103100,
+  "stage": "S6",
+  "stage_name": "Passed",
+  "clock": [
+   [
+    "SP-09 first window",
+    "23 days",
+    "soft"
+   ]
+  ],
+  "headroom": {
+   "score": 34,
+   "band": "Low on the ladder, high on everything else",
+   "components": [
+    [
+     "Ladder finished",
+     "Cleared all three levels. There is nothing left to sell him in CFA.",
+     5,
+     50,
+     false
+    ],
+    [
+     "Spend band",
+     "Rs 1,03,100 over three years. Our best kind of customer.",
+     25,
+     25,
+     true
+    ],
+    [
+     "Nothing adjacent owned",
+     "Analyst Stack, Stock Market and Excel and Python all unowned.",
+     4,
+     25,
+     true
+    ]
+   ]
+  },
+  "momentum": null,
+  "momentum_note": "Not applicable. He has finished.",
+  "playbook": "SP-09",
+  "priority": "Call this week",
+  "next_action": "Congratulate. Ask for a testimonial and two referrals. Analyst Stack at Rs 50,000 is the only product left.",
+  "then": "Day 7 and day 30, then he moves to the alumni list and gets nothing routine.",
+  "blocked_by": [
+   "We have no alumni list and no referral tracking, so the referral half of this playbook cannot be measured."
+  ],
+  "do_not": [
+   "Do not treat low headroom as low value. He is worth more as an advocate than as a buyer."
+  ],
+  "queue_days": null,
+  "queue_reason": "No hard date. Worth more as an advocate than as a buyer."
+ },
+ {
+  "student_id": "ST-06",
+  "name": "Manish Verma",
+  "initials": "MV",
+  "course": "FRM Part 1",
+  "attempt": "November 2026",
+  "owns": [
+   "FRM Part 1"
+  ],
+  "spend": 29100,
+  "stage": "S3",
+  "stage_name": "Studying",
+  "clock": [
+   [
+    "Validity expires",
+    "21 days",
+    "fixed"
+   ],
+   [
+    "Exam day",
+    "89 days",
+    "fixed"
+   ]
+  ],
+  "headroom": {
+   "score": 61,
+   "band": "Medium",
+   "components": [
+    [
+     "One level left",
+     "Owns Part 1. Part 2 unowned.",
+     35,
+     50,
+     true
+    ],
+    [
+     "Spend band",
+     "Rs 29,100.",
+     14,
+     25,
+     null
+    ],
+    [
+     "Nothing adjacent owned",
+     "No second product.",
+     12,
+     25,
+     true
+    ]
+   ]
+  },
+  "momentum": {
+   "score": 54,
+   "band": "Fair",
+   "components": [
+    [
+     "Active in the last 14 days",
+     "Watched on 5 of the last 14 days.",
+     16,
+     30,
+     null
+    ],
+    [
+     "On pace",
+     "48 percent watched with 89 days to go. Roughly on track.",
+     20,
+     30,
+     null
+    ],
+    [
+     "Mocks attempted",
+     "None yet, which is normal at this distance.",
+     8,
+     20,
+     null
+    ],
+    [
+     "Replies and doubts",
+     "Replies when messaged.",
+     10,
+     20,
+     null
+    ]
+   ],
+   "decay": 0
+  },
+  "playbook": "SP-11",
+  "priority": "Call today",
+  "next_action": "Validity extension. His access stops 68 days before his exam, which means he loses the course during revision.",
+  "then": "Once extended he goes back to SP-03, and picks up SP-05 at 60 days out.",
+  "blocked_by": [
+   "Validity expiry is not on the student record today. This case was found by hand. There are others we cannot see."
+  ],
+  "do_not": [
+   "Do not run the run-up playbook first. The expiry is nearer than the exam, so it goes first."
+  ],
+  "queue_days": 21,
+  "queue_reason": "Validity expires in 21 days, 68 days before his exam. The expiry is the nearer date, so it goes first."
+ },
+ {
+  "student_id": "ST-07",
+  "name": "Tanya Bhatt",
+  "initials": "TB",
+  "course": "CFA Level 1",
+  "attempt": "February 2027",
+  "owns": [
+   "CFA Level 1"
+  ],
+  "spend": 32100,
+  "stage": "S1",
+  "stage_name": "Just paid",
+  "clock": [
+   [
+    "Day 7 login check",
+    "3 days",
+    "soft"
+   ]
+  ],
+  "headroom": {
+   "score": 78,
+   "band": "High",
+   "components": [
+    [
+     "Two levels left on the ladder",
+     "Owns Level 1 only.",
+     50,
+     50,
+     true
+    ],
+    [
+     "Spend band",
+     "Rs 32,100.",
+     14,
+     25,
+     null
+    ],
+    [
+     "Nothing adjacent owned",
+     "No second product.",
+     14,
+     25,
+     true
+    ]
+   ]
+  },
+  "momentum": null,
+  "momentum_note": "Too early. Momentum needs at least 14 days of behaviour before it means anything.",
+  "playbook": "SP-01",
+  "priority": "Automated only",
+  "next_action": "Second welcome message. She paid 4 days ago and has not logged in once.",
+  "then": "If she has not logged in by day 7, a counsellor calls once.",
+  "blocked_by": [],
+  "do_not": [
+   "Do not sell anything. Not mocks, not books, not Level 2. The first week is for getting her in."
+  ],
+  "queue_days": 3,
+  "queue_reason": "Day 7 login check in 3 days. Automated until then."
+ },
+ {
+  "student_id": "ST-08",
+  "name": "Ishita Jain",
+  "initials": "IJ",
+  "course": "CA Final",
+  "attempt": "Not on file",
+  "owns": [
+   "CA Final"
+  ],
+  "spend": 18000,
+  "stage": "S9",
+  "stage_name": "Inactive",
+  "clock": [],
+  "headroom": {
+   "score": 41,
+   "band": "Medium",
+   "components": [
+    [
+     "Ladder position unclear",
+     "Owns CA Final. Whether she has cleared it is unknown.",
+     20,
+     50,
+     null
+    ],
+    [
+     "Spend band",
+     "Rs 18,000.",
+     8,
+     25,
+     null
+    ],
+    [
+     "Nothing adjacent owned",
+     "No second product.",
+     13,
+     25,
+     true
+    ]
+   ]
+  },
+  "momentum": null,
+  "momentum_note": "No feed, no attempt, no activity. Nothing to measure.",
+  "playbook": "SP-12",
+  "priority": "Automated only",
+  "next_action": "One win-back message: where are you with CA Final today. Then two follow ups, then stop for six months.",
+  "then": "Whatever she answers decides the next step. If she has cleared it, she becomes an SP-09 case.",
+  "blocked_by": [
+   "No attempt on file, so no dates.",
+   "No result, so we do not know if she is a student or an alumna.",
+   "Last purchase 31 months ago."
+  ],
+  "do_not": [
+   "Do not guess her attempt.",
+   "Do not send a course offer before she tells us where she stands."
+  ],
+  "queue_days": null,
+  "queue_reason": "No dates, no attempt, no result. Automated win-back only."
+ }
+]
