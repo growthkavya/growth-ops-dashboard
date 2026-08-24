@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSEI OOH Recall Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Libre+Franklin:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#09256B;
+    --navy-deep:#071D54;
+    --navy-darkest:#051540;
+    --ink:#101B33;
+    --muted:#56607A;
+    --gold:#D29959;
+    --gold-deep:#A9742F;
+    --paper:#F7F5F0;
+    --card:#FFFFFF;
+    --line:rgba(9,37,107,.14);
+    --line-soft:rgba(9,37,107,.08);
+    --track:rgba(9,37,107,.09);
+    --display:'Archivo',system-ui,Arial,sans-serif;
+    --body:'Libre Franklin',Georgia,system-ui,sans-serif;
+    --mono:'Spline Sans Mono','Courier New',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--body);
+    background:var(--paper);
+    color:var(--ink);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 28px}
+  section{padding:64px 0}
+  .dark{background:var(--navy);color:#F2EFE8}
+  .darker{background:var(--navy-darkest);color:#F2EFE8}
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:.72rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+    display:flex;align-items:center;gap:12px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--gold);flex:none}
+  .dark .eyebrow,.darker .eyebrow{color:var(--gold)}
+  h2{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(1.6rem,3.2vw,2.3rem);
+    line-height:1.12;
+    letter-spacing:-.01em;
+    text-wrap:balance;
+    color:var(--navy);
+    margin-bottom:12px;
+  }
+  .dark h2,.darker h2{color:#fff}
+  h3.sub{
+    font-family:var(--display);font-weight:600;font-size:1.05rem;color:var(--gold-deep);
+    margin-bottom:18px;
+  }
+  .dark h3.sub{color:var(--gold)}
+  .lede{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-bottom:30px}
+  .dark .lede,.darker .lede{color:rgba(242,239,232,.75)}
+  p.body-copy{font-size:.96rem;color:var(--ink);max-width:70ch;margin-bottom:14px}
+  .dark p.body-copy{color:rgba(242,239,232,.88)}
+  .kicker{
+    font-family:var(--display);font-weight:900;
+    font-size:clamp(1.4rem,3.4vw,2.2rem);
+    line-height:1.15;letter-spacing:-.01em;color:var(--navy);text-wrap:balance;
+  }
+  .darker .kicker{color:#fff}
+  .gold{color:var(--gold-deep)}
+  .dark .gold,.darker .gold{color:var(--gold)}
+  .mono{font-family:var(--mono)}
+
+  .interp{
+    border-left:3px solid var(--gold);
+    padding:14px 20px;
+    background:var(--card);
+    border-radius:0 8px 8px 0;
+    max-width:68ch;
+    margin-top:26px;
+    box-shadow:0 1px 3px rgba(9,37,107,.06);
+  }
+  .interp b{color:var(--navy)}
+  .interp .tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-deep);display:block;margin-bottom:6px}
+  .dark .interp{background:rgba(255,255,255,.06);box-shadow:none}
+  .dark .interp b{color:#fff}
+
+  /* bridge: the narrative connector between sections */
+  .bridge{
+    background:var(--navy);color:rgba(242,239,232,.9);
+    padding:22px 0;
+  }
+  .bridge .wrap{display:flex;gap:16px;align-items:baseline}
+  .bridge .arrow{font-family:var(--mono);color:var(--gold);flex:none;font-size:.9rem}
+  .bridge p{font-family:var(--display);font-weight:600;font-size:1.02rem;line-height:1.45;max-width:72ch}
+
+  /* cover */
+  .cover{
+    background:linear-gradient(160deg,var(--navy) 0%,var(--navy-deep) 55%,var(--navy-darkest) 100%);
+    color:#F2EFE8;
+    padding:110px 0 90px;
+    position:relative;overflow:hidden;
+  }
+  .cover::after{
+    content:"";position:absolute;right:-140px;top:-140px;width:520px;height:520px;
+    border:1px solid rgba(210,153,89,.25);border-radius:50%;
+  }
+  .cover::before{
+    content:"";position:absolute;right:-60px;top:-60px;width:360px;height:360px;
+    border:1px solid rgba(210,153,89,.4);border-radius:50%;
+  }
+  .cover h1{
+    font-family:var(--display);font-weight:900;
+    font-size:clamp(2.4rem,6vw,4.4rem);
+    line-height:1.02;letter-spacing:-.02em;color:#fff;
+    margin:18px 0 14px;
+  }
+  .cover .sub{
+    font-size:clamp(1.05rem,2vw,1.35rem);
+    color:var(--gold);font-weight:500;margin-bottom:30px;
+  }
+  .cover-meta{display:flex;flex-wrap:wrap;gap:12px}
+  .pill{
+    font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;
+    border:1px solid rgba(242,239,232,.3);border-radius:999px;
+    padding:7px 16px;color:rgba(242,239,232,.85);
+  }
+  .pill.solid{background:var(--gold);border-color:var(--gold);color:var(--navy-darkest);font-weight:600}
+
+  /* cards */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+  .card{
+    background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:24px;
+    box-shadow:0 1px 3px rgba(9,37,107,.05);
+  }
+  .card .n{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;color:var(--gold-deep);display:block;margin-bottom:10px;text-transform:uppercase}
+  .card h4{font-family:var(--display);font-weight:700;font-size:1.05rem;color:var(--navy);line-height:1.3;margin-bottom:6px}
+  .card p{font-size:.9rem;color:var(--muted)}
+  .dark .card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);box-shadow:none}
+  .dark .card h4{color:#fff}
+  .dark .card p{color:rgba(242,239,232,.72)}
+  .dark .card .n{color:var(--gold)}
+
+  /* data snapshot rows */
+  .data-row{
+    background:var(--card);border:1px solid var(--line-soft);border-radius:12px;
+    padding:24px 26px;margin-bottom:14px;
+    display:grid;grid-template-columns:150px 1fr;gap:26px;align-items:center;
+    box-shadow:0 1px 3px rgba(9,37,107,.05);
+  }
+  @media(max-width:640px){.data-row{grid-template-columns:1fr;gap:10px}}
+  .data-row .num{
+    font-family:var(--display);font-weight:900;font-size:2.2rem;line-height:1;
+    color:var(--navy);font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  }
+  .data-row .num small{font-size:.55em;color:var(--gold-deep);font-weight:700}
+  .data-row .what{font-size:.95rem;color:var(--ink);max-width:60ch}
+  .data-row .what b{color:var(--navy)}
+  .data-row .qual{font-family:var(--mono);font-size:.72rem;color:var(--muted);display:block;margin-top:6px}
+  .bar-track{height:12px;background:var(--track);border-radius:4px;overflow:hidden;margin-top:10px;max-width:420px}
+  .bar-fill{height:100%;background:var(--navy);border-radius:4px;min-width:8px}
+  .bar-fill.gold{background:var(--gold)}
+  .bar-fill.faint{background:rgba(9,37,107,.28)}
+
+  .scope-tag{
+    display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;
+    text-transform:uppercase;border-radius:4px;padding:3px 8px;margin-bottom:8px;
+    background:rgba(9,37,107,.08);color:var(--navy);
+  }
+  .scope-tag.sub{background:rgba(210,153,89,.18);color:#6E4A17}
+  .dark .scope-tag{background:rgba(255,255,255,.14);color:#fff}
+  .dark .scope-tag.sub{background:rgba(210,153,89,.3);color:var(--gold)}
+
+  /* method stages */
+  .stage{
+    background:var(--card);border:1px solid var(--line-soft);border-radius:12px;padding:26px;
+    box-shadow:0 1px 3px rgba(9,37,107,.05);
+  }
+  .stage h4{font-family:var(--display);font-weight:800;font-size:1rem;color:var(--navy);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+  .stage ul{list-style:none}
+  .stage li{padding:6px 0 6px 18px;position:relative;font-size:.92rem;color:var(--muted)}
+  .stage li::before{content:"·";position:absolute;left:2px;color:var(--gold-deep);font-weight:900}
+  .quote-box{
+    font-family:var(--display);font-weight:600;font-size:1.08rem;color:var(--navy);
+    background:rgba(9,37,107,.05);border-radius:10px;padding:16px 20px;margin:14px 0;max-width:52ch;
+  }
+  .quote-box::before{content:"\201C";color:var(--gold-deep)}
+  .quote-box::after{content:"\201D";color:var(--gold-deep)}
+
+  /* chips */
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0 6px}
+  .chip{
+    font-family:var(--display);font-weight:700;letter-spacing:.03em;
+    font-size:.84rem;text-transform:uppercase;
+    background:var(--navy);color:#fff;border-radius:7px;padding:8px 15px;
+  }
+  .chip.alt{background:var(--card);color:var(--navy);border:2px solid var(--navy)}
+
+  /* flow */
+  .flow{display:flex;flex-direction:column;max-width:520px}
+  .flow-step{
+    background:var(--card);border:1px solid var(--line-soft);border-radius:10px;
+    padding:14px 20px;box-shadow:0 1px 3px rgba(9,37,107,.05);
+  }
+  .flow-step .t{font-family:var(--display);font-weight:700;color:var(--navy);font-size:.96rem;text-transform:uppercase;letter-spacing:.05em}
+  .flow-step .q{font-size:.86rem;color:var(--muted);margin-top:2px}
+  .flow-arrow{align-self:center;color:var(--gold-deep);font-size:1rem;line-height:1;padding:6px 0;font-family:var(--mono)}
+  .dark .flow-step{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12);box-shadow:none}
+  .dark .flow-step .t{color:#fff}
+  .dark .flow-step .q{color:rgba(242,239,232,.7)}
+  .dark .flow-arrow{color:var(--gold)}
+  .flow.mini .flow-step{padding:10px 18px}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:820px){.split{grid-template-columns:1fr;gap:26px}}
+
+  /* campaign bars */
+  .camp-bar{margin-bottom:20px;max-width:560px}
+  .camp-bar .lbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;gap:16px}
+  .camp-bar .who{font-weight:600;color:var(--navy);font-size:.93rem}
+  .dark .camp-bar .who{color:#fff}
+  .camp-bar .val{font-family:var(--mono);font-weight:600;font-size:.9rem;color:var(--navy)}
+  .dark .camp-bar .val{color:var(--gold)}
+  .camp-bar .note{font-size:.8rem;color:var(--muted);margin-top:5px}
+  .dark .camp-bar .note{color:rgba(242,239,232,.6)}
+  .dark .bar-track{background:rgba(255,255,255,.12)}
+
+  .tension{
+    display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;
+    margin:28px 0;
+  }
+  .tension .side{
+    font-family:var(--display);font-weight:800;font-size:1.1rem;text-transform:uppercase;letter-spacing:.04em;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 24px;color:#fff;
+  }
+  .tension .vs{font-family:var(--mono);color:var(--gold);font-size:1.3rem}
+
+  /* matrix table */
+  .table-scroll{overflow-x:auto;border-radius:12px;border:1px solid var(--line-soft)}
+  .matrix{width:100%;border-collapse:collapse;background:var(--card);min-width:760px}
+  .matrix th{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;
+    text-align:left;color:var(--gold);background:var(--navy);padding:13px 18px;font-weight:600;
+  }
+  .matrix td{padding:14px 18px;border-top:1px solid var(--line-soft);font-size:.88rem;vertical-align:top;color:var(--muted)}
+  .matrix td:first-child{font-weight:600;color:var(--navy);min-width:150px}
+  .matrix td:nth-child(3){color:var(--ink)}
+
+  /* priority */
+  .prio{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .prio-col{border-radius:12px;padding:24px;border:1px solid var(--line-soft);background:var(--card)}
+  .prio-col.now{background:var(--navy);border-color:var(--navy)}
+  .prio-col h4{font-family:var(--display);font-weight:900;font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;color:var(--navy)}
+  .prio-col.now h4{color:var(--gold)}
+  .prio-col .sub{font-size:.8rem;color:var(--muted);margin-bottom:14px;display:block}
+  .prio-col.now .sub{color:rgba(242,239,232,.7)}
+  .prio-col ul{list-style:none}
+  .prio-col li{padding:8px 0;border-top:1px solid var(--line-soft);font-size:.9rem;color:var(--ink)}
+  .prio-col.now li{border-top-color:rgba(255,255,255,.14);color:rgba(242,239,232,.9)}
+
+  /* checklist */
+  .check-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:9px;margin-top:6px}
+  .check{
+    background:var(--card);border:1px solid var(--line-soft);border-radius:9px;
+    padding:11px 16px;font-size:.88rem;color:var(--ink);
+    display:flex;gap:11px;align-items:baseline;
+  }
+  .check::before{content:"▢";color:var(--gold-deep);font-size:.95rem;flex:none}
+  .check-head{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep);margin:22px 0 10px}
+
+  footer{background:var(--navy-darkest);color:rgba(242,239,232,.55);padding:26px 0;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+  .flag{
+    font-family:var(--mono);font-size:.76rem;color:#7C2B21;background:rgba(159,54,42,.08);
+    border:1px solid rgba(159,54,42,.18);border-radius:8px;padding:10px 14px;max-width:64ch;margin-top:14px;
+  }
+  .dark .flag{color:#F0B9A9;background:rgba(159,54,42,.25);border-color:rgba(240,185,169,.25)}
+
+  .rv{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .rv{opacity:1;transform:none;transition:none}
+    html{scroll-behavior:auto}
+  }
+  @media print{
+    section{padding:30px 0;break-inside:avoid-page}
+    .rv{opacity:1;transform:none}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= COVER ================= -->
+<header class="cover">
+  <div class="wrap">
+    <div class="eyebrow">Internal research report · August 2026</div>
+    <h1>SSEI OOH<br>Marketing</h1>
+    <p class="sub">Student Perception &amp; Brand Recall Study</p>
+    <div class="cover-meta">
+      <span class="pill solid">70+ student conversations</span>
+      <span class="pill">Informal, exploratory, directional</span>
+      <span class="pill">v2 · rebuilt structure</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 01 EXECUTIVE SUMMARY ================= -->
+<section id="summary">
+  <div class="wrap">
+    <div class="eyebrow">01 · Executive summary</div>
+    <h2>Five conclusions from the study</h2>
+    <p class="lede">Each conclusion is developed and evidenced in the body of the report. Nothing here is repeated as a separate framework later.</p>
+    <div class="grid rv">
+      <div class="card"><span class="n">Conclusion 1</span><h4>OOH is an attention and familiarity medium, not a conversion medium</h4><p>Students do not rely on hoardings when actually choosing an education provider. They rely on reviews, peers and online research.</p></div>
+      <div class="card"><span class="n">Conclusion 2</span><h4>Simplicity decides whether a hoarding is seen at all</h4><p>Large type, minimal copy, strong contrast and visual communication were consistently preferred. Information-heavy boards get ignored.</p></div>
+      <div class="card"><span class="n">Conclusion 3</span><h4>Frequency appears more valuable than one premium placement</h4><p>Repeated exposure across student routes may build more familiarity than a single famous location. This should be tested, not assumed.</p></div>
+      <div class="card"><span class="n">Conclusion 4</span><h4>OOH needs a digital continuation to matter</h4><p>Recognition should lead a student to search SSEI, where content, reviews and student proof complete the persuasion job.</p></div>
+      <div class="card"><span class="n">Conclusion 5</span><h4>Boldness works, but credibility sets the limit</h4><p>The provocative CA campaign was well received by most CA aspirants asked, yet the discomfort of a minority centred on the Sanjay Saraf name. Bold and witty, not provocative for its own sake.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 02 OBJECTIVE ================= -->
+<section id="objective" class="dark">
+  <div class="wrap">
+    <div class="eyebrow">02 · Research objective</div>
+    <h2>What we wanted to understand</h2>
+    <p class="lede" style="max-width:72ch">How do students perceive outdoor advertising today, what makes an education hoarding noticeable and memorable, and what role can OOH realistically play in influencing consideration for SSEI?</p>
+    <div class="grid rv">
+      <div class="card"><span class="n">Noticing</span><p>What makes students notice a hoarding, and what makes them ignore one? Which creative formats are easiest to remember?</p></div>
+      <div class="card"><span class="n">Recall</span><p>Does repeated exposure build familiarity? How important is location? Do students currently recognise SSEI's outdoor advertising?</p></div>
+      <div class="card"><span class="n">Decision</span><p>Can OOH directly influence institute selection? Which channels create greater recall, and what actually creates trust? How did students respond to the recent provocative CA campaign?</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 APPROACH ================= -->
+<section id="approach">
+  <div class="wrap">
+    <div class="eyebrow">03 · Research approach</div>
+    <h2>How the conversations were conducted</h2>
+    <p class="body-copy">This was intentionally run as an <b>informal exploratory student conversation</b>, not a formal questionnaire that mentioned SSEI upfront. The typical opening was conversational:</p>
+    <div class="quote-box">Hi guys, do you have five minutes to spare?</div>
+    <p class="body-copy">Students were told the team was trying to understand opinions about outdoor advertising and that their responses could shape future marketing decisions. Because many were unfamiliar with the term, OOH was first briefly explained: <b>Out-of-Home advertising</b> covers hoardings, billboards, transit advertising and other advertising seen outside the home.</p>
+
+    <div class="split rv" style="margin-top:28px">
+      <div class="stage">
+        <h4>Stage 1 · General OOH perception <span style="color:var(--gold-deep)">(SSEI not yet revealed)</span></h4>
+        <ul>
+          <li>Whether and where they notice hoardings</li>
+          <li>What attracts attention: colours, creative styles, text quantity, visuals</li>
+          <li>Advertising they found memorable</li>
+          <li>Whether hoardings affect brand perception</li>
+          <li>Whether OOH could influence their choice of an education brand</li>
+          <li>Whom they trust: billboards, reviews, social media, peers</li>
+        </ul>
+      </div>
+      <div class="stage">
+        <h4>Stage 2 · Brand recall <span style="color:var(--gold-deep)">(SSEI revealed)</span></h4>
+        <ul>
+          <li>Told the researchers were associated with SSEI</li>
+          <li>Shown selected SSEI outdoor creatives</li>
+          <li>Asked whether they had seen them before</li>
+          <li>Asked what, if anything, they recalled about the brand or creative</li>
+          <li>Asked whether repeated SSEI visibility would affect familiarity or consideration</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="interp rv">
+      <span class="tag">Why the sequencing matters</span>
+      By discussing OOH before revealing SSEI, the conversation attempted to capture more natural opinions and reduce the risk of prompting students toward the SSEI brand. This was not a scientifically controlled blind study. It was <b>informal, exploratory, directional field research</b>, and the report reads it that way.
+    </div>
+  </div>
+</section>
+
+<!-- ================= 04 SAMPLE ================= -->
+<section id="sample" style="padding-top:0">
+  <div class="wrap">
+    <div class="eyebrow">04 · Sample &amp; how to read the data</div>
+    <h2>Who we spoke to</h2>
+    <div class="grid rv" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+      <div class="card" style="background:var(--navy);border-color:var(--navy)">
+        <span class="n" style="color:var(--gold)">Interviewed</span>
+        <h4 style="color:#fff;font-size:2rem;font-weight:900">70+</h4>
+        <p style="color:rgba(242,239,232,.75)">Students engaged in conversation</p>
+      </div>
+      <div class="card" style="background:var(--navy);border-color:var(--navy)">
+        <span class="n" style="color:var(--gold)">Actionable</span>
+        <h4 style="color:#fff;font-size:2rem;font-weight:900">45-50</h4>
+        <p style="color:rgba(242,239,232,.75)">Conversations produced usable OOH insight</p>
+      </div>
+      <div class="card">
+        <span class="n">Full-sample findings</span>
+        <p>General OOH perception questions were asked across the interviewed group. Percentages for these are marked <span class="scope-tag">Full sample</span></p>
+      </div>
+      <div class="card">
+        <span class="n">Sub-sample findings</span>
+        <p>The CA campaign was primarily discussed with CA aspirants. Its figures are marked <span class="scope-tag sub">CA-aspirant sub-sample</span> and never blended with full-sample numbers.</p>
+      </div>
+    </div>
+    <div class="interp rv">
+      <span class="tag">How to read every number in this report</span>
+      This was qualitative and exploratory research. Percentages represent <b>observed sentiment within the interviewed group</b> and should be treated as directional indicators, not population-level estimates. Where a figure was not counted, the report uses qualitative language (several, some, a smaller group) instead of inventing a percentage.
+    </div>
+  </div>
+</section>
+
+<div class="bridge"><div class="wrap"><span class="arrow">→</span><p>With the conversation structure understood, the next question is how strongly these patterns appeared across the interviews.</p></div></div>
+
+<!-- ================= 05 DATA SNAPSHOT ================= -->
+<section id="data">
+  <div class="wrap">
+    <div class="eyebrow">05 · Data snapshot</div>
+    <h2>The five quantified signals</h2>
+    <p class="lede">These are the only quantified findings in the study. They are shown once here and referenced, not repeated, in the themes that follow.</p>
+
+    <div class="rv">
+      <div class="data-row">
+        <div><span class="scope-tag">Full sample</span><div class="num">70-80<small>%</small></div></div>
+        <div class="what">Preferred either <b>vibrant, colourful executions</b> or <b>strong solid-colour executions</b>, provided they carried large typography, strong contrast, fewer words and one clear message.
+          <div class="bar-track"><div class="bar-fill" style="width:75%"></div></div>
+        </div>
+      </div>
+      <div class="data-row">
+        <div><span class="scope-tag">Full sample</span><div class="num">~90<small>%</small></div></div>
+        <div class="what">Felt hoardings are <b>not one of the strongest standalone marketing channels today</b>. This does not mean OOH is useless: it means students do not see it as sufficient by itself to drive an education decision.
+          <div class="bar-track"><div class="bar-fill" style="width:90%"></div></div>
+        </div>
+      </div>
+      <div class="data-row">
+        <div><span class="scope-tag">Full sample</span><div class="num">~85<small>%</small></div></div>
+        <div class="what">Felt <b>online marketing creates stronger retention</b> than relying on a single billboard in a famous or crowded location.
+          <span class="qual">Perceived retention, not measured advertising recall</span>
+          <div class="bar-track"><div class="bar-fill" style="width:85%"></div></div>
+        </div>
+      </div>
+      <div class="data-row">
+        <div><span class="scope-tag">Full sample</span><div class="num">~70<small>%</small></div></div>
+        <div class="what">Said repeatedly seeing <b>multiple smaller hoardings across different places</b> could create familiarity and potentially influence consideration.
+          <span class="qual">Familiarity and consideration, not a claim that 70% would choose SSEI</span>
+          <div class="bar-track"><div class="bar-fill" style="width:70%"></div></div>
+        </div>
+      </div>
+      <div class="data-row">
+        <div><span class="scope-tag">Full sample</span><div class="num" style="font-size:1.35rem;line-height:1.2">Near-<br>unanimous</div></div>
+        <div class="what"><b>Credible reviews, peer opinions, alumni experiences and word of mouth matter more than billboard claims</b> when making an actual education decision.
+          <div class="bar-track"><div class="bar-fill gold" style="width:97%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="bridge"><div class="wrap"><span class="arrow">→</span><p>The rest of the report unpacks these signals as four connected themes: what gets noticed, where it gets noticed, what gets remembered, and what gets trusted.</p></div></div>
+
+<!-- ================= 06 THEME 1 ATTENTION ================= -->
+<section id="attention">
+  <div class="wrap">
+    <div class="eyebrow">06 · Theme 1: Attention</div>
+    <h2>What makes a student notice a hoarding?</h2>
+    <p class="body-copy">Across the interviews (the 70-80% signal above), the same preferences kept recurring: large typography, minimal text, strong contrast, vibrant or solid-colour execution, pictorial communication, and simple relatable ideas. Some students also mentioned 3D elements as attention-worthy where appropriate.</p>
+    <div class="chips rv">
+      <span class="chip">Large type</span>
+      <span class="chip alt">Minimal text</span>
+      <span class="chip">Strong contrast</span>
+      <span class="chip alt">Vibrant or solid colour</span>
+      <span class="chip">Pictorial</span>
+      <span class="chip alt">Simple &amp; relatable</span>
+    </div>
+    <div class="interp rv">
+      <span class="tag">Core conclusion</span>
+      <b>Students do not want more information from an outdoor creative. They want faster comprehension.</b> As a creative principle derived from these responses (not a measured finding), OOH should be designed for a few-second attention window, not like a brochure.
+    </div>
+  </div>
+</section>
+
+<div class="bridge"><div class="wrap"><span class="arrow">→</span><p>What students notice is only half the equation. Where they encounter the creative determines whether they get enough time to process it.</p></div></div>
+
+<!-- ================= 07 THEME 2 CONTEXT ================= -->
+<section id="context">
+  <div class="wrap">
+    <div class="eyebrow">07 · Theme 2: Context</div>
+    <h2>Where and when OOH gets noticed</h2>
+    <div class="grid rv">
+      <div class="card"><span class="n">Traffic &amp; signals</span><h4>Idle moments do the work</h4><p>Students notice outdoor advertising most when stuck, waiting, moving slowly or temporarily idle.</p></div>
+      <div class="card"><span class="n">Metro</span><h4>Large type may perform better</h4><p>Visibility, waiting time and repeated commuting exposure favour big, readable creatives.</p></div>
+      <div class="card"><span class="n">Bus stops</span><h4>Possibly lower attention</h4><p>Some students suggested bus stops receive relatively lower deliberate attention. Qualitative observation, not a universal conclusion.</p></div>
+      <div class="card"><span class="n">Morning vs return</span><h4>Return commute may see more</h4><p>Some students said they are rushed in the morning and notice advertising more while returning. Qualitative observation, not quantified.</p></div>
+      <div class="card"><span class="n">Surroundings</span><h4>Contrast with the environment</h4><p>A creative that blends into its physical backdrop disappears, regardless of how good the design is in isolation.</p></div>
+    </div>
+    <div class="interp rv">
+      <span class="tag">Strategic principle</span>
+      <b>Creative should be adapted to location, viewing distance, movement speed and dwell time.</b> One artwork resized for every environment is a compromise in all of them.
+    </div>
+  </div>
+</section>
+
+<div class="bridge"><div class="wrap"><span class="arrow">→</span><p>Being seen once creates attention. Being recognised later requires repetition and distinctive branding.</p></div></div>
+
+<!-- ================= 08 THEME 3 MEMORY ================= -->
+<section id="memory">
+  <div class="wrap">
+    <div class="eyebrow">08 · Theme 3: Memory &amp; recognition</div>
+    <h2>What makes students remember a brand?</h2>
+    <div class="split">
+      <div class="rv">
+        <p class="body-copy">Attention creates the opportunity to be seen; recognition requires <b>repetition and distinctive branding</b>. Around 70% of interviewed students (see Data Snapshot) said repeated exposure to multiple smaller hoardings across different places could create familiarity and potentially influence consideration.</p>
+        <p class="body-copy">For that repetition to accumulate into recognition, students need to identify the brand instantly each time. That argues for consistent SSEI brand assets: distinctive typography, a recurring visual language and a consistent brand device across every placement.</p>
+        <div class="interp" style="margin-top:20px">
+          <span class="tag">A future opportunity, not a research mandate</span>
+          A smaller but strategically interesting group suggested SSEI could create a <b>distinctive recurring brand asset, such as a mascot or recognisable character</b>. This is a long-term brand-building option to explore and test, not something students overwhelmingly demanded.
+        </div>
+      </div>
+      <div class="rv">
+        <div class="eyebrow" style="margin-bottom:12px">How a distinctive asset compounds</div>
+        <div class="flow mini">
+          <div class="flow-step"><span class="t">Distinctive asset</span></div>
+          <div class="flow-arrow">▼</div>
+          <div class="flow-step"><span class="t">Repetition</span></div>
+          <div class="flow-arrow">▼</div>
+          <div class="flow-step"><span class="t">Recognition</span></div>
+          <div class="flow-arrow">▼</div>
+          <div class="flow-step"><span class="t">Association</span></div>
+          <div class="flow-arrow">▼</div>
+          <div class="flow-step"><span class="t">Recall</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="bridge"><div class="wrap"><span class="arrow">→</span><p>Recognition can put SSEI into the consideration set, but recognition alone does not create enough confidence to choose an institute.</p></div></div>
+
+<!-- ================= 09 THEME 4 TRUST ================= -->
+<section id="trust" class="dark">
+  <div class="wrap">
+    <div class="eyebrow">09 · Theme 4: Trust &amp; decision</div>
+    <h2>Being remembered is not the same as being chosen</h2>
+    <div class="split">
+      <div class="rv">
+        <p class="body-copy">Near-unanimously, students said credible reviews, peer opinions, alumni experiences and word of mouth matter more than billboard claims when actually deciding. Online research, social media and search are where that evidence is gathered.</p>
+        <p class="body-copy">This is the single most consistent finding in the study, and it defines OOH's realistic role in one journey:</p>
+        <div class="interp" style="margin-top:20px">
+          <span class="tag">The distinction that matters</span>
+          <b>OOH can contribute to attention and familiarity. It does not appear to be the primary trust or conversion mechanism for most interviewed students.</b>
+        </div>
+      </div>
+      <div class="rv">
+        <div class="eyebrow" style="margin-bottom:12px">The student decision journey</div>
+        <div class="flow">
+          <div class="flow-step"><span class="t">OOH exposure</span><span class="q">Passive, repeated attention</span></div>
+          <div class="flow-arrow">▼</div>
+          <div class="flow-step"><span class="t">Brand familiarity</span><span class="q">"I keep seeing this name"</span></div>
+          <div class="flow-arrow">▼</div>
+          <div class="flow-step"><span class="t">Search · Instagram · YouTube</span><span class="q">Active checking begins</span></div>
+          <div class="flow-arrow">▼</div>
+          <div class="flow-step"><span class="t">Reviews &amp; social proof</span><span class="q">Trust is formed here</span></div>
+          <div class="flow-arrow">▼</div>
+          <div class="flow-step"><span class="t">Enquiry</span><span class="q">Consideration and enrolment</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 10 SSEI BRAND RECALL ================= -->
+<section id="recall">
+  <div class="wrap">
+    <div class="eyebrow">10 · SSEI brand recall</div>
+    <h2>Are students connecting the creative to the brand?</h2>
+    <h3 class="sub">Stage 2 of the conversations, after SSEI was revealed</h3>
+    <p class="body-copy">When shown SSEI outdoor creatives, the interviews surfaced a <b>brand recognition and recall challenge</b>: creatives could be visually noticeable without being clearly associated with SSEI, and unaided recall of SSEI outdoor advertising was weak in the conversations. Students also indicated that social media contributes more strongly to their recognition of the brand than outdoor advertising currently does.</p>
+    <p class="body-copy">At the same time, students consistently said that repeated visibility could improve familiarity, which connects this gap directly to the frequency finding in Theme 3: the issue is not that outdoor cannot register, but that today's presence and branding are not registering strongly enough.</p>
+    <div class="flag rv">FLAG: Recall in this round was captured qualitatively, not counted. No aided or unaided recall percentages exist yet; the measurement framework in section 14 is designed to produce them.</div>
+  </div>
+</section>
+
+<div class="bridge"><div class="wrap"><span class="arrow">→</span><p>This creates an important question for SSEI: how far can the brand push for attention before boldness starts affecting credibility?</p></div></div>
+
+<!-- ================= 11 CA CAMPAIGN ================= -->
+<section id="campaign" class="dark">
+  <div class="wrap">
+    <div class="eyebrow">11 · Campaign perception test</div>
+    <h2>"Give an F to your CA Degree"</h2>
+    <p class="lede">The provocative CA campaign was discussed primarily with students pursuing or considering CA. All figures below refer to that sub-sample, not the full 70+ group.</p>
+
+    <div class="split">
+      <div class="rv">
+        <span class="scope-tag sub">CA-aspirant sub-sample</span>
+        <div class="camp-bar" style="margin-top:10px">
+          <div class="lbl"><span class="who">Responded positively</span><span class="val">~80-85%</span></div>
+          <div class="bar-track" style="height:14px"><div class="bar-fill gold" style="width:82%"></div></div>
+          <div class="note">Perceived it as funny, clever, memorable, bold, a good marketing strategy that caught attention</div>
+        </div>
+        <div class="camp-bar">
+          <div class="lbl"><span class="who">Did not like it</span><span class="val">Smaller minority</span></div>
+          <div class="bar-track" style="height:14px"><div class="bar-fill" style="width:16%;background:rgba(255,255,255,.35)"></div></div>
+          <div class="note">Found it offensive or inappropriate</div>
+        </div>
+        <div class="flag rv">FLAG: Directional sub-sample; the exact denominator should be added before final publication.</div>
+      </div>
+      <div class="rv">
+        <p class="body-copy">An important nuance sat inside the negative reactions. Some students were not against bold advertising itself; their discomfort came from the communication being associated with <b>Sanjay Saraf Sir</b>, whom they regard as a respected professional and educator in finance education.</p>
+        <div class="interp" style="margin-top:18px">
+          <span class="tag">Strategic insight</span>
+          The lesson is not "controversial advertising works." It is: <b>bold communication can generate strong memorability, but the tone must remain compatible with the credibility and reputation attached to the SSEI and Sanjay Saraf brands.</b>
+        </div>
+      </div>
+    </div>
+
+    <div class="tension rv">
+      <span class="side">Memorability</span>
+      <span class="vs">↔</span>
+      <span class="side">Brand credibility</span>
+    </div>
+    <p style="text-align:center;color:rgba(242,239,232,.8);font-size:.95rem">The territory for SSEI is <b style="color:var(--gold)">bold + witty + intelligent</b>, not provocative purely for attention.</p>
+  </div>
+</section>
+
+<div class="bridge"><div class="wrap"><span class="arrow">→</span><p>The combined findings show that SSEI does not necessarily need more OOH communication. It needs more deliberate OOH communication.</p></div></div>
+
+<!-- ================= 12 CONSOLIDATED INTERPRETATION ================= -->
+<section id="interpretation">
+  <div class="wrap">
+    <div class="eyebrow">12 · What the findings mean together</div>
+    <h2>Five conclusions, now earned</h2>
+    <p class="lede">The executive summary stated these upfront; the evidence behind each now sits in the sections above.</p>
+    <div class="grid rv">
+      <div class="card"><span class="n">1 · From Themes 1 &amp; 4</span><h4>OOH is primarily an attention and familiarity medium</h4><p>Students do not appear to rely on it as the primary source when choosing an education provider.</p></div>
+      <div class="card"><span class="n">2 · From Theme 1</span><h4>Simplicity improves the chance of being noticed</h4><p>Large typography, minimal copy, strong contrast and visual communication consistently performed better in student preference.</p></div>
+      <div class="card"><span class="n">3 · From Theme 3</span><h4>Frequency appears more valuable than isolated visibility</h4><p>Repeated exposure across student routes may create greater familiarity than depending entirely on one premium placement.</p></div>
+      <div class="card"><span class="n">4 · From Theme 4 &amp; recall</span><h4>OOH needs a digital continuation</h4><p>Recognition should make the student search SSEI, where content, reviews and student proof take over.</p></div>
+      <div class="card"><span class="n">5 · From the campaign test</span><h4>Distinctiveness must coexist with credibility</h4><p>Students respond to bold campaigns, but communication must protect the trust attached to the institution and Sanjay Saraf Sir.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 13 COURSE OF ACTION ================= -->
+<section id="action" style="padding-top:0">
+  <div class="wrap">
+    <div class="eyebrow">13 · Recommended future course of action</div>
+    <h2>What SSEI should do differently</h2>
+    <p class="lede">Every action maps to a finding. None of them assumes the finding is settled truth; where evidence is directional, the action is a test.</p>
+    <div class="table-scroll rv">
+      <table class="matrix">
+        <thead><tr><th>Finding</th><th>What it suggests</th><th>Action</th><th>How to test</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>70-80% prefer simple, high-contrast creatives</td>
+            <td>Information-heavy boards get ignored</td>
+            <td><b>1 · Move to attention-led OOH:</b> one hero message, one dominant visual, clear SSEI branding, minimal supporting copy</td>
+            <td>Compare recall of new-format vs old-format creatives in the next interview round</td>
+          </tr>
+          <tr>
+            <td>~70% say repeated exposure builds familiarity</td>
+            <td>Frequency may beat prestige, but it is unproven</td>
+            <td><b>2 · Test frequency vs premium placement</b> on comparable budgets</td>
+            <td>Aided and unaided recall, search lift, enquiries by location, QR or URL interaction</td>
+          </tr>
+          <tr>
+            <td>Students split between vibrant and solid-minimal styles</td>
+            <td>Two viable creative directions exist</td>
+            <td><b>3 · A/B the two visual directions</b> with the same headline, placement type and objective</td>
+            <td>Recall and recognition by creative version</td>
+          </tr>
+          <tr>
+            <td>Attention depends on dwell time and surroundings</td>
+            <td>One resized artwork underperforms everywhere</td>
+            <td><b>4 · Adapt creative to environment:</b> metro, roadside, signals, bus stops, student areas</td>
+            <td>Recall by placement type</td>
+          </tr>
+          <tr>
+            <td>Weak brand association in Stage 2 recall</td>
+            <td>Creatives are seen but not linked to SSEI</td>
+            <td><b>5 · Build distinctive brand assets:</b> recurring typography, signature device, consistent structure; possibly a mascot</td>
+            <td>Test recognition of candidate assets before committing, especially the mascot</td>
+          </tr>
+          <tr>
+            <td>Trust forms online, near-unanimously</td>
+            <td>The board is step one of a journey</td>
+            <td><b>6 · Design OOH as the start of a digital journey:</b> see SSEI, search SSEI, find content, meet reviews and alumni proof, enquire</td>
+            <td>Search and profile-visit lift during campaign windows</td>
+          </tr>
+          <tr>
+            <td>Reviews outweigh billboard claims</td>
+            <td>OOH cannot be evaluated in isolation</td>
+            <td><b>7 · Treat reviews and student proof as part of the OOH strategy:</b> Google reviews, testimonials, alumni stories, YouTube, Instagram, landing pages</td>
+            <td>Audit what a student finds in the first search results after seeing a board</td>
+          </tr>
+          <tr>
+            <td>This round produced directional signals only</td>
+            <td>Decisions need real denominators</td>
+            <td><b>8 · Build a campaign measurement system</b> capturing recall, exposure, search behaviour and trust source per campaign</td>
+            <td>Framework in section 15</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 14 PRIORITY ================= -->
+<section id="priority">
+  <div class="wrap">
+    <div class="eyebrow">14 · Priority framework</div>
+    <h2>Sequence the actions</h2>
+    <p class="lede">Evidence-backed immediate changes are separated from hypotheses worth testing and long-term brand opportunities.</p>
+    <div class="prio rv">
+      <div class="prio-col now">
+        <h4>Do now</h4>
+        <span class="sub">Supported strongly enough to implement immediately</span>
+        <ul>
+          <li>Reduce copy on every board</li>
+          <li>Enlarge the hero message</li>
+          <li>Strengthen SSEI brand visibility on creatives</li>
+          <li>Design for contrast with surroundings</li>
+          <li>Give every campaign a digital continuation</li>
+        </ul>
+      </div>
+      <div class="prio-col">
+        <h4>Test next</h4>
+        <span class="sub">Needs controlled validation before scaling</span>
+        <ul>
+          <li>Frequency vs premium location</li>
+          <li>Vibrant vs solid-minimal creative</li>
+          <li>Different executions by placement type</li>
+          <li>Bold copy styles within the credibility line</li>
+        </ul>
+      </div>
+      <div class="prio-col">
+        <h4>Explore long term</h4>
+        <span class="sub">Brand-building options, not urgent commitments</span>
+        <ul>
+          <li>Mascot or recurring character</li>
+          <li>Distinctive SSEI visual system</li>
+          <li>Recurring campaign device</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 15 MEASUREMENT ================= -->
+<section id="measurement" style="padding-top:0">
+  <div class="wrap">
+    <div class="eyebrow">15 · Measurement &amp; next research phase</div>
+    <h2>Make the next round countable</h2>
+    <p class="lede">Every respondent in the next round should be asked the same core questions, so future reports can state real percentages with real denominators.</p>
+    <div class="check-head">Core capture, every respondent</div>
+    <div class="check-grid rv">
+      <div class="check">Student profile and course</div>
+      <div class="check">Noticed any education OOH?</div>
+      <div class="check">Unaided brands recalled</div>
+      <div class="check">Aided SSEI recognition</div>
+      <div class="check">Exact creative recalled</div>
+      <div class="check">Location and exposure frequency</div>
+      <div class="check">Message and visual remembered</div>
+      <div class="check">Did it increase curiosity?</div>
+      <div class="check">Searched the brand afterwards?</div>
+      <div class="check">Preferred marketing medium</div>
+      <div class="check">Most trusted source</div>
+      <div class="check">Could OOH influence consideration?</div>
+    </div>
+    <div class="check-head">Additional capture, CA campaign</div>
+    <div class="check-grid rv">
+      <div class="check">CA aspirant or non-CA</div>
+      <div class="check">Saw campaign naturally vs shown in interview</div>
+      <div class="check">Positive / neutral / negative, with reason</div>
+      <div class="check">Impact on SSEI perception</div>
+      <div class="check">Impact on Sanjay Saraf brand perception</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 16 FINAL ================= -->
+<section id="final" class="darker">
+  <div class="wrap">
+    <div class="eyebrow">16 · Final takeaway</div>
+    <p class="kicker rv" style="max-width:60ch">The research does not suggest that OOH should disappear from SSEI's marketing mix. It suggests its role should become more focused. OOH can create attention, recognition and familiarity; digital content, reviews and student proof then convert that familiarity into trust and consideration. The opportunity is not to say more outdoors, but to become <span class="gold">easier to notice, easier to recognise, and easier to validate</span> once a student looks further.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>SSEI · GROWTH &amp; MARKETING RESEARCH</span>
+    <span>STUDENT PERCEPTION &amp; BRAND RECALL STUDY · V2 · AUG 2026</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    },{threshold:.1});
+    document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  })();
+</script>
+</body>
+</html>
