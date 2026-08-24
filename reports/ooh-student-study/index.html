@@ -112,9 +112,22 @@
 
   /* hero */
   .hero{
-    background:linear-gradient(165deg,var(--navy) 0%,var(--navy-deep) 55%,var(--navy-darkest) 100%);
+    background:
+      linear-gradient(100deg,rgba(7,29,84,.97) 0%,rgba(9,37,107,.94) 45%,rgba(5,21,64,.78) 100%),
+      url('assets/field/hero-field.jpg') right 28%/cover no-repeat,
+      var(--navy-deep);
     color:#F2EFE8;padding:110px 0 90px;position:relative;overflow:hidden;
   }
+  .hero-credit{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:rgba(242,239,232,.55);
+    margin-top:26px;
+  }
+  /* field photo strip */
+  .field-strip{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-top:28px}
+  @media(max-width:760px){.field-strip{grid-template-columns:1fr 1fr}}
+  .field-strip .shot{max-height:340px;overflow:hidden;cursor:zoom-in}
+  .field-strip .shot img{object-fit:cover;height:100%;min-height:220px}
+  .field-cap{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;color:rgba(242,239,232,.6);margin-top:10px}
   .hero::after{content:"";position:absolute;right:-150px;top:-150px;width:540px;height:540px;border:1px solid rgba(210,153,89,.25);border-radius:50%}
   .hero::before{content:"";position:absolute;right:-70px;top:-70px;width:380px;height:380px;border:1px solid rgba(210,153,89,.4);border-radius:50%}
   .hero h1{
@@ -403,6 +416,7 @@
       <span class="pill">Audience · Primarily students</span>
       <span class="pill">Attention → Recall → Attribution → Curiosity</span>
     </div>
+    <p class="hero-credit">Background: the Growth Ops field team interviewing students on a Kolkata street during the survey rounds.</p>
   </div>
 </header>
 
@@ -457,6 +471,20 @@
       <div class="card"><span class="n">Digital reaction evidence</span><p>LinkedIn posts and comment threads relating to the "Give a F to your CA Degree" campaign, supplied as screenshots and shown unaltered.</p></div>
       <div class="card"><span class="n">Search-interest evidence</span><p>Google Trends material for relevant terms and periods, read as relative interest, never as search volume.</p></div>
     </div>
+
+    <div class="field-strip rv">
+      <button class="shot" data-full="assets/field/team-group.jpg" aria-label="Enlarge: the Growth Ops field team in Kolkata">
+        <img src="assets/field/team-group.jpg" alt="The six-member Growth Ops field team standing together on a Kolkata street during the survey rounds" loading="lazy">
+      </button>
+      <button class="shot" data-full="assets/field/interview-1.jpg" aria-label="Enlarge: team members interviewing students outside a college">
+        <img src="assets/field/interview-1.jpg" alt="Team members interviewing two students on a busy pavement outside a Kolkata college" loading="lazy">
+      </button>
+      <button class="shot" data-full="assets/field/interview-2.jpg" aria-label="Enlarge: an interview in progress at a college gate">
+        <img src="assets/field/interview-2.jpg" alt="A team member recording answers on a phone while interviewing students outside The Bhawanipur Education Society College" loading="lazy">
+      </button>
+    </div>
+    <p class="field-cap">The Growth Ops field team conducting the interview rounds outside Kolkata colleges. Click any photo to enlarge.</p>
+
     <div class="interp rv">
       <span class="tag">Read this first</span>
       <b>This is directional research, not a controlled experiment.</b> It reveals patterns, hypotheses and creative directions. It does not prove universal truths about all students in Kolkata, and no claim in this report should be read as one.
@@ -562,6 +590,10 @@
           <div class="flow-step"><span class="t">Audience-relevant location</span><span class="q">Repeated contact with the people SSEI actually wants</span></div>
         </div>
         <p class="copy" style="margin-top:16px;font-size:.9rem">The study supports weighing the second consideration alongside the first, not replacing one with the other.</p>
+        <button class="shot" data-full="assets/field/college-site.jpg" aria-label="Enlarge: interviews outside The Bhawanipur Education Society College" style="max-height:280px;overflow:hidden;margin-top:18px">
+          <img src="assets/field/college-site.jpg" alt="The field team interviewing students directly outside The Bhawanipur Education Society College, the kind of student-movement location the research points to" loading="lazy" style="object-fit:cover;height:280px">
+        </button>
+        <p class="field-cap">Interviews happening where the audience actually is: directly outside a Kolkata college.</p>
       </div>
     </div>
   </div>
