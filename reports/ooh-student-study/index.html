@@ -328,6 +328,52 @@
   footer{background:var(--navy-darkest);color:rgba(242,239,232,.55);padding:26px 0;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em}
   footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 
+  /* LinkedIn evidence gallery */
+  .li-feature{display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:28px;align-items:start;margin-bottom:26px}
+  @media(max-width:820px){.li-feature{grid-template-columns:1fr}}
+  .shot{
+    background:var(--card);border:1px solid var(--line-soft);border-radius:12px;overflow:hidden;
+    box-shadow:0 2px 8px rgba(9,37,107,.08);padding:0;cursor:zoom-in;display:block;width:100%;
+  }
+  .shot img{display:block;width:100%;height:auto}
+  .shot:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .shot-cap{font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.5}
+  .li-rail{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:6px}
+  .li-item .shot{max-height:300px;overflow:hidden}
+  .theme-tags{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 6px}
+  .ttag{
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;
+    background:rgba(9,37,107,.07);border:1px solid var(--line-soft);border-radius:999px;
+    padding:6px 14px;color:var(--navy);
+  }
+  .lightbox{
+    position:fixed;inset:0;background:rgba(5,21,64,.92);z-index:100;display:none;
+    align-items:flex-start;justify-content:center;overflow:auto;padding:30px 16px;
+  }
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:min(680px,96vw);height:auto;border-radius:10px}
+  .lightbox .close{
+    position:fixed;top:14px;right:18px;font-family:var(--mono);font-size:1rem;
+    background:var(--gold);color:var(--navy-darkest);border:0;border-radius:999px;
+    padding:9px 18px;cursor:pointer;font-weight:600;
+  }
+  .lightbox .close:focus-visible{outline:3px solid #fff;outline-offset:2px}
+
+  /* trends chart */
+  .tchart{background:var(--card);border:1px solid var(--line-soft);border-radius:14px;padding:26px;box-shadow:0 1px 3px rgba(9,37,107,.05)}
+  .tchart .title{font-family:var(--display);font-weight:700;color:var(--navy);font-size:1rem;margin-bottom:2px}
+  .tchart .sub{font-size:.8rem;color:var(--muted);margin-bottom:18px}
+  .trow{display:grid;grid-template-columns:minmax(120px,220px) 1fr auto;gap:14px;align-items:center;padding:7px 0}
+  .trow .q{font-size:.88rem;color:var(--ink);font-weight:500}
+  .trow .bar{height:14px;background:var(--track);border-radius:4px;overflow:hidden}
+  .trow .bar i{display:block;height:100%;background:var(--navy);border-radius:4px}
+  .trow .chg{font-family:var(--mono);font-size:.72rem;font-weight:600;border-radius:4px;padding:3px 8px;white-space:nowrap}
+  .chg.up{background:rgba(30,158,139,.14);color:#0E6B5D}
+  .chg.down{background:rgba(86,96,122,.14);color:var(--muted)}
+  .chg.breakout{background:rgba(210,153,89,.2);color:#6E4A17}
+  .tnote{font-size:.8rem;color:var(--muted);margin-top:14px;max-width:74ch}
+  @media(max-width:560px){.trow{grid-template-columns:1fr;gap:6px}.trow .bar{order:3}}
+
   .rv{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
   .rv.in{opacity:1;transform:none}
   @media (prefers-reduced-motion:reduce){
@@ -408,7 +454,7 @@
       <div class="card"><span class="n">Field conversations</span><p>Student and respondent interviews across multiple fieldwork rounds, opened as neutral conversations about outdoor advertising before SSEI was revealed.</p></div>
       <div class="card"><span class="n">Creative recognition</span><p>Respondents were shown relevant creative material, including a masked SSEI creative and a masked competitor creative, and asked about recognition.</p></div>
       <div class="card"><span class="n">Location observations</span><p>Feedback on the selected outdoor sites and commute behaviour around them.</p></div>
-      <div class="card"><span class="n">Digital reaction evidence</span><p>LinkedIn discussion material relating to the "Add F to your CA degree" campaign.</p></div>
+      <div class="card"><span class="n">Digital reaction evidence</span><p>LinkedIn posts and comment threads relating to the "Give a F to your CA Degree" campaign, supplied as screenshots and shown unaltered.</p></div>
       <div class="card"><span class="n">Search-interest evidence</span><p>Google Trends material for relevant terms and periods, read as relative interest, never as search volume.</p></div>
     </div>
     <div class="interp rv">
@@ -579,8 +625,8 @@
 <section class="dark">
   <div class="wrap">
     <div class="eyebrow">Case two · When the billboard left the street</div>
-    <h2>"Add F to your CA degree"</h2>
-    <p class="lede">One SSEI outdoor execution did something most billboards never attempt: it gave people something to react to. This section examines what that reaction does and does not prove.</p>
+    <h2>"Give a F to your CA Degree"</h2>
+    <p class="lede">The boards at the Kolkata sites carried one provocative line and a crane hoisting a gold F into the letters CFA. This execution did something most billboards never attempt: it gave people something to react to. This section examines what that reaction does and does not prove.</p>
     <div class="split">
       <div class="rv">
         <p class="copy">Among CA aspirants asked about the campaign in the interviews, roughly four in five responded positively: funny, clever, bold, memorable. A smaller minority disliked it, and their discomfort was specific: not boldness itself, but boldness attached to the <b>Sanjay Saraf</b> name, which they associate with professional credibility.</p>
@@ -594,6 +640,7 @@
         <div class="eyebrow" style="margin-bottom:12px">What the deeper idea might be</div>
         <p class="copy" style="font-family:var(--display);font-weight:700;font-size:1.15rem;line-height:1.4;color:#fff">The most valuable billboard may not be the one with the most information. It may be the one that gives people something to react to.</p>
         <p class="copy">Balanced immediately by its condition: reaction is useful only when the audience can connect the conversation back to the brand, and when the attention supports rather than damages the intended positioning.</p>
+        <p class="copy">The LinkedIn evidence in the next section adds a message-clarity lesson: the intended decode, add an F to CA and you get CFA, was not instant. Several commenters had to explain it to the critics, and even a defender pointed out the line reads as an insult "prima facie". A provocative line that needs decoding hands the first interpretation to its critics.</p>
       </div>
     </div>
   </div>
@@ -602,26 +649,93 @@
 <!-- ============ LINKEDIN EVIDENCE ============ -->
 <section id="amplify">
   <div class="wrap">
-    <div class="eyebrow">Digital reaction evidence</div>
+    <div class="eyebrow">Digital reaction evidence · observed conversation within supplied screenshots</div>
     <h2>The LinkedIn conversation</h2>
-    <p class="lede">The campaign generated visible discussion on LinkedIn. The screenshots documenting it are being added to this report; the panels below are reserved for the actual evidence and will not be substituted with recreations.</p>
-    <div class="slot-rail rv">
-      <div class="slot"><span class="ic">[ ]</span><span class="t">Featured reaction</span><p>Awaiting supplied LinkedIn screenshot. Will show the most instructive single post at readable size.</p></div>
-      <div class="slot"><span class="ic">[ ]</span><span class="t">Reaction rail</span><p>Awaiting supplied screenshots. Supporting posts, reposts and comment threads, each enlargeable.</p></div>
-      <div class="slot"><span class="ic">[ ]</span><span class="t">Observed themes</span><p>Theme tags (curiosity, debate, humour, qualification comparison) will be derived only from what the screenshots actually show.</p></div>
+    <p class="lede">The campaign was posted about, photographed and argued over on LinkedIn by people unconnected to SSEI, over a period spanning roughly a month. Six screenshots were supplied and are shown unaltered; click any to enlarge.</p>
+
+    <div class="li-feature rv">
+      <div>
+        <button class="shot" data-full="assets/linkedin/li-sumeet-post.jpg" aria-label="Enlarge: critical LinkedIn post by a Chartered Accountant with photo of the billboards">
+          <img src="assets/linkedin/li-sumeet-post.jpg" alt="LinkedIn post by a Chartered Accountant calling the billboard an offensive assault on the CA degree, with his own photograph of two Give a F to your CA Degree billboards at a Kolkata junction" loading="lazy">
+        </button>
+        <p class="shot-cap"><b>Featured:</b> a Chartered Accountant's post (about 4 weeks before the 24 Aug capture) calling the campaign "a direct, offensive, and unprofessional assault on the CA degree", while also decoding the intended wordplay (CA + F = CFA). He photographed the boards himself at a Chowringhee Road junction. Visible engagement on this post: 27 reactions, 5 comments, 1 repost.</p>
+      </div>
+      <div>
+        <p class="copy">Two things make this thread strategically interesting. First, the boards travelled from the street onto LinkedIn through a stranger's phone camera: the amplification mechanism this report hypothesised, caught happening. Second, the argument in the comments did not run one way. The most-reacted comments in the supplied thread <b>defended the campaign's intent</b> (13 and 9 reactions for readings like "they are saying CAs can scale up by pursuing CFA"), while the sharpest criticism attacked the association with Sanjay Saraf's name, and one commenter tagged ICAI's leadership asking for the hoarding's removal.</p>
+        <p class="copy">A separate branding commentator cited the campaign alongside Chai Sutta Bar and WTF as an example of names that "make you stop and look", then asked whether attention converts to long-term trust. The street creative became a third party's case study.</p>
+        <div class="theme-tags" aria-label="Observed conversation themes in the supplied screenshots">
+          <span class="ttag">Criticism &amp; advertising ethics</span>
+          <span class="ttag">Defence &amp; reinterpretation of intent</span>
+          <span class="ttag">Humour &amp; wordplay</span>
+          <span class="ttag">CA vs CFA comparison</span>
+          <span class="ttag">The Sanjay Saraf name as flashpoint</span>
+          <span class="ttag">Cited as a branding case study</span>
+        </div>
+      </div>
     </div>
-    <p class="copy" style="font-size:.88rem;color:var(--muted);margin-top:16px">When the screenshots land: only clearly legible likes, comments and dates will be displayed; nothing will be aggregated into "campaign reach"; and the collection will be presented as observed conversation within the supplied material, not as overall market sentiment.</p>
+
+    <div class="li-rail rv">
+      <div class="li-item">
+        <button class="shot" data-full="assets/linkedin/li-yash-critique.jpg" aria-label="Enlarge: strongly critical post about Sanjay Saraf">
+          <img src="assets/linkedin/li-yash-critique.jpg" alt="LinkedIn post strongly criticising Sanjay Saraf personally for promoting CFA by mocking the CA profession, with a disclaimer, tagging SSEI" loading="lazy">
+        </button>
+        <p class="shot-cap">The harshest supplied reaction (3 weeks, edited): personal criticism of Sanjay Saraf, framed as defending the CA profession, with SSEI tagged.</p>
+      </div>
+      <div class="li-item">
+        <button class="shot" data-full="assets/linkedin/li-defence-thread.jpg" aria-label="Enlarge: comment thread defending the campaign">
+          <img src="assets/linkedin/li-defence-thread.jpg" alt="Comment thread where CFA charterholders and others defend the campaign's intent, the top comment carrying 13 reactions" loading="lazy">
+        </button>
+        <p class="shot-cap">The pushback under that post: charterholders and professionals reinterpreting the creative's intent; the top-reacted comments here defend it.</p>
+      </div>
+      <div class="li-item">
+        <button class="shot" data-full="assets/linkedin/li-sumeet-thread.jpg" aria-label="Enlarge: comments including the FCA wordplay joke">
+          <img src="assets/linkedin/li-sumeet-thread.jpg" alt="Comments under the critical post, including a joke that CAs already gave an F to their degree which is why they are called FCA" loading="lazy">
+        </button>
+        <p class="shot-cap">Humour arriving on its own: "we already gave F to our degree, that's why we are called FCA."</p>
+      </div>
+      <div class="li-item">
+        <button class="shot" data-full="assets/linkedin/li-defence-more.jpg" aria-label="Enlarge: further comments defending CFA prospects">
+          <img src="assets/linkedin/li-defence-more.jpg" alt="Further comments defending CFA's global prospects and one pointing out the grammatically correct phrase would be an F" loading="lazy">
+        </button>
+        <p class="shot-cap">The debate drifting into CA vs CFA career prospects, and a grammar aside about "a F" vs "an F".</p>
+      </div>
+      <div class="li-item">
+        <button class="shot" data-full="assets/linkedin/li-krishna-branding.jpg" aria-label="Enlarge: branding commentary citing the campaign">
+          <img src="assets/linkedin/li-krishna-branding.jpg" alt="LinkedIn post citing the campaign alongside Chai Sutta Bar and WTF as attention-grabbing branding, asking whether a name that makes you stop can make you stay" loading="lazy">
+        </button>
+        <p class="shot-cap">Third-party branding commentary (2 days before capture): "a name can make you stop. Can it make you stay?" The campaign used as a case study in attention vs trust.</p>
+      </div>
+    </div>
+
+    <p class="copy" style="font-size:.85rem;color:var(--muted);margin-top:18px">What this evidence shows: the creative generated genuine, unprompted discussion among at least some professionals, for weeks, beyond SSEI's own pages. What it does not show: overall sentiment, reach, or persuasion. Visible engagement in the supplied material is modest (the largest visible counts are 27 reactions on a post and 13 on a comment), and no aggregate reach figure is claimed.</p>
   </div>
 </section>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged screenshot">
+  <button class="close" id="lb-close">Close ✕</button>
+  <img id="lb-img" src="" alt="Enlarged screenshot">
+</div>
 
 <!-- ============ TRENDS ============ -->
 <section style="padding-top:0">
   <div class="wrap">
     <div class="eyebrow">Search-interest evidence</div>
     <h2>Did curiosity travel to search?</h2>
-    <p class="lede">Google Trends material for relevant terms and the campaign period is being added. Trends reports relative search interest on a 0 to 100 index within a chosen term, geography and period. It never reports search volume, and this report will never phrase it that way.</p>
-    <div class="slot-rail rv" style="grid-template-columns:1fr">
-      <div class="slot" style="min-height:240px"><span class="ic">[ ~ ]</span><span class="t">Relative search-interest chart</span><p style="max-width:52ch">Awaiting supplied Google Trends data. If clean values can be extracted, a custom chart with date on the X axis, the relative-interest index on the Y axis, and event markers only for dates we actually know. If not, the screenshot itself with an analytical caption. No reconstructed lines.</p></div>
+    <p class="lede">The supplied Google Trends exports cover searches made alongside the brand in West Bengal. Trends reports relative search interest on a 0 to 100 index within the chosen geography and period; it never reports search volume, and this report never phrases it that way.</p>
+    <div class="tchart rv">
+      <div class="title">Searches made with the brand · West Bengal</div>
+      <div class="sub">Google Trends related-query export, 1 Jul to 24 Aug 2026. Index: 100 = the highest-interest query in this set. Change is vs the previous period; "Breakout" means a query that was previously negligible and grew sharply.</div>
+      <div class="trow"><span class="q">sanjay saraf</span><div class="bar"><i style="width:100%"></i></div><span class="chg down">-20%</span></div>
+      <div class="trow"><span class="q">ssei</span><div class="bar"><i style="width:76%"></i></div><span class="chg down">-10%</span></div>
+      <div class="trow"><span class="q">cfa</span><div class="bar"><i style="width:47%"></i></div><span class="chg up">+50%</span></div>
+      <div class="trow"><span class="q">sanjay saraf classes</span><div class="bar"><i style="width:35%"></i></div><span class="chg up">+50%</span></div>
+      <div class="trow"><span class="q">ssei mock test</span><div class="bar"><i style="width:30%"></i></div><span class="chg breakout">Breakout</span></div>
+      <div class="trow"><span class="q">sanjay saraf educational institute</span><div class="bar"><i style="width:3%"></i></div><span class="chg breakout">Breakout</span></div>
+      <div class="tnote">Over the longer 1 May to 24 Aug window, the two core terms read: sanjay saraf 100 (-20%) and ssei 76 (-3%). Source: Google Trends exports supplied 24 Aug 2026, geography IN-WB.</div>
+    </div>
+    <div class="interp rv">
+      <span class="tag">Honest reading</span>
+      This is a related-query table, not a campaign-period spike chart; no time series was exported, so none is drawn. What it shows, directionally: during the campaign and conversation period, <b>"cfa" and longer intent-flavoured brand queries grew in West Bengal</b> (two breakouts, two at +50%) <b>while the two core brand terms softened slightly</b>. The "ssei mock test" breakout plausibly reflects the exam cycle as much as any campaign. Mixed signal, worth instrumenting properly next time; not evidence of brand-search lift on its own.
     </div>
     <div class="interp rv">
       <span class="tag">Correlation note</span>
@@ -639,9 +753,9 @@
       <div class="rv">
         <div class="flow">
           <div class="flow-step"><span class="t">Street</span><span class="q">The viewer encounters the billboard</span></div>
-          <div class="flow-arrow">▼ observed sequence</div>
+          <div class="flow-arrow">▼ documented in the LinkedIn threads</div>
           <div class="flow-step"><span class="t">Conversation</span><span class="q">The idea is discussed or reposted online</span></div>
-          <div class="flow-arrow">▼ directional signal</div>
+          <div class="flow-arrow">▼ mixed directional signal</div>
           <div class="flow-step"><span class="t">Search</span><span class="q">Additional curiosity may appear in search behaviour</span></div>
           <div class="flow-arrow">▼ hypothesis</div>
           <div class="flow-step"><span class="t">Destination</span><span class="q">The curious person meets SSEI's content, reviews and proof</span></div>
@@ -673,7 +787,7 @@
       <div class="q"><span class="t">High memory, low action</span><p>People remember it but never research the brand.</p></div>
       <div class="q"><span class="t">High amplification, uncertain persuasion</span><p>People discuss it online but the brand impact is unclear.</p></div>
     </div>
-    <p class="copy" style="margin-top:22px;color:rgba(242,239,232,.85)">The ideal SSEI execution raises <b style="color:var(--gold)">attention + memory + attribution + productive curiosity</b> together, not one metric at the expense of the rest. That framing also keeps the open frequency question honest: the "Add F" case informs the impact-and-conversation mechanism, but it does not prove one signature board beats distributed frequency. For a comparable budget, that remains the highest-priority experiment.</p>
+    <p class="copy" style="margin-top:22px;color:rgba(242,239,232,.85)">The ideal SSEI execution raises <b style="color:var(--gold)">attention + memory + attribution + productive curiosity</b> together, not one metric at the expense of the rest. That framing also keeps the open frequency question honest: the "Give a F" case informs the impact-and-conversation mechanism, but it does not prove one signature board beats distributed frequency. For a comparable budget, that remains the highest-priority experiment.</p>
   </div>
 </section>
 
@@ -762,11 +876,11 @@
       </details>
       <details class="lim">
         <summary>LinkedIn evidence limitation</summary>
-        <div class="body">Supplied screenshots illustrate digital discussion but may not represent the entire online conversation. Visible engagement counts will be reported only where legible, and never aggregated into a reach figure.</div>
+        <div class="body">The six supplied screenshots (a seventh was a duplicate) illustrate digital discussion but may not represent the entire online conversation. Engagement counts are reported only where clearly legible, and none are aggregated into a reach figure. An impressions figure visible in one author's profile headline is their profile boilerplate, not this campaign's reach, and is deliberately not cited.</div>
       </details>
       <details class="lim">
         <summary>Google Trends limitation</summary>
-        <div class="body">Google Trends provides normalised relative search interest, not absolute search volume, and cannot alone establish that the campaign caused any movement.</div>
+        <div class="body">Google Trends provides normalised relative search interest, not absolute search volume, and cannot alone establish that the campaign caused any movement. Only related-query exports for West Bengal were supplied; no time series was available, so no campaign-period trend line is drawn or implied.</div>
       </details>
       <details class="lim">
         <summary>Newest-interview limitation</summary>
@@ -800,7 +914,7 @@
   <div class="wrap">
     <div class="eyebrow">Final strategic answer</div>
     <p class="copy rv" style="font-size:1.05rem;color:rgba(242,239,232,.9);max-width:68ch">The research suggests that SSEI's outdoor opportunity is not simply to be present more often. It is to become harder to ignore, easier to remember and easier to attribute. Vibrant, simple and visually dominant communication appears better suited to earning that first moment of attention, and the newest interviews suggest immediate value cues also deserve testing.</p>
-    <p class="copy rv" style="font-size:1.05rem;color:rgba(242,239,232,.9);max-width:68ch">The "Add F to your CA degree" case introduces another dimension: the strongest outdoor ideas may continue working after the physical exposure ends, by creating discussion and curiosity online. LinkedIn reaction and Google search-interest data can help investigate that amplification, treated as directional signals rather than proof of causation.</p>
+    <p class="copy rv" style="font-size:1.05rem;color:rgba(242,239,232,.9);max-width:68ch">The "Give a F to your CA Degree" case introduces another dimension: the strongest outdoor ideas may continue working after the physical exposure ends, by creating discussion and curiosity online. The supplied LinkedIn threads show that happening; the search-interest data stays mixed. Both are directional signals to instrument properly, not proof of causation.</p>
     <div style="margin:40px 0 0" class="rv">
       <p class="final-q">The question is no longer "how many billboards should we buy?"</p>
       <p class="final-q" style="margin-top:18px">It is: <span>what makes an SSEI billboard continue working after someone has passed it?</span></p>
@@ -863,6 +977,38 @@
       });
     });
   });
+
+  /* screenshot lightbox */
+  (function(){
+    var lb = document.getElementById("lightbox");
+    var lbImg = document.getElementById("lb-img");
+    var closeBtn = document.getElementById("lb-close");
+    var lastFocus = null;
+    if (!lb) return;
+    function open(src, alt){
+      lbImg.src = src;
+      lbImg.alt = alt || "Enlarged screenshot";
+      lb.classList.add("open");
+      lastFocus = document.activeElement;
+      closeBtn.focus();
+    }
+    function close(){
+      lb.classList.remove("open");
+      lbImg.src = "";
+      if (lastFocus) lastFocus.focus();
+    }
+    document.querySelectorAll(".shot").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var img = btn.querySelector("img");
+        open(btn.getAttribute("data-full"), img ? img.alt : "");
+      });
+    });
+    closeBtn.addEventListener("click", close);
+    lb.addEventListener("click", function(e){ if (e.target === lb) close(); });
+    document.addEventListener("keydown", function(e){
+      if (e.key === "Escape" && lb.classList.contains("open")) close();
+    });
+  })();
 
   /* reveal on scroll */
   (function(){
