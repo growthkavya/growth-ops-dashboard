@@ -134,6 +134,17 @@
   .h2h .desc{font-size:.87rem;color:var(--muted);margin-top:6px}
   .gapline{text-align:center;margin-top:22px;font-family:var(--display);font-weight:800;font-size:1.1rem;color:var(--bad)}
 
+  /* campus split */
+  .campus{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:22px}
+  .cs{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:22px;text-align:center}
+  .cs.avg{background:var(--gold);border-color:var(--gold)}
+  .cs .pct{font-family:var(--display);font-weight:900;font-size:2.6rem;line-height:1;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+  .cs.avg .pct{color:var(--navy-dark)}
+  .cs .nm{font-family:var(--display);font-weight:700;font-size:.95rem;color:#fff;margin-top:10px}
+  .cs.avg .nm{color:var(--navy-dark)}
+  .cs .sub2{font-size:.8rem;color:rgba(241,238,231,.65);margin-top:5px}
+  .cs.avg .sub2{color:rgba(5,21,64,.7)}
+
   /* ---------- tables ---------- */
   .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-top:24px;background:var(--card)}
   table{width:100%;border-collapse:collapse;min-width:640px}
@@ -299,17 +310,22 @@
 <section id="verdict">
   <div class="wrap">
     <div class="sec-head"><span class="sec-no">01</span><h2>The verdict</h2></div>
-    <p class="lede">We got the media buy right, the creative wrong, picked up free visibility we did not plan for, and moved no enquiries.</p>
+    <p class="lede">The sites worked and the board got recognised. Where we lost ground is coverage, brand attribution and anything resembling a business number.</p>
     <div class="scorecard rv">
       <div class="sc good">
         <span class="tag">Worked</span>
         <h3>Locations</h3>
-        <p>All three sites sat where our students move. Half of those who remembered the board could name the spot.</p>
+        <p>All three sites sat where our students move. 50 to 60% of those who recognised the board could name exactly where they saw it.</p>
       </div>
-      <div class="sc bad">
-        <span class="tag">Did not work</span>
-        <h3>Creative</h3>
-        <p>Only ~30% recognised our board with the logo hidden. A competitor scored ~85% in the same test.</p>
+      <div class="sc good">
+        <span class="tag">Held up</span>
+        <h3>Creative recall</h3>
+        <p>50 to 60% recognised our hoarding with the branding blanked out. The artwork registered.</p>
+      </div>
+      <div class="sc warn">
+        <span class="tag">Uneven</span>
+        <h3>Coverage</h3>
+        <p>80%+ knew us outside St. Xavier&#8217;s, only 40% outside Bhawanipur. Our awareness is concentrated, not city wide.</p>
       </div>
       <div class="sc good">
         <span class="tag">Bonus</span>
@@ -324,7 +340,7 @@
     </div>
     <div class="callout rv">
       <p class="ct">In one line</p>
-      <p>We bought good media and hung average creative on it. The sites put us in front of the right students, and the board failed to tell them who we were.</p>
+      <p>More people remembered the board than remembered it was ours. 50 to 60% recognised the artwork, but only 40% recalled that SSEI had advertised at all, and that gap is the thing to fix.</p>
     </div>
   </div>
 </section>
@@ -398,46 +414,64 @@
 
     <div class="panel rv">
       <div class="panel-title">Does Kolkata know us?</div>
-      <div class="panel-sub">Hardest test at the top. The grey line is what it means for everyone who said no.</div>
+      <div class="panel-sub">Awareness first, then whether our board specifically registered.</div>
       <div class="stat-row">
-        <div><div class="q">Named SSEI unprompted when asked about finance institutes</div><div class="meter"><i style="width:10%"></i><i class="range" style="left:10%;width:5%"></i></div><div class="flip">85 to 90 out of 100 did not think of us at all.</div></div>
-        <div class="val">10-15%</div>
+        <div><div class="q">Recognised the SSEI name when we said it</div><div class="meter"><i style="width:60%"></i></div><div class="flip">Swings hard by campus. See the split below.</div></div>
+        <div class="val">~60%</div>
       </div>
       <div class="stat-row">
-        <div><div class="q">Recognised the name once we said it</div><div class="meter"><i style="width:40%"></i><i class="range" style="left:40%;width:5%"></i></div><div class="flip">More than half of finance students in our own city had not heard of us.</div></div>
-        <div class="val">40-45%</div>
+        <div><div class="q">Of the students who knew us, those who named SSEI unprompted when asked where they would do CA or CFA coaching</div><div class="meter"><i style="width:85%" class="alt"></i><i class="range" style="left:85%;width:5%"></i></div><div class="flip">Once we are known, we are top of mind. The problem is being known, not being remembered.</div></div>
+        <div class="val">85-90%</div>
       </div>
       <div class="stat-row">
-        <div><div class="q">Noticed SSEI advertising in Kolkata recently</div><div class="meter"><i style="width:40%"></i></div><div class="flip">~60% noticed nothing from us while the boards were up.</div></div>
+        <div><div class="q">Noticed SSEI advertising in Kolkata recently</div><div class="meter"><i style="width:40%"></i></div><div class="flip">Lower than the number who recognised our actual artwork, which is the attribution gap in one line.</div></div>
         <div class="val">~40%</div>
       </div>
       <div class="stat-row">
-        <div><div class="q">Recognised our hoarding with branding hidden</div><div class="meter"><i style="width:30%"></i></div><div class="flip">~70% looked at our own creative and did not recall it.</div></div>
-        <div class="val">~30%</div>
+        <div><div class="q">Recognised our hoarding with the branding hidden</div><div class="meter"><i style="width:50%"></i><i class="range" style="left:50%;width:10%"></i></div><div class="flip">The creative did its job of being memorable.</div></div>
+        <div class="val">50-60%</div>
       </div>
       <div class="stat-row">
-        <div><div class="q">Of those, could correctly name where they saw it</div><div class="meter"><i style="width:50%" class="alt"></i></div><div class="flip">The strongest evidence that site selection was sound.</div></div>
-        <div class="val">~50%</div>
+        <div><div class="q">Of those, could correctly name where they saw it</div><div class="meter"><i style="width:50%" class="alt"></i><i class="range" style="left:50%;width:10%"></i></div><div class="flip">The strongest evidence that site selection was sound.</div></div>
+        <div class="val">50-60%</div>
       </div>
     </div>
 
     <div class="panel rv">
-      <div class="panel-title">The number that should worry us</div>
-      <div class="panel-sub">Same students, same exercise, two masked boards.</div>
-      <div class="h2h">
-        <div class="side us" style="background:rgba(255,255,255,.07);border-color:var(--bad)">
-          <div class="big" style="color:#F2A08D">~30%</div>
-          <div class="who" style="color:#fff">Our board</div>
-          <div class="desc" style="color:rgba(241,238,231,.7)">Recognised, branding masked</div>
+      <div class="panel-title">Awareness is not spread evenly across the city</div>
+      <div class="panel-sub">The same question, asked outside two different colleges.</div>
+      <div class="campus">
+        <div class="cs"><div class="pct">80%+</div><div class="nm">Outside St. Xavier&#8217;s</div><div class="sub2">Beside our Park Street Metro site</div></div>
+        <div class="cs avg"><div class="pct">~60%</div><div class="nm">Average across the city</div><div class="sub2">What we would report as our number</div></div>
+        <div class="cs"><div class="pct">40%</div><div class="nm">Outside Bhawanipur</div><div class="sub2">Beside the Exide and AJC Bose sites</div></div>
+      </div>
+      <p class="body-copy">A 40 point swing between two colleges a few kilometres apart is the most useful number in this study. Our strongest awareness sits exactly where our strongest site sits, though Xavier&#8217;s students may also know us through existing enrolments, so we should not read the whole gap as the hoarding&#8217;s doing. Either way, half our target audience lives in the 40% zone.</p>
+    </div>
+
+    <div class="panel rv">
+      <div class="panel-title">The competitor benchmark, and why it needs context</div>
+      <div class="panel-sub">We showed a masked competitor board alongside ours. It scored around 85%, but that number needs explaining before anyone draws the wrong conclusion.</div>
+      <div class="cards" style="margin-top:6px">
+        <div class="card">
+          <span class="eyebrow">What we compared against</span>
+          <h3>One brand, one permanent board</h3>
+          <p>The benchmark was IMS Pro School, and effectively a single hoarding on their own building near the St. Xavier&#8217;s campus. It has been there continuously. That is not a fair test of creative against creative.</p>
         </div>
-        <div class="side them" style="background:rgba(255,255,255,.07);border-color:var(--gold)">
-          <div class="big" style="color:var(--gold)">~85%</div>
-          <div class="who" style="color:#fff">Competitor board</div>
-          <div class="desc" style="color:rgba(241,238,231,.7)">Recognised, masked identically</div>
+        <div class="card">
+          <span class="eyebrow">Why the category is thin</span>
+          <h3>Finance institutes barely use outdoor</h3>
+          <p>Almost nobody in our category runs hoardings at scale in Kolkata, so there was no real competitive set to benchmark against. The 85% measures permanence and a fixed landmark, not better artwork.</p>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Who did stand out</span>
+          <h3>PhysicsWallah</h3>
+          <p>Outside our category, PhysicsWallah came up repeatedly as a brand students clearly recognised. Worth studying how they are getting that consistency.</p>
         </div>
       </div>
-      <div class="gapline" style="color:#F2A08D">A 55 point gap, same streets, same students.</div>
-      <p class="body-copy">This is not a problem with hoardings. Somebody else&#8217;s board on the same streets got remembered by nearly everyone. Ours did not.</p>
+      <div class="callout" style="margin-top:22px">
+        <p class="ct">The two learnings from this</p>
+        <p>Being up all the time beats being up once. A permanent board on a fixed landmark builds recognition that a two month burst cannot match, which argues for longer runs or repeat bookings rather than one off campaigns. And boards that make a clear statement get remembered, which is the one thing our CA creative genuinely did well.</p>
+      </div>
     </div>
 
     <div class="panel rv">
@@ -517,11 +551,11 @@
 <!-- 06 CREATIVE -->
 <section id="creative" class="band">
   <div class="wrap">
-    <div class="sec-head"><span class="sec-no">06</span><h2>Where the creative lost us</h2></div>
-    <p class="lede">Three problems, all fixable before the next booking.</p>
+    <div class="sec-head"><span class="sec-no">06</span><h2>What to fix in the creative</h2></div>
+    <p class="lede">The artwork was memorable. Three specific things still cost us, and all are fixable before the next booking.</p>
     <div class="cards rv">
       <div class="card"><span class="eyebrow">One</span><h3>The WhatsApp style board</h3><p>Disliked by everyone who saw it. Chat bubbles work at arm&#8217;s length and turn into grey shapes on a road.</p></div>
-      <div class="card"><span class="eyebrow">Two</span><h3>Our name was too small</h3><p>This is what the 30 against 85 gap means. People saw a board and could not connect it to SSEI.</p></div>
+      <div class="card"><span class="eyebrow">Two</span><h3>Our name was too small</h3><p>50 to 60% recognised the artwork but only 40% recalled SSEI advertising at all. The board stuck, the brand slipped off it.</p></div>
       <div class="card"><span class="eyebrow">Three</span><h3>Height and sightline</h3><p>The shelter panel sat above head height. Viewing angle needs to be on the checklist before we sign, not after.</p></div>
     </div>
     <div class="callout rv">
@@ -629,8 +663,8 @@
 
     <div class="panel rv" style="padding:14px 30px">
       <div class="op" style="border-top-color:rgba(255,255,255,.12)"><div class="n" style="color:var(--gold)">01</div><div>
-        <h3>Good media, average creative</h3>
-        <p style="color:rgba(241,238,231,.78)">Placement signals all came back positive. A competitor then scored 85% against our 30% on the same streets. Site selection is not the thing to fix.</p></div></div>
+        <h3>The board was remembered. We were not, quite.</h3>
+        <p style="color:rgba(241,238,231,.78)">50 to 60% recognised our artwork but only 40% recalled that SSEI had advertised. People held on to the creative and let go of the brand. Making our name bigger is the cheapest fix available to us.</p></div></div>
       <div class="op" style="border-top-color:rgba(255,255,255,.12)"><div class="n" style="color:var(--gold)">02</div><div>
         <h3>The best return came from a channel we did not budget for</h3>
         <p style="color:rgba(241,238,231,.78)">A month of unpaid LinkedIn argument, with professionals defending us. We had nothing ready to catch it. Next time we should be in that conversation on day one.</p></div></div>
@@ -638,8 +672,8 @@
         <h3>The line was clever but needed a second read</h3>
         <p style="color:rgba(241,238,231,.78)">Half those comment threads were people explaining the joke to each other. That is a lot to ask of someone passing in traffic. Witty is fine, needing to be decoded is the risk.</p></div></div>
       <div class="op" style="border-top-color:rgba(255,255,255,.12)"><div class="n" style="color:var(--gold)">04</div><div>
-        <h3>The real problem is bigger than one campaign</h3>
-        <p style="color:rgba(241,238,231,.78)">55 to 60% of finance students in Kolkata had not heard of us even when prompted. Two months on three sites was never going to shift that. It tells us the size of the job.</p></div></div>
+        <h3>Our real problem is coverage, not creative</h3>
+        <p style="color:rgba(241,238,231,.78)">80%+ outside Xavier&#8217;s against 40% outside Bhawanipur. We are strong in a pocket and thin everywhere else. That is a media weight and duration problem, and three sites for two months was never going to close it.</p></div></div>
       <div class="op" style="border-top-color:rgba(255,255,255,.12)"><div class="n" style="color:var(--gold)">05</div><div>
         <h3>Flat leads is a warning, not a verdict</h3>
         <p style="color:rgba(241,238,231,.78)">Nobody buys a hoarding to close admissions. But we currently have no number to defend the next spend with, so until recall is measured every OOH budget conversation is one we lose.</p></div></div>
@@ -660,7 +694,7 @@
     </div>
 
     <div class="panel-tab" id="p1" role="tabpanel" aria-labelledby="t1">
-      <div class="step"><div class="n">01</div><div><h3>Make our name unmissable on every board</h3><p>The direct fix for the 30 against 85 gap.</p></div></div>
+      <div class="step"><div class="n">01</div><div><h3>Make our name unmissable on every board</h3><p>The direct fix for the attribution gap, and the cheapest change on this list.</p></div></div>
       <div class="step"><div class="n">02</div><div><h3>One message per board</h3><p>Big type, few words, strong colour separation. Seven or eight in ten students told us this directly.</p></div></div>
       <div class="step"><div class="n">03</div><div><h3>Stop reusing social artwork outdoors</h3><p>Anything built for a feed gets redrawn for the road, or it does not go up.</p></div></div>
       <div class="step"><div class="n">04</div><div><h3>Add sightline to the site checklist</h3><p>Viewing height and angle, checked before signing.</p></div></div>
@@ -669,7 +703,7 @@
     </div>
 
     <div class="panel-tab" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
-      <div class="step"><div class="n">T1</div><div><h3>Many boards against one statement site</h3><p>Same money split two ways. 70% said repeat sightings build familiarity, but that is what they think they would do.</p></div></div>
+      <div class="step"><div class="n">T1</div><div><h3>Longer runs against bigger bursts</h3><p>The competitor board that scored highest has simply been up permanently. Test a smaller footprint held for six months against a big two month burst, because permanence may be worth more than size.</p></div></div>
       <div class="step"><div class="n">T2</div><div><h3>A visible offer against a pure brand message</h3><p>Test whether a discount cheapens us as much as it lifts attention.</p></div></div>
       <div class="step"><div class="n">T3</div><div><h3>Sir&#8217;s name against the SSEI mark alone</h3><p>If our mark is not carrying recall, sir may be the shortcut. Test rather than assume.</p></div></div>
       <div class="step"><div class="n">T4</div><div><h3>Bold and witty against direct and clear</h3><p>We know witty travels. We do not know whether it converts better.</p></div></div>
@@ -723,8 +757,8 @@
 <section class="band-dark" style="padding:88px 0">
   <div class="wrap narrow">
     <div class="sec-head"><span class="sec-no">12</span><h2>The bottom line</h2></div>
-    <p class="body-copy rv" style="font-size:1.14rem;color:rgba(241,238,231,.92);margin-top:20px">The sites were right, the artwork was not, and the most valuable thing that happened was something we never planned for.</p>
-    <p class="body-copy rv" style="font-size:1.14rem;color:rgba(241,238,231,.92)">That does not say stop doing outdoor. It says the next 6 lakh goes on the same kind of sites with a simpler, braver board carrying our name at a size nobody can miss, and the measurement set up before it goes live.</p>
+    <p class="body-copy rv" style="font-size:1.14rem;color:rgba(241,238,231,.92);margin-top:20px">The sites were right and the board was remembered. What slipped was our name on it, and how little of the city we actually covered in two months.</p>
+    <p class="body-copy rv" style="font-size:1.14rem;color:rgba(241,238,231,.92)">That does not say stop doing outdoor. It says the next 6 lakh goes on the same kind of sites, held for longer, with our name at a size nobody can miss and the measurement set up before it goes live.</p>
     <p class="body-copy rv" style="font-size:1.14rem;color:var(--gold);font-weight:600">The question is not how many hoardings we can afford. It is whether a student who walks past one can tell somebody the next day whose board it was.</p>
   </div>
 </section>
