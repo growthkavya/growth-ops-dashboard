@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The CRM Reset</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper:#FAF7F2; --card:#FFFFFF; --ink:#26221C; --muted:#6B6257; --line:#E7DFD3;
+    --accent:#B45309; --accent-soft:#F6EADB; --accent-ink:#8A3E06;
+    --bad:#B3382E; --bad-bg:#F9ECEA; --good:#2F7D4F; --good-bg:#EAF3EC;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#1B1813; --card:#252017; --ink:#EFE9DF; --muted:#A79C8C; --line:#3A342A;
+      --accent:#E9A23B; --accent-soft:#332A17; --accent-ink:#F0BC6F;
+      --bad:#E07B72; --bad-bg:#382019; --good:#7CC397; --good-bg:#1F2E22;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#1B1813; --card:#252017; --ink:#EFE9DF; --muted:#A79C8C; --line:#3A342A;
+    --accent:#E9A23B; --accent-soft:#332A17; --accent-ink:#F0BC6F;
+    --bad:#E07B72; --bad-bg:#382019; --good:#7CC397; --good-bg:#1F2E22;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Public Sans',system-ui,sans-serif; font-size:16.5px; line-height:1.65; padding:0 20px 80px;}
+  main{max-width:800px; margin:0 auto;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif; line-height:1.15; text-wrap:balance;}
+  h1{font-size:clamp(2.2rem,6vw,3.2rem); font-weight:700; margin:.25em 0 .3em;}
+  h2{font-size:1.65rem; font-weight:700; margin:0 0 .5em;}
+  h3{font-size:1.12rem; font-weight:600; margin:0 0 .25em;}
+  p{max-width:66ch; margin:.65em 0;}
+  section{margin:72px 0; padding-top:8px;}
+  .eyebrow{font-size:.74rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-top:56px;}
+  .lede{font-size:1.15rem; color:var(--muted); max-width:62ch;}
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin:36px 0 0;}
+  .stat{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 16px 12px;}
+  .stat b{display:block; font-family:'Fraunces',Georgia,serif; font-size:1.75rem; font-weight:700; font-variant-numeric:tabular-nums; color:var(--accent-ink);}
+  .stat span{font-size:.8rem; color:var(--muted); line-height:1.4; display:block; margin-top:2px;}
+  .problem{display:grid; grid-template-columns:1fr auto; gap:18px; align-items:start;
+    background:var(--card); border:1px solid var(--line); border-left:5px solid var(--bad);
+    border-radius:10px; padding:20px 22px; margin:16px 0;}
+  .problem p{margin:.3em 0 0; font-size:.95rem; color:var(--muted);}
+  .problem .big{font-family:'Fraunces',Georgia,serif; font-weight:700; font-size:1.9rem; color:var(--bad);
+    font-variant-numeric:tabular-nums; text-align:right; line-height:1.1; min-width:90px;}
+  .problem .big small{display:block; font-family:'Public Sans'; font-size:.68rem; font-weight:600; color:var(--muted); letter-spacing:.04em; text-transform:uppercase; margin-top:4px;}
+  @media (max-width:560px){ .problem{grid-template-columns:1fr} .problem .big{text-align:left} }
+  .also{background:var(--card); border:1px dashed var(--line); border-radius:10px; padding:16px 22px; margin:20px 0; font-size:.93rem; color:var(--muted);}
+  .also b{color:var(--ink);}
+  .also li{margin:.45em 0;}
+  .step{display:grid; grid-template-columns:44px 1fr; gap:16px; padding:18px 0; border-bottom:1px solid var(--line);}
+  .step:last-child{border-bottom:none;}
+  .stepnum{width:34px; height:34px; border-radius:50%; background:var(--accent); color:var(--paper);
+    font-family:'Fraunces',Georgia,serif; font-weight:700; font-size:1.05rem; display:flex; align-items:center; justify-content:center; margin-top:2px;}
+  .step p{margin:.25em 0 0; font-size:.95rem; color:var(--muted);}
+  .step .today{display:block; margin-top:8px; font-size:.85rem; color:var(--bad); background:var(--bad-bg);
+    border-radius:6px; padding:7px 12px; max-width:60ch;}
+  .step .today b{font-weight:700;}
+  .teams{display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:14px; margin:20px 0;}
+  .team{background:var(--card); border:1px solid var(--line); border-top:4px solid var(--accent); border-radius:10px; padding:18px 20px;}
+  .team p{font-size:.92rem; color:var(--muted); margin:.35em 0 0;}
+  .plan{counter-reset:ph;}
+  .phase{display:grid; grid-template-columns:1fr; gap:2px; background:var(--card); border:1px solid var(--line);
+    border-radius:10px; padding:18px 22px; margin:12px 0; counter-increment:ph; position:relative; padding-left:64px;}
+  .phase::before{content:counter(ph); position:absolute; left:20px; top:18px;
+    font-family:'Fraunces',Georgia,serif; font-weight:700; font-size:1.5rem; color:var(--accent);}
+  .phase p{font-size:.93rem; color:var(--muted); margin:.25em 0 0;}
+  .reassure{background:var(--good-bg); border-radius:10px; padding:16px 22px; margin:20px 0; font-size:.95rem; color:var(--ink);}
+  .reassure b{color:var(--good);}
+  .need{background:var(--accent-soft); border-radius:10px; padding:18px 24px; margin:16px 0;}
+  .need p{font-size:.95rem; margin:.5em 0;}
+  .footer{margin-top:70px; padding-top:20px; border-top:1px solid var(--line); font-size:.82rem; color:var(--muted);}
+  .goodnews{background:var(--card); border:1px solid var(--line); border-left:5px solid var(--good); border-radius:10px; padding:20px 22px; margin:16px 0;}
+  .goodnews p{font-size:.95rem; color:var(--muted); margin:.3em 0 0;}
+  a{color:var(--accent-ink);}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">SSEI Growth Ops · August 2026</div>
+  <h1>The CRM Reset</h1>
+  <p class="lede">We went through our entire LeadSquared system end to end: every one of our 167,584 leads, all 234 data fields, all 22 automations, and 209 complete lead histories, activity by activity. This page is what we found and what we are going to do about it. Ten minutes to read, no technical language. Nothing here is opinion; every number comes from that read.</p>
+
+  <div class="stats">
+    <div class="stat"><b>167,584</b><span>leads in the system today</span></div>
+    <div class="stat"><b>234</b><span>data fields per lead. About 80 are dead weight nobody fills.</span></div>
+    <div class="stat"><b>22</b><span>automations running, many fighting each other</span></div>
+    <div class="stat"><b>40%</b><span>of the entire database is marked "Not Interested"</span></div>
+    <div class="stat"><b>50%</b><span>of all leads sit under a single login</span></div>
+  </div>
+
+  <section>
+    <h2>What is going wrong today</h2>
+    <p>Seven things, each explained the way we would explain it across a table.</p>
+
+    <div class="problem"><div>
+      <h3>1. We cannot say where a lead came from</h3>
+      <p>When leadership asks "which ad or video brought this student?", the honest answer is: we usually do not know. Twelve different fields each hold a piece of the answer, none is complete, and when we retarget someone, the new campaign overwrites the record of what originally brought them in. So every spend debate runs on gut feel.</p>
+    </div><div class="big">1 in 20<small>leads has a protected "first source"</small></div></div>
+
+    <div class="problem"><div>
+      <h3>2. People who said "call me later" get buried with wrong numbers</h3>
+      <p>When a student says "I will buy after my exam" or "fees are tight this month", the system files them in the same bucket as spam and wrong numbers: Not Interested. Nothing ever resurfaces them, so nobody calls back at the right time. A large part of these 66,598 people are future customers with a stated reason to return.</p>
+    </div><div class="big">66,598<small>leads in the Not Interested bucket</small></div></div>
+
+    <div class="problem"><div>
+      <h3>3. Paid students turn back into brand-new leads</h3>
+      <p>One faulty automation wipes a lead's status whenever they fill any form. A student who already paid and just downloaded a brochure becomes a "new lead" again and can land in a calling queue. Even people who asked us never to call them get recycled. This is why statuses feel unreliable: the system itself is erasing them.</p>
+    </div><div class="big">2 of 3<small>status changes are made by automations, not people</small></div></div>
+
+    <div class="problem"><div>
+      <h3>4. Half the database is parked under one login</h3>
+      <p>Every lead that cannot be assigned defaults to one account, which now holds 84,243 leads. Hot leads age there uncalled, and nobody can fairly measure counsellor workload while half the base sits in one place. The team already flagged this in the intake sheet; the read confirmed it is built into two automations.</p>
+    </div><div class="big">84,243<small>leads under one login</small></div></div>
+
+    <div class="problem"><div>
+      <h3>5. The CRM does not know about a third of our sales</h3>
+      <p>It shows 8,148 closed sales. We actually made roughly 13,000. Payments are recorded by hand, when someone remembers, so the system cannot run the follow-ups that matter most: congratulating a student who passed CFA Level 1 and offering Level 2 at the right moment.</p>
+    </div><div class="big">~5,000<small>sales the CRM never saw</small></div></div>
+
+    <div class="problem"><div>
+      <h3>6. One student can only have one status, even with two interests</h3>
+      <p>A student who is hot for CFA Level 1 and lukewarm about FRM has exactly one status field. Whichever course was discussed last wins, and the other interest silently disappears. Multi-course students, our best customers, are invisible as multi-course students.</p>
+    </div><div class="big">1<small>status field per student today</small></div></div>
+
+    <div class="problem"><div>
+      <h3>7. Our email channel is in real trouble</h3>
+      <p>Six in ten leads we sampled have had an email bounce, and unsubscribe rates are many times beyond healthy. Years of sending everything to everyone burned our sending reputation. Until this is repaired, even well-written emails quietly fail to arrive. There is an open support case with LeadSquared on this right now.</p>
+    </div><div class="big">6 in 10<small>sampled leads have a bounced email</small></div></div>
+
+    <div class="also"><b>And the smaller stuff, briefly:</b>
+      <ul>
+        <li>Every call's recorded time is 5.5 hours off, because of a timezone mistake in an automation.</li>
+        <li>Our real segmentation lives in a field literally named "dummy", filled by hand on 86,000 leads.</li>
+        <li>One dropdown has 912 options, including "testing" and "28".</li>
+        <li>"CA Final Cohort" and "CA FINAL cohort" exist as two different groups (51,844 students split between them).</li>
+        <li>Five separate automations fire on every single logged call, in no guaranteed order.</li>
+      </ul>
+    </div>
+
+    <div class="goodnews">
+      <h3>What is NOT the problem: the people</h3>
+      <p>Of 209 lead histories we checked, 196 had proper call logs. Counsellors are logging calls, 5 to 6 per lead. Duplicates are impressively low. And data captured in 2026 is far better than 2025. This is a system that grew one patch at a time for years. Nobody broke it on purpose, and nobody needs to be blamed for it. It needs a reset, not a culprit.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What the new LeadSquared will do</h2>
+    <p>Here is the journey of one student through the rebuilt system. Each step shows what happens, and what happens today instead.</p>
+
+    <div class="step"><div class="stepnum">1</div><div>
+      <h3>The moment a form is filled, we remember them properly</h3>
+      <p>The system checks if we already know this person (no duplicate entries), and permanently records where they truly came from. That first answer can never be overwritten by later campaigns. What re-engaged them later is recorded separately.</p>
+      <span class="today"><b>Today:</b> retargeting overwrites the original source, and the truth is gone.</span>
+    </div></div>
+
+    <div class="step"><div class="stepnum">2</div><div>
+      <h3>Leads are sorted by heat, instantly</h3>
+      <p>"Call me about CFA" is not the same as "send me the brochure". The system reads which form was filled, which course, and how close the exam is, and sorts each lead: call now, call today, call this week, or nurture automatically. Counsellor queues start with the hottest.</p>
+      <span class="today"><b>Today:</b> every website lead lands in one New Lead pile with equal priority.</span>
+    </div></div>
+
+    <div class="step"><div class="stepnum">3</div><div>
+      <h3>An instant, honest hello</h3>
+      <p>Within a minute: a WhatsApp for their course with a real promise ("our counsellor will call you before 11 am tomorrow") and an email with the brochure and batch calendar. Hot leads during working hours get "we are calling you in 15 minutes", and we actually do.</p>
+      <span class="today"><b>Today:</b> the welcome depends on which campaign the lead came from, if any.</span>
+    </div></div>
+
+    <div class="step"><div class="stepnum">4</div><div>
+      <h3>The right counsellor, with a running clock</h3>
+      <p>Leads route to counsellors who actually have capacity, with a deadline attached. Unassignable leads go to a named queue the manager clears daily. Nothing defaults to a person's inbox to age quietly.</p>
+      <span class="today"><b>Today:</b> unassigned leads park under one login. 84,243 so far.</span>
+    </div></div>
+
+    <div class="step"><div class="stepnum">5</div><div>
+      <h3>After every call: one 15-second form</h3>
+      <p>Six quick fields: what happened, which course, exam window, any objection, next action, next date. That form, not anyone's memory, is what moves the lead forward. Typing essays into a comments box is over.</p>
+      <span class="today"><b>Today:</b> a 23-field form everyone skips, and the substance goes into one long free-text note.</span>
+    </div></div>
+
+    <div class="step"><div class="stepnum">6</div><div>
+      <h3>Every answer triggers the right next step, automatically</h3>
+      <p>Said yes to a follow-up? The reminder is set and the student gets a WhatsApp the day before. Did not pick up? A polite retry ladder, then automated nurturing instead of endless redials. Said "after my exam"? They get a wake-up date and we call them then. Nobody worthwhile falls into a black hole.</p>
+      <span class="today"><b>Today:</b> "call me later" means goodbye forever.</span>
+    </div></div>
+
+    <div class="step"><div class="stepnum">7</div><div>
+      <h3>Each course gets its own track</h3>
+      <p>A student interested in CFA Level 1 and FRM has two separate tracks, each with its own status, so being hot for one and cold for the other is finally possible. Messages go per course, so a CFA student never gets a random CA blast.</p>
+      <span class="today"><b>Today:</b> one status field; the last conversation wins.</span>
+    </div></div>
+
+    <div class="step"><div class="stepnum">8</div><div>
+      <h3>Payments close the loop by themselves</h3>
+      <p>When a student pays, the payment gateway tells the CRM directly: course, amount, date. The sale closes automatically, onboarding messages go out, and revenue appears against the right campaign and counsellor without anyone typing it.</p>
+      <span class="today"><b>Today:</b> sales are marked by hand, and about 5,000 never got marked at all.</span>
+    </div></div>
+
+    <div class="step"><div class="stepnum">9</div><div>
+      <h3>Exam results open the next chapter</h3>
+      <p>Passed Level 1? A congratulations message and a Level 2 conversation at exactly the right moment. Did not pass? A support call, not silence. Registered but did not appear? We know, and we follow up. This is where repeat business stops depending on memory.</p>
+      <span class="today"><b>Today:</b> exam outcomes are barely recorded, so none of this can run.</span>
+    </div></div>
+
+    <div class="step"><div class="stepnum">10</div><div>
+      <h3>Leadership wakes up to real numbers</h3>
+      <p>Every morning at 8 am, automatically: yesterday's leads by source and course, whether we called people on time, sales matched against actual payments, and what moved in the pipeline. Weekly: which channels make money, why we lose leads, and whether the system is staying clean.</p>
+      <span class="today"><b>Today:</b> reports are compiled by hand, from data nobody fully trusts.</span>
+    </div></div>
+  </section>
+
+  <section>
+    <h2>What changes for each team</h2>
+    <div class="teams">
+      <div class="team"><h3>Counsellors</h3><p>Shorter form (15 seconds, six fields), queues sorted hottest-first with promised call times, follow-ups scheduled for you, and no more essay-writing into notes. Your good work finally shows up in numbers.</p></div>
+      <div class="team"><h3>Performance marketing</h3><p>A real answer to "which campaign made money". First source is protected forever, last touch tracked separately, and a weekly spend-to-revenue view per channel. Meta form types become distinguishable.</p></div>
+      <div class="team"><h3>Organic</h3><p>Your posts, videos and webinars finally get credit. Post-level tracking through uniform link tags, webinar registrations visible as fresh activity even for old leads, and a monthly "what happened to organic leads" report.</p></div>
+      <div class="team"><h3>Sales managers</h3><p>A live scoreboard: speed to first call, follow-up discipline, conversions and revenue per counsellor. Plus no more leads rotting unassigned; anything stuck surfaces to you daily.</p></div>
+      <div class="team"><h3>Leadership</h3><p>One 8 am email a day with numbers you can trust, because they come from payments and system events, not manual updates. And one monthly view: this month's leads, and what became of them.</p></div>
+      <div class="team"><h3>RevOps and tech</h3><p>Half the fields, one data dictionary any vendor can read, clean cohort lists that maintain themselves, and a weekly automated health check so the mess never grows back.</p></div>
+    </div>
+    <p>One more thing: the requirements intake sheet the team filled recently was checked line by line against this plan. All 25 asks are covered. Nothing anyone asked for was dropped.</p>
+  </section>
+
+  <section>
+    <h2>The plan, in five steps</h2>
+    <div class="plan">
+      <div class="phase"><h3>Decide together</h3><p>One working session locks the decisions: the new status list, the course list, the source list, and the rules. Everything after this is execution.</p></div>
+      <div class="phase"><h3>Build alongside, quietly</h3><p>The new fields and structures are created next to the old ones. Nothing existing is touched. The CRM keeps running exactly as today.</p></div>
+      <div class="phase"><h3>Repoint the entrances</h3><p>Every form, ad connector and import starts writing into the new clean structure, with fixed dropdown choices so typos and duplicates cannot creep back in.</p></div>
+      <div class="phase"><h3>Replace the automations, one at a time</h3><p>The 22 overlapping automations become 9 purpose-built ones. Each old one is switched off only after its replacement is proven working. The stage-wiping bug dies in this step.</p></div>
+      <div class="phase"><h3>Clean the history, and keep it clean</h3><p>Old data is migrated where trustworthy, duplicates merged, dead fields retired. Then a weekly automated health check and a one-page team SOP make sure it stays this way.</p></div>
+    </div>
+    <div class="reassure"><b>Nothing breaks during this.</b> No data is deleted until its replacement is verified, the CRM stays live throughout, and every change is reversible until the final cleanup step. The riskiest thing we can do is nothing: the current system is actively erasing statuses and burying future customers every day.</div>
+  </section>
+
+  <section>
+    <h2>What we need from you</h2>
+    <div class="need">
+      <p><b>Leadership:</b> one hour for the decision session, and visible backing for the new call-form discipline. If the form is optional, the data dies again.</p>
+      <p><b>Counsellors:</b> use the new 15-second form after every call, every time. It is the entire system's heartbeat, and it is shorter than what exists today.</p>
+      <p><b>Marketing teams (performance and organic):</b> use the standard link tags on everything you publish. One naming sheet, provided.</p>
+      <p><b>Everyone:</b> no new fields, lists or automations without a quick word with Growth Ops. That habit is how the 234-field situation happened.</p>
+    </div>
+  </section>
+
+  <div class="footer">
+    Prepared by Growth Ops, August 2026. Based on a complete read-only analysis of the live LeadSquared account: 167,584 leads, 234 fields, 22 automations, 209 full lead histories. Detailed technical findings and the full target design exist as separate documents for the implementation team. Questions: Kavya (Growth Ops).
+  </div>
+</main>
+</body>
+</html>
