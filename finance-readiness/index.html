@@ -1,0 +1,2086 @@
+<title>Finance Readiness Compass</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --surface: #ffffff;
+    --surface2: #edf0f7;
+    --ink: #17233c;
+    --ink-soft: #45526b;
+    --ink-faint: #6e7b93;
+    --heading: #0e2a5e;
+    --navy: #0e2a5e;
+    --navy-soft: #1d3e7d;
+    --gold: #d4a02b;
+    --gold-deep: #a87c15;
+    --gold-tint: #fbf4e2;
+    --line: #d9dfeb;
+    --line-strong: #c3ccdd;
+    --good: #1e7d54;
+    --good-bg: #e2f2ea;
+    --mid: #a06d0c;
+    --mid-bg: #f7edd6;
+    --bad: #b3462f;
+    --bad-bg: #f9e7e1;
+    --btn-bg: #0e2a5e;
+    --btn-ink: #ffffff;
+    --shadow: 0 1px 2px rgba(14, 42, 94, 0.06), 0 8px 24px rgba(14, 42, 94, 0.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b1423;
+      --surface: #121f36;
+      --surface2: #0f1a2d;
+      --ink: #e8edf7;
+      --ink-soft: #b6c1d6;
+      --ink-faint: #8492ac;
+      --heading: #dce6f8;
+      --navy: #0e2a5e;
+      --navy-soft: #2c4c8d;
+      --gold: #e0b04a;
+      --gold-deep: #efc873;
+      --gold-tint: #2a2410;
+      --line: #253753;
+      --line-strong: #33486a;
+      --good: #56c48f;
+      --good-bg: #14301f;
+      --mid: #e2b04c;
+      --mid-bg: #33270e;
+      --bad: #e57860;
+      --bad-bg: #391c14;
+      --btn-bg: #e0b04a;
+      --btn-ink: #101c31;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1423;
+    --surface: #121f36;
+    --surface2: #0f1a2d;
+    --ink: #e8edf7;
+    --ink-soft: #b6c1d6;
+    --ink-faint: #8492ac;
+    --heading: #dce6f8;
+    --navy: #0e2a5e;
+    --navy-soft: #2c4c8d;
+    --gold: #e0b04a;
+    --gold-deep: #efc873;
+    --gold-tint: #2a2410;
+    --line: #253753;
+    --line-strong: #33486a;
+    --good: #56c48f;
+    --good-bg: #14301f;
+    --mid: #e2b04c;
+    --mid-bg: #33270e;
+    --bad: #e57860;
+    --bad-bg: #391c14;
+    --btn-bg: #e0b04a;
+    --btn-ink: #101c31;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 28px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Plus Jakarta Sans", "Segoe UI", -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    min-height: 100vh;
+  }
+  .topbar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 22px 24px 0;
+  }
+  .wordmark { font-weight: 800; letter-spacing: 0.14em; font-size: 15px; color: var(--heading); }
+  .wordmark span { color: var(--gold); }
+  .topbar-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+  .stage { max-width: 760px; margin: 0 auto; padding: 20px 24px 72px; }
+  .screen { animation: rise 0.35s ease both; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .screen { animation: none; }
+    .bar-fill, .cap-fill { transition: none !important; }
+  }
+
+  h1, h2, .serif {
+    font-family: "DM Serif Display", Georgia, serif;
+    font-weight: 400;
+    color: var(--heading);
+    text-wrap: balance;
+    margin: 0;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--gold-deep);
+    margin-bottom: 10px;
+  }
+
+  .hero { padding-top: 6vh; max-width: 640px; }
+  .hero h1 { font-size: clamp(38px, 6.5vw, 56px); line-height: 1.08; }
+  .hero .lede { font-size: 18px; color: var(--ink-soft); margin: 20px 0 6px; max-width: 54ch; }
+  .hero-points { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 30px; }
+  .chip {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+  }
+  .promise {
+    border-left: 3px solid var(--gold);
+    padding: 4px 0 4px 18px;
+    margin: 0 0 32px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 58ch;
+  }
+  .promise strong { color: var(--ink); }
+
+  .btn {
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    background: var(--btn-bg);
+    color: var(--btn-ink);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 30px;
+    cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.12); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; filter: none; }
+  .btn:focus-visible, .opt:focus-visible, .link-btn:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .link-btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 10px 4px;
+  }
+  .link-btn:hover { color: var(--ink); }
+  .nav-row { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; }
+
+  .progress { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; }
+  .progress-count {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .bar { flex: 1; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.4s ease; }
+
+  .q-head h2 { font-size: clamp(24px, 4vw, 31px); line-height: 1.2; }
+  .scenario {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 18px 0 6px;
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    box-shadow: var(--shadow);
+  }
+  .scenario p { margin: 0 0 8px; }
+  .scenario p:last-child { margin-bottom: 0; }
+  .ask { font-weight: 700; color: var(--ink); font-size: 16.5px; margin: 18px 0 6px; max-width: 60ch; }
+  .pick-note { font-size: 13px; color: var(--gold-deep); font-weight: 700; margin: 0 0 14px; }
+  .opts { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .opt {
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    text-align: left;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    width: 100%;
+  }
+  .opt:hover { border-color: var(--line-strong); }
+  .opt.selected { border-color: var(--gold); background: var(--gold-tint); }
+  .opt-key {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line-strong);
+    color: var(--ink-faint);
+    font-size: 12.5px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    margin-top: 1px;
+  }
+  .opt.multi .opt-key { border-radius: 6px; }
+  .opt.selected .opt-key { background: var(--gold); border-color: var(--gold); color: #1d1503; }
+  .opt.honest { border-style: dashed; color: var(--ink-soft); }
+  .opt-divider {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 700;
+    margin: 6px 0 -2px;
+  }
+
+  .careers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  @media (max-width: 560px) { .careers { grid-template-columns: 1fr; } }
+  .careers .opt { align-items: center; font-weight: 600; }
+
+  .report-head { margin: 3vh 0 26px; }
+  .report-head h1 { font-size: clamp(32px, 5.5vw, 44px); line-height: 1.1; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 26px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .card h2 { font-size: 24px; margin-bottom: 6px; }
+  .card .sub { color: var(--ink-faint); font-size: 14px; margin: 0 0 16px; }
+  .headline-card { border-top: 4px solid var(--gold); }
+  .headline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 14px; }
+  @media (max-width: 620px) { .headline-grid { grid-template-columns: 1fr; } }
+  .headline-grid .k {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  .headline-grid .v { font-size: 17px; font-weight: 700; color: var(--heading); }
+  .gap-profile {
+    margin-top: 20px;
+    padding: 16px 18px;
+    background: var(--surface2);
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+  .gap-profile strong { color: var(--ink); }
+  .diagnosis { margin-top: 14px; font-size: 15px; color: var(--ink); line-height: 1.65; }
+  .insight {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    border-left: 3px solid var(--gold);
+    padding-left: 14px;
+  }
+
+  .finding { padding: 14px 0; border-top: 1px solid var(--line); }
+  .finding:first-of-type { border-top: none; padding-top: 4px; }
+  .finding h3 { font-size: 16px; margin: 0 0 2px; color: var(--ink); }
+  .finding .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 3px 10px;
+    margin-left: 8px;
+    vertical-align: 2px;
+  }
+  .tag.strong-t { background: var(--good-bg); color: var(--good); }
+  .tag.gap-t { background: var(--bad-bg); color: var(--bad); }
+  .mini { margin-top: 8px; }
+  .mini-k {
+    display: block;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--gold-deep);
+    margin-bottom: 2px;
+  }
+  .mini p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+  .mini ul { margin: 0; padding-left: 20px; color: var(--ink-soft); font-size: 14.5px; }
+  .mini li { margin-bottom: 3px; }
+
+  .cap-row {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+  }
+  .cap-row:first-of-type { border-top: none; }
+  @media (max-width: 560px) {
+    .cap-row { grid-template-columns: 1fr auto; }
+    .cap-track { grid-column: 1 / -1; }
+  }
+  .cap-name { font-size: 14.5px; font-weight: 600; color: var(--ink); }
+  .cap-track { height: 8px; border-radius: 4px; background: var(--surface2); overflow: hidden; }
+  .cap-fill { height: 100%; border-radius: 4px; width: 0; transition: width 0.8s ease; }
+  .cap-chip {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 4px 12px;
+    white-space: nowrap;
+  }
+  .cap-chip.c-strong { background: var(--good-bg); color: var(--good); }
+  .cap-chip.c-dev { background: var(--mid-bg); color: var(--mid); }
+  .cap-chip.c-gap { background: var(--bad-bg); color: var(--bad); }
+  .cap-fill.c-strong { background: var(--good); }
+  .cap-fill.c-dev { background: var(--mid); }
+  .cap-fill.c-gap { background: var(--bad); }
+  .bottleneck {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--gold-tint);
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .bottleneck .mini-k { margin-bottom: 4px; }
+
+  .role-level {
+    display: inline-block;
+    background: var(--gold-tint);
+    color: var(--gold-deep);
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 999px;
+    padding: 6px 16px;
+    margin: 6px 0 10px;
+  }
+
+  .fit-item { display: flex; gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); }
+  .fit-item:first-of-type { border-top: none; padding-top: 4px; }
+  .fit-num {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--surface2);
+    color: var(--heading);
+    font-weight: 800;
+    font-size: 14px;
+    display: grid;
+    place-items: center;
+    margin-top: 2px;
+  }
+  .fit-item h3 { font-size: 16px; margin: 0 0 3px; color: var(--ink); }
+  .fit-item p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+  .help-block { padding: 16px 0; border-top: 1px solid var(--line); }
+  .help-block:first-of-type { border-top: none; padding-top: 4px; }
+  .help-block h3 { font-size: 16px; margin: 0 0 6px; color: var(--ink); }
+  .ssei-line {
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 10px 0 0;
+  }
+  .ssei-line strong { color: var(--gold-deep); }
+
+  .step { display: flex; gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); }
+  .step:first-of-type { border-top: none; padding-top: 4px; }
+  .step-num {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 13px;
+    display: grid;
+    place-items: center;
+    margin-top: 2px;
+  }
+  :root[data-theme="dark"] .step-num { background: var(--navy-soft); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .step-num { background: var(--navy-soft); }
+  }
+  .step h3 { font-size: 16px; margin: 0 0 3px; color: var(--ink); }
+  .step h3 em { font-style: normal; color: var(--gold-deep); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; margin-right: 8px; }
+  .step p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+  .disclaimer { font-size: 13px; color: var(--ink-faint); max-width: 62ch; margin: 26px 0 14px; }
+</style>
+
+<div class="topbar">
+  <div class="wordmark">SSEI<span>.</span></div>
+  <div class="topbar-label">Finance Skills Gap Assessment</div>
+</div>
+<main class="stage" id="stage" aria-live="polite"></main>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ROLE-BASED FINANCE SKILLS GAP ASSESSMENT (v2)
+   Option schema: t = text, q = quality tier 0..4, g = behaviour tags,
+                  s = execution-gap flag, c = confidence level, v = value override
+   Question schema: e = eyebrow, sc = scenario, ask, d = dimension weights,
+                  m = multi-pick count, hl = honest option last, nsh = no shuffle,
+                  alt = adaptive variant (used when earlier answers show acceptance)
+   ============================================================ */
+
+var TIERV = [8, 25, 48, 72, 95];
+
+var DIM_NAMES = {
+  fsi: "Financial Statement Interpretation",
+  bcu: "Business and Commercial Understanding",
+  vit: "Valuation and Investment Thinking",
+  fme: "Financial Modelling and Forecasting",
+  mri: "Market and Risk Interpretation",
+  aj:  "Analytical Judgement"
+};
+
+var CAP_NAMES = {
+  fsi: "Interpret Financial Statements",
+  bcu: "Analyse a Business",
+  fme: "Build Financial Forecasts",
+  vit: "Understand Valuation",
+  mri: "Interpret Markets and Risk",
+  aj:  "Defend a Finance View"
+};
+
+var CAREERS = [
+  { key: "ib",      label: "Investment Banking / Valuation" },
+  { key: "er",      label: "Equity Research / Investment Analysis" },
+  { key: "fpa",     label: "FP&A / Business Finance" },
+  { key: "risk",    label: "Risk Management / Credit / Treasury" },
+  { key: "acct",    label: "Accounting / Audit / Financial Reporting" },
+  { key: "corpfin", label: "Corporate Finance" },
+  { key: "am",      label: "Asset / Portfolio Management" },
+  { key: "ns",      label: "Not Sure Yet" }
+];
+
+var ROLE_W = {
+  ib:      { fsi: 0.22, fme: 0.25, vit: 0.25, aj: 0.16, bcu: 0.06, mri: 0.06 },
+  er:      { fsi: 0.20, bcu: 0.20, vit: 0.22, aj: 0.20, mri: 0.10, fme: 0.08 },
+  fpa:     { bcu: 0.25, fme: 0.25, fsi: 0.20, aj: 0.18, mri: 0.06, vit: 0.06 },
+  risk:    { mri: 0.30, fsi: 0.24, aj: 0.20, bcu: 0.10, fme: 0.10, vit: 0.06 },
+  acct:    { fsi: 0.34, aj: 0.28, bcu: 0.14, fme: 0.10, mri: 0.08, vit: 0.06 },
+  corpfin: { vit: 0.24, fsi: 0.20, bcu: 0.20, aj: 0.16, mri: 0.12, fme: 0.08 },
+  am:      { vit: 0.24, mri: 0.20, aj: 0.20, bcu: 0.18, fsi: 0.12, fme: 0.06 },
+  ns:      { fsi: 1/6, bcu: 1/6, vit: 1/6, fme: 1/6, mri: 1/6, aj: 1/6 }
+};
+
+/* ================= QUESTION TRACKS ================= */
+
+var TRACKS = {
+
+/* ---------- INVESTMENT BANKING / VALUATION ---------- */
+ib: { q: [
+  { e: "Earnings quality", d: { fsi: 1, aj: 0.5 },
+    sc: "You are valuing a company off its EBITDA. EBITDA has grown 25% a year for three years, but operating cash flow has weakened each year.",
+    ask: "Before relying on those earnings, what would you investigate?",
+    options: [
+      { t: "Whether reported EBITDA actually converts into cash: receivables, inventory, one-off gains and anything flattering the number.", q: 4, g: ["t_invest","n_cash","n_wc","n_quality"] },
+      { t: "How the EBITDA margin compares with listed peers, to confirm the growth is competitive rather than company-specific.", q: 2, g: ["t_metric"] },
+      { t: "Not much. The valuation is built on EBITDA, so the timing of cash flows matters far less than the earnings trend.", q: 1, g: ["t_accept","t_surface"] },
+      { t: "Whether the growth is organic or came from acquisitions made during the period.", q: 3, g: ["t_invest","n_quality"] }
+    ] },
+  { e: "Revenue forecasting", d: { fme: 1, bcu: 0.5 },
+    sc: "Management expects revenue to grow 30% a year for the next three years and wants your model to reflect it.",
+    ask: "What evidence should actually drive your revenue forecast?",
+    options: [
+      { t: "Capacity, the split of volume and price, market growth, the order pipeline and how accurate management's past forecasts were.", q: 4, g: ["t_model","t_sceptic","n_drivers"] },
+      { t: "The three-year historical growth rate. It is the most objective number available and avoids arguments about assumptions.", q: 1, g: ["t_mech"] },
+      { t: "Use management's number as the base case and handle the uncertainty later in sensitivities.", q: 2, g: ["t_accept"] },
+      { t: "Growth rates of comparable listed companies, applied to this business without checking its own capacity.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Margin assumptions", d: { fme: 1, bcu: 0.5 },
+    sc: "Your model needs an operating margin assumption. Management is guiding to significant margin expansion.",
+    ask: "What would justify building that expansion into your forecast?",
+    options: [
+      { t: "Identifying exactly where it comes from: pricing, product mix, operating leverage, input costs or higher utilisation.", q: 4, g: ["t_model","n_margin","n_drivers"] },
+      { t: "Use the guided margin but apply a haircut of a few points as a margin of safety.", q: 2, g: ["t_accept"] },
+      { t: "Hold last year's margin flat through the forecast. It is the safest assumption and nobody can challenge it.", q: 1, g: ["t_mech"] },
+      { t: "Check the sector leader's margin as a ceiling for how far expansion could plausibly run.", q: 3, g: ["t_invest","n_margin"] }
+    ] },
+  { e: "Valuation judgement", d: { vit: 1, aj: 0.5 },
+    sc: "You must value two companies: a mature, steady cash generator, and a young, fast-growing business that is still loss-making.",
+    ask: "Should both be valued using the same approach?",
+    options: [
+      { t: "No. Method and assumptions should fit each one's maturity, cash profile and risk; multiples suit one, longer-horizon scenarios the other.", q: 4, g: ["t_invest","n_valuation"] },
+      { t: "Yes. Applying one consistent multiple to both is the only way to keep the comparison fair.", q: 1, g: ["t_mech"] },
+      { t: "Value both purely on a DCF, because a DCF is always the most rigorous method available.", q: 2, g: ["t_mech","n_valuation"] },
+      { t: "Use different multiples for each (earnings for one, sales for the other) but treat risk and time horizon identically.", q: 3, g: ["t_metric"] }
+    ] },
+  { e: "Enterprise value thinking", d: { vit: 1, fsi: 0.5 },
+    sc: "A target company raised large new debt mid-year, and its cash balance also rose sharply. You are comparing its valuation with peers.",
+    ask: "What should you be careful about in the comparison?",
+    options: [
+      { t: "Keeping equity and enterprise value consistent: current net debt, why cash rose, seasonality and what the borrowing funded.", q: 4, g: ["t_invest","n_leverage","n_valuation"] },
+      { t: "Not much. A price-to-earnings comparison handles it, since interest costs already flow through earnings.", q: 1, g: ["t_metric"] },
+      { t: "Exclude the new debt from the comparison because it was raised recently and is not yet part of the business.", q: 2, g: ["t_surface"] },
+      { t: "Use enterprise-value multiples for the comparison, without digging into what the debt was actually raised for.", q: 3, g: ["t_metric"] }
+    ] },
+  { e: "Transaction judgement", d: { aj: 1, vit: 0.7, mri: 0.5 }, m: 2,
+    sc: "A potential acquisition target has strong growth, an expensive valuation and significant debt on its balance sheet.",
+    ask: "Which TWO things would you investigate first before recommending the deal?",
+    options: [
+      { t: "Whether the target's cash flows could still service its debt in a weaker year.", q: 4, g: ["t_risk","n_leverage","n_cash"] },
+      { t: "What is actually driving the growth, and whether it survives after the deal.", q: 4, g: ["t_invest","n_drivers"] },
+      { t: "The multiples paid in recent comparable transactions in the sector.", q: 2, g: ["t_metric","n_valuation"] },
+      { t: "The target's share price momentum over the last six months.", q: 1, g: ["t_surface"] },
+      { t: "The synergy estimates presented by the seller's advisors.", q: 2, g: ["t_accept"] }
+    ] },
+  { e: "Model integrity", d: { fme: 1, fsi: 0.7 },
+    sc: "A draft model shows revenue doubling over four years, while working capital, capex, cash and debt all stay almost flat.",
+    ask: "What looks questionable?",
+    options: [
+      { t: "Growth with no funding or asset build is internally inconsistent; working capital and capex should be linked to revenue and the funding flows rebuilt.", q: 4, g: ["t_model","n_wc","t_invest"] },
+      { t: "The margins are probably too optimistic and should be benchmarked against the sector.", q: 2, g: ["t_metric"] },
+      { t: "Nothing serious. Growing without needing more assets or cash is exactly what a well-run business looks like.", q: 1, g: ["t_accept","t_surface"] },
+      { t: "The flat capex is odd for a doubling business, though working capital rarely moves the answer much.", q: 3, g: ["t_invest"] }
+    ],
+    alt: { e: "Testing the base case", d: { aj: 1, fme: 0.7 },
+      sc: "A senior banker hands you a model where management's aggressive projections have been used directly as the base case, and asks you to finish it tonight.",
+      ask: "What do you do before circulating it?",
+      options: [
+        { t: "Test each management assumption against history, capacity and the market; build a defensible base case and keep management's as the upside.", q: 4, g: ["t_sceptic","t_model"] },
+        { t: "Keep the base case but add a downside sensitivity tab so readers can flex the assumptions themselves.", q: 2, g: [] },
+        { t: "Circulate it as instructed. The client owns these assumptions and knows the business better than we do.", q: 1, g: ["t_accept"] },
+        { t: "Benchmark the growth assumptions against listed peers and flag any that look far off.", q: 3, g: ["t_invest"] }
+      ] } },
+  { e: "The 90 minute test", d: { aj: 1, fme: 0.6, vit: 0.6 }, hl: 1,
+    sc: "You receive a company's historical statements and must present an initial valuation view in 90 minutes.",
+    ask: "How would you structure the time?",
+    options: [
+      { t: "Skim the business, clean and normalise the key numbers, sketch a quick driver-based forecast, triangulate multiples with a rough DCF, list open questions.", q: 4, g: ["t_structured","t_decision"] },
+      { t: "Read all the historical statements thoroughly first, so the view is built on complete information.", q: 1, g: [] },
+      { t: "Apply peer multiples to last year's reported profit. Ninety minutes is only enough for a comps answer.", q: 2, g: ["t_mech"] },
+      { t: "Look up broker research and target prices for the company and anchor the view on those.", q: 1, g: ["t_surface","t_accept"] },
+      { t: "Honestly: I understand the individual concepts, but I would struggle to structure this analysis myself.", q: 2, g: [], s: 1 }
+    ] },
+  { e: "Honest check", d: { aj: 0.15 }, nsh: 1,
+    sc: "Imagine being asked to build and defend a basic valuation of a real company, on your own, next week.",
+    ask: "How comfortable would you feel?",
+    options: [
+      { t: "I could build it, explain my assumptions and defend the range.", q: 3, v: 72, c: 4 },
+      { t: "I could build most of it but would want guidance on the assumptions.", q: 3, v: 58, c: 3 },
+      { t: "I understand the pieces but would struggle to assemble them alone.", q: 2, v: 45, c: 2 },
+      { t: "I would not know where to begin.", q: 1, v: 30, c: 1 }
+    ] }
+] },
+
+/* ---------- EQUITY RESEARCH ---------- */
+er: { q: [
+  { e: "Earnings quality", d: { fsi: 1, aj: 0.5 },
+    sc: "A company you follow reports profit growing 30%, but operating cash flow grew only 5%.",
+    ask: "What needs investigating before you call this a strong result?",
+    options: [
+      { t: "Receivables, inventory, one-off items and revenue recognition, to see how much of the profit is actually backed by cash.", q: 4, g: ["t_invest","n_cash","n_wc","n_quality"] },
+      { t: "How the profit margin now compares with the closest listed competitors.", q: 2, g: ["t_metric"] },
+      { t: "Very little. The profit and loss account is what drives the share price, and it is clearly strong.", q: 1, g: ["t_surface","t_accept"] },
+      { t: "Whether this quarter is seasonally weak for collections, which could explain the cash lag.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Results vs expectations", d: { vit: 1, mri: 0.5 },
+    sc: "A company beats revenue estimates, yet the stock falls 8% on results day.",
+    ask: "What explanations would you examine?",
+    options: [
+      { t: "Whether margins, guidance or cash flow disappointed, and what the market had already priced in before the result.", q: 4, g: ["t_invest","n_expectations","n_margin"] },
+      { t: "The market has reacted irrationally, which usually creates a straightforward buying opportunity.", q: 1, g: ["t_surface"] },
+      { t: "Whether the broader index also fell that day, which would explain most of the move.", q: 2, g: ["t_metric"] },
+      { t: "Whether management cut full-year guidance, even though the quarter itself beat.", q: 3, g: ["n_expectations"] }
+    ] },
+  { e: "Business drivers", d: { bcu: 1, fsi: 0.5 },
+    sc: "A consumer company's sales are growing rapidly, but its operating margin keeps deteriorating.",
+    ask: "Which operational drivers would you investigate?",
+    options: [
+      { t: "Whether growth is being bought: price cuts, discounting, a shift to lower-margin products, rising input or customer acquisition costs.", q: 4, g: ["t_commercial","n_pricing","n_margin"] },
+      { t: "Whether the tax rate has increased, which would directly explain the margin pressure.", q: 1, g: [] },
+      { t: "Whether absolute profit is still growing, since shareholders ultimately care about the total.", q: 2, g: ["t_surface"] },
+      { t: "Whether the entire industry's margins fell, which would make it a sector story rather than a company story.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Management guidance", d: { aj: 1, bcu: 0.5, fme: 0.4 },
+    sc: "Management guides to a major margin improvement next year and the street is starting to build it into estimates.",
+    ask: "What would you examine before changing your own estimates?",
+    options: [
+      { t: "Their guidance track record, the specific source of the improvement, and whether industry conditions actually support it.", q: 4, g: ["t_sceptic","n_drivers"] },
+      { t: "Build in roughly half the guided improvement as a sensible compromise between trust and caution.", q: 2, g: ["t_accept"] },
+      { t: "Build it in. Management has the best information about its own cost structure, and consensus is moving anyway.", q: 1, g: ["t_accept"] },
+      { t: "Whether early signs of the cost savings are already visible in the latest quarter's numbers.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Valuation context", d: { vit: 1, bcu: 0.5 },
+    sc: "Company A trades at 15 times earnings. Company B, in the same sector, trades at 30 times.",
+    ask: "What could justify the difference?",
+    options: [
+      { t: "Faster growth, higher returns on capital, stronger competitive position and more durable earnings at Company B.", q: 4, g: ["t_invest","n_valuation"] },
+      { t: "Very little. Double the multiple in the same sector almost always means B is overpriced and A is the buy.", q: 1, g: ["t_mech","n_valuation"] },
+      { t: "Company B's stronger share price momentum, which shows the market backing it.", q: 2, g: ["t_surface"] },
+      { t: "Where each sits against the sector's average multiple, which anchors what is normal.", q: 3, g: ["t_metric"] }
+    ] },
+  { e: "Investment thesis", d: { vit: 1, aj: 0.7 },
+    sc: "A company has compounded revenue 25% a year for five years. It now trades at a rich valuation and competition is intensifying.",
+    ask: "How would you decide whether it remains attractive?",
+    options: [
+      { t: "Test whether its advantage holds: unit economics, pricing power, and whether the price already assumes the growth continues.", q: 4, g: ["t_invest","n_valuation","n_drivers"] },
+      { t: "Stay positive. Five years of compounding is the strongest evidence a business can offer.", q: 1, g: ["t_accept","t_surface"] },
+      { t: "Move on purely because the valuation is high; expensive stocks are where losses come from.", q: 2, g: ["t_mech","n_valuation"] },
+      { t: "Track the new competitors' pricing and product moves closely before touching the numbers.", q: 3, g: ["t_commercial"] }
+    ] },
+  { e: "Thesis monitoring", d: { aj: 1, vit: 0.5 },
+    sc: "A stock you recommend reports a disappointing quarter.",
+    ask: "What would justify genuinely changing your thesis, rather than just reacting?",
+    options: [
+      { t: "Evidence that the driver the thesis rests on has broken, after separating one-off items from the underlying trend.", q: 4, g: ["t_sceptic","t_invest","n_quality"] },
+      { t: "The size of the miss against consensus estimates; a large enough miss speaks for itself.", q: 2, g: ["t_metric"] },
+      { t: "The share price reaction. If the market sells it hard, the market is telling you the thesis is broken.", q: 1, g: ["t_surface"] },
+      { t: "Whether management also lowered full-year guidance alongside the weak quarter.", q: 3, g: ["n_expectations"] }
+    ],
+    alt: { e: "Testing the explanation", d: { aj: 1, bcu: 0.5 },
+      sc: "Management explains the weak quarter as \"temporary softness; underlying demand is fully intact.\"",
+      ask: "What do you do with that explanation?",
+      options: [
+        { t: "Test it against independent evidence: channel checks, peer results, industry data; and define what would show it is not temporary.", q: 4, g: ["t_sceptic"] },
+        { t: "Accept it for now but note it as a risk in the next published update.", q: 2, g: ["t_accept"] },
+        { t: "Accept it. Management sees the order book daily and has far better information than any analyst.", q: 1, g: ["t_accept"] },
+        { t: "Wait one more quarter; a second data point will settle whether it was temporary.", q: 3, g: [] }
+      ] } },
+  { e: "The 90 minute test", d: { aj: 1, fsi: 0.6, bcu: 0.6 }, hl: 1,
+    sc: "You get a company's annual report, investor presentation and latest results, and 90 minutes before discussing it with a senior analyst.",
+    ask: "How would you structure your analysis?",
+    options: [
+      { t: "Business model first, then drivers, the three statements, earnings quality, valuation versus peers, and a list of open questions.", q: 4, g: ["t_structured","t_decision"] },
+      { t: "Read the annual report cover to cover; the presentation and results will make sense afterwards.", q: 1, g: [] },
+      { t: "Go straight to valuation multiples against peers, since that is what the discussion will focus on.", q: 2, g: ["t_mech"] },
+      { t: "Find an existing broker note on the company and use it as the backbone of the discussion.", q: 1, g: ["t_surface","t_accept"] },
+      { t: "Honestly: I understand the individual concepts, but I would struggle to structure this analysis myself.", q: 2, g: [], s: 1 }
+    ] },
+  { e: "Honest check", d: { aj: 0.15 }, nsh: 1,
+    sc: "Imagine defending an investment view on a company in front of someone experienced.",
+    ask: "Could you explain both why your view may be right and what evidence would prove it wrong?",
+    options: [
+      { t: "Yes. I could argue my view and name the specific evidence that would break it.", q: 3, v: 72, c: 4 },
+      { t: "I could argue my view, but would find the \"what proves me wrong\" part harder.", q: 3, v: 58, c: 3 },
+      { t: "I could describe the company, but struggle to turn that into a view with evidence.", q: 2, v: 45, c: 2 },
+      { t: "I would not know where to begin.", q: 1, v: 30, c: 1 }
+    ] }
+] },
+
+/* ---------- FP&A / BUSINESS FINANCE ---------- */
+fpa: { q: [
+  { e: "Budget variance", d: { bcu: 1, fme: 0.5, fsi: 0.5 }, m: 2,
+    sc: "Quarterly results are in. Revenue is within 1% of budget, but EBITDA is 15% below budget.",
+    ask: "Which TWO things would you investigate first?",
+    options: [
+      { t: "Gross margin: whether pricing, product mix or input costs moved against the plan.", q: 4, g: ["t_commercial","n_margin","n_pricing"] },
+      { t: "Operating cost lines against budget: where the overrun sits and whether it is one-off or run-rate.", q: 4, g: ["t_invest","n_costs"] },
+      { t: "Interest and tax lines, since they often swing the final result well away from plan.", q: 1, g: ["t_surface"] },
+      { t: "Revenue against last year rather than budget, to see the true growth picture.", q: 2, g: ["t_metric"] },
+      { t: "Currency translation effects, if any part of the business bills in other currencies.", q: 2, g: [] }
+    ] },
+  { e: "Revenue assumptions", d: { fme: 1, aj: 0.7 },
+    sc: "Sales leadership submits a forecast of 25% growth for next year and wants it in the budget.",
+    ask: "What should FP&A verify before using that number?",
+    options: [
+      { t: "Pipeline coverage, capacity to deliver, how accurate their past forecasts were, and the growth drivers segment by segment.", q: 4, g: ["t_model","t_sceptic","n_drivers"] },
+      { t: "Nothing much. Sales owns the number and will be held accountable for delivering it.", q: 1, g: ["t_accept"] },
+      { t: "Apply a standard haircut, say to 15%, based on general conservatism.", q: 2, g: ["t_mech"] },
+      { t: "How the number compares with expected market growth for the category.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Cost behaviour", d: { bcu: 1, fme: 0.5 },
+    sc: "Sales are up 10% year on year. Operating expenses are up 20%.",
+    ask: "How would you judge whether this is a problem?",
+    options: [
+      { t: "Split the increase into fixed versus variable, one-off versus run-rate, and deliberate investment versus cost creep.", q: 4, g: ["t_commercial","t_invest","n_costs"] },
+      { t: "It is a problem by definition. Costs should never grow at twice the rate of sales.", q: 1, g: ["t_mech"] },
+      { t: "It is fine as long as EBITDA remains positive and the business keeps growing.", q: 2, g: ["t_surface"] },
+      { t: "Benchmark the cost-to-sales ratio against competitors before judging it.", q: 3, g: ["t_metric"] }
+    ] },
+  { e: "Pricing scenario", d: { bcu: 1, fme: 0.7 },
+    sc: "Management proposes an 8% price increase across the main product line and asks FP&A for the financial view.",
+    ask: "What effects should be modelled?",
+    options: [
+      { t: "Volume response, competitor reaction, mix shifts, contribution margin and possible customer churn, not just the price line.", q: 4, g: ["t_commercial","t_model","n_pricing"] },
+      { t: "Revenue rising roughly 8%, which is the direct and measurable effect of the change.", q: 1, g: ["t_mech"] },
+      { t: "The margin uplift assuming volumes hold constant, presented as the base case.", q: 2, g: ["t_mech"] },
+      { t: "Competitor price points first, to establish whether the increase is even feasible.", q: 3, g: ["t_commercial"] }
+    ] },
+  { e: "Business unit decision", d: { aj: 1, bcu: 0.7, vit: 0.3 },
+    sc: "One division is growing fast but remains unprofitable. Leadership asks whether to keep investing in it.",
+    ask: "What should drive the recommendation?",
+    options: [
+      { t: "Its unit economics trajectory, contribution margins, cash requirements, strategic value and whether the path to profit is credible.", q: 4, g: ["t_decision","t_commercial"] },
+      { t: "Stop investing. Divisions that lose money destroy value and drag the group down.", q: 1, g: ["t_mech"] },
+      { t: "Keep investing. Growth almost always converts to profit once scale arrives.", q: 2, g: ["t_accept","t_surface"] },
+      { t: "How similar divisions at competitor companies have performed at the same stage.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Profit vs cash", d: { fsi: 1, bcu: 0.5 },
+    sc: "The company is hitting its budgeted profit every month, yet the cash balance keeps falling.",
+    ask: "What should FP&A investigate?",
+    options: [
+      { t: "Working capital: receivables, inventory and payables, plus capex against plan and any timing effects.", q: 4, g: ["t_invest","n_wc","n_cash"] },
+      { t: "Nothing urgent. If profit is on budget, cash will catch up in the coming quarters.", q: 1, g: ["t_accept","t_surface"] },
+      { t: "The bank statements and borrowing lines, to confirm the balances are being reported correctly.", q: 2, g: [] },
+      { t: "Whether one or two large customers have started paying later than their agreed terms.", q: 3, g: ["n_wc"] }
+    ] },
+  { e: "Scenario analysis", d: { fme: 1, bcu: 0.5, mri: 0.3 },
+    sc: "The CFO asks: \"What happens to us if volumes fall 10% next quarter?\"",
+    ask: "How would you approach the answer?",
+    options: [
+      { t: "Trace it through contribution margin, fixed cost coverage, working capital and cash, so the CFO sees profit and liquidity impact.", q: 4, g: ["t_model","n_costs","n_cash"] },
+      { t: "Revenue falls about 10%, so profit falls about 10%; scale the P&L accordingly.", q: 1, g: ["t_mech"] },
+      { t: "Look at the last quarter when volumes dipped and reuse what happened then.", q: 2, g: ["t_mech"] },
+      { t: "Model revenue and EBITDA impact carefully, stopping short of the cash position.", q: 3, g: ["t_model"] }
+    ],
+    alt: { e: "Challenging the budget", d: { aj: 1, fme: 0.5 },
+      sc: "Business heads' budgets have come in optimistic three years running. This year's submission is up 30%.",
+      ask: "How should FP&A respond?",
+      options: [
+        { t: "Compare their past budgets with actuals, challenge the drivers line by line, and agree a realistic base with a separate stretch case.", q: 4, g: ["t_sceptic","t_model"] },
+        { t: "Apply a uniform haircut across all submissions to correct for the known optimism.", q: 2, g: ["t_mech"] },
+        { t: "Accept the submissions. The business heads own delivery and should set their own bar.", q: 1, g: ["t_accept"] },
+        { t: "Benchmark the growth against external market forecasts and flag the difference.", q: 3, g: ["t_invest"] }
+      ] } },
+  { e: "The 90 minute test", d: { aj: 1, bcu: 0.6, fme: 0.5 }, hl: 1,
+    sc: "You receive raw actual-versus-budget numbers 90 minutes before a management meeting.",
+    ask: "What do you prioritise?",
+    options: [
+      { t: "The biggest variances by impact: explain each through volume, price and cost, separate one-offs, and prepare a clear so-what.", q: 4, g: ["t_structured","t_decision"] },
+      { t: "Build a complete, properly formatted pack covering every line, so nothing is missing in the room.", q: 1, g: [] },
+      { t: "Focus on explaining the revenue performance well, since that is what leadership asks about first.", q: 2, g: [] },
+      { t: "Circulate the raw numbers with caveats and offer a full analysis after the meeting.", q: 1, g: ["t_surface"] },
+      { t: "Honestly: I understand the individual concepts, but I would struggle to structure this analysis myself.", q: 2, g: [], s: 1 }
+    ] },
+  { e: "Honest check", d: { aj: 0.15 }, nsh: 1,
+    sc: "Imagine standing in front of management after a quarter like the ones above.",
+    ask: "Could you explain what happened, why it happened and what should be done next?",
+    options: [
+      { t: "Yes. I could explain the what, the why and a recommendation.", q: 3, v: 72, c: 4 },
+      { t: "I could explain what happened and mostly why, but the recommendation would be harder.", q: 3, v: 58, c: 3 },
+      { t: "I could present the numbers, but would struggle to explain the causes confidently.", q: 2, v: 45, c: 2 },
+      { t: "I would not know where to begin.", q: 1, v: 30, c: 1 }
+    ] }
+] },
+
+/* ---------- RISK / CREDIT / TREASURY ---------- */
+risk: { q: [
+  { e: "Debt capacity", d: { mri: 1, fsi: 0.7 },
+    sc: "A company plans to increase its borrowing significantly to fund growth.",
+    ask: "What actually determines whether the extra leverage is manageable?",
+    options: [
+      { t: "Cash-flow stability, interest cover, the maturity schedule, what the debt funds, and headroom in a weaker year.", q: 4, g: ["t_risk","n_leverage","n_cash"] },
+      { t: "Whether debt to equity stays below the industry average after the new borrowing.", q: 1, g: ["t_metric"] },
+      { t: "Whether the lending banks approve it; their credit teams will have done the analysis.", q: 2, g: ["t_accept"] },
+      { t: "The profitability trend, since profits are ultimately what repay debt.", q: 3, g: ["n_margin"] }
+    ] },
+  { e: "Cash-flow risk", d: { fsi: 1, mri: 0.7 },
+    sc: "A borrower's profits remain strong, but its cash balances have declined for four straight quarters.",
+    ask: "What could this mean for financial risk?",
+    options: [
+      { t: "Profit is not liquidity: working capital absorption, capex or repayments could be straining its ability to meet obligations.", q: 4, g: ["t_invest","n_cash","n_wc","n_liquidity"] },
+      { t: "Little. Profitable companies almost never run into genuine repayment trouble.", q: 1, g: ["t_surface","t_accept"] },
+      { t: "The dividend policy is probably too generous and should be checked first.", q: 2, g: [] },
+      { t: "It may be seasonal; compare the same quarters in earlier years before concluding.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Rate shock", d: { mri: 1, aj: 0.5 }, m: 2,
+    sc: "Interest rates rise unexpectedly and sharply.",
+    ask: "Which TWO exposures would you reassess first?",
+    options: [
+      { t: "The share of floating-rate debt and what happens to interest cover.", q: 4, g: ["t_risk","n_leverage"] },
+      { t: "Refinancing that falls due in the next 12 to 18 months.", q: 4, g: ["t_risk","n_liquidity"] },
+      { t: "The likely impact on equity market valuations of the sector.", q: 2, g: ["t_metric"] },
+      { t: "Whether the central bank is likely to reverse the hike soon.", q: 1, g: ["t_surface"] },
+      { t: "How customer demand may respond to costlier borrowing.", q: 3, g: ["n_macro"] }
+    ] },
+  { e: "Concentration", d: { mri: 1, bcu: 0.6 },
+    sc: "45% of a company's revenue comes from a single customer.",
+    ask: "How does this change the risk assessment?",
+    options: [
+      { t: "Materially: contract terms, relationship health, payment behaviour, and what survival looks like if that customer leaves.", q: 4, g: ["t_risk","n_concentration"] },
+      { t: "Not much while the customer itself is growing and paying on time.", q: 1, g: ["t_accept"] },
+      { t: "It gets flagged as a concentration ratio in the report, which covers the exposure.", q: 2, g: ["t_mech"] },
+      { t: "Check the receivable days for that specific customer for early warning signs.", q: 3, g: ["t_invest","n_wc"] }
+    ] },
+  { e: "Refinancing", d: { mri: 1, fsi: 0.6, vit: 0.25 },
+    sc: "A large portion of a company's debt matures next year. Its debt-to-equity ratio looks comfortable.",
+    ask: "What matters beyond that ratio?",
+    options: [
+      { t: "Cash generation against the maturity size, market access, banking relationships, backup liquidity and asset cover.", q: 4, g: ["t_risk","n_liquidity"] },
+      { t: "Little. Debt to equity is the standard solvency measure, and it is comfortable.", q: 1, g: ["t_metric"] },
+      { t: "Whether rates are likely to be lower next year, making the refinancing cheaper.", q: 2, g: ["t_surface"] },
+      { t: "The recent operating cash flow trend, which shows repayment capacity building or eroding.", q: 3, g: ["n_cash"] }
+    ] },
+  { e: "Currency exposure", d: { mri: 1, bcu: 0.5 },
+    sc: "A company earns almost all its revenue in rupees but imports a significant share of its inputs in dollars.",
+    ask: "How could currency movements affect its risk?",
+    options: [
+      { t: "A weaker rupee squeezes margins unless costs can be passed on; hedging, pass-through ability and timing mismatches all matter.", q: 4, g: ["t_risk","t_commercial","n_macro"] },
+      { t: "Minimally. With no export revenue, the company has little real currency exposure.", q: 1, g: ["t_surface"] },
+      { t: "It should simply hedge everything, which removes the question entirely.", q: 2, g: ["t_mech"] },
+      { t: "Compare its import dependence with competitors to see who is hurt most.", q: 3, g: ["t_commercial"] }
+    ] },
+  { e: "Downside testing", d: { mri: 1, fme: 0.6 },
+    sc: "Management's plan assumes aggressive growth. You are assessing the company's financial resilience.",
+    ask: "What downside scenarios should be tested?",
+    options: [
+      { t: "Slower growth, weaker margins and slower collections together, asking where covenants or liquidity break first.", q: 4, g: ["t_risk","t_model"] },
+      { t: "The base case with revenue about 5% lower, which covers a normal miss.", q: 1, g: ["t_mech"] },
+      { t: "A rate-rise scenario, since financing cost is the main external threat.", q: 2, g: [] },
+      { t: "A replay of the sector's last downturn applied to today's balance sheet.", q: 3, g: ["t_risk"] }
+    ],
+    alt: { e: "Testing the assurance", d: { aj: 1, mri: 0.6 },
+      sc: "The borrower's management insists demand is resilient and the debt level is comfortable, and asks you to move quickly.",
+      ask: "What do you do with that assurance?",
+      options: [
+        { t: "Test it against order data, industry indicators and a stressed cash flow; lend against evidence, not assurance.", q: 4, g: ["t_sceptic","t_risk"] },
+        { t: "Record the assurance and add a protective covenant to the facility.", q: 2, g: ["t_accept"] },
+        { t: "Accept it. Their repayment record is clean and they know their demand best.", q: 1, g: ["t_accept"] },
+        { t: "Ask their auditors whether anything contradicts the management view.", q: 3, g: [] }
+      ] } },
+  { e: "The 90 minute test", d: { aj: 1, mri: 0.6, fsi: 0.6 }, hl: 1,
+    sc: "You receive a company's financial statements and have 90 minutes to judge whether it looks financially resilient.",
+    ask: "How would you use the time?",
+    options: [
+      { t: "Cash generation stability, leverage and maturities, liquidity, working capital trends, a quick downside sensitivity, then a red-flag list.", q: 4, g: ["t_structured","t_risk"] },
+      { t: "Read the full statements and notes end to end so nothing is missed.", q: 1, g: [] },
+      { t: "Compute the standard ratio set: leverage, cover, current ratio; and compare with thresholds.", q: 2, g: ["t_metric"] },
+      { t: "Check the credit rating and recent news, which condense the same judgement.", q: 1, g: ["t_accept"] },
+      { t: "Honestly: I understand the individual concepts, but I would struggle to structure this analysis myself.", q: 2, g: [], s: 1 }
+    ] },
+  { e: "Honest check", d: { aj: 0.15 }, nsh: 1,
+    sc: "Think about a real company you know reasonably well.",
+    ask: "Could you explain what could realistically cause it to struggle to meet its obligations?",
+    options: [
+      { t: "Yes. I could name its specific vulnerabilities and the chain that leads to distress.", q: 3, v: 72, c: 4 },
+      { t: "Broadly, though I would want help ranking which risks actually matter.", q: 3, v: 58, c: 3 },
+      { t: "I could list generic risks, but not tie them to that company's numbers.", q: 2, v: 45, c: 2 },
+      { t: "I would not know where to begin.", q: 1, v: 30, c: 1 }
+    ] }
+] },
+
+/* ---------- ACCOUNTING / AUDIT / REPORTING ---------- */
+acct: { q: [
+  { e: "Profit vs cash", d: { fsi: 1, aj: 0.5 },
+    sc: "Reported profit improves materially this year, while operating cash flow deteriorates.",
+    ask: "What deserves investigation?",
+    options: [
+      { t: "Working capital movements, revenue recognition timing, one-off items and provisioning: what is driving the divergence.", q: 4, g: ["t_invest","n_wc","n_cash","n_quality"] },
+      { t: "The margin ratios against industry peers, to see whether the profit level itself is unusual.", q: 2, g: ["t_metric"] },
+      { t: "Little. The accounts are audited, and profit is the primary measure of performance.", q: 1, g: ["t_accept"] },
+      { t: "Whether the same profit-cash gap appeared in earlier years or is new this year.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Revenue quality", d: { fsi: 1, aj: 0.7 },
+    sc: "Revenue jumps sharply in the final quarter of the year, well beyond the usual seasonal pattern.",
+    ask: "What evidence would you examine before treating the growth as genuine?",
+    options: [
+      { t: "Recognition terms, receivables around year-end, unusual credit terms or returns, and whether sales reversed in the next period.", q: 4, g: ["t_sceptic","n_quality","n_wc"] },
+      { t: "Nothing specific. Strong quarters happen, and the sector has been buoyant.", q: 1, g: ["t_accept"] },
+      { t: "Management's list of the new customer wins that produced the jump.", q: 2, g: ["t_accept"] },
+      { t: "Whether competitors also reported unusually strong final quarters.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Margin movement", d: { fsi: 1, bcu: 0.6 },
+    sc: "Gross margin improves significantly, with no obvious change in the business to explain it.",
+    ask: "What should be investigated?",
+    options: [
+      { t: "Inventory valuation, cost capitalisation, reclassification between cost lines, and one-off supplier credits.", q: 4, g: ["t_invest","n_margin","n_quality"] },
+      { t: "Good news rarely needs probing; margins improving is the outcome everyone wants.", q: 1, g: ["t_accept","t_surface"] },
+      { t: "Whether pricing or input costs genuinely moved, before suspecting the accounting.", q: 3, g: ["t_commercial"] },
+      { t: "How the new margin compares with the industry average.", q: 2, g: ["t_metric"] }
+    ] },
+  { e: "Receivables", d: { fsi: 1, mri: 0.5 },
+    sc: "Receivables are growing at twice the rate of revenue.",
+    ask: "Why does this deserve attention?",
+    options: [
+      { t: "Revenue may be pulled forward or credit loosened to book sales; ageing, policy changes and collection risk need review.", q: 4, g: ["t_invest","n_wc","n_quality"] },
+      { t: "It is a natural feature of growth; more sales always mean more receivables.", q: 1, g: ["t_accept"] },
+      { t: "It only matters if specific debtors actually start defaulting.", q: 2, g: ["t_surface"] },
+      { t: "Compare receivable days with peers to size how unusual the build-up is.", q: 3, g: ["t_metric"] }
+    ] },
+  { e: "Adjusted earnings", d: { aj: 1, fsi: 0.6, vit: 0.25 },
+    sc: "Management excludes several expenses when presenting \"adjusted profit\", which is now well above reported profit.",
+    ask: "How would you decide whether the adjustments are reasonable?",
+    options: [
+      { t: "Check whether the excluded items are genuinely one-off, whether they recur year after year, and whether they involve real cash.", q: 4, g: ["t_sceptic","n_quality"] },
+      { t: "Adjusted numbers are standard market practice, so use them as presented.", q: 1, g: ["t_accept"] },
+      { t: "Ignore all adjustments on principle and use only the statutory figures.", q: 2, g: ["t_mech"] },
+      { t: "Compare the nature and size of the adjustments with what peer companies exclude.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Management estimates", d: { aj: 1, fsi: 0.6, fme: 0.4 },
+    sc: "A change in a management estimate moves reported profit materially this year.",
+    ask: "What evidence should be assessed?",
+    options: [
+      { t: "The assumptions behind the estimate, the history of revisions, its sensitivity, and whether there is an incentive to flatter results.", q: 4, g: ["t_sceptic","n_quality"] },
+      { t: "Little. Estimates are precisely the part of the accounts that management is entitled to judge.", q: 1, g: ["t_accept"] },
+      { t: "Whether the auditors raised the estimate as a key matter in their report.", q: 2, g: ["t_accept"] },
+      { t: "How the size of the change compares with materiality for the accounts overall.", q: 3, g: ["t_metric"] }
+    ] },
+  { e: "Professional scepticism", d: { aj: 1, fsi: 0.5 },
+    sc: "You query an unusual financial movement. Management's explanation is vague and general.",
+    ask: "What should you do?",
+    options: [
+      { t: "Corroborate independently: underlying records, the segments or counterparties involved, and a follow-up with specific questions.", q: 4, g: ["t_sceptic","t_invest"] },
+      { t: "Accept it. Management understands its own business far better than an outsider can.", q: 1, g: ["t_accept"] },
+      { t: "Record the explanation in the workpapers and move to the next item.", q: 2, g: ["t_surface"] },
+      { t: "Ask a colleague who reviewed this company last year what the item usually reflects.", q: 3, g: [] }
+    ],
+    alt: { e: "Testing the explanation", d: { aj: 1, fsi: 0.6 },
+      sc: "The CFO explains a sharp receivables spike as \"timing effects from a system migration.\"",
+      ask: "What do you do next?",
+      options: [
+        { t: "Test it: ageing before and after the migration, cash actually received since, and a sample of the underlying invoices.", q: 4, g: ["t_sceptic"] },
+        { t: "Obtain a written representation from management covering the explanation.", q: 2, g: ["t_accept"] },
+        { t: "Accept it; system migrations genuinely do distort receivables timing.", q: 1, g: ["t_accept"] },
+        { t: "Extend testing in other areas in case the migration affected them too.", q: 3, g: [] }
+      ] } },
+  { e: "The 90 minute test", d: { aj: 1, fsi: 0.7 }, hl: 1,
+    sc: "You have 90 minutes with a company's annual report to identify the areas that deserve deeper investigation.",
+    ask: "What do you prioritise?",
+    options: [
+      { t: "Profit-to-cash reconciliation, working capital trends, unusual margin moves, accounting policy changes, and the notes and contingencies.", q: 4, g: ["t_structured","n_quality"] },
+      { t: "The chairman's letter and management discussion first, to understand the story being told.", q: 2, g: [] },
+      { t: "Confirm the audit opinion is clean, which tells you the statements can be relied on.", q: 1, g: ["t_accept"] },
+      { t: "A ratio screen against the prior year to flag statistical outliers for follow-up.", q: 3, g: ["t_metric"] },
+      { t: "Honestly: I understand the individual concepts, but I would struggle to structure this analysis myself.", q: 2, g: [], s: 1 }
+    ] },
+  { e: "Honest check", d: { aj: 0.15 }, nsh: 1,
+    sc: "Imagine being handed a set of accounts with no hints about where any problem might be.",
+    ask: "Could you identify unusual financial relationships on your own?",
+    options: [
+      { t: "Yes. I know which relationships to test and what unusual looks like.", q: 3, v: 72, c: 4 },
+      { t: "Mostly, though I would be faster with a checklist or guidance.", q: 3, v: 58, c: 3 },
+      { t: "I could check figures I am pointed to, but not find the odd ones myself.", q: 2, v: 45, c: 2 },
+      { t: "I would not know where to begin.", q: 1, v: 30, c: 1 }
+    ] }
+] },
+
+/* ---------- CORPORATE FINANCE ---------- */
+corpfin: { q: [
+  { e: "Expansion decision", d: { vit: 1, fme: 0.6 },
+    sc: "A company wants to build a new plant.",
+    ask: "What determines whether the investment creates value?",
+    options: [
+      { t: "Whether the incremental cash flows, after the ramp-up, earn more than the capital costs, including in a downside case.", q: 4, g: ["t_decision","n_valuation"] },
+      { t: "Whether revenue will grow as a result, which is what expansion is for.", q: 1, g: ["t_surface"] },
+      { t: "Whether the payback period comes in under the company's three-year rule.", q: 2, g: ["t_mech"] },
+      { t: "What capacity competitors are adding, which shapes future pricing in the market.", q: 3, g: ["t_commercial"] }
+    ] },
+  { e: "Funding choice", d: { vit: 1, mri: 0.6 },
+    sc: "The company can fund the plant with internal cash, new debt or fresh equity.",
+    ask: "What should determine the choice?",
+    options: [
+      { t: "Cash-flow stability against fixed obligations, existing leverage, cost and flexibility of each route, dilution, and the project's returns.", q: 4, g: ["t_decision","n_leverage"] },
+      { t: "Debt, almost always. It is cheaper than equity, so it maximises value.", q: 1, g: ["t_mech"] },
+      { t: "Equity, almost always. It never has to be repaid, so it is the safest.", q: 2, g: ["t_mech"] },
+      { t: "Whatever similar companies in the sector chose for comparable projects.", q: 3, g: [] }
+    ] },
+  { e: "Capital allocation", d: { vit: 1, aj: 0.7 },
+    sc: "A company has accumulated significant excess cash. Options include expansion, acquisitions, debt repayment, dividends and buybacks.",
+    ask: "How should management decide?",
+    options: [
+      { t: "Rank the options by risk-adjusted returns against the cost of capital, including whether buybacks are below intrinsic value.", q: 4, g: ["t_decision","n_valuation"] },
+      { t: "Pay dividends. Shareholders expect them, and cash sitting idle frustrates investors.", q: 2, g: ["t_accept"] },
+      { t: "Reinvest in growth. Expanding the business is what management is there to do.", q: 1, g: ["t_surface"] },
+      { t: "First size a safety buffer for the business, then weigh the remaining options.", q: 3, g: ["t_risk"] }
+    ] },
+  { e: "Working capital", d: { fsi: 1, bcu: 0.6 },
+    sc: "Revenue is growing fast, but available cash keeps tightening every quarter.",
+    ask: "What should be investigated?",
+    options: [
+      { t: "How much cash growth is absorbing: receivables and inventory build, payment terms, and the funding the growth itself requires.", q: 4, g: ["t_invest","n_wc","n_cash"] },
+      { t: "Nothing alarming. Profitable growth funds itself over time.", q: 1, g: ["t_accept"] },
+      { t: "Where costs can be cut to free up the cash the business needs.", q: 2, g: [] },
+      { t: "The capex schedule, in case investment timing explains the tightness.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Acquisition", d: { aj: 1, bcu: 0.7 },
+    sc: "An acquisition target has strong growth but weak profitability.",
+    ask: "What should be understood before acquiring it?",
+    options: [
+      { t: "Why it is unprofitable: unit economics versus scale versus pricing; the credible path and cost to profitability, and the price being paid.", q: 4, g: ["t_invest","t_commercial"] },
+      { t: "Its growth rate relative to the market, which is what the deal is buying.", q: 1, g: ["t_surface"] },
+      { t: "The synergy estimates prepared by the bankers running the process.", q: 2, g: ["t_accept"] },
+      { t: "Its market share trajectory against competitors over the last three years.", q: 3, g: ["t_commercial"] }
+    ] },
+  { e: "Growth vs returns", d: { vit: 1, bcu: 0.6 },
+    sc: "A division grows rapidly every year but consistently earns returns below the company's cost of capital.",
+    ask: "What should management consider?",
+    options: [
+      { t: "That growth below the cost of capital destroys value: fix the economics, reprice, or stop growing it, and test whether returns improve with scale.", q: 4, g: ["t_decision","n_valuation"] },
+      { t: "Keep going. Returns almost always catch up once a growing division reaches scale.", q: 1, g: ["t_accept"] },
+      { t: "Shut it down now. Value destruction should be stopped immediately wherever it appears.", q: 2, g: ["t_mech"] },
+      { t: "Benchmark the division's returns against similar businesses at competitors.", q: 3, g: ["t_metric"] }
+    ] },
+  { e: "Financing risk", d: { mri: 1, fme: 0.6 },
+    sc: "A debt-funded project looks attractive in the base case.",
+    ask: "What downside situations need testing before committing?",
+    options: [
+      { t: "Revenue delays, cost overruns and higher rates together, checking covenant and liquidity headroom at the worst point.", q: 4, g: ["t_risk","t_model"] },
+      { t: "Few. The base case was already built conservatively, which is what it is for.", q: 1, g: ["t_accept"] },
+      { t: "A rate-rise case, since financing cost is the main variable in a debt-funded project.", q: 2, g: [] },
+      { t: "A commissioning delay, which is the most common way projects go wrong.", q: 3, g: ["t_risk"] }
+    ],
+    alt: { e: "Testing the sponsor's case", d: { aj: 1, vit: 0.5 },
+      sc: "A division head's \"conservative\" project case lands exactly on the company's approval hurdle rate.",
+      ask: "What do you do before recommending approval?",
+      options: [
+        { t: "Probe the assumptions against history and the market, and build an independent downside case; hurdle-hugging cases deserve suspicion.", q: 4, g: ["t_sceptic"] },
+        { t: "Approve with milestone-based monitoring so problems surface early.", q: 2, g: ["t_accept"] },
+        { t: "Approve. The division head runs the business and owns the delivery risk.", q: 1, g: ["t_accept"] },
+        { t: "Compare the case against the division's past project outcomes before deciding.", q: 3, g: ["t_invest"] }
+      ] } },
+  { e: "The 90 minute test", d: { aj: 1, vit: 0.6, fme: 0.5 }, hl: 1,
+    sc: "You have 90 minutes to advise whether the company should proceed with a ₹500 crore expansion.",
+    ask: "How do you structure your thinking?",
+    options: [
+      { t: "Frame the decision: expected returns versus capital cost, funding and balance-sheet impact, downside case, strategic logic; then a verdict with conditions.", q: 4, g: ["t_structured","t_decision"] },
+      { t: "Summarise the proposal document accurately so leadership has a clean read-out.", q: 1, g: ["t_surface"] },
+      { t: "Start building a full project model; the numbers should lead the advice.", q: 2, g: ["t_model"] },
+      { t: "Ask for more time. A ₹500 crore decision cannot responsibly be advised in 90 minutes.", q: 1, g: [] },
+      { t: "Honestly: I understand the individual concepts, but I would struggle to structure this analysis myself.", q: 2, g: [], s: 1 }
+    ] },
+  { e: "Honest check", d: { aj: 0.15 }, nsh: 1,
+    sc: "Think about the last time you analysed any company or project.",
+    ask: "Could you turn financial information into a recommendation, rather than a summary of the numbers?",
+    options: [
+      { t: "Yes. I naturally end analysis with a recommendation and its conditions.", q: 3, v: 72, c: 4 },
+      { t: "Usually, though my recommendations lean heavily on how others frame the choice.", q: 3, v: 58, c: 3 },
+      { t: "I can summarise well, but committing to a recommendation is uncomfortable.", q: 2, v: 45, c: 2 },
+      { t: "I would not know where to begin.", q: 1, v: 30, c: 1 }
+    ] }
+] },
+
+/* ---------- ASSET / PORTFOLIO MANAGEMENT ---------- */
+am: { q: [
+  { e: "Business vs investment", d: { vit: 1, aj: 0.6, bcu: 0.3 },
+    sc: "A genuinely high-quality company trades at an extremely demanding valuation.",
+    ask: "Is business quality alone enough to make it a good investment?",
+    options: [
+      { t: "No. Returns depend on price versus value: what growth is already priced in, and how much margin of safety remains.", q: 4, g: ["t_invest","n_valuation"] },
+      { t: "Yes, over time. Quality compounds, and entry price matters less with a long horizon.", q: 1, g: ["t_accept"] },
+      { t: "Partly. Buy a small starter position now and average in on any weakness.", q: 2, g: [] },
+      { t: "Check whether comparable quality names trade at similar levels before deciding.", q: 3, g: ["t_metric"] }
+    ] },
+  { e: "Portfolio fit", d: { mri: 1, vit: 0.5 },
+    sc: "A stock looks attractive on its own, but is highly correlated with several companies already in the portfolio.",
+    ask: "What should be considered?",
+    options: [
+      { t: "The marginal impact: shared risk drivers, how the combined position behaves in a drawdown, and whether it adds return or just exposure.", q: 4, g: ["t_risk","n_concentration"] },
+      { t: "Little beyond the stock itself. Best ideas deserve capital wherever they overlap.", q: 1, g: ["t_surface"] },
+      { t: "Cap it at a token weight so the overlap cannot do real damage.", q: 2, g: ["t_mech"] },
+      { t: "Sell one of the correlated existing holdings to make clean room for it.", q: 3, g: [] }
+    ] },
+  { e: "Risk and reward", d: { vit: 1, aj: 0.7, fme: 0.25 },
+    sc: "An idea offers attractive upside, meaningful downside, and an uncertain catalyst.",
+    ask: "How should the position be evaluated?",
+    options: [
+      { t: "Weigh the outcomes honestly, size the position to survive being wrong, and define in advance what evidence would kill the idea.", q: 4, g: ["t_decision","t_risk"] },
+      { t: "The upside exceeds the downside, so the maths already says take the position.", q: 1, g: ["t_mech"] },
+      { t: "Avoid it. Uncertain catalysts are how portfolios end up holding dead money.", q: 2, g: ["t_mech"] },
+      { t: "Wait for the catalyst to firm up, accepting a worse entry price for more certainty.", q: 3, g: [] }
+    ] },
+  { e: "Macro impact", d: { mri: 1, vit: 0.5 },
+    sc: "Interest rates rise unexpectedly.",
+    ask: "How would you assess the implications for an equity portfolio?",
+    options: [
+      { t: "Which holdings are most valuation-sensitive to rates, which carry leverage or refinancing needs, and which sectors' demand weakens.", q: 4, g: ["t_risk","n_macro"] },
+      { t: "Sparingly. Equities recover from rate moves; reacting to macro is usually a mistake.", q: 1, g: ["t_surface","t_accept"] },
+      { t: "Reduce everything rate-sensitive immediately and revisit once rates settle.", q: 2, g: ["t_mech"] },
+      { t: "Check which holdings, such as lenders, might actually benefit from the move.", q: 3, g: ["n_macro"] }
+    ] },
+  { e: "Concentration", d: { aj: 1, vit: 0.6 },
+    sc: "A holding has grown from 5% to 15% of the portfolio purely through price appreciation.",
+    ask: "What should determine whether to reduce it?",
+    options: [
+      { t: "The risk and reward at today's price, whether the thesis has strengthened as much as the price, and concentration limits; not the gain itself.", q: 4, g: ["t_decision","n_concentration","n_valuation"] },
+      { t: "Never trim winners. Cutting the flowers to water the weeds is the classic error.", q: 1, g: ["t_accept"] },
+      { t: "The tax that selling would trigger, which often outweighs the rebalancing benefit.", q: 2, g: [] },
+      { t: "Trim back toward the portfolio's standard position band, as discipline requires.", q: 3, g: ["t_mech"] }
+    ] },
+  { e: "Thesis monitoring", d: { aj: 1, vit: 0.6, bcu: 0.4, fsi: 0.3 },
+    sc: "A portfolio company reports disappointing results.",
+    ask: "What should determine whether to add, hold, reduce or exit?",
+    options: [
+      { t: "Whether the thesis driver is broken or merely delayed, and what today's lower price now implies; re-underwrite it as if new.", q: 4, g: ["t_invest","t_decision"] },
+      { t: "Exit. The results disappointed, and hope is not a strategy.", q: 1, g: ["t_surface"] },
+      { t: "Add automatically. The same thesis at a lower price is simply better value.", q: 2, g: ["t_mech"] },
+      { t: "Compare the miss against guidance and peer results before doing anything.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Drawdown", d: { vit: 1, mri: 0.5 },
+    sc: "A stock in the portfolio falls 25%.",
+    ask: "Why is the price decline alone insufficient to decide whether to buy or sell?",
+    options: [
+      { t: "Price change is not thesis change: value may have fallen more or less than price, so the cause and today's implied expectations decide.", q: 4, g: ["t_invest","n_valuation"] },
+      { t: "It is not insufficient: down 25% means cheaper, and cheaper means add.", q: 1, g: ["t_mech"] },
+      { t: "It is not insufficient: a fall that size means the market knows something, so reduce.", q: 1, g: ["t_surface"] },
+      { t: "Because the sector may have fallen similarly, making it a market move, not a company move.", q: 3, g: ["t_invest"] }
+    ],
+    alt: { e: "Guidance vs evidence", d: { aj: 1, mri: 0.5 },
+      sc: "A holding's management reiterates full-year guidance even as independent channel data weakens.",
+      ask: "How do you respond?",
+      options: [
+        { t: "Weight the independent evidence over the reiteration, test what the guidance requires from the second half, and size down if it cannot be verified.", q: 4, g: ["t_sceptic","t_decision"] },
+        { t: "Trust the reiteration but monitor the next quarter closely for confirmation.", q: 2, g: ["t_accept"] },
+        { t: "The reiteration settles it; management would not repeat guidance it might miss.", q: 1, g: ["t_accept"] },
+        { t: "Ask investor relations for more detail on how the guidance bridges to the data.", q: 3, g: [] }
+      ] } },
+  { e: "The 90 minute test", d: { aj: 1, vit: 0.6 }, hl: 1,
+    sc: "You are given five companies with limited information and 90 minutes to decide which deserve deeper research.",
+    ask: "How do you choose?",
+    options: [
+      { t: "Screen for where an edge could exist: price versus quality mismatches, understandable businesses, and clear questions worth answering.", q: 4, g: ["t_structured","t_decision"] },
+      { t: "Split the time evenly and research all five to the same depth.", q: 1, g: [] },
+      { t: "Start with the two largest and best-known names, where information is richest.", q: 2, g: ["t_surface"] },
+      { t: "Start with the recent best price performers, since strength tends to persist.", q: 1, g: ["t_surface","t_metric"] },
+      { t: "Honestly: I understand the individual concepts, but I would struggle to structure this analysis myself.", q: 2, g: [], s: 1 }
+    ] },
+  { e: "Honest check", d: { aj: 0.15 }, nsh: 1,
+    sc: "Think of any investment you hold or would like to hold.",
+    ask: "Could you explain why you own it and exactly what evidence would make you sell?",
+    options: [
+      { t: "Yes. I could state the thesis and the specific sell triggers.", q: 3, v: 72, c: 4 },
+      { t: "I could explain why I own it; the sell discipline is vaguer.", q: 3, v: 58, c: 3 },
+      { t: "I could describe the company, but not frame it as a thesis with triggers.", q: 2, v: 45, c: 2 },
+      { t: "I would not know where to begin.", q: 1, v: 30, c: 1 }
+    ] }
+] },
+
+/* ---------- NOT SURE YET ---------- */
+ns: { q: [
+  { e: "Reading the numbers", d: { fsi: 1, aj: 0.5 },
+    sc: "A company's revenue grew 20% this year and reported profit also increased. But its operating cash flow declined sharply.",
+    ask: "What would you investigate before deciding the company actually performed well?",
+    options: [
+      { t: "Receivables, inventory, payables and other working capital items, to see why profit is not converting into cash.", q: 4, g: ["t_invest","n_cash","n_wc"] },
+      { t: "Nothing further. Higher revenue and higher profit are the clearest signs of improvement.", q: 1, g: ["t_accept","t_surface"] },
+      { t: "Whether the share price rose over the year, since markets see problems before analysts do.", q: 1, g: ["t_surface"] },
+      { t: "Whether the dividend was maintained, which signals management's own confidence.", q: 2, g: ["t_accept"] }
+    ] },
+  { e: "Behind the numbers", d: { bcu: 1, fsi: 0.5 },
+    sc: "A consumer company's sales have grown substantially over two years, but its operating margin has steadily fallen.",
+    ask: "Which explanation would you investigate first?",
+    options: [
+      { t: "Whether growth came from price cuts, discounts or lower-margin products, and what happened to input and marketing costs.", q: 4, g: ["t_commercial","n_pricing","n_margin"] },
+      { t: "Whether the tax rate went up, which would directly reduce the margin.", q: 1, g: [] },
+      { t: "Whether absolute profit still grew, because that is what finally matters.", q: 2, g: ["t_surface"] },
+      { t: "Whether the whole industry's margins fell, making it a sector-wide story.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Building a forecast", d: { fme: 1, fsi: 0.5 },
+    sc: "You receive three years of a company's historical financial statements and are asked to build a basic three-year forecast.",
+    ask: "What would you do first?",
+    options: [
+      { t: "Work out what drives revenue and costs, set assumptions for each driver, and keep the three statements linked.", q: 4, g: ["t_model","n_drivers"] },
+      { t: "Grow every line at its three-year average rate; history is the most objective guide.", q: 1, g: ["t_mech"] },
+      { t: "Skip to valuation using last year's actuals, since forecasts are guesses anyway.", q: 1, g: ["t_surface"] },
+      { t: "Ask for five more years of history before starting anything.", q: 2, g: [] }
+    ] },
+  { e: "Valuation", d: { vit: 1, bcu: 0.5 },
+    sc: "Two companies operate in the same industry. Company A trades at 12 times earnings, Company B at 25 times.",
+    ask: "Can Company B still be the better investment? What would you want to know?",
+    options: [
+      { t: "Yes, possibly: compare growth, margins, returns on capital, competitive position and how durable each one's earnings are.", q: 4, g: ["t_invest","n_valuation"] },
+      { t: "Unlikely. Paying double the multiple in the same industry means overpaying.", q: 1, g: ["t_mech"] },
+      { t: "Yes, if B's share price has been rising faster; the market clearly prefers it.", q: 1, g: ["t_surface"] },
+      { t: "Compare both against the industry average multiple and prefer whichever is below it.", q: 2, g: ["t_metric"] }
+    ] },
+  { e: "Inside a business", d: { bcu: 1, fme: 0.5 },
+    sc: "A company's quarterly revenue landed on budget, but its operating profit came in 15% below budget.",
+    ask: "Where would you look first for the explanation?",
+    options: [
+      { t: "Margins and costs: whether pricing, product mix, input costs or overheads moved against the plan.", q: 4, g: ["t_commercial","n_margin","n_costs"] },
+      { t: "Interest and tax, which often push the final number away from plan.", q: 1, g: ["t_surface"] },
+      { t: "Last year's same quarter, to see whether the business actually grew.", q: 2, g: ["t_metric"] },
+      { t: "Whether a single one-off expense explains the whole gap.", q: 3, g: ["t_invest"] }
+    ] },
+  { e: "Debt and risk", d: { mri: 1, fsi: 0.5 },
+    sc: "A company plans to double its borrowings to fund expansion.",
+    ask: "What determines whether that is manageable?",
+    options: [
+      { t: "Whether its cash flows could still service the debt in a weak year: stability, interest cover and the repayment schedule.", q: 4, g: ["t_risk","n_leverage","n_cash"] },
+      { t: "Whether debt-to-equity stays below 1, the standard safety threshold.", q: 1, g: ["t_metric"] },
+      { t: "Whether banks agree to lend; they will have checked the risk already.", q: 1, g: ["t_accept"] },
+      { t: "Whether the expansion itself will earn returns above the interest cost.", q: 3, g: ["n_valuation"] }
+    ] },
+  { e: "Accounting quality", d: { fsi: 1, aj: 0.6 },
+    sc: "A company's receivables are growing at twice the rate of its revenue.",
+    ask: "Why might this deserve attention?",
+    options: [
+      { t: "Sales may be booked on loosening credit terms or pulled forward; the ageing and collection pattern would show it.", q: 4, g: ["t_invest","n_wc","n_quality"] },
+      { t: "It is a natural feature of growth; more sales always mean more receivables.", q: 1, g: ["t_accept"] },
+      { t: "It matters only if customers actually start defaulting on payments.", q: 2, g: ["t_surface"] },
+      { t: "Compare receivable days with competitors to size how unusual it is.", q: 3, g: ["t_metric"] }
+    ],
+    alt: { e: "Judgement call", d: { aj: 1, bcu: 0.5 },
+      sc: "On an earnings call, management says: \"We expect margins to improve significantly next year.\"",
+      ask: "What would you need before building this into your analysis?",
+      options: [
+        { t: "Their track record on past guidance, exactly where the improvement comes from, and whether industry conditions support it.", q: 4, g: ["t_sceptic","n_drivers"] },
+        { t: "Not much. Management knows the business better than any outsider.", q: 1, g: ["t_accept"] },
+        { t: "Take half of what they claim as a margin of safety and use that.", q: 2, g: ["t_mech"] },
+        { t: "Wait to see whether analysts upgrade their estimates first.", q: 1, g: ["t_accept","t_surface"] }
+      ] } },
+  { e: "Capital allocation", d: { vit: 1, aj: 0.5 }, hl: 1,
+    sc: "A company has built up significant excess cash. It could expand, acquire, repay debt, pay dividends or buy back shares.",
+    ask: "How should management decide?",
+    options: [
+      { t: "Compare the options by expected returns against the cost of capital and the company's risk, rather than by habit or optics.", q: 4, g: ["t_decision","n_valuation"] },
+      { t: "Pay dividends; shareholders expect them and idle cash frustrates investors.", q: 2, g: ["t_accept"] },
+      { t: "Expand; growing the business is what management exists to do.", q: 1, g: ["t_surface"] },
+      { t: "Repay all debt first; a debt-free balance sheet is always the safest outcome.", q: 2, g: ["t_mech"] },
+      { t: "Honestly: I understand the options, but I would struggle to structure this decision myself.", q: 2, g: [], s: 1 }
+    ] },
+  { e: "Your instincts", d: {}, nsh: 1,
+    sc: "You have just worked through eight very different finance situations.",
+    ask: "Which type of task felt most natural or interesting to you?",
+    options: [
+      { t: "Digging into financial statements and spotting where the numbers looked odd.", q: 2, v: 55, r: ["acct","er"] },
+      { t: "Working out what was driving a business's performance and what management should do.", q: 2, v: 55, r: ["fpa","corpfin"] },
+      { t: "Judging what companies are worth and whether they would be good investments.", q: 2, v: 55, r: ["er","am","ib"] },
+      { t: "Thinking about debt, downside scenarios and what could go wrong.", q: 2, v: 55, r: ["risk"] }
+    ] }
+] }
+};
+
+/* ================= RESULT CONTENT ================= */
+
+var LEVELS = [
+  { min: 90, label: "Strong Practical Command" },
+  { min: 75, label: "Practical Ready" },
+  { min: 60, label: "Application Developing" },
+  { min: 40, label: "Conceptually Aware" },
+  { min: 0,  label: "Foundation Gap" }
+];
+
+var ROLE_LEVELS = [
+  { min: 85, label: "Interview Preparation Ready" },
+  { min: 70, label: "Practically Developing" },
+  { min: 55, label: "Skill Building Required" },
+  { min: 40, label: "Foundation Ready" },
+  { min: 0,  label: "Exploring" }
+];
+
+var PROFILES = {
+  theory: {
+    name: "Theory-First",
+    text: "You understand several finance concepts, but converting them into an actual analysis or decision is currently the bigger challenge. Your fastest gains will come from applying what you already know to real companies, not from learning more theory."
+  },
+  building: {
+    name: "Building Practicality",
+    text: "You can interpret common financial situations, but more structured practice is needed before you can independently analyse and make decisions. You are past the beginner stage; the next stage is repetition on real companies."
+  },
+  ready: {
+    name: "Practically Ready",
+    text: "You demonstrate the ability to connect financial concepts with businesses, numbers and decisions. Your focus now should be depth and speed: the same analysis, done better and faster, on harder companies."
+  },
+  strong: {
+    name: "Strong but Specialisation Needed",
+    text: "Your practical finance fundamentals appear strong. Your next gap is not general ability; it is deeper, role-specific capability in the career you are aiming for."
+  }
+};
+
+var NOTICE_PHRASES = {
+  n_cash: "cash conversion", n_wc: "working capital", n_margin: "margin drivers",
+  n_pricing: "pricing and mix", n_leverage: "leverage and debt service",
+  n_liquidity: "liquidity and refinancing", n_concentration: "concentration risk",
+  n_valuation: "what the price already assumes", n_expectations: "market expectations",
+  n_drivers: "underlying business drivers", n_quality: "earnings quality",
+  n_costs: "cost behaviour", n_macro: "macro transmission"
+};
+
+var GAP_TITLES = {
+  fsi: "Financial Statement Interpretation",
+  bcu: "Business Interpretation",
+  vit: "Valuation Thinking",
+  fme: "Modelling and Forecasting",
+  mri: "Market and Risk Interpretation",
+  aj:  "Analytical Judgement"
+};
+
+var ROLE_WHY = {
+  ib: {
+    fsi: "Deal work starts from reported numbers that must be cleaned, normalised and trusted before any model is built on them.",
+    bcu: "A valuation is only as good as your grasp of what actually drives the target's revenue and margins.",
+    vit: "Choosing methods, multiples and assumptions that fit the business is the daily substance of valuation work.",
+    fme: "Bankers live inside models; a forecast that is not internally consistent gets taken apart in the first review.",
+    mri: "Leverage, rates and financing conditions decide whether a deal structure survives a bad year.",
+    aj:  "Every model rests on assumptions someone will challenge; defending them is the job."
+  },
+  er: {
+    fsi: "Research begins where reported numbers and economic reality diverge; analysts are paid to spot that gap early.",
+    bcu: "An earnings model is a business model in numbers; without the business, estimates are just extrapolation.",
+    vit: "A recommendation is a view on price versus value; putting multiples in context is the core craft.",
+    fme: "Estimate changes come from driver assumptions, so loose modelling means loose recommendations.",
+    mri: "Stocks move on expectations and macro shifts; results only matter relative to what was priced in.",
+    aj:  "Analysts constantly separate management narrative from evidence; scepticism is the professional default."
+  },
+  fpa: {
+    fsi: "Explaining performance to management means reconciling profit, cash and the balance sheet without gaps.",
+    bcu: "Variance analysis is only useful when numbers are traced back to volumes, prices, mix and costs.",
+    vit: "Investment and pricing proposals need a value lens, not just a budget lens.",
+    fme: "Budgets, forecasts and scenarios are FP&A's core products; driver logic is what makes them credible.",
+    mri: "Rate moves, input costs and demand shifts land in the plan; FP&A is expected to see them coming.",
+    aj:  "FP&A sits between optimistic business heads and the CFO; challenging numbers with evidence is the value added."
+  },
+  risk: {
+    fsi: "Credit risk lives in the statements: cash generation, working capital and the debt schedule show who can actually pay.",
+    bcu: "Understanding how a borrower earns money is the first step in judging how it could fail.",
+    vit: "Collateral and enterprise values matter most when things go wrong; risk work needs a value sense.",
+    fme: "Stress testing means rebuilding forecasts under bad assumptions, not just flexing one number.",
+    mri: "Rates, currency, liquidity and concentration are the raw material of risk work.",
+    aj:  "Risk hides where the comfortable story is wrong; the job is asking what breaks first."
+  },
+  acct: {
+    fsi: "The relationships between the three statements are the daily toolkit of reporting and audit work.",
+    bcu: "Unusual numbers only look unusual to someone who knows what the business should normally produce.",
+    vit: "Impairments, fair values and estimates all lean on valuation judgement.",
+    fme: "Testing management's estimates means rebuilding their assumptions and seeing what moves.",
+    mri: "Going-concern and liquidity judgements depend on reading financial risk correctly.",
+    aj:  "Professional scepticism is the defining skill of the role: corroborate, do not accept."
+  },
+  corpfin: {
+    fsi: "Capital decisions start from an honest read of cash generation and the balance sheet.",
+    bcu: "Allocating capital well requires knowing which parts of the business actually earn their keep.",
+    vit: "Every corporate finance decision is a value comparison: returns against the cost of capital.",
+    fme: "Project cases and funding plans are forecasts; weak driver logic produces confident wrong answers.",
+    mri: "Funding choices carry rate, refinancing and downside risks that must be tested before committing.",
+    aj:  "Turning analysis into a recommendation management can act on is the whole point of the role."
+  },
+  am: {
+    fsi: "Earnings quality decides whether reported performance can be trusted enough to own.",
+    bcu: "Owning a stock means owning a business; the drivers behind the numbers are the thesis.",
+    vit: "Returns come from the gap between price and value; valuation discipline is the edge.",
+    fme: "Testing a thesis means working out what the price implies and what has to go right.",
+    mri: "Portfolios live in markets: rates, cycles, correlation and drawdowns shape outcomes as much as stock picks.",
+    aj:  "Every position needs a reason to own it and a defined reason to sell it; that discipline is the process."
+  },
+  ns: {
+    fsi: "Every finance role starts from reading the three statements as one connected system.",
+    bcu: "Whatever role you choose, numbers only make sense against the business that produced them.",
+    vit: "A working sense of what things are worth underpins most finance careers.",
+    fme: "Turning assumptions into forecasts is the most transferable practical finance skill.",
+    mri: "Connecting markets and risk to companies matters in every seat, buy side or corporate.",
+    aj:  "Evidence-first thinking is the trait every finance interviewer probes for."
+  }
+};
+
+var STRENGTH_EVIDENCE = {
+  fsi: { tag: ["n_cash","n_wc"], yes: "When profit and cash moved in different directions, you went looking for the working-capital and cash-conversion story instead of accepting the headline.", no: "You read financial statements as one connected system rather than as separate pages of numbers." },
+  bcu: { tag: ["n_pricing","n_costs","n_margin"], yes: "You repeatedly traced financial changes back to pricing, mix and cost decisions inside the business, rather than stopping at the ratio.", no: "You connected financial outcomes to the operational decisions that produce them." },
+  vit: { tag: ["n_valuation"], yes: "You treated prices and multiples as claims to be tested against growth, returns and durability, not as answers in themselves.", no: "You looked for the context behind valuations instead of applying rules of thumb." },
+  fme: { tag: ["n_drivers"], yes: "When a forecast was needed, you reached for drivers, assumptions and linked statements rather than extending past numbers.", no: "You approached forecasting through assumptions and relationships rather than extrapolation." },
+  mri: { tag: ["n_leverage","n_liquidity","n_macro"], yes: "You traced macro moves and balance-sheet risks through to specific cash flows and obligations, not just to headlines.", no: "You connected market and risk events to company-level consequences." },
+  aj:  { tag: [], yes: "", no: "You asked for evidence before accepting management or market narratives, and looked for what was missing before concluding." }
+};
+
+var GAP_NOTICED = {
+  fsi: { cond: "t_surface", yes: "In several scenarios you worked from the headline number without tracing it through the balance sheet and cash flow, which is where the real story sat.", no: "Connecting the P&L, balance sheet and cash flow into one picture was the weakest thread in your answers." },
+  bcu: { cond: "t_metric", yes: "You reached for ratios and benchmarks readily, but less often for the operational causes (pricing, mix, costs) behind them.", no: "Linking financial changes to what actually happened inside the business was where your answers thinned out." },
+  vit: { cond: "t_mech", yes: "You applied valuation rules mechanically in more than one scenario: a cheaper multiple, or a rule of thumb, stood in for the context that decides the answer.", no: "Judging what a price already assumes, and when an expensive business is still the better one, is currently your least developed instinct." },
+  fme: { cond: "t_mech", yes: "When a forecast was needed, you tended to extend past numbers rather than build from drivers and assumptions.", no: "Converting observations into structured assumptions and linked forecasts is currently a gap." },
+  mri: { cond: "t_surface", yes: "Macro and risk events stayed at headline level in your answers; the chain from event to cash flow to obligation went untraced.", no: "Tracing rates, currency and leverage through to a specific company's outcomes is currently a gap." },
+  aj:  { cond: "t_accept", yes: "In more than one scenario you took a management claim or a comfortable narrative at face value where evidence was available to test it.", no: "Challenging assumptions and asking for the missing evidence before concluding is the habit your answers most lacked." }
+};
+
+var IMPROVE = {
+  fsi: "Take one real annual report and trace how profit becomes, or fails to become, cash. Repeat until the linkages feel automatic.",
+  bcu: "For every ratio change you spot, force yourself to name the operational decision that could have caused it.",
+  vit: "Compare two listed competitors at different multiples and write down what the expensive one must deliver to justify its price.",
+  fme: "Build one small driver-based forecast with linked statements. The struggle itself is the training.",
+  mri: "After each macro event, write three lines tracing it to one company's costs, demand and funding.",
+  aj:  "Pick one management claim a week and check it against past guidance and independent evidence."
+};
+
+var CAP_READY = {
+  fsi: "Reading a set of financial statements and noticing where the story does not hold together",
+  bcu: "Explaining financial results in terms of what the business actually did",
+  vit: "Putting a price or multiple into context instead of just quoting it",
+  fme: "Thinking in drivers and assumptions when a forecast is needed",
+  mri: "Connecting rates, risk and market events to company outcomes",
+  aj:  "Challenging claims and asking for the missing evidence"
+};
+
+var ROLE_SKILLS = {
+  ib: ["Building and defending valuation work across methods, not just one multiple", "Clean, linked three-statement modelling under time pressure", "Normalising and adjusting reported financials before using them"],
+  er: ["Turning quarterly results into a clear, defensible investment view", "Separating one-off items from underlying business performance", "Writing and defending an investment thesis end to end"],
+  fpa: ["Driver-based budgeting and forecasting rather than percentage roll-forwards", "Variance analysis that traces numbers back to operations", "Communicating financial insight to non-finance business teams"],
+  risk: ["Reading cash-flow stability and debt-service capacity", "Scenario and stress thinking: what breaks first, and when", "Connecting macro moves to borrower or portfolio risk"],
+  acct: ["Moving fluently between the three financial statements", "Spotting where reported profit and economic reality diverge", "Understanding accounting policies and the incentives behind them"],
+  corpfin: ["Capital structure and cost-of-capital reasoning", "Evaluating projects and funding options against required returns", "Judging financing choices against cash-flow stability"],
+  am: ["Judging whether past returns are repeatable or already priced in", "Valuation discipline when the story is attractive", "Portfolio-level risk and position thinking, not just stock picking"],
+  ns: ["Structured company analysis from business model to valuation", "Comfort across statements, business drivers and markets", "Exploring roles by doing real company work, not reading role descriptions"]
+};
+
+var HELP_BLOCKS = {
+  fme: {
+    title: "Modelling and Forecasting",
+    practise: ["Excel fluency with real financial data", "Three-statement modelling on actual listed companies", "Forecasting from drivers, not growth rates", "Scenario and sensitivity analysis"],
+    how: "Build one rough model this month on a company you know as a customer, then rebuild it better next month. Two passes teach more than any course watched passively.",
+    ssei: "SSEI's Financial Modeling programme is built around exactly this: constructing linked models and valuations on real listed companies rather than blank templates."
+  },
+  vit: {
+    title: "Valuation and Investment Analysis",
+    practise: ["Annual report analysis with a question in mind", "Industry structure and competitive research", "Multiples in context: what a price already assumes", "Building and defending an investment thesis"],
+    how: "Take two listed competitors at different multiples and write one page on why the market prices them differently, ending with which you would rather own.",
+    ssei: "SSEI's CFA and investment analysis pathways build this progressively, from reading annual reports properly to constructing and defending a full thesis."
+  },
+  mri: {
+    title: "Market and Risk Interpretation",
+    practise: ["Interest-rate moves and what they touch first", "Credit analysis: who can pay in a bad year", "Downside scenarios and stress thinking", "Macro-to-company impact chains"],
+    how: "After the next RBI decision, write three lines tracing it into one company you follow: costs, demand and funding. Repeat for every major macro event this quarter.",
+    ssei: "SSEI's FRM and risk-focused programmes train exactly this chain: rates, credit, scenarios and stress, applied to real businesses."
+  },
+  fsi: {
+    title: "Accounting and Reporting Foundations",
+    practise: ["How the three statements move together", "Why profit and cash diverge, and what it signals", "Working capital and its effect on cash", "Reading the notes, not just the statements"],
+    how: "Take one annual report and reconcile reported profit to operating cash flow line by line, writing one sentence for each major difference.",
+    ssei: "SSEI's accounting and financial reporting foundations rebuild this from the relationships up, before layering on advanced modelling."
+  },
+  bcu: {
+    title: "Business Analysis",
+    practise: ["Revenue drivers and unit economics", "Cost structures and operating leverage", "Pricing and competition", "Management commentary versus what the numbers show"],
+    how: "Read one annual report a week starting from the business sections, and write three lines on what actually drives that company before looking at a single ratio.",
+    ssei: "SSEI's practical programmes push you into real annual reports and industry work early, because this skill cannot be learned from summaries."
+  },
+  exec: {
+    title: "Practical Execution",
+    practise: ["Real listed-company analysis, one per week", "Simple financial models, improved with each pass", "One-page investment or business memos", "Case studies defended out loud"],
+    how: "Learn less in isolation. Start applying more: pick one listed company this week, analyse it end to end, and explain your view to someone who will push back.",
+    ssei: "SSEI's practical finance programmes are structured around exactly this kind of applied, project-based work on real companies."
+  }
+};
+
+var FIX_LINES = {
+  fsi: "Rebuild your statement fluency: relearn how the P&L, balance sheet and cash flow interact, on one real company rather than a textbook.",
+  bcu: "Train the business lens: connect every financial change you see to a pricing, cost, mix or demand decision that could have caused it.",
+  vit: "Sharpen your valuation context: practise explaining why two similar companies deserve different prices.",
+  fme: "Learn driver-based forecasting: assumptions in, linked statements out, on a real company's numbers.",
+  mri: "Build the macro-to-company reflex: rates, currency and liquidity traced into one business at a time.",
+  aj:  "Make evidence a habit: no claim enters your analysis until you have tested it against something independent.",
+  exec: "Learn less in isolation, start applying more: your gap is structuring the work, and only doing the work fixes it."
+};
+
+var ROLE_APPLY = {
+  ib: "Pick one listed company and build a simple three-statement model with a three-year forecast and a basic valuation range.",
+  er: "Choose one listed company and analyse its last four quarters against what management promised each time.",
+  fpa: "Take any company's historicals and build a revenue, margin and working-capital forecast with a base, upside and downside case.",
+  risk: "Take one leveraged listed company and assess whether it could service its debt in a bad year: cover, maturities, liquidity.",
+  acct: "Take one annual report and reconcile reported profit with operating cash flow, explaining every major gap you find.",
+  corpfin: "Take a real announced capex or acquisition and evaluate it: expected returns, funding choice and downside case.",
+  am: "Analyse one stock you find attractive: what today's price implies, the risk and reward, and how it would fit a five-stock portfolio."
+};
+
+var ROLE_PROVE = {
+  ib: "Prepare a two-page valuation summary and practise defending each key assumption out loud.",
+  er: "Write a one-page investment thesis stating your view, what makes it right, and exactly what would prove it wrong.",
+  fpa: "Prepare a management-style budget-versus-actual variance explanation with a clear so-what, on one page.",
+  risk: "Write a one-page credit note: the three things that could realistically stop this company meeting its obligations.",
+  acct: "Write a one-page earnings-quality note flagging the three items you would investigate further, and why.",
+  corpfin: "Write a one-page recommendation memo: proceed or not, under what conditions, and what would change your mind.",
+  am: "Write a one-page ownership note: why you would own it, at what size, and the exact evidence that would make you sell."
+};
+
+/* ================= STATE ================= */
+
+var state = { career: null, answers: {}, shuffles: {}, q7mode: null };
+
+/* ================= HELPERS ================= */
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function levelFor(score, table) {
+  for (var i = 0; i < table.length; i++) if (score >= table[i].min) return table[i].label;
+  return table[table.length - 1].label;
+}
+function careerLabel(k) {
+  for (var i = 0; i < CAREERS.length; i++) if (CAREERS[i].key === k) return CAREERS[i].label;
+  return "";
+}
+function optValue(o) { return o.v !== undefined ? o.v : TIERV[o.q]; }
+
+/* Resolve the question actually shown at index qi (handles the adaptive Q7). */
+function getQ(qi) {
+  var q = TRACKS[state.career].q[qi];
+  if (qi === 6 && q.alt && state.q7mode === "alt") return q.alt;
+  return q;
+}
+
+/* Decide the adaptive Q7 variant from answers to Q1-Q6: repeated acceptance
+   of management claims or headline numbers triggers a scepticism re-test. */
+function resolveQ7() {
+  if (state.q7mode) return;
+  var acc = 0;
+  for (var qi = 0; qi < 6; qi++) {
+    var q = getQ(qi);
+    var a = state.answers[qi];
+    if (a === undefined) continue;
+    var picks = q.m ? a : [a];
+    for (var p = 0; p < picks.length; p++) {
+      var g = q.options[picks[p]].g || [];
+      if (g.indexOf("t_accept") !== -1) acc++;
+    }
+  }
+  state.q7mode = (acc >= 2 && TRACKS[state.career].q[6].alt) ? "alt" : "base";
+}
+
+var stage = document.getElementById("stage");
+function setScreen(html) {
+  stage.innerHTML = "<div class='screen'>" + html + "</div>";
+  window.scrollTo(0, 0);
+}
+
+/* ================= SCREENS ================= */
+
+function renderIntro() {
+  setScreen(
+    "<div class='hero'>" +
+      "<div class='eyebrow'>A career diagnostic, not an exam</div>" +
+      "<h1>Can you actually<br>do finance?</h1>" +
+      "<p class='lede'>Nine realistic situations from the finance career <strong>you</strong> pick, so an aspiring banker and an aspiring auditor face different tests. No formulas, no trivia, no calculators. It measures what you can <strong>apply</strong>, and shows you what to work on next.</p>" +
+      "<div class='hero-points'>" +
+        "<span class='chip'>9 role-specific scenarios</span>" +
+        "<span class='chip'>5 to 7 minutes</span>" +
+        "<span class='chip'>No calculations</span>" +
+        "<span class='chip'>Personalised gap report</span>" +
+      "</div>" +
+      "<p class='promise'>You will leave with your <strong>Finance Readiness Profile</strong>: how you actually think through finance situations, your strongest capabilities, your biggest practical gaps, your readiness for the role you want, and a three-step plan built from your answers.</p>" +
+      "<button class='btn' id='start'>Start the diagnostic</button>" +
+    "</div>"
+  );
+  document.getElementById("start").onclick = renderCareer;
+}
+
+function renderCareer() {
+  var html =
+    "<div class='eyebrow'>Before we begin</div>" +
+    "<h2 class='serif' style='font-size:clamp(26px,4.5vw,34px)'>Which finance career are you currently most interested in?</h2>" +
+    "<p style='color:var(--ink-soft); margin:12px 0 0; max-width:56ch'>Pick one. Your entire assessment is built around the practical thinking that career demands. “Not Sure Yet” gives you a balanced diagnostic and suggests directions that fit how you think.</p>" +
+    "<div class='careers'>";
+  for (var i = 0; i < CAREERS.length; i++) {
+    var sel = state.career === CAREERS[i].key ? " selected" : "";
+    html += "<button class='opt" + sel + "' data-career='" + CAREERS[i].key + "'><span>" + esc(CAREERS[i].label) + "</span></button>";
+  }
+  html += "</div><div class='nav-row'><button class='link-btn' id='back'>← Back</button><button class='btn' id='next' " + (state.career ? "" : "disabled") + ">Continue</button></div>";
+  setScreen(html);
+
+  var btns = stage.querySelectorAll("[data-career]");
+  for (var b = 0; b < btns.length; b++) {
+    btns[b].onclick = function () {
+      var k = this.getAttribute("data-career");
+      if (state.career !== k) {
+        state.career = k;
+        state.answers = {};
+        state.shuffles = {};
+        state.q7mode = null;
+      }
+      var all = stage.querySelectorAll("[data-career]");
+      for (var x = 0; x < all.length; x++) all[x].classList.remove("selected");
+      this.classList.add("selected");
+      document.getElementById("next").disabled = false;
+    };
+  }
+  document.getElementById("back").onclick = renderIntro;
+  document.getElementById("next").onclick = function () {
+    if (state.career) renderQuestion(0);
+  };
+}
+
+function orderFor(qi, q) {
+  var key = qi + (state.q7mode === "alt" && qi === 6 ? "a" : "");
+  if (state.shuffles[key]) return state.shuffles[key];
+  var idx = [], last = null;
+  for (var i = 0; i < q.options.length; i++) {
+    if (q.hl && q.options[i].s) last = i; else idx.push(i);
+  }
+  var order = q.nsh ? idx : shuffle(idx);
+  if (last !== null) order.push(last);
+  state.shuffles[key] = order;
+  return order;
+}
+
+function answerComplete(qi, q) {
+  var a = state.answers[qi];
+  if (a === undefined) return false;
+  if (q.m) return a.length === q.m;
+  return true;
+}
+
+function renderQuestion(qi) {
+  if (qi === 6) resolveQ7();
+  var q = getQ(qi);
+  var order = orderFor(qi, q);
+  var keys = "ABCDE";
+  var pct = Math.round((qi / 9) * 100);
+
+  var html =
+    "<div class='progress'><span class='progress-count'>Question " + (qi + 1) + " of 9</span><div class='bar'><div class='bar-fill' style='width:" + pct + "%'></div></div></div>" +
+    "<div class='q-head'><div class='eyebrow'>" + esc(q.e) + "</div></div>" +
+    "<div class='scenario'><p>" + esc(q.sc) + "</p></div>" +
+    "<p class='ask'>" + esc(q.ask) + "</p>" +
+    (q.m ? "<p class='pick-note'>Pick exactly " + q.m + " · <span id='pickcount'>0</span> of " + q.m + " selected</p>" : "") +
+    "<div class='opts'>";
+
+  for (var i = 0; i < order.length; i++) {
+    var oi = order[i];
+    var opt = q.options[oi];
+    var a = state.answers[qi];
+    var isSel = q.m ? (a && a.indexOf(oi) !== -1) : a === oi;
+    if (q.hl && opt.s) html += "<div class='opt-divider'>Or, honestly</div>";
+    html += "<button class='opt" + (isSel ? " selected" : "") + (opt.s ? " honest" : "") + (q.m ? " multi" : "") + "' data-oi='" + oi + "'>" +
+      "<span class='opt-key'>" + keys[i] + "</span><span>" + esc(opt.t) + "</span></button>";
+  }
+
+  html += "</div><div class='nav-row'><button class='link-btn' id='back'>← Back</button>" +
+    "<button class='btn' id='next' " + (answerComplete(qi, q) ? "" : "disabled") + ">" +
+    (qi === 8 ? "See my results" : "Continue") + "</button></div>";
+  setScreen(html);
+
+  function refresh() {
+    var a = state.answers[qi];
+    var all = stage.querySelectorAll("[data-oi]");
+    for (var x = 0; x < all.length; x++) {
+      var oid = parseInt(all[x].getAttribute("data-oi"), 10);
+      var sel = q.m ? (a && a.indexOf(oid) !== -1) : a === oid;
+      all[x].classList.toggle("selected", !!sel);
+    }
+    if (q.m) {
+      var pc = document.getElementById("pickcount");
+      if (pc) pc.textContent = a ? a.length : 0;
+    }
+    document.getElementById("next").disabled = !answerComplete(qi, q);
+  }
+
+  var btns = stage.querySelectorAll("[data-oi]");
+  for (var b = 0; b < btns.length; b++) {
+    btns[b].onclick = function () {
+      var oi = parseInt(this.getAttribute("data-oi"), 10);
+      if (q.m) {
+        var a = state.answers[qi] || [];
+        var at = a.indexOf(oi);
+        if (at !== -1) a.splice(at, 1);
+        else if (a.length < q.m) a.push(oi);
+        state.answers[qi] = a;
+      } else {
+        state.answers[qi] = oi;
+      }
+      refresh();
+    };
+  }
+  if (q.m) refresh();
+  document.getElementById("back").onclick = function () {
+    if (qi === 0) renderCareer(); else renderQuestion(qi - 1);
+  };
+  document.getElementById("next").onclick = function () {
+    if (!answerComplete(qi, q)) return;
+    if (qi === 8) renderResults(); else renderQuestion(qi + 1);
+  };
+}
+
+/* ================= SCORING & DIAGNOSTICS ================= */
+
+function computeResults() {
+  var totals = {}, wsum = {}, tags = {};
+  var struggle = false, confidence = null, prefRoles = null;
+  var q7Result = null;
+
+  for (var qi = 0; qi < 9; qi++) {
+    var q = getQ(qi);
+    var a = state.answers[qi];
+    if (a === undefined) continue;
+    var picks = q.m ? a : [a];
+    var val = 0;
+    for (var p = 0; p < picks.length; p++) {
+      var o = q.options[picks[p]];
+      val += optValue(o);
+      if (o.s) struggle = true;
+      if (o.c) confidence = o.c;
+      if (o.r) prefRoles = o.r;
+      var g = o.g || [];
+      for (var t = 0; t < g.length; t++) tags[g[t]] = (tags[g[t]] || 0) + 1;
+      if (qi === 6 && state.q7mode === "alt") q7Result = optValue(o);
+    }
+    val = val / picks.length;
+    for (var d in q.d) {
+      totals[d] = (totals[d] || 0) + val * q.d[d];
+      wsum[d] = (wsum[d] || 0) + q.d[d];
+    }
+  }
+
+  /* A dimension the chosen track barely touched inherits the measured mean,
+     is excluded from strength/gap findings, and never becomes a fabricated verdict. */
+  var dims = {}, unmeasured = [], mSum = 0, mCount = 0;
+  for (var k in DIM_NAMES) {
+    if (wsum[k]) {
+      dims[k] = Math.round(totals[k] / wsum[k]);
+      mSum += dims[k]; mCount++;
+    } else {
+      unmeasured.push(k);
+    }
+  }
+  var mMean = mCount ? Math.round(mSum / mCount) : 45;
+  for (var u = 0; u < unmeasured.length; u++) dims[unmeasured[u]] = mMean;
+  var overall = 0, minDim = 100;
+  for (var k2 in dims) {
+    overall += dims[k2];
+    if (dims[k2] < minDim) minDim = dims[k2];
+  }
+  overall = Math.round(overall / 6);
+
+  var interp = (dims.fsi + dims.bcu + dims.vit) / 3;
+  var exec = (dims.fme + dims.aj) / 2;
+
+  var profile;
+  if (struggle && interp >= 45) profile = "theory";
+  else if (overall >= 85 && minDim >= 72) profile = "strong";
+  else if (overall >= 70) profile = "ready";
+  else if (interp >= 55 && exec < 52) profile = "theory";
+  else profile = "building";
+
+  /* behaviour patterns, evidence-gated */
+  var T = function (x) { return tags[x] || 0; };
+  var patterns = [];
+  if (T("t_sceptic") >= 2 && T("t_accept") <= 1) patterns.push("sceptic");
+  if (T("t_invest") >= 3) patterns.push("investigator");
+  if (T("t_commercial") >= 2) patterns.push("commercial");
+  if (T("t_model") >= 2) patterns.push("modeler");
+  if (T("t_risk") >= 3) patterns.push("marketAware");
+  if (T("t_decision") >= 2) patterns.push("decisive");
+  if (T("t_surface") + T("t_accept") >= 4) patterns.push("surface");
+  if (T("t_metric") >= 3) patterns.push("ratioFirst");
+  /* only diagnose hesitancy if this track actually offered decision-format choices */
+  var decisionOffered = 0;
+  for (var dq = 0; dq < 9; dq++) {
+    var qq = getQ(dq);
+    for (var doi = 0; doi < qq.options.length; doi++) {
+      if ((qq.options[doi].g || []).indexOf("t_decision") !== -1) { decisionOffered++; break; }
+    }
+  }
+  if (decisionOffered >= 2 && T("t_invest") >= 3 && T("t_decision") === 0) patterns.push("hesitantDecider");
+  if (struggle || (interp >= 55 && exec < 50)) patterns.push("execGap");
+
+  var noticed = [];
+  for (var n in NOTICE_PHRASES) if (T(n) >= 1) noticed.push({ k: n, c: T(n) });
+  noticed.sort(function (x, y) { return y.c - x.c; });
+
+  var sorted = Object.keys(dims).filter(function (d) { return unmeasured.indexOf(d) === -1; })
+    .sort(function (x, y) { return dims[y] - dims[x]; });
+  var strengths = sorted.slice(0, 2);
+  var gaps = sorted.slice().reverse().filter(function (d) { return dims[d] < 65; }).slice(0, 3);
+  var softGaps = false;
+  if (gaps.length === 0) { gaps = [sorted[sorted.length - 1]]; softGaps = true; }
+
+  var rw = ROLE_W[state.career];
+  var roleScore = 0;
+  for (var rd in rw) roleScore += rw[rd] * dims[rd];
+  roleScore = Math.round(roleScore);
+
+  var confGap = null;
+  if (confidence !== null) {
+    confGap = overall - ({ 4: 80, 3: 62, 2: 47, 1: 32 })[confidence];
+  }
+
+  /* Not-Sure career fit: role-weighted ability + stated preference */
+  var fits = null;
+  if (state.career === "ns") {
+    fits = [];
+    for (var rk in ROLE_W) {
+      if (rk === "ns") continue;
+      var f = 0;
+      for (var fd in ROLE_W[rk]) f += ROLE_W[rk][fd] * dims[fd];
+      if (prefRoles && prefRoles.indexOf(rk) !== -1) f += 8;
+      fits.push({ role: rk, score: Math.round(f), pref: prefRoles ? prefRoles.indexOf(rk) !== -1 : false });
+    }
+    fits.sort(function (x, y) { return y.score - x.score; });
+    fits = fits.slice(0, 3);
+  }
+
+  return {
+    dims: dims, overall: overall, minDim: minDim, profile: profile,
+    tags: tags, patterns: patterns, noticed: noticed,
+    strengths: strengths, gaps: gaps, softGaps: softGaps,
+    roleScore: roleScore, confidence: confidence, confGap: confGap,
+    struggle: struggle, fits: fits,
+    q7alt: state.q7mode === "alt", q7Result: q7Result
+  };
+}
+
+/* Personalised 2-4 sentence diagnosis built from behaviour, not score. */
+function buildDiagnosis(res, role) {
+  var s = [];
+  var P = function (p) { return res.patterns.indexOf(p) !== -1; };
+  var np = res.noticed.slice(0, 2).map(function (n) { return NOTICE_PHRASES[n.k]; });
+
+  if (P("sceptic")) s.push("You rarely accepted a management claim or a comfortable headline without asking what evidence would support it" + (np.length ? ", and you kept returning to " + np.join(" and ") : "") + ".");
+  else if (P("investigator")) s.push("Across the scenarios you repeatedly went looking for what was missing" + (np.length ? ", most often " + np.join(" and ") : "") + ", before you were willing to conclude.");
+  else if (P("commercial")) s.push("Your instinct was to look through the numbers to the business behind them: pricing, mix, costs and demand came up again and again in your choices.");
+  else if (P("modeler")) s.push("When a forecast or scenario was needed, you naturally reached for drivers and assumptions rather than extending past numbers.");
+  else if (P("decisive")) s.push("You consistently pushed analysis toward a decision rather than stopping at observation, which is rarer than it sounds.");
+  else if (np.length) s.push("Your strongest instinct was noticing " + np.join(" and ") + " where many students stop at the headline number.");
+  else s.push("Your answers showed a mix of instincts that has not yet settled into one consistent way of working through a finance situation.");
+
+  if (P("surface")) s.push("The scenarios that pulled your profile down were the ones where a headline number or a confident narrative was available to accept, and you accepted it.");
+  else if (P("execGap")) s.push("Your answers became less structured when insight had to be converted into a forecast, a decision or a piece of work delivered on a clock.");
+  else if (P("ratioFirst")) s.push("You reach for ratios and benchmarks quickly, but the step behind them, what the business did to move the ratio, appeared less often in your answers.");
+  else if (P("hesitantDecider")) s.push("You investigate well, but you tended to stop one step short of a recommendation, which is the step your target role is ultimately paid for.");
+  else {
+    var wk = res.gaps[0];
+    if (!res.softGaps) s.push("The clearest development area was " + GAP_TITLES[wk].toLowerCase() + ", which showed up as the weakest thread across your answers.");
+  }
+
+  if (res.q7alt && res.q7Result !== null) {
+    if (res.q7Result >= 70) s.push("When a later scenario quietly re-tested that acceptance habit, you corrected for it, which is a genuinely good sign.");
+    else s.push("A later scenario quietly re-tested that habit, and the pattern held, so treat it as your first fix.");
+  }
+
+  var wk2 = res.gaps[0];
+  var roleRef = state.career === "ns" ? "whichever role you eventually choose" : role;
+  var whyLine = ROLE_WHY[state.career][wk2];
+  /* lowercase the first letter only when it starts an ordinary word, not an acronym like FP&A */
+  if (whyLine.length > 1 && whyLine.charAt(1) === whyLine.charAt(1).toLowerCase()) {
+    whyLine = whyLine.charAt(0).toLowerCase() + whyLine.slice(1);
+  }
+  s.push("For " + roleRef + ", this matters because " + whyLine);
+
+  return s.slice(0, 4).join(" ");
+}
+
+function buildBottleneck(res) {
+  if (res.patterns.indexOf("execGap") !== -1)
+    return "Your main gap is not recognising finance concepts. It is structuring those concepts into an independent analysis.";
+  if (res.patterns.indexOf("surface") !== -1)
+    return "Your main gap is the pause before concluding: investigating what sits underneath a headline number before accepting it.";
+  if (res.patterns.indexOf("hesitantDecider") !== -1)
+    return "Your main gap is the last step: converting good investigation into a recommendation you are willing to defend.";
+  var wk = res.gaps[0];
+  var lines = {
+    fsi: "Your main bottleneck is statement fluency: connecting the P&L, balance sheet and cash flow into one picture, quickly.",
+    bcu: "Your main bottleneck is the business lens: explaining what operationally caused the numbers you can already read.",
+    vit: "Your main bottleneck is valuation context: judging what a price assumes rather than applying rules of thumb.",
+    fme: "Your main bottleneck is conversion: turning what you notice into structured assumptions and a linked forecast.",
+    mri: "Your main bottleneck is transmission: tracing macro and risk events all the way into a specific company's cash flows.",
+    aj:  "Your main bottleneck is evidence discipline: testing claims before they enter your analysis."
+  };
+  return lines[wk];
+}
+
+function pickSteps(res) {
+  var fixKey;
+  if (res.patterns.indexOf("execGap") !== -1) fixKey = "exec";
+  else if (res.patterns.indexOf("surface") !== -1 && res.dims.aj < 65) fixKey = "aj";
+  else fixKey = res.gaps[0];
+  var applyRole = state.career === "ns" ? (res.fits && res.fits[0] ? res.fits[0].role : "er") : state.career;
+  return [
+    { label: "Fix", title: FIX_LINES[fixKey] },
+    { label: "Apply", title: ROLE_APPLY[applyRole] },
+    { label: "Prove", title: ROLE_PROVE[applyRole] }
+  ];
+}
+
+/* ================= RESULTS ================= */
+
+function renderResults() {
+  var res = computeResults();
+  var prof = PROFILES[res.profile];
+  var role = careerLabel(state.career);
+  var isNS = state.career === "ns";
+  var overallLevel = levelFor(res.overall, LEVELS);
+  var roleLevel = levelFor(res.roleScore, ROLE_LEVELS);
+  var whyRole = ROLE_WHY[state.career];
+
+  var html = "<div class='report-head'><div class='eyebrow'>Finance Skills Gap Report</div><h1>Your Finance Readiness Profile</h1></div>";
+
+  /* --- Headline --- */
+  html += "<div class='card headline-card'>" +
+    "<div class='headline-grid'>" +
+      "<div><div class='k'>Overall Practical Readiness</div><div class='v'>" + overallLevel + "</div></div>" +
+      "<div><div class='k'>Target Role</div><div class='v'>" + esc(role) + "</div></div>" +
+      "<div><div class='k'>Practical Finance Gap</div><div class='v'>" + prof.name + "</div></div>" +
+    "</div>" +
+    "<div class='gap-profile'><strong>" + prof.name + ".</strong> " + prof.text + "</div>" +
+    "<p class='diagnosis'>" + buildDiagnosis(res, role) + "</p>";
+
+  if (res.confGap !== null) {
+    var confNote;
+    if (res.confGap <= -18) confNote = "Your self-rated confidence runs ahead of what your scenario answers demonstrated. That is common and fixable: practice on real companies will close the gap from both sides.";
+    else if (res.confGap >= 18) confNote = "Your scenario answers were stronger than your self-rated confidence. You may be underrating yourself; structured practice should turn quiet ability into conviction.";
+    else confNote = "Your self-assessment broadly matches what your answers demonstrated, which is itself a good analytical sign: you read your own ability accurately.";
+    html += "<div class='insight'>" + confNote + "</div>";
+  }
+  html += "</div>";
+
+  /* --- Strongest areas --- */
+  html += "<div class='card'><h2>Your 2 Strongest Areas</h2><p class='sub'>Where your answers showed the most practical instinct</p>";
+  for (var s = 0; s < res.strengths.length; s++) {
+    var sd = res.strengths[s];
+    var sTag = res.dims[sd] >= 60 ? levelFor(res.dims[sd], LEVELS) : "Relative Strength";
+    var ev = STRENGTH_EVIDENCE[sd];
+    var hasTag = false;
+    for (var e = 0; e < ev.tag.length; e++) if (res.tags[ev.tag[e]]) hasTag = true;
+    var evText = (hasTag && ev.yes) ? ev.yes : ev.no;
+    html += "<div class='finding'><h3>" + DIM_NAMES[sd] + "<span class='tag strong-t'>" + sTag + "</span></h3>" +
+      "<div class='mini'><span class='mini-k'>What your answers suggest</span><p>" + evText + "</p></div>" +
+      "<div class='mini'><span class='mini-k'>Why this matters for " + (isNS ? "any finance role" : "your role") + "</span><p>" + whyRole[sd] + "</p></div>" +
+    "</div>";
+  }
+  html += "</div>";
+
+  /* --- Gaps --- */
+  html += "<div class='card'><h2>Your Biggest Skill Gaps</h2><p class='sub'>" +
+    (res.softGaps ? "No major gaps showed up. This is your relatively weakest area, worth sharpening next" : "Specific, fixable, and ranked by how much they are holding you back") + "</p>";
+  for (var g = 0; g < res.gaps.length; g++) {
+    var gd = res.gaps[g];
+    var gTag = res.softGaps ? "Sharpen Next" : levelFor(res.dims[gd], LEVELS);
+    var gn = GAP_NOTICED[gd];
+    var gBody = res.softGaps
+      ? "Nothing here is broken. Relative to your other capabilities, this is the area with the most headroom, and sharpening it is what takes you from strong generalist to specialist."
+      : ((res.tags[gn.cond] || 0) >= 2 ? gn.yes : gn.no);
+    html += "<div class='finding'><h3>" + GAP_TITLES[gd] + "<span class='tag gap-t'>" + gTag + "</span></h3>" +
+      "<div class='mini'><span class='mini-k'>What we noticed</span><p>" + gBody + "</p></div>" +
+      "<div class='mini'><span class='mini-k'>Why it matters for " + esc(isNS ? "whichever role you choose" : role) + "</span><p>" + whyRole[gd] + "</p></div>" +
+      "<div class='mini'><span class='mini-k'>What would improve it</span><p>" + IMPROVE[gd] + "</p></div>" +
+    "</div>";
+  }
+  html += "</div>";
+
+  /* --- Capability dashboard --- */
+  html += "<div class='card'><h2>Can You Actually Do It?</h2><p class='sub'>Your practical capability across the six things finance work is made of</p>";
+  var capOrder = ["fsi", "bcu", "fme", "vit", "mri", "aj"];
+  for (var c = 0; c < capOrder.length; c++) {
+    var ck = capOrder[c];
+    var v = res.dims[ck];
+    var cls = v >= 70 ? "c-strong" : (v >= 45 ? "c-dev" : "c-gap");
+    var lab = v >= 70 ? "Strong" : (v >= 45 ? "Developing" : "Gap");
+    html += "<div class='cap-row'><span class='cap-name'>" + CAP_NAMES[ck] + "</span>" +
+      "<div class='cap-track'><div class='cap-fill " + cls + "' data-w='" + v + "'></div></div>" +
+      "<span class='cap-chip " + cls + "'>" + lab + "</span></div>";
+  }
+  html += "<div class='bottleneck'><span class='mini-k'>Your biggest practical bottleneck</span>" + buildBottleneck(res) + "</div></div>";
+
+  /* --- Role readiness OR career-fit signals --- */
+  if (isNS) {
+    html += "<div class='card'><h2>Your Strongest Career-Fit Signals</h2><p class='sub'>From demonstrated ability plus the task you said felt most natural</p>";
+    for (var f = 0; f < res.fits.length; f++) {
+      var fit = res.fits[f];
+      var topDims = Object.keys(ROLE_W[fit.role]).sort(function (a, b) { return ROLE_W[fit.role][b] - ROLE_W[fit.role][a]; }).slice(0, 2);
+      var bestDim = res.dims[topDims[0]] >= res.dims[topDims[1]] ? topDims[0] : topDims[1];
+      var reason = "Your " + DIM_NAMES[bestDim].toLowerCase() + " answers were among your strongest, and this work leans on exactly that." +
+        (fit.pref ? " You also said this type of task felt most natural to you." : "");
+      html += "<div class='fit-item'><div class='fit-num'>" + (f + 1) + "</div><div><h3>" + esc(careerLabel(fit.role)) + "</h3><p>" + reason + "</p></div></div>";
+    }
+    html += "<p style='color:var(--ink-faint); font-size:13px; margin:14px 0 0'>This is a directional signal based on this assessment, not a definitive career recommendation.</p></div>";
+  } else {
+    var rdims = Object.keys(ROLE_W[state.career]).sort(function (a, b) { return ROLE_W[state.career][b] - ROLE_W[state.career][a]; });
+    var readyDims = rdims.filter(function (d) { return res.dims[d] >= 60; }).slice(0, 2);
+    var holdDim = rdims.slice(0, 4).sort(function (a, b) { return res.dims[a] - res.dims[b]; })[0];
+    html += "<div class='card'><h2>Your Current Readiness for " + esc(role) + "</h2>" +
+      "<div class='role-level'>" + roleLevel + "</div>";
+    html += "<div class='mini'><span class='mini-k'>What you already appear ready for</span>";
+    if (readyDims.length) {
+      html += "<ul>";
+      for (var rr = 0; rr < readyDims.length; rr++) html += "<li>" + CAP_READY[readyDims[rr]] + "</li>";
+      html += "</ul>";
+    } else {
+      html += "<p>Your foundations are still forming; nothing yet stands out as role-ready, and that is exactly what this stage is for.</p>";
+    }
+    html += "</div>";
+    html += "<div class='mini'><span class='mini-k'>What would currently hold you back</span><p>" + GAP_TITLES[holdDim] + " is the weakest of the capabilities this role leans on most. " + whyRole[holdDim] + "</p></div>";
+    html += "<div class='mini'><span class='mini-k'>Before you are more interview-ready</span><ul>";
+    var skl = ROLE_SKILLS[state.career];
+    for (var sk = 0; sk < Math.min(3, skl.length); sk++) html += "<li>" + skl[sk] + "</li>";
+    html += "</ul></div>";
+    html += "<p style='color:var(--ink-faint); font-size:13px; margin:14px 0 0'>Readiness reflects your answers today. It maps what to build next; it does not predict hiring outcomes or guarantee interview success.</p></div>";
+  }
+
+  /* --- Recommendations --- */
+  var helpKeys = [];
+  if (res.patterns.indexOf("execGap") !== -1) helpKeys.push("exec");
+  for (var h = 0; h < res.gaps.length; h++) {
+    if (helpKeys.length >= 3) break;
+    if (helpKeys.indexOf(res.gaps[h]) === -1 && HELP_BLOCKS[res.gaps[h]]) helpKeys.push(res.gaps[h]);
+  }
+  if (helpKeys.length === 0) helpKeys.push("exec");
+  html += "<div class='card'><h2>How to Close These Gaps</h2><p class='sub'>Built from your diagnosed gaps, not a standard pitch</p>";
+  for (var hb = 0; hb < helpKeys.length; hb++) {
+    var hk = helpKeys[hb];
+    var blk = HELP_BLOCKS[hk];
+    var diag = hk === "exec"
+      ? "The concepts are largely in place; structuring them into finished, defensible work is the missing layer."
+      : ((res.tags[GAP_NOTICED[hk].cond] || 0) >= 2 ? GAP_NOTICED[hk].yes : GAP_NOTICED[hk].no);
+    var why = hk === "exec"
+      ? "Every finance role, including " + (isNS ? "the ones suggested above" : role) + ", is ultimately assessed on delivered analysis, not recognised concepts."
+      : whyRole[hk];
+    html += "<div class='help-block'><h3>" + blk.title + "</h3>" +
+      "<div class='mini'><span class='mini-k'>The gap</span><p>" + diag + "</p></div>" +
+      "<div class='mini'><span class='mini-k'>Why it matters</span><p>" + why + "</p></div>" +
+      "<div class='mini'><span class='mini-k'>What to practise</span><ul>";
+    for (var it = 0; it < blk.practise.length; it++) html += "<li>" + blk.practise[it] + "</li>";
+    html += "</ul></div>" +
+      "<div class='mini'><span class='mini-k'>How to practise it</span><p>" + blk.how + "</p></div>" +
+      "<p class='ssei-line'><strong>Where SSEI fits:</strong> " + blk.ssei + "</p></div>";
+  }
+  html += "</div>";
+
+  /* --- Next 3 steps --- */
+  var steps = pickSteps(res);
+  html += "<div class='card'><h2>Your Next 3 Steps</h2><p class='sub'>Fix the gap, apply it on something real, produce proof</p>";
+  for (var st = 0; st < steps.length; st++) {
+    html += "<div class='step'><div class='step-num'>" + (st + 1) + "</div><div><h3><em>" + steps[st].label + "</em></h3><p>" + steps[st].title + "</p></div></div>";
+  }
+  html += "</div>";
+
+  html += "<p class='disclaimer'>This is a directional diagnostic based on nine role-specific scenarios. It shows how you approached realistic finance situations today and what to build next. It does not predict interview or job outcomes, and it is not a substitute for doing the work.</p>" +
+    "<button class='link-btn' id='retake' style='padding-left:0'>Retake the assessment →</button>";
+
+  setScreen(html);
+
+  var fills = stage.querySelectorAll(".cap-fill");
+  setTimeout(function () {
+    for (var fl = 0; fl < fills.length; fl++) fills[fl].style.width = fills[fl].getAttribute("data-w") + "%";
+  }, 60);
+
+  document.getElementById("retake").onclick = function () {
+    state = { career: null, answers: {}, shuffles: {}, q7mode: null };
+    renderIntro();
+  };
+}
+
+renderIntro();
+</script>
