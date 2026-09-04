@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lifecycle Plan</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪜</text></svg>">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper:#FAF7F2; --card:#FFFFFF; --ink:#26221C; --muted:#6B6257; --line:#E7DFD3;
+    --accent:#1F6F62; --accent-soft:#E3F0ED; --accent-ink:#155248;
+    --bad:#B3382E; --bad-bg:#F9ECEA; --good:#2F7D4F; --good-bg:#EAF3EC;
+    --gold:#B45309; --gold-soft:#F6EADB;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#151A18; --card:#1E2523; --ink:#EFE9DF; --muted:#A2AFAB; --line:#2E3936;
+      --accent:#5FBFAC; --accent-soft:#1B2F2B; --accent-ink:#89D6C6;
+      --bad:#E07B72; --bad-bg:#382019; --good:#7CC397; --good-bg:#1F2E22;
+      --gold:#E9A23B; --gold-soft:#332A17;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#151A18; --card:#1E2523; --ink:#EFE9DF; --muted:#A2AFAB; --line:#2E3936;
+    --accent:#5FBFAC; --accent-soft:#1B2F2B; --accent-ink:#89D6C6;
+    --bad:#E07B72; --bad-bg:#382019; --good:#7CC397; --good-bg:#1F2E22;
+    --gold:#E9A23B; --gold-soft:#332A17;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Public Sans',system-ui,sans-serif; font-size:16.5px; line-height:1.65; padding:0 20px 80px;}
+  main{max-width:800px; margin:0 auto;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif; line-height:1.15; text-wrap:balance;}
+  h1{font-size:clamp(2.2rem,6vw,3.2rem); font-weight:700; margin:.25em 0 .3em;}
+  h2{font-size:1.65rem; font-weight:700; margin:0 0 .5em;}
+  h3{font-size:1.12rem; font-weight:600; margin:0 0 .25em;}
+  p{max-width:66ch; margin:.65em 0;}
+  section{margin:72px 0; padding-top:8px;}
+  .eyebrow{font-size:.74rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-top:56px;}
+  .lede{font-size:1.15rem; color:var(--muted); max-width:62ch;}
+  a{color:var(--accent-ink);}
+  .pair{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; margin:28px 0 0;}
+  .doc{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px; display:flex; flex-direction:column;}
+  .doc .tag{font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;}
+  .doc h3{margin:0 0 .3em;}
+  .doc p{font-size:.9rem; color:var(--muted); margin:0 0 14px; flex:1;}
+  .doc a.btn{display:inline-block; align-self:flex-start; background:var(--accent); color:#fff; text-decoration:none;
+    font-weight:600; font-size:.86rem; padding:9px 16px; border-radius:7px;}
+  .doc.here{border-color:var(--accent); background:var(--accent-soft);}
+  .doc.here .badge{align-self:flex-start; font-size:.78rem; font-weight:600; color:var(--accent-ink); padding:9px 0;}
+  .ladder{margin:24px 0;}
+  .rung{display:grid; grid-template-columns:150px 1fr 84px; gap:14px; align-items:center; margin:9px 0;}
+  .rung .lbl{font-size:.9rem; font-weight:600; text-align:right;}
+  .rung .track{background:var(--accent-soft); border-radius:5px; height:26px; overflow:hidden;}
+  .rung .fill{background:var(--accent); height:100%; border-radius:5px; min-width:3px;}
+  .rung .fill.low{background:var(--bad);}
+  .rung .pc{font-family:'Fraunces',Georgia,serif; font-weight:700; font-size:1.05rem; font-variant-numeric:tabular-nums;}
+  @media (max-width:560px){ .rung{grid-template-columns:110px 1fr 60px; gap:8px;} .rung .lbl{font-size:.8rem;} }
+  .money{background:var(--card); border:1px solid var(--line); border-left:5px solid var(--gold);
+    border-radius:10px; padding:20px 22px; margin:16px 0; display:grid; grid-template-columns:1fr auto; gap:18px; align-items:start;}
+  .money p{margin:.3em 0 0; font-size:.95rem; color:var(--muted);}
+  .money .big{font-family:'Fraunces',Georgia,serif; font-weight:700; font-size:1.8rem; color:var(--gold);
+    text-align:right; line-height:1.1; min-width:96px; font-variant-numeric:tabular-nums;}
+  .money .big small{display:block; font-family:'Public Sans'; font-size:.68rem; font-weight:600; color:var(--muted);
+    letter-spacing:.04em; text-transform:uppercase; margin-top:4px;}
+  @media (max-width:560px){ .money{grid-template-columns:1fr} .money .big{text-align:left} }
+  .twocol{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:14px; margin:20px 0;}
+  .idea{background:var(--card); border:1px solid var(--line); border-top:4px solid var(--accent); border-radius:10px; padding:18px 20px;}
+  .idea .axis{font-size:.78rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:8px;}
+  .idea p{font-size:.93rem; color:var(--muted); margin:.3em 0 0;}
+  .idea .eg{display:block; margin-top:10px; font-size:.87rem; background:var(--accent-soft); border-radius:6px; padding:8px 12px; color:var(--ink);}
+  .flow{display:flex; flex-wrap:wrap; gap:8px; margin:18px 0;}
+  .node{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:9px 14px; font-size:.88rem; font-weight:600;}
+  .node small{display:block; font-weight:400; font-size:.78rem; color:var(--muted); margin-top:1px;}
+  .node.end{border-color:var(--good); background:var(--good-bg);}
+  .node.park{border-style:dashed; color:var(--muted);}
+  .pills{display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 6px;}
+  .pill{font-size:.85rem; font-weight:600; padding:7px 14px; border-radius:999px; background:var(--accent-soft); color:var(--accent-ink);}
+  .pill.now{background:var(--bad-bg); color:var(--bad);}
+  .pill.today{background:var(--gold-soft); color:var(--gold);}
+  .plays{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px; margin:18px 0;}
+  .play{background:var(--card); border:1px solid var(--line); border-radius:9px; padding:14px 16px;}
+  .play b{display:block; font-size:.93rem;}
+  .play span{font-size:.85rem; color:var(--muted);}
+  .moments{margin:18px 0;}
+  .mm{display:grid; grid-template-columns:34px 1fr; gap:14px; padding:13px 0; border-bottom:1px solid var(--line);}
+  .mm:last-child{border-bottom:none;}
+  .mm .n{width:28px; height:28px; border-radius:7px; background:var(--gold); color:#fff; display:flex; align-items:center;
+    justify-content:center; font-weight:700; font-size:.85rem; font-family:'Public Sans';}
+  .mm b{font-size:.98rem;} .mm p{margin:.15em 0 0; font-size:.92rem; color:var(--muted);}
+  .callout{background:var(--accent-soft); border-radius:10px; padding:18px 24px; margin:20px 0; font-size:.97rem;}
+  .callout b{color:var(--accent-ink);}
+  .warn{background:var(--bad-bg); border-radius:10px; padding:18px 24px; margin:20px 0; font-size:.97rem;}
+  .warn b{color:var(--bad);}
+  .meeting{background:var(--card); border:2px solid var(--accent); border-radius:12px; padding:22px 26px; margin:24px 0;}
+  .meeting h3{font-size:1.3rem; color:var(--accent-ink);}
+  .meeting .when{font-family:'Fraunces',Georgia,serif; font-size:1.45rem; font-weight:700; margin:.2em 0 .1em;}
+  .footer{margin-top:70px; padding-top:20px; border-top:1px solid var(--line); font-size:.82rem; color:var(--muted);}
+  ul{max-width:70ch;} li{margin:.4em 0;}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">SSEI Growth Ops · September 2026</div>
+  <h1>The Lifecycle Plan</h1>
+  <p class="lede">If the CRM is the machine, this is the plan it runs. Who we talk to, in what order, what we say, and what happens after someone pays us. Built on real numbers from our own 85,802 student records, not on assumptions. Ten minutes to read.</p>
+
+  <div class="pair">
+    <div class="doc">
+      <span class="tag">Companion document</span>
+      <h3>The CRM Reset</h3>
+      <p>What is broken inside LeadSquared today and how the system gets rebuilt to run this plan.</p>
+      <a class="btn" href="../crm-reset/">Open the CRM Reset</a>
+    </div>
+    <div class="doc here">
+      <span class="tag">You are here</span>
+      <h3>The Lifecycle Plan</h3>
+      <p>Who we call first, what each group hears from us, and how we sell the next course after someone buys.</p>
+      <span class="badge">Read this second, about 10 minutes.</span>
+    </div>
+  </div>
+
+  <section>
+    <h2>The belief that turned out to be wrong</h2>
+    <p>We have always said that once a student does CFA Level 1 with us, they almost always come back for Level 2 and Level 3. It is in our strategy documents. It shapes how we think about lifetime value.</p>
+    <p>We measured it across all 85,802 students in our records. It is not true.</p>
+
+    <div class="ladder">
+      <div class="rung"><span class="lbl">CFA L1 to L2</span><div class="track"><div class="fill low" style="width:13%"></div></div><span class="pc">13.0%</span></div>
+      <div class="rung"><span class="lbl">FRM P1 to P2</span><div class="track"><div class="fill low" style="width:15.9%"></div></div><span class="pc">15.9%</span></div>
+      <div class="rung"><span class="lbl">CA Inter to Final</span><div class="track"><div class="fill low" style="width:17.6%"></div></div><span class="pc">17.6%</span></div>
+      <div class="rung"><span class="lbl">CFA L2 to L3</span><div class="track"><div class="fill" style="width:35.4%"></div></div><span class="pc">35.4%</span></div>
+    </div>
+    <p style="font-size:.92rem; color:var(--muted)">On cohorts older than three years, CFA L1 to L2 rises to 25.9%. Still nowhere near "almost always". These are purchases visible in our own records, so the true number may be a little higher where students bought elsewhere. That does not change the conclusion.</p>
+
+    <div class="warn"><b>Why this matters more than any other number here.</b> We spend heavily to acquire a Level 1 student. If 87 of every 100 never buy the next level from us, our real lifetime value is a fraction of what we assume, and the cheapest revenue available to us is being left on the table. Not because students are unhappy, but because after they pay, we mostly stop talking to them.</p></div>
+  </section>
+
+  <section>
+    <h2>The money we are already leaving behind</h2>
+
+    <div class="money"><div>
+      <h3>Students are buying extensions with nobody selling them</h3>
+      <p>2,226 students whose access ran out bought a validity extension entirely on their own initiative. No campaign, no call, no reminder. That is proof that post purchase selling works here and that it is completely unmanaged.</p>
+    </div><div class="big">Rs 1 cr<small>earned with zero prompting</small></div></div>
+
+    <div class="money"><div>
+      <h3>We do not know when most students sit their exam</h3>
+      <p>Attempt is recorded for only 38.5% of students. This single missing field blocks 7 of the 12 things we plan to do after purchase, because almost every post purchase conversation is timed off the exam date.</p>
+    </div><div class="big">38.5%<small>have an attempt on record</small></div></div>
+
+    <div class="money"><div>
+      <h3>We never find out who passed</h3>
+      <p>There is no result field anywhere in our systems. Results do not come to us automatically and never will. So we have to ask, on result day, every cycle. That one question unlocks the entire next level conversation.</p>
+    </div><div class="big">0<small>results recorded today</small></div></div>
+
+    <div class="money"><div>
+      <h3>The gap between purchases is long, and we go quiet inside it</h3>
+      <p>The median gap between a student's first and last purchase is 515 days. Well over a year in which almost nothing structured reaches them from us. That gap is where the ladder leak happens.</p>
+    </div><div class="big">515<small>days between purchases</small></div></div>
+  </section>
+
+  <section>
+    <h2>Two simple ideas run the whole thing</h2>
+    <p>Everyone in the system, lead or student, is scored on exactly two axes. Before payment they answer one pair of questions, after payment another. Learn these two ideas and you understand the entire plan.</p>
+
+    <div class="twocol">
+      <div class="idea">
+        <div class="axis">Before payment</div>
+        <h3>Fit and Intent</h3>
+        <p><b>Fit</b> asks whether this course genuinely suits them: their stage, eligibility, time and budget. <b>Intent</b> asks how much they want it right now: what they have opened, clicked, attended and asked for.</p>
+        <span class="eg">High fit and low intent means keep nurturing. Low fit and high intent means talk to them, but about a different course. High on both means call today.</span>
+      </div>
+      <div class="idea">
+        <div class="axis">After payment</div>
+        <h3>Headroom and Momentum</h3>
+        <p><b>Headroom</b> asks how much more they could reasonably buy: where they sit on the ladder, what they have spent, what related courses they do not own. <b>Momentum</b> asks whether they are still active: watch time, pace, mocks, replies.</p>
+        <span class="eg">Headroom decides what we offer them. Momentum decides whether we need to step in first. Momentum decays when they go quiet, so we notice before they disappear.</span>
+      </div>
+    </div>
+    <p>The important part: <b>Fit and Headroom are structural</b>, they change slowly. <b>Intent and Momentum are behavioural</b>, they move every week and they fade with silence. That is why nobody in the system stays hot forever and nobody gets forgotten forever either.</p>
+  </section>
+
+  <section>
+    <h2>Before payment: nine stages, and who we call first</h2>
+    <p>Today our CRM has 26 different states with names only a few people can interpret. This collapses them into nine plain stages that describe where a person genuinely is.</p>
+    <div class="flow">
+      <span class="node">New<small>not spoken yet</small></span>
+      <span class="node">Contacted<small>no reply yet</small></span>
+      <span class="node">Engaged<small>they responded</small></span>
+      <span class="node">Interested<small>worth a call</small></span>
+      <span class="node">In conversation<small>call or class happening</small></span>
+      <span class="node">Ready to buy<small>asking about fees</small></span>
+      <span class="node">Paying<small>link sent</small></span>
+      <span class="node end">Enrolled<small>they paid</small></span>
+      <span class="node park">Parked<small>not now, for a stated reason</small></span>
+    </div>
+    <p>Separately from where they are, every person carries a <b>priority</b>, which is our plan for them. This replaces the old codes that nobody could read.</p>
+    <div class="pills">
+      <span class="pill now">Call now</span>
+      <span class="pill today">Call today</span>
+      <span class="pill">Call this week</span>
+      <span class="pill">Automated only</span>
+      <span class="pill">Redirect</span>
+      <span class="pill">Do not contact</span>
+    </div>
+    <p style="font-size:.93rem; color:var(--muted)">Counsellor queues are sorted by this, so the top of your list is genuinely the most valuable call you can make that morning. Every stage also has a stuck time. A lead sitting in Ready to buy for 72 hours with no counsellor action surfaces to the manager automatically, because that is the most expensive place to lose someone.</p>
+  </section>
+
+  <section>
+    <h2>Twelve situations, twelve scripts</h2>
+    <p>People arrive in recognisably different situations, and the same message cannot serve all of them. Each situation has a written plan: what we send, in what order, how long we wait, and when we stop.</p>
+    <div class="plays">
+      <div class="play"><b>School student</b><span>Class 11, 12 and just finished</span></div>
+      <div class="play"><b>College, worried about placements</b><span>Employability is the real question</span></div>
+      <div class="play"><b>Working professional</b><span>Knows the course, wants the fastest route</span></div>
+      <div class="play"><b>Retaking an exam</b><span>Failed or deferred, deciding whether to try again</span></div>
+      <div class="play"><b>Course unknown</b><span>Usually our largest group each week</span></div>
+      <div class="play"><b>Ready to buy</b><span>Asked about fees, batches or instalments</span></div>
+      <div class="play"><b>Gone quiet</b><span>Stopped responding partway</span></div>
+      <div class="play"><b>Waking an old lead</b><span>Parked more than 30 days</span></div>
+      <div class="play"><b>Existing student</b><span>Past 60% of their course, ready for the next one</span></div>
+      <div class="play"><b>Parent enquiring</b><span>Asking on behalf of their child</span></div>
+      <div class="play"><b>Not eligible yet</b><span>Redirect to the right step, honestly</span></div>
+      <div class="play"><b>Do not contact</b><span>Opted out, and we respect it</span></div>
+    </div>
+    <div class="callout"><b>40 guard rules sit above all of it.</b> These are the things the system must never do, whatever the score says: no acquisition messaging to a paying student, no payment link before eligibility is confirmed, no course named to someone whose course we only guessed, nothing at all to anyone who opted out. Each rule has a severity and a plain explanation, so when a message is blocked, anyone can see why.</div>
+  </section>
+
+  <section>
+    <h2>After payment: the half we have never built</h2>
+    <p>This is the genuinely new part. Once a student pays, they move through nine stages driven by their exam calendar rather than their clicks, because after purchase the dates matter more than the behaviour.</p>
+    <div class="flow">
+      <span class="node">Just paid</span>
+      <span class="node">Getting started</span>
+      <span class="node">Studying<small>the long middle</small></span>
+      <span class="node">Exam run-up<small>60 days out</small></span>
+      <span class="node">Result awaited</span>
+      <span class="node end">Passed</span>
+      <span class="node">Did not pass</span>
+      <span class="node">Skipped the exam</span>
+      <span class="node park">Inactive</span>
+    </div>
+    <p>And there are exactly six moments where a student would genuinely want to buy something more. Everything after enrolment is built around these.</p>
+    <div class="moments">
+      <div class="mm"><span class="n">1</span><div><b>First enrolment</b><p>The one moment we currently manage well.</p></div></div>
+      <div class="mm"><span class="n">2</span><div><b>Validity extension</b><p>Access runs out before they are ready. Already earning Rs 1 crore unprompted.</p></div></div>
+      <div class="mm"><span class="n">3</span><div><b>Next attempt</b><p>They did not pass, or skipped the exam. Support first, sell second.</p></div></div>
+      <div class="mm"><span class="n">4</span><div><b>Next level on the ladder</b><p>They passed. This is the 13% problem, and the biggest prize.</p></div></div>
+      <div class="mm"><span class="n">5</span><div><b>Adjacent product</b><p>They finished, or want job skills alongside the certification.</p></div></div>
+      <div class="mm"><span class="n">6</span><div><b>Referral</b><p>Possible any time, strongest in the days right after a pass.</p></div></div>
+    </div>
+    <div class="callout"><b>Result day is the hinge.</b> Results never reach us on their own, so on every result day we ask every student in that cycle a single question: how did it go. That one answer routes them into congratulations and the next level, or into support and a re-attempt, or tells us they did not sit the exam at all. Without it, moments 3, 4 and 6 cannot happen.</div>
+  </section>
+
+  <section>
+    <h2>What this means in practice</h2>
+    <ul>
+      <li><b>One queue, not two.</b> Leads and students sit in the same priority list. A student two weeks from their exam can rank above a fresh lead, because dates beat money in the ordering.</li>
+      <li><b>Nobody is permanently lost.</b> Parked people carry a stated reason and a return date. When the reason expires, they come back into play automatically.</li>
+      <li><b>Counsellors get a shorter, better list.</b> Sorted by real priority, with the reason attached, so the first call of the day is the most valuable one available.</li>
+      <li><b>Marketing can finally target properly.</b> Cohorts become real, maintained lists, so a CFA Level 1 student never receives a Level 1 acquisition ad again.</li>
+      <li><b>One field unlocks most of this.</b> Capturing exam attempt at enrolment, and asking the result question on result day, turns on the majority of the post purchase plan. It is the cheapest high value change available to us.</li>
+    </ul>
+    <div class="callout">The full plan, with all nine lead stages, twelve lead playbooks, twelve student playbooks, the 40 guard rules, the message library and every number behind them, lives in the detailed dashboard. This page is the summary. <a href="https://growthkavya.github.io/growth-ops-dashboard/lifecycle/">Open the full Lifecycle System</a> if you want the depth for your own area.</div>
+  </section>
+
+  <section>
+    <h2>The discussion</h2>
+    <div class="meeting">
+      <h3>We are talking through both documents together</h3>
+      <div class="when">Wednesday, 9 September, 3:00 pm</div>
+      <p style="margin:.2em 0 0; color:var(--muted); font-size:.93rem;">Proposed. Tell Kavya before Monday evening if that does not work, otherwise it stands.</p>
+      <p style="margin:1em 0 0;">From this document, the questions we most need answered in the room:</p>
+      <ul style="font-size:.94rem; color:var(--muted); margin-top:.4em;">
+        <li>Do we accept the ladder numbers, and do we agree the next level conversation is our biggest single opportunity?</li>
+        <li>Who owns the result day question every cycle, and how do we get exam attempt captured at enrolment?</li>
+        <li>Are the twelve situations the right twelve, or is your team seeing one we have missed?</li>
+        <li>Which of the six money moments do we start with, given we cannot build all six at once?</li>
+      </ul>
+      <p style="margin:1em 0 0; font-weight:600;">Come with objections. Whatever we agree is what gets built.</p>
+    </div>
+  </section>
+
+  <div class="footer">
+    Prepared by Growth Ops, September 2026. Ladder conversion, extension revenue, attempt coverage and purchase gap figures are measured from our consolidated student master of 85,802 records. Lead stages, playbooks, scoring and guard rules come from the full lifecycle model. Questions: Kavya (Growth Ops).
+  </div>
+</main>
+</body>
+</html>
