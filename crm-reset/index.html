@@ -78,11 +78,26 @@
   .goodnews{background:var(--card); border:1px solid var(--line); border-left:5px solid var(--good); border-radius:10px; padding:20px 22px; margin:16px 0;}
   .goodnews p{font-size:.95rem; color:var(--muted); margin:.3em 0 0;}
   a{color:var(--accent-ink);}
+  .pair{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; margin:28px 0 0;}
+  .doc{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px; display:flex; flex-direction:column;}
+  .doc .tag{font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;}
+  .doc h3{margin:0 0 .3em;}
+  .doc p{font-size:.9rem; color:var(--muted); margin:0 0 14px; flex:1;}
+  .doc a.btn{display:inline-block; align-self:flex-start; background:var(--accent); color:#fff; text-decoration:none;
+    font-weight:600; font-size:.86rem; padding:9px 16px; border-radius:7px;}
+  .doc a.btn:hover{background:var(--accent-ink);}
+  .doc.here{border-color:var(--accent); background:var(--accent-soft);}
+  .doc.here .badge{align-self:flex-start; font-size:.78rem; font-weight:600; color:var(--accent-ink); padding:9px 0;}
+  .meeting{background:var(--card); border:2px solid var(--accent); border-radius:12px; padding:22px 26px; margin:24px 0;}
+  .meeting h3{font-size:1.3rem; color:var(--accent-ink);}
+  .meeting .when{font-family:'Fraunces',Georgia,serif; font-size:1.45rem; font-weight:700; margin:.2em 0 .1em;}
+  .meeting ul{margin:.6em 0 0; padding-left:1.2em; font-size:.93rem; color:var(--muted);}
+  .meeting li{margin:.35em 0;}
 </style>
 </head>
 <body>
 <main>
-  <div class="eyebrow">SSEI Growth Ops · August 2026</div>
+  <div class="eyebrow">SSEI Growth Ops · September 2026</div>
   <h1>The CRM Reset</h1>
   <p class="lede">We went through our entire LeadSquared system end to end: every one of our 167,584 leads, all 234 data fields, all 22 automations, and 209 complete lead histories, activity by activity. This page is what we found and what we are going to do about it. Ten minutes to read, no technical language. Nothing here is opinion; every number comes from that read.</p>
 
@@ -92,6 +107,21 @@
     <div class="stat"><b>22</b><span>automations running, many fighting each other</span></div>
     <div class="stat"><b>40%</b><span>of the entire database is marked "Not Interested"</span></div>
     <div class="stat"><b>50%</b><span>of all leads sit under a single login</span></div>
+  </div>
+
+  <div class="pair">
+    <div class="doc here">
+      <span class="tag">You are here</span>
+      <h3>The CRM Reset</h3>
+      <p>What is broken in our CRM today, and what the rebuilt system will do. This page.</p>
+      <span class="badge">Read this first, about 10 minutes.</span>
+    </div>
+    <div class="doc">
+      <span class="tag">Companion document</span>
+      <h3>The Lifecycle System</h3>
+      <p>The plan the CRM will actually run: how we group students into cohorts, who we call first and why, and how we sell the next course after someone buys. The CRM is the machine, this is the plan it executes.</p>
+      <a class="btn" href="https://growthkavya.github.io/growth-ops-dashboard/lifecycle/" target="_blank" rel="noopener">Open the Lifecycle System</a>
+    </div>
   </div>
 
   <section>
@@ -247,10 +277,27 @@
       <p><b>Marketing teams (performance and organic):</b> use the standard link tags on everything you publish. One naming sheet, provided.</p>
       <p><b>Everyone:</b> no new fields, lists or automations without a quick word with Growth Ops. That habit is how the 234-field situation happened.</p>
     </div>
+
+    <div class="meeting">
+      <h3>The discussion</h3>
+      <div class="when">Wednesday, 9 September, 3:00 pm</div>
+      <p style="margin:.2em 0 0; color:var(--muted); font-size:.93rem;">Proposed. Tell Kavya before Monday evening if that does not work for you, otherwise it stands.</p>
+      <p style="margin:1em 0 0; font-weight:600;">Please read both documents before the meeting. We want to close decisions in the room, not explain the background there.</p>
+      <p style="margin:.8em 0 .2em; font-size:.93rem;">What we will decide together:</p>
+      <ul>
+        <li>The new lead status list, and what replaces the Not Interested dumping ground</li>
+        <li>The master course list, and how one student can hold interest in several courses</li>
+        <li>The single clean list of lead sources, and the link-tagging standard for every campaign</li>
+        <li>The six fields on the new call form, and when it must be filled</li>
+        <li>What each cohort receives on WhatsApp and email, and at what point</li>
+        <li>The daily and weekly reports leadership will receive from day one</li>
+      </ul>
+      <p style="margin:1em 0 0; font-size:.93rem;">Come with objections and gaps. Anything we agree in this meeting is what gets built.</p>
+    </div>
   </section>
 
   <div class="footer">
-    Prepared by Growth Ops, August 2026. Based on a complete read-only analysis of the live LeadSquared account: 167,584 leads, 234 fields, 22 automations, 209 full lead histories. Detailed technical findings and the full target design exist as separate documents for the implementation team. Questions: Kavya (Growth Ops).
+    Prepared by Growth Ops, September 2026. Based on a complete read-only analysis of the live LeadSquared account: 167,584 leads, 234 fields, 22 automations, 209 full lead histories. Detailed technical findings and the full target design exist as separate documents for the implementation team. Questions: Kavya (Growth Ops).
   </div>
 </main>
 </body>
