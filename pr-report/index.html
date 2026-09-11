@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From Headlines to Trust</title>
+<meta name="description" content="SSEI's first quarter of PR, what it taught us, and the plan for the next 90 days and the next year. For leadership.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  :root {
+    --ground: #F3F6F4; --card: #FFFFFF; --ink: #15231E; --mut: #5A6963; --line: #D8E1DC;
+    --accent: #1E6F66; --accent-ink: #155A52; --on-accent: #FFFFFF;
+    --tint: #E1EFEC; --tint2: #CBE4DE;
+    --bar1: #134A44; --bar2: #2A8A7F; --bar3: #6DB8AE;
+    --brass: #8A6D2B;
+    --good: #1E6F66; --warn: #B27A00; --bad: #C03050;
+    --good-bg: #E1EFEC; --warn-bg: #F8EED6; --bad-bg: #F9E3E7;
+    --hero-bg: #123F3A; --hero-ink: #EEF5F3; --hero-mut: #A3C6BF; --hero-line: #2C5B55;
+    --hero-card: rgba(255, 255, 255, 0.07); --hero-card-hover: rgba(255, 255, 255, 0.13);
+    --menu-bg: rgba(243, 246, 244, 0.94);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #101715; --card: #18211F; --ink: #E5ECE9; --mut: #9AABA5; --line: #293632;
+      --accent: #6CC3B6; --accent-ink: #8FD6CB; --on-accent: #0B1F1C;
+      --tint: #1A2D29; --tint2: #213A35;
+      --bar1: #8FD6CB; --bar2: #4FA99D; --bar3: #2A7A70;
+      --brass: #C9A55E;
+      --good: #5FB98E; --warn: #E8BE4A; --bad: #F2768C;
+      --good-bg: #1A2D26; --warn-bg: #352C17; --bad-bg: #3A1F25;
+      --hero-bg: #0B2522; --hero-ink: #E6F0EE; --hero-mut: #8FB5AD; --hero-line: #24453F;
+      --hero-card: rgba(255, 255, 255, 0.05); --hero-card-hover: rgba(255, 255, 255, 0.10);
+      --menu-bg: rgba(16, 23, 21, 0.94);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #101715; --card: #18211F; --ink: #E5ECE9; --mut: #9AABA5; --line: #293632;
+    --accent: #6CC3B6; --accent-ink: #8FD6CB; --on-accent: #0B1F1C;
+    --tint: #1A2D29; --tint2: #213A35;
+    --bar1: #8FD6CB; --bar2: #4FA99D; --bar3: #2A7A70;
+    --brass: #C9A55E;
+    --good: #5FB98E; --warn: #E8BE4A; --bad: #F2768C;
+    --good-bg: #1A2D26; --warn-bg: #352C17; --bad-bg: #3A1F25;
+    --hero-bg: #0B2522; --hero-ink: #E6F0EE; --hero-mut: #8FB5AD; --hero-line: #24453F;
+    --hero-card: rgba(255, 255, 255, 0.05); --hero-card-hover: rgba(255, 255, 255, 0.10);
+    --menu-bg: rgba(16, 23, 21, 0.94);
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font: 16px/1.55 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .serif { font-family: 'Newsreader', Georgia, 'Times New Roman', serif; }
+
+  /* Menu bar */
+  .menu { position: sticky; top: 0; z-index: 20; background: var(--menu-bg);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .menu-in { max-width: 1120px; margin: 0 auto; padding: 0 20px; height: 56px;
+    display: flex; align-items: center; gap: 20px; }
+  .brand { font-weight: 800; font-size: 14px; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .brand span { color: var(--accent); }
+  .links { display: flex; gap: 2px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+  .links::-webkit-scrollbar { display: none; }
+  .links a { white-space: nowrap; font-size: 13.5px; font-weight: 600; color: var(--mut);
+    text-decoration: none; padding: 7px 11px; border-radius: 7px; }
+  .links a:hover { color: var(--ink); background: var(--tint); }
+  .links a.on { color: var(--accent-ink); background: var(--tint); }
+  @media (max-width: 700px) { .brand { display: none; } .links { margin-left: 0; } }
+
+  /* Hero + agenda */
+  .hero { background: var(--hero-bg); color: var(--hero-ink); }
+  .hero-in { max-width: 1120px; margin: 0 auto; padding: 46px 20px 40px; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--hero-mut); margin: 0 0 12px; }
+  h1 { font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: clamp(36px, 5.4vw, 58px);
+    line-height: 1.04; letter-spacing: -0.01em; margin: 0 0 14px; text-wrap: balance; }
+  .hero .lead { font-size: 18px; color: var(--hero-ink); max-width: 54ch; margin: 0 0 30px; }
+  .agenda-label { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--hero-mut); margin: 0 0 10px; }
+  .agenda { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .agenda a { display: block; height: 100%; text-decoration: none; color: var(--hero-ink);
+    background: var(--hero-card); border: 1px solid var(--hero-line); border-radius: 12px; padding: 14px 15px 16px; }
+  .agenda a:hover { background: var(--hero-card-hover); }
+  .agenda .n { font-family: 'Newsreader', Georgia, serif; font-size: 28px; line-height: 1; color: var(--hero-mut); }
+  .agenda b { display: block; font-size: 15px; margin: 8px 0 4px; }
+  .agenda small { display: block; font-size: 12.5px; line-height: 1.4; color: var(--hero-mut); }
+  @media (max-width: 920px) { .agenda { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px) { .agenda { grid-template-columns: 1fr; } }
+
+  /* Sections */
+  main { max-width: 1120px; margin: 0 auto; padding: 0 20px 20px; }
+  section { padding: 58px 0 50px; scroll-margin-top: 58px; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+  .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 8px; }
+  h2 { font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: clamp(29px, 3.6vw, 40px);
+    line-height: 1.1; margin: 0 0 10px; text-wrap: balance; }
+  h3 { font-size: 15px; font-weight: 700; margin: 0 0 14px; }
+  .intro { font-size: 17px; color: var(--mut); max-width: 62ch; margin: 0 0 28px; }
+  .take { display: block; background: var(--tint); border-radius: 10px; padding: 13px 16px;
+    margin: 24px 0 0; font-size: 15px; max-width: 800px; }
+  .take b { color: var(--accent-ink); }
+
+  /* Status dots + chips (shape and colour both carry the state) */
+  .dot { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; border: 2px solid; }
+  .dot.good { border-color: var(--good); background: var(--good); }
+  .dot.warn { border-color: var(--warn); background: linear-gradient(90deg, var(--warn) 50%, transparent 50%); }
+  .dot.bad { border-color: var(--bad); background: transparent; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+    padding: 3px 10px 3px 8px; border-radius: 99px; color: var(--ink); white-space: nowrap; }
+  .chip.good { background: var(--good-bg); }
+  .chip.warn { background: var(--warn-bg); }
+  .chip.bad { background: var(--bad-bg); }
+
+  /* 1. Short version */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .stat b { display: block; font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 46px;
+    line-height: 1; font-variant-numeric: tabular-nums; }
+  .stat span { display: block; font-weight: 700; margin-top: 10px; }
+  .stat small { display: block; color: var(--mut); font-size: 13.5px; line-height: 1.4; margin-top: 2px; }
+  @media (max-width: 700px) { .stats { grid-template-columns: 1fr; } }
+
+  .funnel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px 16px; }
+  .frow { display: grid; grid-template-columns: 210px 1fr 86px; gap: 14px; align-items: center; padding: 5px 0; }
+  .flab { text-align: right; font-size: 14px; }
+  .ftrack { height: 26px; }
+  .fbar { display: block; height: 100%; border-radius: 0 5px 5px 0; }
+  .fval { font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .fnone { height: 26px; border: 1.5px dashed var(--line); border-radius: 5px; display: flex; align-items: center;
+    gap: 8px; padding-left: 12px; font-size: 12.5px; font-weight: 600; color: var(--mut); }
+  @media (max-width: 640px) {
+    .frow { grid-template-columns: 1fr 64px; gap: 4px 10px; padding: 7px 0; }
+    .flab { grid-column: 1 / -1; text-align: left; }
+  }
+
+  .press { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 20px; }
+  .press > span { font-size: 13px; color: var(--mut); margin-right: 2px; }
+  .press a { font-size: 13px; font-weight: 600; color: var(--ink); text-decoration: none; background: var(--card);
+    border: 1px solid var(--line); border-radius: 99px; padding: 6px 13px; }
+  .press a:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .note { font-size: 13.5px; color: var(--mut); border-left: 3px solid var(--line); padding: 2px 0 2px 12px;
+    margin: 20px 0 0; max-width: 78ch; }
+
+  /* Flow diagrams (used in sections 2 and 4) */
+  .flow { display: flex; align-items: stretch; }
+  .node { flex: 1 1 0; min-width: 0; background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px 15px; }
+  .node > b { display: block; font-size: 15px; line-height: 1.3; }
+  .node > small { display: block; color: var(--mut); font-size: 12.5px; line-height: 1.4; margin-top: 6px; }
+  .node.end { background: var(--tint2); border-color: transparent; }
+  .node ul { margin: 10px 0 0; padding-left: 17px; font-size: 13.5px; line-height: 1.5; }
+  .node .chip { margin-bottom: 10px; }
+  .edge { flex: 0 0 88px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0 6px; text-align: center; }
+  .edge small { font-size: 11.5px; line-height: 1.25; color: var(--mut); margin-bottom: 6px; }
+  .edge i { position: relative; display: block; width: 100%; height: 2px; background: var(--brass); }
+  .edge i::after { content: ""; position: absolute; right: -2px; top: -5px;
+    border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 8px solid var(--brass); }
+  @media (max-width: 880px) {
+    .flow { flex-direction: column; }
+    .edge { flex: 0 0 auto; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 6px 0 6px 26px; text-align: left; }
+    .edge small { margin: 0; }
+    .edge i { order: -1; width: 2px; height: 28px; flex: none; }
+    .edge i::after { right: auto; top: auto; left: -5px; bottom: -2px;
+      border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--brass); border-bottom: 0; }
+  }
+
+  /* One article, many uses */
+  .fan { display: grid; grid-template-columns: 250px 64px 1fr; align-items: center; margin-top: 16px; }
+  .src { background: var(--card); border: 2px solid var(--accent); border-radius: 12px; padding: 18px; }
+  .src b { display: block; font-family: 'Newsreader', Georgia, serif; font-weight: 600; font-size: 22px; line-height: 1.15; }
+  .src small { display: block; color: var(--mut); font-size: 13px; margin-top: 6px; }
+  .fanline { position: relative; height: 2px; background: var(--brass); margin: 0 10px 0 4px; }
+  .fanline::after { content: ""; position: absolute; right: -2px; top: -5px;
+    border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 8px solid var(--brass); }
+  .uses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-left: 2px solid var(--brass); padding-left: 16px; }
+  .use { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; }
+  .use b { display: block; font-size: 14px; }
+  .use small { display: block; color: var(--mut); font-size: 12.5px; line-height: 1.35; margin-top: 2px; }
+  @media (max-width: 880px) {
+    .fan { grid-template-columns: 1fr; }
+    .fanline { width: 2px; height: 26px; margin: 0 0 0 26px; }
+    .fanline::after { right: auto; top: auto; left: -5px; bottom: -2px;
+      border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--brass); border-bottom: 0; }
+    .uses { grid-template-columns: repeat(2, 1fr); border-left: none; border-top: 2px solid var(--brass); padding: 14px 0 0; }
+  }
+
+  /* 3. The PR map */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+  .filters button { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--card);
+    border: 1px solid var(--line); border-radius: 99px; padding: 7px 14px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px; }
+  .filters button:hover { border-color: var(--accent); }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+  .colhead { display: grid; grid-template-columns: 232px 1fr 1fr 1fr; gap: 28px; margin-left: 74px; padding-bottom: 8px;
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mut); }
+  .map { display: grid; grid-template-columns: 52px 1fr; gap: 0 22px; }
+  .root { background: var(--accent); color: var(--on-accent); border-radius: 12px; display: flex;
+    align-items: center; justify-content: center; font-weight: 800; font-size: 13px; letter-spacing: 0.22em; }
+  .root span { writing-mode: vertical-rl; transform: rotate(180deg); }
+  .rows { display: grid; gap: 10px; }
+  .row { position: relative; display: grid; grid-template-columns: 232px 1fr 1fr 1fr; gap: 28px; }
+  .row::before { content: ""; position: absolute; left: -22px; top: 50%; width: 22px; border-top: 2px solid var(--line); }
+  .svc { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .svc b { display: block; font-size: 15px; line-height: 1.3; }
+  .svc small { display: block; color: var(--mut); font-size: 12.5px; line-height: 1.35; margin: 3px 0 9px; }
+  .step { position: relative; border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.45; }
+  .step::before { content: ""; position: absolute; left: -24px; top: 50%; width: 15px; height: 2px; background: var(--brass); }
+  .step::after { content: ""; position: absolute; left: -10px; top: calc(50% - 5px);
+    border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 8px solid var(--brass); }
+  .s1 { background: var(--card); border: 1px solid var(--line); }
+  .s2 { background: var(--tint); }
+  .s3 { background: var(--tint2); }
+  .ml { display: none; }
+  @media (max-width: 920px) {
+    .colhead { display: none; }
+    .map { grid-template-columns: 1fr; gap: 14px; }
+    .root { justify-content: flex-start; padding: 11px 16px; }
+    .root span { writing-mode: horizontal-tb; transform: none; }
+    .rows { gap: 30px; }
+    .row { grid-template-columns: 1fr; gap: 20px; }
+    .row::before { display: none; }
+    .step::before { left: 26px; top: -18px; width: 2px; height: 12px; }
+    .step::after { left: 21px; top: -8px; border-left: 6px solid transparent; border-right: 6px solid transparent;
+      border-top: 8px solid var(--brass); border-bottom: 0; }
+    .ml { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--mut); margin-bottom: 3px; }
+  }
+
+  /* 5. Asks */
+  .asks { list-style: none; margin: 0; padding: 0; counter-reset: ask;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px; }
+  .asks li { counter-increment: ask; position: relative; background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px 16px 16px 56px; }
+  .asks li::before { content: counter(ask); position: absolute; left: 16px; top: 15px; width: 27px; height: 27px;
+    border-radius: 50%; background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; }
+  .asks b { display: block; font-size: 15.5px; line-height: 1.3; margin-bottom: 4px; }
+  .asks span { display: block; color: var(--mut); font-size: 14px; line-height: 1.45; }
+
+  footer { max-width: 1120px; margin: 0 auto; padding: 22px 20px 48px; border-top: 1px solid var(--line);
+    color: var(--mut); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+  footer a { color: var(--mut); }
+</style>
+</head>
+<body>
+
+<nav class="menu" aria-label="Report sections">
+  <div class="menu-in">
+    <a class="brand" href="#top">SSEI <span>·</span> PR review</a>
+    <div class="links">
+      <a href="#short">The short version</a>
+      <a href="#why">Why PR matters</a>
+      <a href="#map">The PR map</a>
+      <a href="#measure">Measuring it</a>
+      <a href="#ask">What we need</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-in">
+    <p class="eyebrow">SSEI leadership review · September 2026</p>
+    <h1>From headlines to trust</h1>
+    <p class="lead">Our first quarter of PR worked. Here's what it taught us and what we'd like to do next, in about five minutes.</p>
+    <p class="agenda-label">Today's agenda</p>
+    <ol class="agenda">
+      <li><a href="#short"><span class="n">1</span><b>The short version</b><small>What May to August delivered</small></a></li>
+      <li><a href="#why"><span class="n">2</span><b>Why PR matters</b><small>How a news story becomes an admission</small></a></li>
+      <li><a href="#map"><span class="n">3</span><b>The PR map</b><small>Eight services: where we are, where we're headed</small></a></li>
+      <li><a href="#measure"><span class="n">4</span><b>Measuring it</b><small>Counting trust, not articles</small></a></li>
+      <li><a href="#ask"><span class="n">5</span><b>What we need</b><small>Five decisions for leadership</small></a></li>
+    </ol>
+  </div>
+</header>
+
+<main>
+
+  <section id="short">
+    <p class="kicker">1 · The short version</p>
+    <h2>One piece of research did most of the work</h2>
+    <p class="intro">Between May and August, our agency Mandrake Mydia got SSEI into the news 17 times across 11 outlets. They had promised 9.</p>
+
+    <div class="stats">
+      <div class="stat"><b>17</b><span>articles about SSEI</span><small>from 6 separate stories</small></div>
+      <div class="stat"><b>12</b><span>came from one study</span><small>Finance Talent Pulse, our survey of 133 finance students</small></div>
+      <div class="stat"><b>4 vs 0</b><span>Sanjay Saraf Sir vs Vidyut</span><small>articles featuring each of them</small></div>
+    </div>
+
+    <div class="funnel" role="img" aria-label="Of 17 articles, 8 were in national outlets and 4 featured Sanjay Sir. Whether they were reused on our channels or led to enquiries is not tracked yet.">
+      <h3>What happened to those 17 articles</h3>
+      <div class="frow"><span class="flab">In the news</span><span class="ftrack"><span class="fbar" style="width:100%; background:var(--bar1)"></span></span><span class="fval">17</span></div>
+      <div class="frow"><span class="flab">In national outlets</span><span class="ftrack"><span class="fbar" style="width:47%; background:var(--bar2)"></span></span><span class="fval">8 (47%)</span></div>
+      <div class="frow"><span class="flab">Featured Sanjay Sir</span><span class="ftrack"><span class="fbar" style="width:24%; background:var(--bar3)"></span></span><span class="fval">4 (24%)</span></div>
+      <div class="frow"><span class="flab">Reused on our own channels</span><span class="fnone"><span class="dot bad"></span>Not tracked yet</span><span class="fval"></span></div>
+      <div class="frow"><span class="flab">Led to enquiries</span><span class="fnone"><span class="dot bad"></span>Not tracked yet</span><span class="fval"></span></div>
+    </div>
+
+    <p class="take"><b>In short:</b> we're good at getting into the news. We can't yet see what the news does for us afterwards.</p>
+
+    <div class="press">
+      <span>Read the coverage:</span>
+      <a href="https://www.thehindu.com/education/the-problem-of-teaching-commerce-as-a-dictionary-and-not-a-discipline/article71150992.ece" target="_blank" rel="noopener">The Hindu</a>
+      <a href="https://economictimes.indiatimes.com/tech/artificial-intelligence/only-9-of-indias-finance-aspirants-feel-ready-to-compete-in-ai-driven-job-market-study/articleshow/133419250.cms" target="_blank" rel="noopener">Economic Times</a>
+      <a href="https://www.hindustantimes.com/education/features/will-ai-replace-financial-analysts-how-junior-finance-roles-are-changing-101786963968852.html" target="_blank" rel="noopener">Hindustan Times</a>
+      <a href="https://www.financialexpress.com/opinion/ai-is-transforming-finance-careers/4257509/" target="_blank" rel="noopener">Financial Express</a>
+      <a href="https://zeenews.india.com/education/ai-wont-take-your-job-but-someone-using-ai-might-experts-on-future-proofing-careers-3065688.html" target="_blank" rel="noopener">Zee News</a>
+      <a href="https://aninews.in/news/business/only-9-of-indias-finance-aspirants-feel-ready-to-compete-in-ai-driven-job-market-study20260821162909/" target="_blank" rel="noopener">ANI</a>
+    </div>
+
+    <p class="note">A note on numbers: the agency's report puts a ₹70.5 lakh "PR value" on this coverage. We don't use that figure. It prices each article as if we'd bought ad space, and counts a newspaper's entire readership as ours.</p>
+  </section>
+
+  <section id="why">
+    <p class="kicker">2 · Why PR matters</p>
+    <h2>Ads buy attention. PR earns belief.</h2>
+    <p class="intro">Choosing a CA, CFA or FRM coach is a big, expensive decision for a student and their family. They trust what others say about us far more than what we say about ourselves.</p>
+
+    <div class="flow" role="img" aria-label="We share what we know, a reporter picks it up, people see us in the news, a neutral voice vouches for us, they start to believe us, it tips a close choice, they pick or recommend SSEI, which shows up as enquiries and admissions.">
+      <div class="node"><b>We share what we know</b><small>Research, Sir's views, student stories</small></div>
+      <div class="edge"><small>a reporter picks it up</small><i></i></div>
+      <div class="node"><b>People see us in the news</b><small>Papers, TV, podcasts</small></div>
+      <div class="edge"><small>a neutral voice vouches for us</small><i></i></div>
+      <div class="node"><b>They start to believe us</b><small>SSEI becomes the name they trust</small></div>
+      <div class="edge"><small>it tips a close choice</small><i></i></div>
+      <div class="node"><b>They pick or recommend SSEI</b><small>Students, parents, colleges, employers</small></div>
+      <div class="edge"><small>shows up as</small><i></i></div>
+      <div class="node end"><b>Enquiries and admissions</b><small>What we start tracking next quarter</small></div>
+    </div>
+
+    <h3 style="margin-top:40px">And one article keeps working</h3>
+    <div class="fan" role="img" aria-label="One opinion piece in The Hindu can be reused six ways: LinkedIn, Instagram, our website, counsellors, ads and the next media pitch.">
+      <div class="src"><b>One opinion piece in The Hindu</b><small>By Sanjay Saraf Sir, July 2026</small></div>
+      <div class="fanline"></div>
+      <div class="uses">
+        <div class="use"><b>LinkedIn</b><small>Sir's post shares it</small></div>
+        <div class="use"><b>Instagram</b><small>"As featured in The Hindu"</small></div>
+        <div class="use"><b>Our website</b><small>Press page, so Google finds it</small></div>
+        <div class="use"><b>Counsellors</b><small>Proof during admission calls</small></div>
+        <div class="use"><b>Ads</b><small>A credibility line in our ads</small></div>
+        <div class="use"><b>Next pitch</b><small>Reporters say yes faster</small></div>
+      </div>
+    </div>
+
+    <p class="take"><b>In short:</b> today this reuse happens by chance. From next quarter, every article goes through all six.</p>
+  </section>
+
+  <section id="map">
+    <p class="kicker">3 · The PR map</p>
+    <h2>PR is eight services. Here's where we stand on each.</h2>
+    <p class="intro">PR agencies offer eight kinds of work. For each one: what we did so far, what we'll do in the next 90 days, and where we want to be in 6 to 12 months.</p>
+
+    <div class="filters" role="group" aria-label="Filter services by status">
+      <button type="button" data-f="all" aria-pressed="true">All 8</button>
+      <button type="button" data-f="good" aria-pressed="false"><span class="dot good"></span>Going well · 2</button>
+      <button type="button" data-f="warn" aria-pressed="false"><span class="dot warn"></span>Started · 2</button>
+      <button type="button" data-f="bad" aria-pressed="false"><span class="dot bad"></span>Not yet · 4</button>
+    </div>
+
+    <div class="colhead" aria-hidden="true"><span>Service</span><span>So far (May to Aug)</span><span>Next 90 days</span><span>In 6 to 12 months</span></div>
+    <div class="map">
+      <div class="root"><span>PR · 8 SERVICES</span></div>
+      <div class="rows">
+
+        <div class="row" data-status="good">
+          <div class="svc"><b>Media coverage</b><small>Getting SSEI into newspapers and news sites</small><span class="chip good"><span class="dot good"></span>Going well</span></div>
+          <div class="step s1"><span class="ml">So far</span><b>17 articles</b> in 11 outlets, incl. Economic Times, The Hindu, HT. All online.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>More national outlets, fewer small sites. Add print editions, a Bengali paper and student success stories.</div>
+          <div class="step s3"><span class="ml">In 6 to 12 months</span>Reporters call us first on exam results and finance careers.</div>
+        </div>
+
+        <div class="row" data-status="warn">
+          <div class="svc"><b>Sir and Vidyut as voices</b><small>Leaders quoted and invited as experts</small><span class="chip warn"><span class="dot warn"></span>Started</span></div>
+          <div class="step s1"><span class="ml">So far</span>Sir: <b>2 opinion pieces</b> (FE, The Hindu) and 2 expert quotes. Vidyut: none yet.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>One piece a month from Sir. Vidyut's first interview, on careers and Gen Z. First TV slot.</div>
+          <div class="step s3"><span class="ml">In 6 to 12 months</span>Sir owns markets and exams; Vidyut owns careers and the education business.</div>
+        </div>
+
+        <div class="row" data-status="good">
+          <div class="svc"><b>Research and data stories</b><small>Our own surveys, turned into news</small><span class="chip good"><span class="dot good"></span>Going well</span></div>
+          <div class="step s1"><span class="ml">So far</span><b>Talent Pulse</b> (133 students) became 12 of our 17 articles.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>Publish the full study on our website. Plan next year's survey with 1,000+ of our students.</div>
+          <div class="step s3"><span class="ml">In 6 to 12 months</span>A yearly study the media waits for, plus a mid-year salary study.</div>
+        </div>
+
+        <div class="row" data-status="bad">
+          <div class="svc"><b>Search and online presence</b><small>How we look when someone Googles us</small><span class="chip bad"><span class="dot bad"></span>Not yet</span></div>
+          <div class="step s1"><span class="ml">So far</span>Big sites wrote about us, but we don't track links back or searches for SSEI.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>A press page on our website. Start tracking Google searches for SSEI and visits from articles.</div>
+          <div class="step s3"><span class="ml">In 6 to 12 months</span>Every article links to us, and searches for SSEI grow each quarter.</div>
+        </div>
+
+        <div class="row" data-status="bad">
+          <div class="svc"><b>Events and experiences</b><small>Events outsiders want to attend and cover</small><span class="chip bad"><span class="dot bad"></span>Not yet</span></div>
+          <div class="step s1"><span class="ml">So far</span>Webinars and events, promoted only to our own followers.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>Turn one webinar into a public panel with outside guests.</div>
+          <div class="step s3"><span class="ml">In 6 to 12 months</span>An inter-college analyst competition and a results-day helpline for every student.</div>
+        </div>
+
+        <div class="row" data-status="warn">
+          <div class="svc"><b>Creators and partners</b><small>Influencers, colleges and employers</small><span class="chip warn"><span class="dot warn"></span>Started</span></div>
+          <div class="step s1"><span class="ml">So far</span>Creator collaborations running well, but mostly paid posts.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>Pick creators for credibility, not follower count. One joint piece with a college or employer.</div>
+          <div class="step s3"><span class="ml">In 6 to 12 months</span>Research and events built with partners, not just paid posts.</div>
+        </div>
+
+        <div class="row" data-status="bad">
+          <div class="svc"><b>Awards and recognition</b><small>Credible outsiders vouching for us</small><span class="chip bad"><span class="dot bad"></span>Not yet</span></div>
+          <div class="step s1"><span class="ml">So far</span>Planned, but nothing applied for yet.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>List the awards and rankings that carry weight. Skip pay-to-win ones.</div>
+          <div class="step s3"><span class="ml">In 6 to 12 months</span>Two or three credible recognitions for SSEI and Sir.</div>
+        </div>
+
+        <div class="row" data-status="bad">
+          <div class="svc"><b>Complaints and crisis</b><small>Handling complaints and false news fast</small><span class="chip bad"><span class="dot bad"></span>Not yet</span></div>
+          <div class="step s1"><span class="ml">So far</span>No plan if a complaint goes viral or false exam news spreads.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>A one-page plan: who spots it, who decides, who speaks, within 2 hours.</div>
+          <div class="step s3"><span class="ml">In 6 to 12 months</span>We hear about problems early and fix the cause, not just the post.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <p class="take"><b>In short:</b> two services are working, two have started, four haven't begun. The next 90 days fix the foundations; the year after builds the rest.</p>
+  </section>
+
+  <section id="measure">
+    <p class="kicker">4 · Measuring it</p>
+    <h2>Count trust, not articles</h2>
+    <p class="intro">Every month we'll report three steps, so we can see whether coverage is turning into anything for SSEI.</p>
+
+    <div class="flow" role="img" aria-label="Three steps: what we did, which earns what it earned, which leads to what it did for SSEI. Step one is tracked today, step two partly, step three starts next quarter.">
+      <div class="node">
+        <span class="chip good"><span class="dot good"></span>Tracked today</span>
+        <b>What we did</b>
+        <ul><li>Stories pitched to reporters</li><li>Articles published</li></ul>
+      </div>
+      <div class="edge"><small>which earns</small><i></i></div>
+      <div class="node">
+        <span class="chip warn"><span class="dot warn"></span>Partly tracked</span>
+        <b>What it earned</b>
+        <ul><li>Articles in national outlets</li><li>Times Sir and Vidyut are quoted</li><li>Reporters who contact us first</li></ul>
+      </div>
+      <div class="edge"><small>which leads to</small><i></i></div>
+      <div class="node end">
+        <span class="chip bad"><span class="dot bad"></span>Starts next quarter</span>
+        <b>What it did for SSEI</b>
+        <ul><li>Google searches for SSEI</li><li>Visits to our site from articles</li><li>Enquiries that mention an article</li></ul>
+      </div>
+    </div>
+
+    <p class="take"><b>In short:</b> today we only see the first step. By the end of next quarter, we'll see all three.</p>
+  </section>
+
+  <section id="ask">
+    <p class="kicker">5 · What we need</p>
+    <h2>Five decisions for leadership</h2>
+    <p class="intro">The next 90 days mostly reuse people and tools we already have. What they need is these five decisions.</p>
+    <ol class="asks">
+      <li><b>Judge PR on trust, not article counts</b><span>The monthly three-step report replaces the agency's rupee "PR value".</span></li>
+      <li><b>Time from Sanjay Sir and Vidyut</b><span>Two to three hours a week between them for interviews, opinion pieces and podcasts.</span></li>
+      <li><b>Make Talent Pulse a yearly study we own</b><span>1,000+ of our own students, published on our website first.</span></li>
+      <li><b>A new brief for the agency</b><span>Fewer copies of one story; more national outlets, TV, podcasts, print and Bengali press.</span></li>
+      <li><b>One person inside SSEI owns PR</b><span>Holds the reporter list, the crisis plan and the monthly numbers.</span></li>
+    </ol>
+  </section>
+
+</main>
+
+<footer>
+  <span>Built from Mandrake Mydia's coverage report (May to August 2026) and the published articles. Prepared by Growth &amp; Ops, September 2026.</span>
+  <a href="#top">Back to top ↑</a>
+</footer>
+
+<script>
+  (function () {
+    var bar = document.querySelector('.links');
+    var links = Array.prototype.slice.call(bar.querySelectorAll('a'));
+    var byId = {};
+    links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          links.forEach(function (l) { l.classList.remove('on'); });
+          var a = byId[e.target.id];
+          if (a) {
+            a.classList.add('on');
+            bar.scrollTo({ left: a.offsetLeft - 20, behavior: 'smooth' });
+          }
+        });
+      }, { rootMargin: '-40% 0px -55% 0px' });
+      document.querySelectorAll('main section[id]').forEach(function (s) { io.observe(s); });
+    }
+
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('.filters button'));
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.row'));
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var f = b.getAttribute('data-f');
+        buttons.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        rows.forEach(function (r) { r.hidden = f !== 'all' && r.getAttribute('data-status') !== f; });
+      });
+    });
+  })();
+</script>
+</body>
+</html>
