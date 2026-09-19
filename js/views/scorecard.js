@@ -413,7 +413,10 @@ const scorecardView = {
     openKpi(kpiId) {
         const kpi = store.kpis.find(k => k.id === kpiId);
         if (!kpi) return;
-        const parent = kpi.supports_kpi_id ? store.kpis.find(k => k.id === kpi.supports_kpi_id) : null;
+        // The link to the manager KPI is for the admin's view only: each
+        // person's KPIs are presented as their own, standalone.
+        const parent = auth.isAdmin && kpi.supports_kpi_id
+            ? store.kpis.find(k => k.id === kpi.supports_kpi_id) : null;
 
         const items = [
             ...this.workFor(kpiId).map(w => ({
