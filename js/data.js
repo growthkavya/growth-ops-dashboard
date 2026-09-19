@@ -147,6 +147,81 @@ const data = {
         return row;
     },
 
+    /* ---------- KPI updates -------------------------------- */
+
+    /** Weekly and monthly notes under each KPI. RLS returns only your own unless you're the admin. */
+    async kpiUpdates() {
+        const { data: rows, error } = await sb
+            .from('kpi_updates').select('*')
+            .order('period_start', { ascending: false });
+        if (error) throw error;
+        return rows || [];
+    },
+
+    /** One note per KPI per week (or month): saving again replaces it. */
+    async saveKpiUpdate(fields) {
+        const { data: row, error } = await sb
+            .from('kpi_updates')
+            .upsert(fields, { onConflict: 'kpi_id,period,period_start' })
+            .select().single();
+        if (error) throw error;
+        return row;
+    },
+
+    async deleteKpiUpdate(id) {
+        const { error } = await sb.from('kpi_updates').delete().eq('id', id);
+        if (error) throw error;
+    },
+
+    /* ---------- Attendance --------------------------------- */
+
+    /** Rows between two ISO dates, inclusive. RLS limits non-admins to their own. */
+    async attendance(from, to) {
+        const { data: rows, error } = await sb
+            .from('attendance').select('*')
+            .gte('work_date', from).lte('work_date', to)
+            .order('work_date');
+        if (error) throw error;
+        return rows || [];
+    },
+
+    /** Server-stamped. The browser's clock is never trusted with a time. */
+    async checkIn() {
+        const { data: row, error } = await sb.rpc('attendance_check_in');
+        if (error) throw error;
+        return row;
+    },
+
+    async checkOut() {
+        const { data: row, error } = await sb.rpc('attendance_check_out');
+        if (error) throw error;
+        return row;
+    },
+
+    /** Admin corrections: times, leave, holidays. */
+    async saveAttendance(fields) {
+        const { data: row, error } = await sb
+            .from('attendance')
+            .upsert({ ...fields, edited_by: auth.userId, edited_at: new Date().toISOString(),
+                      updated_at: new Date().toISOString() },
+                    { onConflict: 'user_id,work_date' })
+            .select().single();
+        if (error) throw error;
+        return row;
+    },
+
+    async deleteAttendance(id) {
+        const { error } = await sb.from('attendance').delete().eq('id', id);
+        if (error) throw error;
+    },
+
+    /* ---------- Account ------------------------------------ */
+
+    async changePassword(password) {
+        const { error } = await sb.auth.updateUser({ password });
+        if (error) throw error;
+    },
+
     /* ---------- Documents ---------------------------------- */
 
     async documents() {

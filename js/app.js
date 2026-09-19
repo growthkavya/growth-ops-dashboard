@@ -19,6 +19,8 @@ const store = {
     interns: [],
     profiles: [],
     activity: [],
+    kpiUpdates: [],
+    attendance: [],     // this month, first of the month to today
     failed: [],
 
     async load() {
@@ -26,11 +28,13 @@ const store = {
         const results = await Promise.allSettled([
             data.workItems(), data.goals(), data.kras(), data.kpis(),
             data.scores(), data.documents(), data.sheets(),
-            data.interns(), data.profiles(), data.activity(30)
+            data.interns(), data.profiles(), data.activity(30),
+            data.kpiUpdates(), data.attendance(dates.monthStart(), dates.today())
         ]);
 
         const keys = ['workItems', 'goals', 'kras', 'kpis', 'scores',
-                      'documents', 'sheets', 'interns', 'profiles', 'activity'];
+                      'documents', 'sheets', 'interns', 'profiles', 'activity',
+                      'kpiUpdates', 'attendance'];
 
         // One failing table shouldn't blank the whole dashboard — RLS can
         // legitimately deny a member access to a slice. Keep what loaded.
@@ -89,6 +93,11 @@ const store = {
         return this.kras.find(k => k.id === id);
     },
 
+    /** The signed-in person's attendance row for today, if any. */
+    myDay() {
+        return this.attendance.find(r => r.user_id === auth.userId && r.work_date === dates.today());
+    },
+
     /** Documents and sheets whose review is overdue. */
     staleDocs() {
         const isStale = (d) => {
@@ -110,6 +119,7 @@ const app = {
         scorecard: () => scorecardView,
         work:      () => workView,
         calendar:  () => calendarView,
+        attendance: () => attendanceView,
         documents: () => documentsView,
         people:    () => peopleView
     },
@@ -125,6 +135,8 @@ const app = {
         this.wireTheme();
         this.wireSession();
         this.wireNotifications();
+        this.wireClock();
+        this.wirePassword();
 
         await store.load();
         this.renderAll();
@@ -165,6 +177,8 @@ const app = {
         mark.style.setProperty('--who-color', personColor(auth.key));
 
         document.body.classList.add('role-' + auth.role);
+        (this.hiddenFor[auth.role] || []).forEach(v =>
+            document.querySelector(`.rail-link[data-view="${v}"]`)?.classList.add('hidden'));
     },
 
     wireNav() {
@@ -194,13 +208,20 @@ const app = {
     },
 
     go(view, { replace = false } = {}) {
-        if (!this.views[view]) view = 'home';
+        if (!this.allowed(view)) view = 'home';
         history[replace ? 'replaceState' : 'pushState']({}, '', `#${view}`);
         this.show(view);
     },
 
+    /** Interns work from their tasks and their attendance; the rest is the team's. */
+    hiddenFor: { intern: ['goals', 'scorecard', 'documents', 'people'] },
+
+    allowed(view) {
+        return !!this.views[view] && !(this.hiddenFor[auth.role] || []).includes(view);
+    },
+
     show(view) {
-        if (!this.views[view]) view = 'home';
+        if (!this.allowed(view)) view = 'home';
         this.view = view;
 
         document.querySelectorAll('.rail-link').forEach(l =>
@@ -221,6 +242,7 @@ const app = {
             }
         });
         this.paintCounts();
+        this.paintClock();
     },
 
     /**
@@ -240,6 +262,71 @@ const app = {
         set('home', attention, attention > 0);
         set('work', store.open(store.mine()).length);
         set('documents', store.staleDocs().length, false);
+    },
+
+    /**
+     * Check-in and check-out, in the rail so it is one tap from every
+     * page. The times shown are the server's, returned by the call.
+     */
+    paintClock() {
+        const host = document.getElementById('rail-clock');
+        if (!host) return;
+        const day = store.myDay();
+        const workDay = CONFIG.office.workDays.includes(dates.weekday(dates.today()));
+
+        if (!day?.check_in_at) {
+            host.innerHTML = `<button class="btn btn-primary" id="clock-btn" data-clock="in">Check in</button>
+                <div class="rail-clock-line">${workDay ? `Office opens ${esc(attendanceView.clock(CONFIG.office.start))}` : 'Not a working day'}</div>`;
+        } else if (!day.check_out_at) {
+            host.innerHTML = `<button class="btn" id="clock-btn" data-clock="out">Check out</button>
+                <div class="rail-clock-line">In since <b>${esc(dates.time(day.check_in_at))}</b></div>`;
+        } else {
+            host.innerHTML = `<button class="btn btn-quiet btn-sm" id="clock-btn" data-clock="out" title="Checking out again moves your check-out to now">Update check-out</button>
+                <div class="rail-clock-line"><b>${esc(dates.time(day.check_in_at))}</b> to <b>${esc(dates.time(day.check_out_at))}</b> · ${esc(dates.duration(day.check_in_at, day.check_out_at))}</div>`;
+        }
+    },
+
+    /** Any [data-clock] button anywhere checks in or out: the rail, Home, Attendance. */
+    wireClock() {
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-clock]');
+            if (!btn) return;
+            const going = btn.dataset.clock;
+            if (going === 'out' && store.myDay()?.check_out_at
+                && !confirm('You have already checked out today. Move your check-out to now?')) return;
+
+            btn.disabled = true;
+            try {
+                const row = going === 'in' ? await data.checkIn() : await data.checkOut();
+                await data.log(going === 'in' ? 'checked in' : 'checked out', 'attendance', row?.id || null, auth.name);
+                toast(going === 'in' ? `Checked in at ${dates.time(row.check_in_at)}` : `Checked out at ${dates.time(row.check_out_at)}`);
+                await store.reload();
+            } catch (err) {
+                toast(/function .* does not exist|schema cache/i.test(err.message)
+                    ? 'Attendance isn\'t switched on in the database yet. Ask Kavya.'
+                    : err.message, 'bad');
+                btn.disabled = false;
+            }
+        });
+    },
+
+    wirePassword() {
+        document.getElementById('password')?.addEventListener('click', () => {
+            ui.modal({
+                title: 'Change your password',
+                body: `
+                    ${ui.field('pw1', 'New password', { type: 'password', required: true, hint: 'At least 8 characters.' })}
+                    ${ui.field('pw2', 'Type it again', { type: 'password', required: true })}`,
+                submitLabel: 'Change password',
+                onSubmit: async (form) => {
+                    const a = form.get('pw1') || '';
+                    if (a.length < 8) throw new Error('Use at least 8 characters.');
+                    if (a !== form.get('pw2')) throw new Error('The two passwords don\'t match.');
+                    await data.changePassword(a);
+                    toast('Password changed');
+                }
+            });
+        });
     },
 
     wireTheme() {

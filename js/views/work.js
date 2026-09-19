@@ -394,6 +394,11 @@ const workView = {
         const kraOptions = [{ value: '', label: 'No area' }].concat(
             store.kras.map(k => ({ value: k.id, label: k.name })));
 
+        // Every KPI you can see, labelled with its owner, so a task handed
+        // to Riya can still count under the manager KPI it serves.
+        const kpiOptions = [{ value: '', label: 'Not under a KPI' }].concat(
+            store.kpis.map(k => ({ value: k.id, label: `${personName(k.member)} · ${k.name}` })));
+
         ui.modal({
             title: w ? 'Work item' : 'Add work item',
             wide: true,
@@ -411,9 +416,12 @@ const workView = {
                     ${ui.field('percent_done', 'Progress %', { type: 'number', value: w?.percent_done ?? 0 })}
                 </div>
                 <div class="field-pair">
-                    ${ui.select('kra_id', 'Responsibility area', kraOptions, { value: w?.kra_id || '' })}
+                    ${ui.select('kpi_id', 'KPI it counts under', kpiOptions, { value: w?.kpi_id || '',
+                        hint: 'Sets the area too. Logged work shows up under the KPI in KRAs & KPIs.' })}
                     ${ui.select('goal_id', 'Goal it serves', goalOptions, { value: w?.goal_id || '' })}
                 </div>
+                ${ui.select('kra_id', 'Responsibility area', kraOptions, { value: w?.kra_id || '',
+                    hint: 'Only needed when the work has no KPI.' })}
                 <div class="field-pair">
                     ${ui.field('project_tag', 'Project tag', {
                         value: w?.project_tag || '',
@@ -441,7 +449,9 @@ const workView = {
                     status:       form.get('status'),
                     due_date:     form.get('due_date') || null,
                     percent_done: parseInt(form.get('percent_done'), 10) || 0,
-                    kra_id:       form.get('kra_id') || null,
+                    kpi_id:       form.get('kpi_id') || null,
+                    kra_id:       store.kpis.find(k => k.id === form.get('kpi_id'))?.kra_id
+                                  || form.get('kra_id') || null,
                     goal_id:      form.get('goal_id') || null,
                     project_tag:  form.get('project_tag') || null,
                     hours_spent:  form.get('hours_spent') ? parseFloat(form.get('hours_spent')) : null,

@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;550;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/app.css?v=2">
+    <link rel="stylesheet" href="css/app.css?v=3">
 </head>
 <body>
 
@@ -39,6 +39,7 @@
                 Delegations <span class="rail-count hidden" id="count-work"></span>
             </a>
             <a href="#calendar" class="rail-link" data-view="calendar">Calendar</a>
+            <a href="#attendance" class="rail-link" data-view="attendance">Attendance</a>
             <a href="#documents" class="rail-link" data-view="documents">
                 Documents <span class="rail-count hidden" id="count-documents"></span>
             </a>
@@ -46,6 +47,7 @@
         </div>
 
         <div class="rail-foot">
+            <div class="rail-clock" id="rail-clock"></div>
             <div class="rail-user">
                 <div class="person-mark" id="user-mark" style="width:28px;height:28px;font-size:11px">—</div>
                 <div>
@@ -67,6 +69,13 @@
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
                         <circle cx="8" cy="8" r="5"/>
                         <path d="M8 3a5 5 0 0 0 0 10Z" fill="currentColor" stroke="none"/>
+                    </svg>
+                </button>
+
+                <button class="icon-btn" id="password" title="Change password" aria-label="Change password">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="5.5" cy="10.5" r="3"/>
+                        <path d="M7.7 8.3 13.5 2.5M11.5 4.5l1.5 1.5M10 6l1.2 1.2"/>
                     </svg>
                 </button>
 
@@ -127,8 +136,8 @@
                 <div>
                     <h2 class="h-page">KRAs &amp; KPIs</h2>
                     <p class="view-head-purpose">
-                        How each person is performing across their five responsibility areas.
-                        Scored 1–5 every month against a written standard, weighted to 100.
+                        How each person is performing across their responsibility areas, and the
+                        work and weekly updates behind it. Scored 1 to 5 every month, weighted to 100.
                     </p>
                 </div>
                 <div class="view-figure">
@@ -181,6 +190,26 @@
             </div>
         </section>
 
+        <!-- Attendance: who is in, and the month's record -->
+        <section class="view" id="view-attendance">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page">Attendance</h2>
+                    <p class="view-head-purpose">
+                        Check in when you arrive and out when you leave, from the button at the
+                        bottom of the menu. Times are taken from the server, not your device.
+                    </p>
+                </div>
+                <div class="view-figure">
+                    <div class="view-figure-val" id="attendance-figure">·</div>
+                    <span class="eyebrow" id="attendance-figure-label">Today</span>
+                </div>
+            </div>
+            <div id="attendance-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
+
         <!-- Documents: a tracker, not a link list -->
         <section class="view" id="view-documents">
             <div class="view-head">
@@ -227,17 +256,18 @@
 <div class="toast-stack" id="toast-stack"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=11"></script>
-<script src="js/data.js?v=11"></script>
-<script src="js/ui.js?v=11"></script>
-<script src="js/auth.js?v=11"></script>
-<script src="js/views/home.js?v=11"></script>
-<script src="js/views/goals.js?v=11"></script>
-<script src="js/views/scorecard.js?v=11"></script>
-<script src="js/views/work.js?v=11"></script>
-<script src="js/views/calendar.js?v=11"></script>
-<script src="js/views/documents.js?v=11"></script>
-<script src="js/views/people.js?v=11"></script>
-<script src="js/app.js?v=11"></script>
+<script src="js/config.js?v=12"></script>
+<script src="js/data.js?v=12"></script>
+<script src="js/ui.js?v=12"></script>
+<script src="js/auth.js?v=12"></script>
+<script src="js/views/home.js?v=12"></script>
+<script src="js/views/goals.js?v=12"></script>
+<script src="js/views/scorecard.js?v=12"></script>
+<script src="js/views/work.js?v=12"></script>
+<script src="js/views/calendar.js?v=12"></script>
+<script src="js/views/attendance.js?v=12"></script>
+<script src="js/views/documents.js?v=12"></script>
+<script src="js/views/people.js?v=12"></script>
+<script src="js/app.js?v=12"></script>
 </body>
 </html>

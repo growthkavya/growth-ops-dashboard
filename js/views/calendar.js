@@ -36,18 +36,10 @@ const calendarView = {
 
     /* ---------- Week maths ---------------------------------- */
 
-    /** Monday of the week containing `date`. */
-    mondayOf(date) {
-        const d = new Date(date);
-        d.setHours(0, 0, 0, 0);
-        const shift = (d.getDay() + 6) % 7;   // Sunday = 6, Monday = 0
-        d.setDate(d.getDate() - shift);
-        return d;
-    },
-
-    /** The date an item counts against. */
+    /** The date an item counts against, in office time. */
     finishedOn(item) {
-        return (item.completed_at || item.updated_at || '').slice(0, 10);
+        const ts = item.completed_at || item.updated_at;
+        return ts ? dates.iso(ts) : '';
     },
 
     /**
@@ -75,23 +67,21 @@ const calendarView = {
     },
 
     buildWeeks() {
-        const thisMonday = this.mondayOf(new Date());
+        // Week maths runs on YYYY-MM-DD strings in office time. Slicing
+        // toISOString() of a local midnight gave the previous day in India,
+        // so "weeks" used to run Sunday to Saturday.
+        const thisMonday = dates.weekStart();
 
         // Earliest Monday in view, so the column set covers the whole range.
-        const first = new Date(thisMonday);
-        first.setDate(first.getDate() - (this.weeksBack - 1) * 7);
-        const people = this.columns(first.toISOString().slice(0, 10));
+        const people = this.columns(dates.addDays(thisMonday, -(this.weeksBack - 1) * 7));
 
         const weeks = [];
 
         for (let i = 0; i < this.weeksBack; i++) {
-            const start = new Date(thisMonday);
-            start.setDate(start.getDate() - i * 7);
-            const end = new Date(start);
-            end.setDate(end.getDate() + 6);
-
-            const from = start.toISOString().slice(0, 10);
-            const to   = end.toISOString().slice(0, 10);
+            const from  = dates.addDays(thisMonday, -i * 7);
+            const to    = dates.addDays(from, 6);
+            const start = new Date(from + 'T00:00:00');
+            const end   = new Date(to + 'T00:00:00');
 
             const done = store.workItems.filter(w => {
                 if (w.status !== 'done') return false;

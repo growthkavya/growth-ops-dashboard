@@ -19,6 +19,7 @@ const homeView = {
         const next      = this.rank(open)[0];
 
         body.innerHTML = `
+            ${this.clockNudge()}
             ${this.tally(mine, open, attention)}
             <div class="grid-side">
                 <div>
@@ -32,6 +33,17 @@ const homeView = {
             </div>`;
 
         this.wire();
+    },
+
+    /** On a working day with no check-in yet, the first thing Home asks for. */
+    clockNudge() {
+        const today = dates.today();
+        if (!CONFIG.office.workDays.includes(dates.weekday(today))) return '';
+        if (store.myDay()?.check_in_at) return '';
+        return `<div class="notice" style="display:flex;align-items:center;justify-content:space-between;gap:var(--s3);margin-bottom:var(--s4)">
+                    <span><strong>You haven't checked in today.</strong> Office opens at ${esc(attendanceView.clock(CONFIG.office.start))}.</span>
+                    <button class="btn btn-primary btn-sm" data-clock="in">Check in</button>
+                </div>`;
     },
 
     paintHeader() {

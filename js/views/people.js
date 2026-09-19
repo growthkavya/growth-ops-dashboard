@@ -36,6 +36,15 @@ const peopleView = {
         </div>`;
     },
 
+    /** Today's attendance at a glance, for whoever can see it. */
+    todayChip(member) {
+        const r = store.attendance.find(a => a.member_key === member.key && a.work_date === dates.today());
+        if (!r) return auth.isAdmin ? ui.chip('Not checked in') : '';
+        if (r.check_in_at && !r.check_out_at) return ui.chip(`In since ${dates.time(r.check_in_at)}`, 'good');
+        if (r.check_out_at) return ui.chip(`Left ${dates.time(r.check_out_at)}`);
+        return ui.chip(VOCAB.attendance[r.status] || r.status, 'accent');
+    },
+
     personRow(member) {
         const theirs  = store.workItems.filter(w => w.owner_name === member.key);
         const open    = theirs.filter(w => w.status !== 'done');
@@ -52,6 +61,7 @@ const peopleView = {
                 <div class="person-name">${esc(member.name)}</div>
                 <div class="person-role">${esc(member.role)}</div>
                 <div class="row-sub" style="margin-top:5px">
+                    ${this.todayChip(member)}
                     ${late ? ui.chip(`${late} past due`, 'bad') : ''}
                     ${blocked ? ui.chip(`${blocked} blocked`, 'warn') : ''}
                     ${!late && !blocked && open.length ? ui.chip('On track', 'good') : ''}

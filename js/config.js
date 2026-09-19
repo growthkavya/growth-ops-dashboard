@@ -11,13 +11,25 @@
 const SUPABASE_URL = 'https://glheaimbqdjgpufsclrr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdsaGVhaW1icWRqZ3B1ZnNjbHJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwOTU5MjIsImV4cCI6MjA4OTY3MTkyMn0.DJoKsXfYQtoWbro7RBJbenD0ozptBUkfwkuGIUJok4k';
 
+/**
+ * The review period follows the calendar, so nobody has to remember to
+ * change it on the first of a quarter.
+ */
+const PERIOD = (() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const quarter = Math.floor(now.getMonth() / 3) + 1;
+    const first = new Date(year, (quarter - 1) * 3, 1);
+    const last  = new Date(year, quarter * 3 - 1, 1);
+    const mon = (d) => d.toLocaleDateString('en-IN', { month: 'short' });
+    return { year, quarter, label: `${mon(first)} to ${mon(last)} ${year}` };
+})();
+
 const CONFIG = {
-    // Current review period. Update these two lines each quarter —
-    // everything that says "this quarter" reads from here.
-    year: 2026,
-    quarter: 3,
-    quarterLabel: 'Jul–Sep 2026',
-    yearLabel: 'Year 2 · CY2026',
+    year: PERIOD.year,
+    quarter: PERIOD.quarter,
+    quarterLabel: PERIOD.label,
+    yearLabel: `CY${PERIOD.year}`,
 
     // KPI scoring runs 1–5. 4 is the target, and the target is what
     // the notch on every measure bar points at.
@@ -25,14 +37,32 @@ const CONFIG = {
     scoreMax: 5,
     scoreTarget: 4,
 
-    // Team. `key` matches actions.owner_name and kpis.member.
+    // Team. `key` matches actions.owner_name, kpis.member and
+    // profiles.member_key. `level` decides what a person can see:
+    // interns see their own tasks and attendance, nothing else.
     team: [
-        { key: 'kavya', name: 'Kavya', role: 'Head of Growth & Ops', color: 'var(--p-kavya)' },
-        { key: 'riya',  name: 'Riya',  role: 'Executor',             color: 'var(--p-riya)'  }
+        { key: 'kavya',  name: 'Kavya',  role: 'AI & Growth Ops Manager', level: 'manager',   color: 'var(--p-kavya)'  },
+        { key: 'riya',   name: 'Riya',   role: 'Growth & Ops Associate',  level: 'associate', color: 'var(--p-riya)'   },
+        { key: 'pallak', name: 'Pallak', role: 'Intern',                  level: 'intern',    color: 'var(--p-pallak)' },
+        { key: 'rupam',  name: 'Rupam',  role: 'Intern',                  level: 'intern',    color: 'var(--p-rupam)'  }
     ],
 
-    // Interns share one login; `intern1` is the owner_name they write under.
+    // The old shared intern login still owns some history under this key.
     internKey: 'intern1',
+
+    // Office hours from the employment letters: Monday to Saturday,
+    // 10:30 to 19:30, in office. Late and short days are flagged, not
+    // blocked: the record is for a conversation, not a penalty.
+    office: {
+        start: '10:30',
+        end: '19:30',
+        fullDayHours: 9,
+        workDays: [1, 2, 3, 4, 5, 6],   // Mon..Sat (0 = Sunday)
+        timeZone: 'Asia/Kolkata',
+        // First day attendance was kept here. Days before it are blank,
+        // not "nothing recorded".
+        trackingFrom: '2026-09-21'
+    },
 
     growthLabUrl: 'lab/'
 };
@@ -93,6 +123,39 @@ const VOCAB = {
         admin:  'Admin',
         member: 'Team',
         intern: 'Intern'
+    },
+
+    attendance: {
+        present:      'Present',
+        wfh:          'Working from home',
+        half_day:     'Half day',
+        casual_leave: 'Casual leave',
+        sick_leave:   'Sick leave',
+        absent:       'Absent',
+        holiday:      'Holiday'
+    },
+
+    // Short forms for the month register, one or two letters per day.
+    attendanceMark: {
+        present: 'P', wfh: 'WH', half_day: 'HD', casual_leave: 'CL',
+        sick_leave: 'SL', absent: 'A', holiday: 'H'
+    },
+
+    health: {
+        on_track:  'On track',
+        at_risk:   'At risk',
+        off_track: 'Off track'
+    },
+
+    healthTone: {
+        on_track: 'good',
+        at_risk: 'warn',
+        off_track: 'bad'
+    },
+
+    period: {
+        week:  'Weekly update',
+        month: 'Monthly summary'
     }
 };
 

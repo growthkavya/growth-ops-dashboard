@@ -17,17 +17,72 @@ const escAttr = (s) => String(s ?? '').replace(/"/g, '&quot;');
 /* ---------- Dates ------------------------------------------ */
 
 const dates = {
+    /**
+     * The office's calendar date for a moment, as YYYY-MM-DD. Taken in
+     * Kolkata time: converting local midnight to UTC (the old approach)
+     * lands on the previous day in India, which made "due today" read
+     * as "due tomorrow".
+     */
+    iso(d = new Date()) {
+        return new Date(d).toLocaleDateString('en-CA', { timeZone: CONFIG.office.timeZone });
+    },
+
     today() {
-        const d = new Date();
-        d.setHours(0, 0, 0, 0);
-        return d.toISOString().slice(0, 10);
+        return this.iso();
     },
 
     daysAgo(n) {
-        const d = new Date();
-        d.setDate(d.getDate() - n);
-        d.setHours(0, 0, 0, 0);
+        return this.addDays(this.today(), -n);
+    },
+
+    /** Calendar arithmetic on YYYY-MM-DD strings, immune to time zones. */
+    addDays(iso, n) {
+        const d = new Date(iso + 'T12:00:00Z');
+        d.setUTCDate(d.getUTCDate() + n);
         return d.toISOString().slice(0, 10);
+    },
+
+    /** 0 = Sunday … 6 = Saturday, for a YYYY-MM-DD string. */
+    weekday(iso) {
+        return new Date(iso + 'T12:00:00Z').getUTCDay();
+    },
+
+    /** Monday of the week containing `iso`. Weeks run Monday to Saturday here. */
+    weekStart(iso = this.today()) {
+        const wd = this.weekday(iso);
+        return this.addDays(iso, wd === 0 ? -6 : 1 - wd);
+    },
+
+    monthStart(iso = this.today()) {
+        return iso.slice(0, 8) + '01';
+    },
+
+    /** Every YYYY-MM-DD in a month. `month` is 1–12. */
+    monthDays(year, month) {
+        const n = new Date(Date.UTC(year, month, 0)).getUTCDate();
+        return Array.from({ length: n }, (_, i) =>
+            `${year}-${String(month).padStart(2, '0')}-${String(i + 1).padStart(2, '0')}`);
+    },
+
+    /** "10:24 am", in office time. */
+    time(ts) {
+        if (!ts) return '';
+        return new Date(ts).toLocaleTimeString('en-IN', {
+            timeZone: CONFIG.office.timeZone, hour: 'numeric', minute: '2-digit', hour12: true });
+    },
+
+    /** Minutes past midnight, office time, for comparing against office hours. */
+    minutesOfDay(ts) {
+        const [h, m] = new Date(ts).toLocaleTimeString('en-GB', {
+            timeZone: CONFIG.office.timeZone, hour: '2-digit', minute: '2-digit', hour12: false }).split(':');
+        return (+h % 24) * 60 + (+m);
+    },
+
+    /** "8h 45m" from two timestamps. */
+    duration(from, to) {
+        if (!from || !to) return '';
+        const mins = Math.max(0, Math.round((new Date(to) - new Date(from)) / 60000));
+        return `${Math.floor(mins / 60)}h ${String(mins % 60).padStart(2, '0')}m`;
     },
 
     /** "12 Aug" — the form used in every table and row. */
@@ -243,7 +298,11 @@ const ui = {
     /** Options for the person picker, including interns where allowed. */
     peopleOptions({ includeIntern = true, includeUnassigned = false } = {}) {
         const opts = CONFIG.team.map(m => ({ value: m.key, label: m.name }));
-        if (includeIntern) opts.push({ value: CONFIG.internKey, label: 'Intern' });
+        // The old shared intern login: offered only while it still owns work,
+        // so an edit never silently reassigns that work to someone else.
+        if (includeIntern && store.workItems.some(w => w.owner_name === CONFIG.internKey)) {
+            opts.push({ value: CONFIG.internKey, label: 'Intern (old shared login)' });
+        }
         if (includeUnassigned) opts.unshift({ value: '', label: 'Unassigned' });
         return opts;
     },

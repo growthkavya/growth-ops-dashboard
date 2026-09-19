@@ -55,6 +55,8 @@
     --p-kavya:       #2563eb;
     --p-riya:        #16a34a;
     --p-intern:      #7c3aed;
+    --p-pallak:      #db2777;
+    --p-rupam:       #ea580c;
 
     /* Type */
     --font:      'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -99,6 +101,8 @@
     --p-kavya:       #5b8dfa;
     --p-riya:        #45c47b;
     --p-intern:      #a78bfa;
+    --p-pallak:      #f472b6;
+    --p-rupam:       #fb923c;
 }
 
 /* ---------- 2. Reset -------------------------------------- */
@@ -1191,4 +1195,146 @@ textarea { resize: vertical; min-height: 72px; }
     .main { padding: 0; max-width: none; }
     .view { display: block !important; }
     .block { break-inside: avoid; border-color: #ccc; }
+}
+
+/* ---------- Attendance ------------------------------------ */
+
+/* The check-in control lives in the rail, so it is one tap from every page. */
+.rail-clock { margin-bottom: var(--s3); }
+.rail-clock .btn { width: 100%; justify-content: center; }
+.rail-clock-line {
+    font-family: var(--font-num);
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 5px;
+    text-align: center;
+}
+.rail-clock-line b { color: var(--ink); font-weight: 500; }
+
+.att-grid { border-collapse: collapse; font-family: var(--font-num); font-size: 11px; }
+.att-grid th, .att-grid td { padding: 0; text-align: center; }
+.att-grid thead th {
+    font-weight: 500;
+    color: var(--ink-3);
+    padding: var(--s2) 0 var(--s1);
+    min-width: 26px;
+    border-bottom: 1px solid var(--line-strong);
+}
+.att-grid thead th span { display: block; font-size: 11px; color: var(--ink-2); }
+.att-grid thead th small { display: block; font-size: 9px; color: var(--ink-4); }
+.att-grid .att-who {
+    text-align: left;
+    padding: 0 var(--s3) 0 var(--s4);
+    white-space: nowrap;
+    position: sticky;
+    left: 0;
+    background: var(--surface);
+    z-index: 1;
+    font-family: var(--font);
+    font-weight: 400;
+}
+.att-grid tbody tr { border-bottom: 1px solid var(--line); }
+.att-grid tbody tr:last-child { border-bottom: none; }
+.att-grid .is-off { background: var(--surface-sunk); }
+.att-grid .is-today { box-shadow: inset 0 0 0 1px var(--accent); }
+
+.att-mark {
+    width: 22px;
+    height: 22px;
+    margin: 5px 2px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink-3);
+    cursor: pointer;
+}
+.att-mark:disabled { cursor: default; }
+.att-mark:not(:disabled):hover { box-shadow: inset 0 0 0 1px var(--line-strong); }
+.att-mark.t-good    { background: var(--good-wash);  color: var(--good); }
+.att-mark.t-warn    { background: var(--warn-wash);  color: var(--warn); }
+.att-mark.t-bad     { background: var(--bad-wash);   color: var(--bad); }
+.att-mark.t-leave   { background: var(--accent-wash); color: var(--accent-ink); }
+.att-mark.t-off     { background: var(--idle-wash);  color: var(--ink-3); }
+.att-mark.t-missing { color: var(--bad); font-size: 16px; line-height: 1; }
+
+.att-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s4);
+    padding: var(--s3) var(--s4);
+    border-top: 1px solid var(--line);
+}
+.att-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.att-key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+.att-key.t-good    { background: var(--good-wash);  box-shadow: inset 0 0 0 1px var(--good); }
+.att-key.t-warn    { background: var(--warn-wash);  box-shadow: inset 0 0 0 1px var(--warn); }
+.att-key.t-leave   { background: var(--accent-wash); box-shadow: inset 0 0 0 1px var(--accent); }
+.att-key.t-bad     { background: var(--bad-wash);   box-shadow: inset 0 0 0 1px var(--bad); }
+.att-key.t-missing { background: transparent;       box-shadow: inset 0 0 0 1px var(--bad); border-radius: 50%; }
+
+.t-warn-ink { color: var(--warn); }
+.t-bad-ink  { color: var(--bad); }
+
+/* ---------- KPI log --------------------------------------- */
+
+.kpi-log-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 70px repeat(var(--weeks, 4), 34px) 44px 96px;
+    align-items: center;
+    gap: var(--s2);
+    padding: var(--s3) var(--s4);
+    border-bottom: 1px solid var(--line);
+}
+.kpi-log-row:last-child { border-bottom: none; }
+.kpi-log-head {
+    font-family: var(--font-num);
+    font-size: 10px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--line-strong);
+}
+.kpi-log-head span { text-align: center; }
+.kpi-log-head span:first-child { text-align: left; }
+.kpi-log-count { font-family: var(--font-num); font-size: 12px; text-align: center; color: var(--ink-2); }
+.kpi-log-count b { color: var(--ink); font-weight: 500; }
+.upd-dot {
+    width: 22px;
+    height: 22px;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px dashed var(--line-strong);
+    background: transparent;
+    color: var(--ink-4);
+    font-size: 11px;
+    cursor: pointer;
+}
+.upd-dot.has { border-style: solid; }
+.upd-dot.has.t-good { background: var(--good-wash); border-color: var(--good); color: var(--good); }
+.upd-dot.has.t-warn { background: var(--warn-wash); border-color: var(--warn); color: var(--warn); }
+.upd-dot.has.t-bad  { background: var(--bad-wash);  border-color: var(--bad);  color: var(--bad); }
+.upd-dot.has.t-none { background: var(--accent-wash); border-color: var(--accent); color: var(--accent-ink); }
+.upd-dot:disabled { cursor: default; opacity: .45; }
+
+.timeline { display: flex; flex-direction: column; }
+.timeline-item {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: var(--s3);
+    padding: var(--s3) 0;
+    border-bottom: 1px solid var(--line);
+}
+.timeline-item:last-child { border-bottom: none; }
+.timeline-when { font-family: var(--font-num); font-size: 11px; color: var(--ink-3); padding-top: 2px; }
+.timeline-title { font-size: 13.5px; font-weight: 500; }
+.timeline-body { font-size: 13px; color: var(--ink-2); margin-top: 3px; white-space: pre-wrap; }
+
+@media (max-width: 720px) {
+    .kpi-log-row { grid-template-columns: minmax(0, 1fr) 56px 44px; }
+    .kpi-log-row .upd-week, .kpi-log-head .upd-week { display: none; }
 }
