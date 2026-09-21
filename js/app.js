@@ -85,6 +85,45 @@ const store = {
             (w.status === 'blocked' || (w.due_date && w.due_date <= today)));
     },
 
+    /**
+     * How far a goal has got. If work items are pointed at it, that is the
+     * answer: done divided by linked. A goal with children (the company
+     * goal) averages its yearly children. Only a goal with neither uses
+     * the percentage somebody typed in.
+     */
+    goalProgress(goal) {
+        const linked = this.workItems.filter(w => w.goal_id === goal.id);
+        if (linked.length) {
+            const done = linked.filter(w => w.status === 'done').length;
+            return { pct: Math.round((done / linked.length) * 100), from: 'work', done, total: linked.length };
+        }
+        // A yearly goal is the sum of the months and weeks spent on that
+        // area, so it moves as the shorter goals are met.
+        let kids = this.goals.filter(g => g.parent_id === goal.id &&
+            (goal.scope === 'company' ? g.type === 'year' : true));
+        if (!kids.length && goal.type === 'year' && goal.kra_id) {
+            kids = this.goals.filter(g => g.kra_id === goal.kra_id &&
+                ['month', 'week'].includes(g.type) && !g.archived_at);
+        }
+        if (kids.length) {
+            const each = kids.map(k => this.goalProgress(k).pct);
+            return { pct: Math.round(each.reduce((a, b) => a + b, 0) / kids.length), from: 'children', total: kids.length };
+        }
+        return { pct: goal.progress_pct || 0, from: 'manual' };
+    },
+
+    /** Goals for a period, newest first. type is 'week', 'month' or 'year'. */
+    goalsOfType(type) {
+        return this.goals.filter(g => g.type === type && g.scope === 'team')
+            .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    },
+
+    /** Measures with no score for the period showing on the scorecard. */
+    unscored(period, start, member = auth.key) {
+        return this.kpis.filter(k => k.member === member &&
+            !this.scores.some(s => s.kpi_id === k.id && s.period === period && s.period_start === start));
+    },
+
     kraByCode(code) {
         return this.kras.find(k => k.kra_code === code);
     },
@@ -114,9 +153,11 @@ const app = {
     view: 'home',
 
     views: {
+        overview:  () => overviewView,
         home:      () => homeView,
         goals:     () => goalsView,
         scorecard: () => scorecardView,
+        worklog:   () => worklogView,
         work:      () => workView,
         calendar:  () => calendarView,
         attendance: () => attendanceView,
@@ -149,7 +190,7 @@ const app = {
         this.warnIfIncomplete();
 
         document.getElementById('app').style.display = 'flex';
-        this.go(location.hash.replace('#', '') || 'home', { replace: true });
+        this.go(location.hash.replace('#', '') || this.landing(), { replace: true });
     },
 
     /**
@@ -186,7 +227,7 @@ const app = {
         mark.style.setProperty('--who-color', personColor(auth.key));
 
         document.body.classList.add('role-' + auth.role);
-        (this.hiddenFor[auth.role] || []).forEach(v =>
+        (this.hiddenFor[auth.audience] || []).forEach(v =>
             document.querySelector(`.rail-link[data-view="${v}"]`)?.classList.add('hidden'));
     },
 
@@ -200,7 +241,7 @@ const app = {
         });
 
         window.addEventListener('popstate', () =>
-            this.show(location.hash.replace('#', '') || 'home'));
+            this.show(location.hash.replace('#', '') || this.landing()));
 
         const toggle = document.getElementById('rail-toggle');
         const scrim  = document.getElementById('rail-scrim');
@@ -217,20 +258,30 @@ const app = {
     },
 
     go(view, { replace = false } = {}) {
-        if (!this.allowed(view)) view = 'home';
+        if (!this.allowed(view)) view = this.landing();
         history[replace ? 'replaceState' : 'pushState']({}, '', `#${view}`);
         this.show(view);
     },
 
     /** Interns work from their tasks and their attendance; the rest is the team's. */
-    hiddenFor: { intern: ['goals', 'scorecard', 'documents', 'people'] },
+    hiddenFor: {
+        intern: ['overview', 'goals', 'scorecard', 'worklog', 'documents', 'people'],
+        member: ['overview'],
+        admin:  ['overview'],
+        leader: ['home', 'work', 'attendance', 'documents', 'people']
+    },
 
     allowed(view) {
-        return !!this.views[view] && !(this.hiddenFor[auth.role] || []).includes(view);
+        return !!this.views[view] && !(this.hiddenFor[auth.audience] || []).includes(view);
+    },
+
+    /** Where each person lands: leadership on the overview, everyone else on Home. */
+    landing() {
+        return auth.isLeader ? 'overview' : 'home';
     },
 
     show(view) {
-        if (!this.allowed(view)) view = 'home';
+        if (!this.allowed(view)) view = this.landing();
         this.view = view;
 
         document.querySelectorAll('.rail-link').forEach(l =>
@@ -277,9 +328,16 @@ const app = {
      * Check-in and check-out, in the rail so it is one tap from every
      * page. The times shown are the server's, returned by the call.
      */
+    /** Only the people on the register see the check-in control. */
+    onRegister() {
+        const me = CONFIG.team.find(m => m.key === auth.key);
+        return me ? me.attendance !== false : false;
+    },
+
     paintClock() {
         const host = document.getElementById('rail-clock');
         if (!host) return;
+        if (!this.onRegister()) { host.innerHTML = ''; return; }
         const day = store.myDay();
         const workDay = CONFIG.office.workDays.includes(dates.weekday(dates.today()));
 

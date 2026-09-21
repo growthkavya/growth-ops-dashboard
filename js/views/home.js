@@ -27,7 +27,9 @@ const homeView = {
                     ${this.queue(this.rank(open).slice(1, 6))}
                 </div>
                 <div>
-                    ${this.quarterBlock()}
+                    ${this.weekBlock()}
+                    ${this.scoreNudge()}
+                    ${this.teamToday()}
                     ${this.activityBlock()}
                 </div>
             </div>`;
@@ -37,6 +39,7 @@ const homeView = {
 
     /** On a working day with no check-in yet, the first thing Home asks for. */
     clockNudge() {
+        if (!app.onRegister()) return '';
         const today = dates.today();
         if (!CONFIG.office.workDays.includes(dates.weekday(today))) return '';
         if (store.myDay()?.check_in_at) return '';
@@ -182,47 +185,102 @@ const homeView = {
                 </div>`;
     },
 
-    /** The one place Home reaches into another tab — because a quarter
-        that's off track is exactly the thing you want to see unprompted. */
-    quarterBlock() {
-        const teamGoals = store.goals.filter(g =>
-            g.scope === 'team' &&
-            g.period_year === CONFIG.year &&
-            g.period_quarter === CONFIG.quarter);
-
-        if (teamGoals.length === 0) {
-            return `<div class="block">
-                        <div class="block-head"><h3 class="h-block">This quarter</h3></div>
-                        ${ui.empty('No goals set for this quarter',
-                            'Set them in Goals so the work has something to ladder up to.')}
-                    </div>`;
-        }
-
-        const avg = Math.round(teamGoals.reduce((s, g) => s + (g.progress_pct || 0), 0) / teamGoals.length);
+    /**
+     * This week's goals. Progress is counted from the tasks pointed at
+     * each goal, so this moves when work moves, not when someone
+     * remembers to update a percentage.
+     */
+    weekBlock() {
+        const goals = store.goalsOfType('week');
 
         return `<div class="block">
                     <div class="block-head">
-                        <h3 class="h-block">This quarter</h3>
-                        <span class="eyebrow">${esc(CONFIG.quarterLabel)}</span>
+                        <h3 class="h-block">This week</h3>
+                        <a href="#goals" class="meta">All goals &rarr;</a>
                     </div>
                     <div class="block-body">
-                        <div style="margin-bottom:var(--s4)">
-                            ${/* Accent, not a status colour: being at 54% mid-quarter
-                                 is neither good nor bad, and colouring it red would
-                                 say otherwise. */''}
-                            ${ui.measureRow({ value: avg, max: 100, target: 100, label: avg + '%',
-                                              tone: avg >= 100 ? 'good' : 'accent' })}
-                        </div>
-                        ${teamGoals.slice(0, 5).map(g => `
-                            <div style="margin-bottom:var(--s3)">
-                                <div style="display:flex;justify-content:space-between;gap:var(--s3);margin-bottom:3px">
-                                    <span style="font-size:12.5px">${esc(g.title)}</span>
-                                    <span class="num meta">${g.progress_pct || 0}%</span>
+                        ${goals.length === 0
+                            ? `<p class="meta">No goals set for this week.</p>`
+                            : goals.map(g => {
+                                const p = store.goalProgress(g);
+                                return `<div style="margin-bottom:var(--s3)">
+                                    <div style="display:flex;justify-content:space-between;gap:var(--s3);margin-bottom:3px">
+                                        <span style="font-size:12.5px">${esc(g.title)}</span>
+                                        <span class="num meta">${p.pct}%</span>
+                                    </div>
+                                    ${ui.measure({ value: p.pct, max: 100, size: 'xs',
+                                                   tone: p.pct >= 100 ? 'good' : 'accent' })}
+                                    ${p.from === 'work' ? `<div class="meta">${p.done} of ${p.total} tasks done</div>` : ''}
+                                </div>`;
+                            }).join('')}
+                        ${auth.isLeader ? '' : `<button class="btn btn-sm" id="home-goal">Add a goal for this week</button>`}
+                    </div>
+                </div>`;
+    },
+
+    /**
+     * What is waiting to be scored this week. One click from here to the
+     * standard, so scoring never means hunting through a tab.
+     */
+    scoreNudge() {
+        const mine = store.kpis.filter(k => k.member === auth.key);
+        if (!mine.length) return '';
+
+        const week = dates.weekStart();
+        const waiting = store.unscored('week', week);
+        if (!waiting.length) {
+            return `<div class="block">
+                        <div class="block-head"><h3 class="h-block">Scoring</h3>
+                            <span class="eyebrow">Week of ${esc(dates.short(week))}</span></div>
+                        <div class="block-body"><p class="meta">All ${mine.length} measures scored this week.</p></div>
+                    </div>`;
+        }
+
+        return `<div class="block">
+                    <div class="block-head">
+                        <h3 class="h-block">To score this week</h3>
+                        <span class="eyebrow">${waiting.length} of ${mine.length} left</span>
+                    </div>
+                    <div class="block-body block-body--flush">
+                        ${waiting.slice(0, 5).map(k => `
+                            <div class="row-item">
+                                <div class="row-main">
+                                    <div class="row-title">${esc(k.name)}</div>
+                                    <div class="row-sub">${esc(store.kraById(k.kra_id)?.short_name || '')} · ${k.weight || 0}%</div>
                                 </div>
-                                ${ui.measure({ value: g.progress_pct || 0, max: 100, size: 'xs',
-                                               tone: (g.progress_pct || 0) >= 100 ? 'good' : 'accent' })}
+                                <button class="btn btn-sm" data-score="${k.id}">Score</button>
                             </div>`).join('')}
-                        <a href="#goals" class="meta">All goals &rarr;</a>
+                        ${waiting.length > 5 ? `<div class="row-item"><a href="#scorecard" class="meta">${waiting.length - 5} more in KRAs &amp; KPIs &rarr;</a></div>` : ''}
+                    </div>
+                </div>`;
+    },
+
+    /** Who is in today. Only the manager needs this on Home. */
+    teamToday() {
+        if (!auth.isAdmin) return '';
+        const today = dates.today();
+        const people = CONFIG.team.filter(m => m.attendance !== false);
+        if (!people.length) return '';
+
+        return `<div class="block">
+                    <div class="block-head">
+                        <h3 class="h-block">Team today</h3>
+                        <a href="#attendance" class="meta">Register &rarr;</a>
+                    </div>
+                    <div class="block-body block-body--flush">
+                        ${people.map(m => {
+                            const r = store.attendance.find(a => a.member_key === m.key && a.work_date === today);
+                            const open = store.workItems.filter(w => w.owner_name === m.key && w.status !== 'done').length;
+                            return `<div class="row-item">
+                                <div class="row-main">
+                                    <div class="row-title">${esc(m.name)}</div>
+                                    <div class="row-sub">${r?.check_in_at
+                                        ? `In since ${esc(dates.time(r.check_in_at))}`
+                                        : r ? esc(VOCAB.attendance[r.status] || r.status) : 'Not checked in'}</div>
+                                </div>
+                                <span class="meta">${open} open</span>
+                            </div>`;
+                        }).join('')}
                     </div>
                 </div>`;
     },
@@ -287,5 +345,19 @@ const homeView = {
         });
 
         document.getElementById('home-new')?.addEventListener('click', () => workView.openEditor());
+
+        document.getElementById('home-goal')?.addEventListener('click', () => {
+            goalsView.period = 'week';
+            goalsView.openEditor(null);
+        });
+
+        // Scoring from Home scores the week, which is what Home is showing.
+        body.querySelectorAll('[data-score]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                scorecardView.period = 'week';
+                scorecardView.anchor = dates.weekStart();
+                scorecardView.openScorer(btn.dataset.score);
+            });
+        });
     }
 };

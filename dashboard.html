@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;550;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/app.css?v=4">
+    <link rel="stylesheet" href="css/app.css?v=6">
 </head>
 <body>
 
@@ -30,11 +30,13 @@
         </div>
 
         <div class="rail-nav">
+            <a href="#overview" class="rail-link" data-view="overview">Overview</a>
             <a href="#home" class="rail-link active" data-view="home">
                 Home <span class="rail-count hidden" id="count-home"></span>
             </a>
             <a href="#goals" class="rail-link" data-view="goals">Goals</a>
             <a href="#scorecard" class="rail-link" data-view="scorecard">KRAs &amp; KPIs</a>
+            <a href="#worklog" class="rail-link" data-view="worklog">Work log</a>
             <a href="#work" class="rail-link" data-view="work">
                 Delegations <span class="rail-count hidden" id="count-work"></span>
             </a>
@@ -98,6 +100,26 @@
     <!-- ============ Views ============ -->
     <main class="main">
 
+        <!-- Overview: the leadership read of the vertical -->
+        <section class="view" id="view-overview">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page">Growth &amp; Ops</h2>
+                    <p class="view-head-purpose">
+                        What the vertical committed to this year, where it has got to, and what it
+                        has shipped. Progress is counted from the work itself.
+                    </p>
+                </div>
+                <div class="view-figure">
+                    <div class="view-figure-val" id="overview-figure">—</div>
+                    <span class="eyebrow" id="overview-figure-label">The year so far</span>
+                </div>
+            </div>
+            <div id="overview-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
+
         <!-- Home: what needs you today -->
         <section class="view active" id="view-home">
             <div class="view-head">
@@ -121,8 +143,8 @@
                 <div>
                     <h2 class="h-page">Goals</h2>
                     <p class="view-head-purpose">
-                        What SSEI is trying to achieve this year, and what Growth &amp; Ops is doing
-                        this quarter to get there. Every quarterly goal sits under the company goal it serves.
+                        What we are working towards this week, this month and this year. Point tasks at a
+                        goal in Delegations and its progress counts itself.
                     </p>
                 </div>
                 <div class="view-figure">
@@ -142,8 +164,8 @@
                 <div>
                     <h2 class="h-page">KRAs &amp; KPIs</h2>
                     <p class="view-head-purpose">
-                        How each person is performing across their responsibility areas, and the
-                        work and weekly updates behind it. Scored 1 to 5 every month, weighted to 100.
+                        Every responsibility area and the measures under it. Give each measure a score
+                        out of 5, by the week or by the quarter. What was actually done sits in Work log.
                     </p>
                 </div>
                 <div class="view-figure">
@@ -156,14 +178,34 @@
             </div>
         </section>
 
+        <!-- Work log: what was done, under each measure -->
+        <section class="view" id="view-worklog">
+            <div class="view-head">
+                <div>
+                    <h2 class="h-page">Work log</h2>
+                    <p class="view-head-purpose">
+                        What has been done under each measure, newest first, with dates, notes
+                        and links. Add work as you finish it.
+                    </p>
+                </div>
+                <div class="view-figure">
+                    <div class="view-figure-val" id="worklog-figure">—</div>
+                    <span class="eyebrow" id="worklog-figure-label">Logged</span>
+                </div>
+            </div>
+            <div id="worklog-body">
+                <p class="loading-note">Loading…</p>
+            </div>
+        </section>
+
         <!-- Delegations: the single work tracker -->
         <section class="view" id="view-work">
             <div class="view-head">
                 <div>
                     <h2 class="h-page">Delegations</h2>
                     <p class="view-head-purpose">
-                        Every piece of work the team is carrying — yours, what you handed to
-                        someone else, and what interns are doing. One list, filtered four ways.
+                        Every task the team is carrying: yours, what you handed to someone else,
+                        and what the interns are doing. Add a task, set a due date, attach notes and a link.
                     </p>
                 </div>
                 <div class="view-figure">
@@ -182,8 +224,7 @@
                 <div>
                     <h2 class="h-page">Calendar</h2>
                     <p class="view-head-purpose">
-                        What each person actually finished, week by week. Delegations shows
-                        what's open now — this is the record of what got done.
+                        The month at a glance: what is due on each day, and what was finished.
                     </p>
                 </div>
                 <div class="view-figure">
@@ -222,8 +263,7 @@
                 <div>
                     <h2 class="h-page">Documents</h2>
                     <p class="view-head-purpose">
-                        Every sheet, process note and report the team relies on — who owns it,
-                        when it was last checked, and whether it's still trustworthy.
+                        The sheets and docs the team works in, and the reports we have produced.
                     </p>
                 </div>
                 <div class="view-figure">
@@ -262,18 +302,20 @@
 <div class="toast-stack" id="toast-stack"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=13"></script>
-<script src="js/data.js?v=13"></script>
-<script src="js/ui.js?v=13"></script>
-<script src="js/auth.js?v=13"></script>
-<script src="js/views/home.js?v=13"></script>
-<script src="js/views/goals.js?v=13"></script>
-<script src="js/views/scorecard.js?v=13"></script>
-<script src="js/views/work.js?v=13"></script>
-<script src="js/views/calendar.js?v=13"></script>
-<script src="js/views/attendance.js?v=13"></script>
-<script src="js/views/documents.js?v=13"></script>
-<script src="js/views/people.js?v=13"></script>
-<script src="js/app.js?v=13"></script>
+<script src="js/config.js?v=15"></script>
+<script src="js/data.js?v=15"></script>
+<script src="js/ui.js?v=15"></script>
+<script src="js/auth.js?v=15"></script>
+<script src="js/views/overview.js?v=15"></script>
+<script src="js/views/home.js?v=15"></script>
+<script src="js/views/goals.js?v=15"></script>
+<script src="js/views/scorecard.js?v=15"></script>
+<script src="js/views/worklog.js?v=15"></script>
+<script src="js/views/work.js?v=15"></script>
+<script src="js/views/calendar.js?v=15"></script>
+<script src="js/views/attendance.js?v=15"></script>
+<script src="js/views/documents.js?v=15"></script>
+<script src="js/views/people.js?v=15"></script>
+<script src="js/app.js?v=15"></script>
 </body>
 </html>

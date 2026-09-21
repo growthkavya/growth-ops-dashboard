@@ -1,319 +1,202 @@
 /**
- * Goals — two levels.
+ * Goals: this week, this month, this year.
  *
- *   Company goal (annual)   what SSEI is trying to achieve this year
- *     └─ Team goal (quarterly)   what Growth & Ops is doing about it
- *
- * The nesting is load-bearing: a team goal is shown under the company
- * goal it serves. A team goal with no parent is shown separately and
- * called out, because unattached work is the thing worth noticing.
- *
- * Work items link up to team goals (work.goal_id), so each goal shows
- * how much work sits behind it and how much of that is finished.
+ * A goal's progress is not typed in. Point work items at a goal in
+ * Delegations and it counts them: three of five done is 60%. The yearly
+ * goals are the seven responsibility areas, so the scorecard and the
+ * goals are two views of the same commitments, never two lists to keep
+ * in step by hand.
  */
 
 const goalsView = {
-    showing: 'current',
+    period: 'week',
+
+    periods: [
+        { key: 'week',  label: 'This week',  noun: 'weekly goal' },
+        { key: 'month', label: 'This month', noun: 'monthly goal' },
+        { key: 'year',  label: 'This year',  noun: 'yearly goal' }
+    ],
 
     render() {
         const body = document.getElementById('goals-body');
+        const goals = store.goalsOfType(this.period);
+        const company = store.goals.find(g => g.scope === 'company' && !g.archived_at);
 
-        const company = store.goals
-            .filter(g => g.scope === 'company')
-            .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        const overall = goals.length
+            ? Math.round(goals.reduce((s, g) => s + store.goalProgress(g).pct, 0) / goals.length)
+            : 0;
+        document.getElementById('goals-figure').innerHTML = `${overall}<small>%</small>`;
 
-        const team = this.teamGoals();
-
-        document.getElementById('goals-figure').innerHTML = team.length
-            ? `${Math.round(team.reduce((s, g) => s + (g.progress_pct || 0), 0) / team.length)}<small>%</small>`
-            : '—';
-
-        document.getElementById('goals-actions').innerHTML = `
-            <div style="display:flex;justify-content:space-between;align-items:center;width:100%;gap:var(--s4);flex-wrap:wrap">
+        body.innerHTML = `
+            <div class="bar">
                 <div class="segments">
-                    <button class="segment ${this.showing === 'current' ? 'active' : ''}" data-showing="current">This quarter</button>
-                    <button class="segment ${this.showing === 'all' ? 'active' : ''}" data-showing="all">All quarters</button>
+                    ${this.periods.map(p =>
+                        `<button class="segment ${this.period === p.key ? 'active' : ''}" data-period="${p.key}">${esc(p.label)}</button>`
+                    ).join('')}
                 </div>
-                ${auth.isAdmin ? `
-                    <div style="display:flex;gap:var(--s2)">
-                        <button class="btn btn-sm" id="new-company">Add company goal</button>
-                        <button class="btn btn-primary btn-sm" id="new-team">Add team goal</button>
-                    </div>` : `
-                    <button class="btn btn-primary btn-sm" id="new-team">Add team goal</button>`}
-            </div>`;
+                ${auth.isLeader ? '' : `<button class="btn btn-primary btn-sm" id="goal-add">Add ${esc(this.current().noun)}</button>`}
+            </div>
 
-        if (company.length === 0 && team.length === 0) {
-            body.innerHTML = `<div class="block">${ui.empty(
-                'No goals yet',
-                'Start with a company goal — what SSEI is trying to achieve this year. Then add the quarterly goals that get you there.',
-                auth.isAdmin ? `<button class="btn btn-primary" id="empty-new">Add the first company goal</button>` : ''
-            )}</div>`;
-            this.wire();
-            return;
-        }
+            ${company ? this.companyCard(company) : ''}
+            ${goals.length ? this.list(goals) : ui.empty(
+                `No ${this.current().noun}s yet`,
+                'Add one, then point tasks at it in Delegations. The progress counts itself from the tasks.')}`;
 
-        const attached = new Set();
-        let html = company.map(c => {
-            const children = team.filter(t => t.parent_id === c.id);
-            children.forEach(t => attached.add(t.id));
-            return this.companyBlock(c, children);
-        }).join('');
-
-        const orphans = team.filter(t => !attached.has(t.id));
-        if (orphans.length) html += this.orphanBlock(orphans);
-
-        body.innerHTML = html;
         this.wire();
     },
 
-    teamGoals() {
-        return store.goals
-            .filter(g => g.scope === 'team')
-            .filter(g => this.showing === 'all' ||
-                (g.period_year === CONFIG.year && g.period_quarter === CONFIG.quarter))
-            .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    current() {
+        return this.periods.find(p => p.key === this.period);
     },
 
-    /**
-     * A company goal's progress is the average of the quarterly goals
-     * under it — not a number someone types. If nothing is under it,
-     * that is itself the finding, and the block says so.
-     */
-    companyBlock(goal, children) {
-        const rolled = children.length
-            ? Math.round(children.reduce((s, g) => s + (g.progress_pct || 0), 0) / children.length)
-            : null;
-
-        return `<section class="goal-company">
+    companyCard(company) {
+        const p = store.goalProgress(company);
+        return `<div class="block">
             <div class="goal-company-head">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s4)">
-                    <div style="flex:1;min-width:0">
-                        <span class="eyebrow">Company goal · ${goal.period_year || CONFIG.year}</span>
-                        <h3 class="goal-company-title">${esc(goal.title)}</h3>
-                        ${goal.metric ? `
-                            <p class="meta">
-                                ${esc(goal.metric)}
-                                ${goal.baseline ? ` · from <span class="num">${esc(goal.baseline)}</span>` : ''}
-                                ${goal.target ? ` to <span class="num">${esc(goal.target)}</span>` : ''}
-                            </p>` : ''}
-                    </div>
-                    ${auth.isAdmin ? `<button class="btn btn-quiet btn-sm" data-edit-company="${goal.id}">Edit</button>` : ''}
+                <span class="eyebrow">The year</span>
+                <div class="goal-company-title">${esc(company.title)}</div>
+                ${company.description ? `<p class="meta">${esc(company.description)}</p>` : ''}
+                <div style="margin-top:var(--s3);max-width:520px">
+                    ${ui.measureRow({ value: p.pct, max: 100, label: `${p.pct}%` })}
                 </div>
-
-                <div style="margin-top:var(--s4)">
-                    ${rolled === null
-                        ? `<p class="meta">Nothing scheduled against this yet. Add a quarterly goal to move it.</p>`
-                        : ui.measureRow({ value: rolled, max: 100, target: 100, size: '',
-                                          label: rolled + '%',
-                                          tone: rolled >= 100 ? 'good' : 'accent' })}
-                </div>
-                ${rolled !== null ? `<p class="meta" style="margin-top:6px">Rolled up from ${children.length} quarterly goal${children.length === 1 ? '' : 's'}</p>` : ''}
-            </div>
-
-            <div class="goal-children">
-                ${children.length === 0
-                    ? `<p class="meta" style="padding:var(--s3) var(--s5)">No quarterly goals under this one.</p>`
-                    : children.map(c => this.teamRow(c)).join('')}
-            </div>
-        </section>`;
-    },
-
-    orphanBlock(orphans) {
-        return `<section class="block goal-orphans">
-            <div class="block-head">
-                <div>
-                    <h3 class="h-block">Not tied to a company goal</h3>
-                    <p class="meta">Worth a look — either these serve a company goal that isn't written down, or they shouldn't be this quarter's priority.</p>
-                </div>
-            </div>
-            <div class="goal-children">
-                ${orphans.map(g => this.teamRow(g)).join('')}
-            </div>
-        </section>`;
-    },
-
-    teamRow(goal) {
-        const behind = store.workItems.filter(w => w.goal_id === goal.id);
-        const done   = behind.filter(w => w.status === 'done').length;
-        const pct    = goal.progress_pct || 0;
-        const due    = dates.relativeDue(goal.due_date);
-
-        return `<div class="goal-child" data-goal="${goal.id}">
-            <div style="min-width:0">
-                <div class="goal-child-title">${esc(goal.title)}</div>
-                <div class="goal-child-meta">
-                    ${ui.who(null, goal.owner?.full_name || 'Unassigned')}
-                    ${goal.kras?.short_name ? ui.chip(goal.kras.short_name) : ''}
-                    ${goal.status === 'blocked' ? ui.chip('Blocked', 'bad') : ''}
-                </div>
-            </div>
-
-            <div>
-                ${ui.measure({ value: pct, max: 100, size: 'sm', tone: pct >= 100 ? 'good' : 'accent' })}
-                <span class="meta num" style="display:block;margin-top:4px">${pct}%</span>
-            </div>
-
-            <div class="goal-child-when meta">
-                ${behind.length
-                    ? `<a href="#work">${done} of ${behind.length} tasks done</a>`
-                    : `<span class="muted">No tasks yet</span>`}
-                <div class="num" style="margin-top:2px">Q${goal.period_quarter || '?'} · ${esc(due.text)}</div>
-            </div>
-
-            <div style="text-align:right">
-                <button class="btn btn-quiet btn-sm" data-edit-team="${goal.id}">Update</button>
             </div>
         </div>`;
     },
 
-    /* ---------- Interactions -------------------------------- */
+    list(goals) {
+        return `<div class="block">
+            <div class="block-head">
+                <h3 class="h-block">${esc(this.current().label)}</h3>
+                <span class="eyebrow">${goals.length} goal${goals.length === 1 ? '' : 's'} · progress counted from tasks</span>
+            </div>
+            <div class="block-body block-body--flush">
+                ${goals.map(g => this.row(g)).join('')}
+            </div>
+        </div>`;
+    },
+
+    row(goal) {
+        const p = store.goalProgress(goal);
+        const kra = store.kraById(goal.kra_id);
+        const late = goal.due_date && goal.due_date < dates.today() && p.pct < 100;
+
+        return `<div class="goal-row" data-goal="${goal.id}">
+            <div class="goal-main">
+                <div class="row-title">${esc(goal.title)}</div>
+                <div class="row-sub">
+                    ${kra ? ui.chip(kra.short_name || kra.name) : ''}
+                    ${p.from === 'work' ? ui.chip(`${p.done} of ${p.total} tasks done`, p.pct === 100 ? 'good' : '') : ''}
+                    ${p.from === 'manual' && !goal.metric ? ui.chip('Set by hand') : ''}
+                    ${goal.target ? ui.chip(`Target: ${goal.target}`) : ''}
+                    ${late ? ui.chip('Past its date', 'bad') : ''}
+                </div>
+            </div>
+            <div class="goal-measure">
+                ${ui.measureRow({ value: p.pct, max: 100, label: `${p.pct}%`,
+                    tone: p.pct === 100 ? 'good' : p.pct === 0 ? 'idle' : 'accent' })}
+            </div>
+        </div>`;
+    },
+
+    /* ---------- Interaction --------------------------------- */
 
     wire() {
         const view = document.getElementById('view-goals');
 
-        view.querySelectorAll('[data-showing]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.showing = btn.dataset.showing;
-                this.render();
-            });
-        });
+        view.querySelectorAll('[data-period]').forEach(btn =>
+            btn.addEventListener('click', () => { this.period = btn.dataset.period; this.render(); }));
 
-        document.getElementById('new-company')?.addEventListener('click', () => this.editCompany());
-        document.getElementById('empty-new')?.addEventListener('click', () => this.editCompany());
-        document.getElementById('new-team')?.addEventListener('click', () => this.editTeam());
+        document.getElementById('goal-add')?.addEventListener('click', () => this.openEditor(null));
 
-        view.querySelectorAll('[data-edit-company]').forEach(btn =>
-            btn.addEventListener('click', () => this.editCompany(btn.dataset.editCompany)));
-
-        view.querySelectorAll('[data-edit-team]').forEach(btn =>
-            btn.addEventListener('click', () => this.editTeam(btn.dataset.editTeam)));
+        if (auth.isLeader) return;
+        view.querySelectorAll('[data-goal]').forEach(row =>
+            row.addEventListener('click', () => this.openEditor(row.dataset.goal)));
     },
 
-    goal(id) {
-        return store.goals.find(g => g.id === id);
+    /** The end of the period a new goal belongs to. */
+    dueFor(type) {
+        const today = dates.today();
+        if (type === 'week') return dates.addDays(dates.weekStart(today), 5);
+        if (type === 'month') {
+            const [y, m] = today.split('-').map(Number);
+            return new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
+        }
+        return `${CONFIG.year}-12-31`;
     },
 
-    editCompany(id = null) {
-        const g = id ? this.goal(id) : null;
-
-        ui.modal({
-            title: g ? 'Company goal' : 'Add a company goal',
-            body: `
-                ${ui.field('title', 'The goal', {
-                    value: g?.title || '', required: true,
-                    placeholder: 'Grow enrolments 20% over CY2026' })}
-                ${ui.textarea('description', 'Why it matters', { value: g?.description || '' })}
-                ${ui.field('metric', 'What gets measured', {
-                    value: g?.metric || '', placeholder: 'Paid enrolments per quarter' })}
-                <div class="field-pair">
-                    ${ui.field('baseline', 'Starting point', { value: g?.baseline || '', placeholder: '1,200' })}
-                    ${ui.field('target', 'Target', { value: g?.target || '', placeholder: '1,440' })}
-                </div>
-                <div class="field-pair">
-                    ${ui.field('period_year', 'Year', { type: 'number', value: g?.period_year || CONFIG.year })}
-                    ${ui.field('sort_order', 'Order shown', { type: 'number', value: g?.sort_order ?? 0 })}
-                </div>`,
-            submitLabel: g ? 'Save goal' : 'Add goal',
-            danger: g && auth.isAdmin ? {
-                label: 'Archive',
-                confirm: `Archive "${g.title}"? It stays in the database as a record but leaves this view.`,
-                run: async () => {
-                    await data.archiveGoal(g.id);
-                    toast('Archived');
-                    await store.reload();
-                }
-            } : null,
-            onSubmit: async (form) => {
-                const fields = {
-                    scope: 'company',
-                    type: 'year',
-                    title: (form.get('title') || '').trim(),
-                    description: form.get('description') || null,
-                    metric: form.get('metric') || null,
-                    baseline: form.get('baseline') || null,
-                    target: form.get('target') || null,
-                    period_year: parseInt(form.get('period_year'), 10) || CONFIG.year,
-                    sort_order: parseInt(form.get('sort_order'), 10) || 0
-                };
-                if (g) await data.updateGoal(g.id, fields);
-                else   await data.createGoal({ ...fields, owner_id: auth.userId, status: 'in_progress' });
-                toast(g ? 'Saved' : 'Goal added');
-                await store.reload();
-            }
-        });
-    },
-
-    editTeam(id = null) {
-        const g = id ? this.goal(id) : null;
-
-        const parents = [{ value: '', label: 'Not tied to a company goal' }].concat(
-            store.goals.filter(x => x.scope === 'company')
-                       .map(x => ({ value: x.id, label: x.title })));
-
+    openEditor(id) {
+        const g = id ? store.goals.find(x => x.id === id) : null;
+        const p = g ? store.goalProgress(g) : null;
         const kraOptions = [{ value: '', label: 'No area' }].concat(
             store.kras.map(k => ({ value: k.id, label: k.name })));
-
-        const owners = store.profiles
-            .filter(p => p.role !== 'intern')
-            .map(p => ({ value: p.id, label: p.full_name || p.email }));
+        const linked = g ? store.workItems.filter(w => w.goal_id === g.id) : [];
 
         ui.modal({
-            title: g ? 'Team goal' : 'Add a team goal',
+            title: g ? 'Goal' : `Add ${this.current().noun}`,
+            wide: true,
             body: `
-                ${ui.field('title', 'The goal', {
-                    value: g?.title || '', required: true,
-                    placeholder: 'Cut lead response time to under 2 hours' })}
-                ${ui.textarea('description', 'What done looks like', {
-                    value: g?.description || '',
-                    placeholder: 'Be specific enough that anyone can tell whether it happened.' })}
-                ${ui.select('parent_id', 'Company goal it serves', parents, {
-                    value: g?.parent_id || '',
-                    hint: 'A goal with no parent shows in its own section so it doesn\'t get lost.' })}
+                ${ui.field('title', 'What are we trying to achieve', { value: g?.title || '', required: true,
+                    placeholder: 'Cohortisation live in LeadSquared for the top six cohorts' })}
                 <div class="field-pair">
-                    ${ui.select('owner_id', 'Owner', owners, { value: g?.owner_id || auth.userId })}
                     ${ui.select('kra_id', 'Responsibility area', kraOptions, { value: g?.kra_id || '' })}
+                    ${ui.field('due_date', 'Finish by', { type: 'date',
+                        value: g?.due_date || this.dueFor(this.period) })}
                 </div>
                 <div class="field-pair">
-                    ${ui.select('period_quarter', 'Quarter',
-                        [1, 2, 3, 4].map(q => ({ value: q, label: 'Q' + q })),
-                        { value: g?.period_quarter || CONFIG.quarter })}
-                    ${ui.field('period_year', 'Year', { type: 'number', value: g?.period_year || CONFIG.year })}
+                    ${ui.field('target', 'What good looks like', { value: g?.target || '',
+                        placeholder: '95% of leads sorted' })}
+                    ${ui.field('progress_pct', 'Progress %', { type: 'number', value: g?.progress_pct ?? 0,
+                        hint: linked.length ? 'Ignored: counted from the tasks below.' : 'Used until tasks are linked.' })}
                 </div>
-                <div class="field-pair">
-                    ${ui.field('progress_pct', 'Progress %', { type: 'number', value: g?.progress_pct ?? 0 })}
-                    ${ui.field('due_date', 'Due', { type: 'date', value: g?.due_date || '' })}
-                </div>
-                ${ui.select('status', 'Status', ui.statusOptions(), { value: g?.status || 'in_progress' })}`,
+                ${linked.length ? `<div class="field">
+                    <label>Tasks counted towards this goal</label>
+                    <div class="log-items" style="padding:0">
+                        ${linked.map(w => `<div class="log-item" style="cursor:default">
+                            <span class="log-when num">${esc(w.completed_at ? dates.short(dates.iso(w.completed_at)) : (w.due_date ? dates.short(w.due_date) : ''))}</span>
+                            <div class="log-body"><div class="log-title">${esc(w.title)}</div></div>
+                            <div class="row-end">${ui.statusChip(w.status)}</div>
+                        </div>`).join('')}
+                    </div>
+                    <p class="field-hint">${p.done} of ${p.total} done, so this goal reads ${p.pct}%.</p>
+                </div>` : `<p class="field-hint">No tasks point at this goal yet. Open a task in Delegations and pick this goal to have progress count itself.</p>`}`,
             submitLabel: g ? 'Save goal' : 'Add goal',
             danger: g && auth.isAdmin ? {
-                label: 'Archive',
-                confirm: `Archive "${g.title}"?`,
+                label: 'Remove from the board',
+                confirm: `Take "${g.title}" off the board? It stays in the record.`,
                 run: async () => {
                     await data.archiveGoal(g.id);
-                    toast('Archived');
+                    toast('Goal archived');
                     await store.reload();
                 }
             } : null,
             onSubmit: async (form) => {
-                const pct = Math.max(0, Math.min(100, parseInt(form.get('progress_pct'), 10) || 0));
                 const fields = {
-                    scope: 'team',
-                    type: 'quarter',
                     title: (form.get('title') || '').trim(),
-                    description: form.get('description') || null,
-                    parent_id: form.get('parent_id') || null,
-                    owner_id: form.get('owner_id') || null,
                     kra_id: form.get('kra_id') || null,
-                    period_quarter: parseInt(form.get('period_quarter'), 10),
-                    period_year: parseInt(form.get('period_year'), 10) || CONFIG.year,
-                    progress_pct: pct,
                     due_date: form.get('due_date') || null,
-                    // Progress and status shouldn't contradict each other.
-                    status: pct >= 100 ? 'done' : form.get('status')
+                    target: form.get('target') || null,
+                    progress_pct: Math.max(0, Math.min(100, parseInt(form.get('progress_pct'), 10) || 0))
                 };
-                if (g) await data.updateGoal(g.id, fields);
-                else   await data.createGoal(fields);
-                toast(g ? 'Saved' : 'Goal added');
+                if (!fields.title) throw new Error('Give the goal a title.');
+
+                if (g) {
+                    await data.updateGoal(g.id, fields);
+                    toast('Goal saved');
+                } else {
+                    const company = store.goals.find(x => x.scope === 'company' && !x.archived_at);
+                    await data.createGoal({
+                        ...fields,
+                        type: this.period,
+                        scope: 'team',
+                        status: 'in_progress',
+                        parent_id: company?.id || null,
+                        owner_id: auth.userId,
+                        period_year: CONFIG.year,
+                        period_quarter: this.period === 'year' ? null : CONFIG.quarter,
+                        sort_order: store.goalsOfType(this.period).length
+                    });
+                    toast('Goal added');
+                }
                 await store.reload();
             }
         });

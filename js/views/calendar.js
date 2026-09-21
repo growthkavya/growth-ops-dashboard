@@ -1,236 +1,168 @@
 /**
- * Calendar — what actually got done, week by week.
+ * Calendar: the month, the way a calendar looks.
  *
- * Delegations answers "what is open now". This answers "what did we
- * ship, and when" — the retrospective question you need for a 1:1, a
- * monthly review, or a conversation with Sir about where the team's
- * time went. Different question, so its own tab.
+ * One cell per day, Monday to Sunday, with what is due that day and what
+ * was finished. Finished work is the record, so it stays on the day it
+ * was actually finished, not the day it was logged.
  *
- * Weeks run Monday to Sunday. An item lands in the week it was
- * finished (completed_at), not the week it was created — otherwise a
- * task that sat open for a month would credit the wrong week.
- *
- * Riya sees her own weeks; RLS on `actions` does that filtering
- * server-side, so this view doesn't need to know about roles.
+ * The earlier build stacked weeks as columns per person. It answered a
+ * different question ("what did each person ship"), which the Work log
+ * now answers properly.
  */
 
 const calendarView = {
-    weeksBack: 8,
+    month: null,           // 'YYYY-MM'
+    person: 'all',
 
     render() {
         const body = document.getElementById('calendar-body');
-        const weeks = this.buildWeeks();
+        if (!this.month) this.month = dates.today().slice(0, 7);
 
-        const finishedTotal = weeks.reduce((n, w) => n + w.total, 0);
-        document.getElementById('calendar-figure').textContent = finishedTotal;
-        document.getElementById('calendar-figure-label').textContent =
-            `Finished · ${this.weeksBack} weeks`;
+        const [y, m] = this.month.split('-').map(Number);
+        const days = dates.monthDays(y, m);
+        const items = this.itemsFor(days[0], days[days.length - 1]);
+
+        document.getElementById('calendar-figure').textContent =
+            items.filter(i => i.kind === 'done').length;
+        document.getElementById('calendar-figure-label').textContent = 'Finished this month';
 
         body.innerHTML = `
-            ${this.throughputStrip(weeks)}
-            ${weeks.map((w, i) => this.weekBlock(w, i === 0)).join('')}
-            ${this.moreButton()}`;
+            ${this.controls()}
+            ${this.grid(days, items)}`;
 
         this.wire();
     },
 
-    /* ---------- Week maths ---------------------------------- */
-
-    /** The date an item counts against, in office time. */
-    finishedOn(item) {
-        const ts = item.completed_at || item.updated_at;
-        return ts ? dates.iso(ts) : '';
-    },
+    /* ---------- What goes on the calendar -------------------- */
 
     /**
-     * People to show as columns. Computed once across the whole visible
-     * range, not per week — so a person keeps the same column position in
-     * every week block and you can read straight down. A column that
-     * varies by week makes the weeks impossible to compare.
-     *
-     * The team is always shown. Anyone else (interns) appears only if they
-     * finished something in the range at all, so a quiet intern doesn't
-     * add an empty column to every week forever.
+     * Every work item that touches this month, as one entry per date:
+     * the day it was finished, or the day it is due.
      */
-    columns(from) {
-        const ordered = CONFIG.team.map(m => m.key);
-        const extras = new Set();
+    itemsFor(from, to) {
+        const out = [];
+        for (const w of store.workItems) {
+            if (this.person !== 'all' && w.owner_name !== this.person) continue;
 
-        store.workItems.forEach(w => {
-            if (!w.owner_name || ordered.includes(w.owner_name)) return;
-            const on = this.finishedOn(w);
-            if (w.status === 'done' && on >= from) extras.add(w.owner_name);
-            else if (w.status !== 'done' && w.due_date && w.due_date >= from) extras.add(w.owner_name);
-        });
-
-        return ordered.concat([...extras]);
-    },
-
-    buildWeeks() {
-        // Week maths runs on YYYY-MM-DD strings in office time. Slicing
-        // toISOString() of a local midnight gave the previous day in India,
-        // so "weeks" used to run Sunday to Saturday.
-        const thisMonday = dates.weekStart();
-
-        // Earliest Monday in view, so the column set covers the whole range.
-        const people = this.columns(dates.addDays(thisMonday, -(this.weeksBack - 1) * 7));
-
-        const weeks = [];
-
-        for (let i = 0; i < this.weeksBack; i++) {
-            const from  = dates.addDays(thisMonday, -i * 7);
-            const to    = dates.addDays(from, 6);
-            const start = new Date(from + 'T00:00:00');
-            const end   = new Date(to + 'T00:00:00');
-
-            const done = store.workItems.filter(w => {
-                if (w.status !== 'done') return false;
-                const on = this.finishedOn(w);
-                return on >= from && on <= to;
-            });
-
-            // For the current week, also surface what is still outstanding.
-            const open = i === 0
-                ? store.workItems.filter(w =>
-                    w.status !== 'done' && w.due_date && w.due_date >= from && w.due_date <= to)
-                : [];
-
-            weeks.push({
-                start, end, from, to,
-                isCurrent: i === 0,
-                total: done.length,
-                hours: done.reduce((h, w) => h + (parseFloat(w.hours_spent) || 0), 0),
-                byPerson: people.map(key => ({
-                    key,
-                    name: personName(key),
-                    done: done.filter(w => w.owner_name === key),
-                    open: open.filter(w => w.owner_name === key)
-                }))
-            });
+            if (w.status === 'done' && w.completed_at) {
+                const on = dates.iso(w.completed_at);
+                if (on >= from && on <= to) out.push({ on, kind: 'done', w });
+            } else if (w.due_date && w.due_date >= from && w.due_date <= to) {
+                out.push({ on: w.due_date, kind: w.due_date < dates.today() ? 'late' : 'due', w });
+            }
         }
-
-        return weeks;
+        return out;
     },
 
-    /* ---------- Throughput ---------------------------------- */
+    controls() {
+        const [y, m] = this.month.split('-').map(Number);
+        const label = new Date(y, m - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+        const people = [{ value: 'all', label: 'Everyone' }].concat(
+            CONFIG.team.map(t => ({ value: t.key, label: t.name })));
 
-    /**
-     * Twelve weeks of output at a glance. Bars are relative to the best
-     * week in view, so this reads as a trend, not an absolute target —
-     * there is no "correct" number of tasks per week.
-     */
-    throughputStrip(weeks) {
-        const peak = Math.max(1, ...weeks.map(w => w.total));
-        const bars = [...weeks].reverse();
+        return `<div class="bar">
+            <div class="stepper">
+                <button class="btn btn-sm btn-quiet" data-month="-1" aria-label="Previous month">&#8249;</button>
+                <span class="stepper-now num">${esc(label)}</span>
+                <button class="btn btn-sm btn-quiet" data-month="1" aria-label="Next month">&#8250;</button>
+            </div>
+            ${this.month === dates.today().slice(0, 7) ? '' : `<button class="btn btn-sm" data-month="0">Today</button>`}
+            <select id="cal-person" aria-label="Whose work">
+                ${people.map(p => `<option value="${escAttr(p.value)}" ${this.person === p.value ? 'selected' : ''}>${esc(p.label)}</option>`).join('')}
+            </select>
+            <span class="meta">Green is finished, amber is due, red is past its date.</span>
+        </div>`;
+    },
+
+    /* ---------- The grid ------------------------------------- */
+
+    grid(days, items) {
+        const first = days[0];
+        const lead = (dates.weekday(first) + 6) % 7;         // Monday-first offset
+        const cells = [];
+
+        for (let i = 0; i < lead; i++) cells.push('<div class="cal-cell is-outside"></div>');
+        for (const iso of days) cells.push(this.cell(iso, items.filter(i => i.on === iso)));
+        while (cells.length % 7 !== 0) cells.push('<div class="cal-cell is-outside"></div>');
+
+        const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
         return `<div class="block">
-            <div class="block-head">
-                <h3 class="h-block">Output by week</h3>
-                <span class="eyebrow">Relative to the busiest week shown</span>
-            </div>
-            <div class="block-body">
-                <div class="spark">
-                    ${bars.map(w => `
-                        <div class="spark-col" title="${esc(this.rangeLabel(w))} · ${w.total} finished">
-                            <div class="spark-bar ${w.isCurrent ? 'now' : ''}"
-                                 style="height:${Math.max(3, (w.total / peak) * 100)}%"></div>
-                            <span class="spark-n num">${w.total}</span>
-                            <span class="spark-lbl num">${w.start.getDate()}/${w.start.getMonth() + 1}</span>
-                        </div>`).join('')}
-                </div>
-            </div>
+            <div class="cal-head">${names.map(n => `<div>${n}</div>`).join('')}</div>
+            <div class="cal-grid">${cells.join('')}</div>
         </div>`;
     },
 
-    rangeLabel(w) {
-        const sameMonth = w.start.getMonth() === w.end.getMonth();
-        const s = w.start.toLocaleDateString('en-IN', { day: 'numeric', month: sameMonth ? undefined : 'short' });
-        const e = w.end.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-        return `${s}–${e}`;
-    },
+    cell(iso, entries) {
+        const today = iso === dates.today();
+        const sunday = dates.weekday(iso) === 0;
+        const shown = entries.slice(0, 3);
 
-    /* ---------- A week -------------------------------------- */
-
-    weekBlock(w, isFirst) {
-        const heading = w.isCurrent
-            ? 'This week'
-            : `Week of ${w.start.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}`;
-
-        return `<section class="block week ${w.isCurrent ? 'week-now' : ''}">
-            <div class="block-head">
-                <div>
-                    <h3 class="h-block">${esc(heading)}</h3>
-                    <span class="eyebrow">${esc(this.rangeLabel(w))}</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:var(--s4)">
-                    <span class="meta">
-                        <strong class="num">${w.total}</strong> finished${w.hours > 0 ? ` · <strong class="num">${w.hours.toFixed(1)}h</strong> logged` : ''}
-                    </span>
-                    ${isFirst ? `<button class="btn btn-sm" id="cal-print">Print</button>` : ''}
-                </div>
-            </div>
-
-            ${w.total === 0 && !w.byPerson.some(c => c.open.length)
-                ? `<div class="block-body"><p class="meta">Nothing finished this week.</p></div>`
-                : `<div class="week-grid" style="grid-template-columns:repeat(${w.byPerson.length}, minmax(0,1fr))">
-                    ${w.byPerson.map(c => this.personColumn(c, w.isCurrent)).join('')}
-                   </div>`}
-        </section>`;
-    },
-
-    personColumn(col, isCurrent) {
-        return `<div class="week-col">
-            <div class="week-col-head">
-                <span class="who" style="--who-color:${personColor(col.key)}">${esc(col.name)}</span>
-                <span class="num meta">${col.done.length}</span>
-            </div>
-
-            ${col.done.length === 0
-                ? `<p class="meta week-none">—</p>`
-                : `<ul class="week-list">
-                    ${col.done.map(w => `
-                        <li>
-                            <span class="week-tick">&#10003;</span>
-                            <span>
-                                ${w.output_link
-                                    ? `<a href="${escAttr(w.output_link)}" target="_blank" rel="noopener">${esc(w.title)}</a>`
-                                    : esc(w.title)}
-                                ${w.hours_spent ? `<span class="num meta"> ${parseFloat(w.hours_spent).toFixed(1)}h</span>` : ''}
-                                ${w.kras?.short_name ? `<span class="meta"> · ${esc(w.kras.short_name)}</span>` : ''}
-                            </span>
-                        </li>`).join('')}
-                   </ul>`}
-
-            ${isCurrent && col.open.length ? `
-                <div class="week-open">
-                    <span class="eyebrow">Still due this week</span>
-                    <ul class="week-list">
-                        ${col.open.map(w => `
-                            <li>
-                                <span class="week-tick week-tick-open ${w.status === 'blocked' ? 'is-blocked' : ''}">&#9675;</span>
-                                <span class="muted">${esc(w.title)}${w.status === 'blocked' ? ' — blocked' : ''}</span>
-                            </li>`).join('')}
-                    </ul>
-                </div>` : ''}
+        return `<div class="cal-cell ${today ? 'is-today' : ''} ${sunday ? 'is-off' : ''}" data-day="${iso}">
+            <div class="cal-date num">${+iso.slice(8)}</div>
+            ${shown.map(e => `
+                <div class="cal-chip t-${e.kind}" title="${escAttr(e.w.title)}">
+                    <span class="cal-dot" style="--who-color:${personColor(e.w.owner_name)}"></span>
+                    ${esc(e.w.title)}
+                </div>`).join('')}
+            ${entries.length > shown.length
+                ? `<button class="cal-more" data-open="${iso}">${entries.length - shown.length} more</button>` : ''}
         </div>`;
     },
 
-    moreButton() {
-        if (this.weeksBack >= 26) {
-            return `<p class="meta" style="text-align:center;padding:var(--s4)">
-                        Showing six months. Older work is still in Delegations under “Everything”.
-                    </p>`;
-        }
-        return `<div style="text-align:center;padding:var(--s4)">
-                    <button class="btn" id="cal-more">Show ${this.weeksBack >= 16 ? '10' : '8'} more weeks</button>
-                </div>`;
-    },
+    /* ---------- Interaction ---------------------------------- */
 
     wire() {
-        document.getElementById('cal-more')?.addEventListener('click', () => {
-            this.weeksBack = Math.min(26, this.weeksBack + (this.weeksBack >= 16 ? 10 : 8));
+        const view = document.getElementById('view-calendar');
+
+        view.querySelectorAll('[data-month]').forEach(btn =>
+            btn.addEventListener('click', () => {
+                const step = parseInt(btn.dataset.month, 10);
+                if (step === 0) { this.month = dates.today().slice(0, 7); }
+                else {
+                    const [y, m] = this.month.split('-').map(Number);
+                    this.month = new Date(Date.UTC(y, m - 1 + step, 1)).toISOString().slice(0, 7);
+                }
+                this.render();
+            }));
+
+        document.getElementById('cal-person')?.addEventListener('change', (e) => {
+            this.person = e.target.value;
             this.render();
         });
-        document.getElementById('cal-print')?.addEventListener('click', () => window.print());
+
+        view.querySelectorAll('[data-day]').forEach(cell =>
+            cell.addEventListener('click', () => this.openDay(cell.dataset.day)));
+    },
+
+    openDay(iso) {
+        const entries = this.itemsFor(iso, iso);
+        if (!entries.length) return;
+
+        ui.modal({
+            title: dates.long(iso),
+            wide: true,
+            body: `<div class="log-items" style="padding:0">
+                ${entries.map(e => `
+                    <div class="log-item" data-edit="${e.w.id}">
+                        <span class="log-when num">${e.kind === 'done' ? 'done' : 'due'}</span>
+                        <div class="log-body">
+                            <div class="log-title">${esc(e.w.title)}</div>
+                            <div class="meta">${esc(personName(e.w.owner_name))}${e.w.kpis ? ' · ' + esc(e.w.kpis.name) : ''}</div>
+                        </div>
+                        <div class="row-end">
+                            ${e.w.output_link ? `<a href="${escAttr(e.w.output_link)}" target="_blank" rel="noopener" class="chip" data-stop="1">Open &#8599;</a>` : ''}
+                            ${ui.statusChip(e.w.status)}
+                        </div>
+                    </div>`).join('')}
+            </div>`
+        });
+
+        document.querySelectorAll('#modal-host [data-edit]').forEach(row =>
+            row.addEventListener('click', (ev) => {
+                if (ev.target.closest('[data-stop]')) return;
+                if (auth.isLeader) return;
+                workView.openEditor(row.dataset.edit);
+            }));
     }
 };

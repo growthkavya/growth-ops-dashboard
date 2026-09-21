@@ -31,6 +31,12 @@ const auth = {
     get role()    { return this.profile?.role || 'member'; },
     get isAdmin() { return this.role === 'admin'; },
 
+    /** Leadership: reads the vertical, runs none of it. */
+    get isLeader() { return CONFIG.leaders.includes((this.email || '').toLowerCase()); },
+
+    /** Which set of tabs this person gets. */
+    get audience() { return this.isLeader ? 'leader' : this.role; },
+
     /**
      * The person key used by actions.owner_name and kpis.member. On a
      * shared login this is whoever said they were signing in, so their

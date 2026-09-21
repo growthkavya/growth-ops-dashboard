@@ -22,7 +22,7 @@ const attendanceView = {
         const people = this.people();
         const todays = store.attendance.filter(r => r.work_date === today);
 
-        if (auth.isAdmin) {
+        if (auth.isAdmin || !app.onRegister()) {
             const inNow = people.filter(p => todays.some(r => r.member_key === p.key && r.check_in_at)).length;
             document.getElementById('attendance-figure').innerHTML = `${inNow}<small>/${people.length}</small>`;
             document.getElementById('attendance-figure-label').textContent = 'Checked in today';
@@ -40,9 +40,10 @@ const attendanceView = {
             ${this.summaryBlock(people)}
             <p class="meta" style="margin-top:var(--s3)">
                 Office hours ${esc(this.clock(CONFIG.office.start))} to ${esc(this.clock(CONFIG.office.end))}, Monday to Saturday.
-                A check-in after ${esc(this.clock(CONFIG.office.start))} is marked late; a day under
-                ${CONFIG.office.fullDayHours} hours is marked short. Leave follows the leave policy: apply by email and
-                the day is marked here once approved.
+                Sunday is a paid weekly off and is marked WO. A check-in after
+                ${esc(this.clock(CONFIG.office.start))} is marked late, and a day under
+                ${CONFIG.office.fullDayHours} hours is marked short. Leave follows the leave policy: apply by email,
+                and the day is marked here once approved.
             </p>`;
 
         this.wire();
@@ -55,7 +56,8 @@ const attendanceView = {
      * shared login sees both the people who use it.
      */
     people() {
-        return auth.isAdmin ? CONFIG.team : CONFIG.team.filter(m => auth.keys.includes(m.key));
+        const onRegister = CONFIG.team.filter(m => m.attendance !== false);
+        return auth.isAdmin ? onRegister : onRegister.filter(m => auth.keys.includes(m.key));
     },
 
     rowsFor(month) {
@@ -132,8 +134,9 @@ const attendanceView = {
             </tr>`;
         };
 
-        const mine = store.myDay();
-        const myButton = !mine?.check_in_at
+        const mine = app.onRegister() ? store.myDay() : null;
+        const myButton = !app.onRegister() ? ''
+            : !mine?.check_in_at
             ? `<button class="btn btn-primary btn-sm" data-clock="in">Check in</button>`
             : !mine.check_out_at ? `<button class="btn btn-sm" data-clock="out">Check out</button>` : '';
 
@@ -172,7 +175,11 @@ const attendanceView = {
             const f = this.flags(r);
 
             let mark = '', tone = 'none';
-            if (r) {
+            if (off && !r) {
+                // Sunday is the weekly off, and it is paid.
+                mark = 'WO';
+                tone = 'off';
+            } else if (r) {
                 if (r.check_in_at && ['present', 'wfh'].includes(r.status)) {
                     mark = r.status === 'wfh' ? 'WH' : 'P';
                     tone = f.includes('no-out') ? 'bad' : f.length ? 'warn' : 'good';
@@ -187,7 +194,8 @@ const attendanceView = {
 
             const title = [
                 `${p.name}, ${dates.short(iso)}`,
-                r ? (VOCAB.attendance[r.status] || r.status) : (off ? 'Sunday' : future ? '' : 'Nothing recorded'),
+                r ? (VOCAB.attendance[r.status] || r.status)
+                  : (off ? 'Weekly off, paid' : future ? '' : 'Nothing recorded'),
                 r?.check_in_at ? `in ${dates.time(r.check_in_at)}` : '',
                 r?.check_out_at ? `out ${dates.time(r.check_out_at)}` : '',
                 f.length ? f.map(x => ({ late: 'late', short: 'short day', 'no-out': 'no check-out' }[x])).join(', ') : '',
@@ -225,9 +233,10 @@ const attendanceView = {
                 </table>
             </div>
             <div class="att-legend meta">
-                <span><i class="att-key t-good"></i>Present</span>
+                <span><i class="att-key t-good"></i>Present (P)</span>
                 <span><i class="att-key t-warn"></i>Late or short</span>
-                <span><i class="att-key t-leave"></i>Leave</span>
+                <span><i class="att-key t-leave"></i>Leave (CL, SL)</span>
+                <span><i class="att-key t-off"></i>Weekly off, paid (WO)</span>
                 <span><i class="att-key t-bad"></i>Absent or no check-out</span>
                 <span><i class="att-key t-missing"></i>Nothing recorded</span>
                 ${auth.isAdmin ? '<span>Click a day to correct it or mark leave.</span>' : ''}
@@ -248,6 +257,9 @@ const attendanceView = {
             const mine = rows.filter(r => r.member_key === p.key);
             const holidays = mine.filter(r => r.status === 'holiday').length;
             const present = mine.filter(r => ['present', 'wfh'].includes(r.status) && r.check_in_at).length;
+            const wfh = mine.filter(r => r.status === 'wfh').length;
+            const offs = dates.monthDays(y, m).filter(iso =>
+                !this.isWorkDay(iso) && iso <= today && iso >= from).length;
             const half = mine.filter(r => r.status === 'half_day').length;
             const leave = mine.filter(r => ['casual_leave', 'sick_leave'].includes(r.status)).length;
             const late = mine.filter(r => this.flags(r).includes('late')).length;
@@ -267,6 +279,8 @@ const attendanceView = {
                 <td class="col-num ${late ? 't-warn-ink' : ''}">${late}</td>
                 <td class="col-num ${short ? 't-warn-ink' : ''}">${short}</td>
                 <td class="col-num">${leave}</td>
+                <td class="col-num">${wfh || '<span class="muted">0</span>'}</td>
+                <td class="col-num muted">${offs}</td>
                 <td class="col-num ${noOut + missing ? 't-bad-ink' : ''}">${noOut + missing}</td>
                 <td class="col-num">${avg == null ? '<span class="muted">·</span>' : `${Math.floor(avg / 60)}h ${String(Math.round(avg % 60)).padStart(2, '0')}m`}</td>
             </tr>`;
@@ -285,6 +299,8 @@ const attendanceView = {
                         <th style="text-align:right">Late</th>
                         <th style="text-align:right">Short days</th>
                         <th style="text-align:right">Leave</th>
+                        <th style="text-align:right">From home</th>
+                        <th style="text-align:right" title="Sundays, paid">Weekly off</th>
                         <th style="text-align:right">Gaps</th>
                         <th style="text-align:right">Average day</th>
                     </tr></thead>

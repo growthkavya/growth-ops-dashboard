@@ -404,7 +404,7 @@ const workView = {
             wide: true,
             body: `
                 ${ui.field('title', 'What needs doing', { value: w?.title || '', required: true })}
-                ${ui.textarea('description', 'Detail', {
+                ${ui.textarea('description', 'What it involves', {
                     value: w?.description || '',
                     placeholder: 'Anything the person picking this up would need to know.' })}
                 <div class="field-pair">
@@ -429,8 +429,10 @@ const workView = {
                         hint: 'For work that doesn\'t belong to a KPI.' })}
                     ${ui.field('hours_spent', 'Hours spent', { type: 'number', value: w?.hours_spent ?? '' })}
                 </div>
-                ${ui.field('output_link', 'Link to the output', { type: 'url', value: w?.output_link || '' })}
-                ${ui.textarea('rm_remarks', 'Notes', { value: w?.rm_remarks || '' })}`,
+                ${ui.field('output_link', 'Link', { type: 'url', value: w?.output_link || '',
+                    placeholder: 'https://', hint: 'The report, sheet, page or folder this produced.' })}
+                ${ui.textarea('rm_remarks', 'Notes', { value: w?.rm_remarks || '',
+                    placeholder: 'Anything worth remembering: what was agreed, what is pending, who is waiting.' })}`,
             submitLabel: w ? 'Save changes' : 'Add work item',
             danger: w && auth.isAdmin ? {
                 label: 'Delete',

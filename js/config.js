@@ -41,7 +41,7 @@ const CONFIG = {
     // profiles.member_key. `level` decides what a person can see:
     // interns see their own tasks and attendance, nothing else.
     team: [
-        { key: 'kavya',  name: 'Kavya',  role: 'AI & Growth Ops Manager', level: 'manager',   color: 'var(--p-kavya)'  },
+        { key: 'kavya',  name: 'Kavya',  role: 'AI & Growth Ops Manager', level: 'manager',   color: 'var(--p-kavya)', attendance: false },
         { key: 'riya',   name: 'Riya',   role: 'Growth & Ops Associate',  level: 'associate', color: 'var(--p-riya)'   },
         { key: 'palak',  name: 'Palak',  role: 'Intern',                  level: 'intern',    color: 'var(--p-palak)'  },
         { key: 'rupam',  name: 'Rupam',  role: 'Intern',                  level: 'intern',    color: 'var(--p-rupam)'  }
@@ -55,6 +55,8 @@ const CONFIG = {
     // The old shared intern login still owns some history under this key.
     internKey: 'intern1',
 
+    // Attendance is kept for the team. The manager runs the register
+    // rather than appearing on it, so `attendance: false` above.
     // Office hours from the employment letters: Monday to Saturday,
     // 10:30 to 19:30, in office. Late and short days are flagged, not
     // blocked: the record is for a conversation, not a penalty.
@@ -68,6 +70,10 @@ const CONFIG = {
         // not "nothing recorded".
         trackingFrom: '2026-09-21'
     },
+
+    // Leadership sees the vertical, not the controls: goals, scores and
+    // what shipped. Matched on the email their login uses.
+    leaders: ['vidyutkauntia@ssei.co.in'],
 
     growthLabUrl: 'lab/'
 };

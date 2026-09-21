@@ -132,19 +132,24 @@ const data = {
     async scores() {
         const { data: rows, error } = await sb
             .from('kpi_scores').select('*')
-            .order('year', { ascending: false })
-            .order('month', { ascending: false });
+            .order('period_start', { ascending: false });
         if (error) throw error;
         return rows || [];
     },
 
+    /** One score per KPI per period, so saving the same period again replaces it. */
     async saveScore(score) {
         const { data: row, error } = await sb
             .from('kpi_scores')
-            .upsert(score, { onConflict: 'kpi_id,month,year' })
+            .upsert(score, { onConflict: 'kpi_id,period,period_start' })
             .select().single();
         if (error) throw error;
         return row;
+    },
+
+    async deleteScore(id) {
+        const { error } = await sb.from('kpi_scores').delete().eq('id', id);
+        if (error) throw error;
     },
 
     /* ---------- KPI updates -------------------------------- */
