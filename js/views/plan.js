@@ -209,7 +209,7 @@ const planView = {
                         ${rows.map(w => `<div class="april">
                             <div class="april-what"><a href="#" data-task="${w.id}" style="color:inherit">${esc(w.title)}</a></div>
                             <div class="april-who">${esc(personName(w.owner_name))}</div>
-                            <div class="april-out">${outcome(w)}${w.rm_remarks ? esc(w.rm_remarks) : ''}</div>
+                            <div class="april-out">${outcome(w)}${w.rm_remarks && !(w.status === 'done' && /^Done\b[^.]{0,14}\.?$/.test(w.rm_remarks)) ? esc(w.rm_remarks) : ''}</div>
                         </div>`).join('')}
                     </div>
                 </div>`;
