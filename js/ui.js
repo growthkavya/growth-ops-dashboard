@@ -57,6 +57,27 @@ const dates = {
         return iso.slice(0, 8) + '01';
     },
 
+    /** Saturday of the week containing `iso` (the last working day). */
+    weekEnd(iso = this.today()) {
+        return this.addDays(this.weekStart(iso), 5);
+    },
+
+    monthEnd(iso = this.today()) {
+        const [y, m] = iso.split('-').map(Number);
+        return new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
+    },
+
+    /** "September 2026" for 'YYYY-MM' or a date. */
+    monthLabel(iso) {
+        const [y, m] = iso.split('-').map(Number);
+        return new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString('en-IN', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    },
+
+    /** "Monday, 21 September" */
+    dayLabel(iso) {
+        return new Date(iso + 'T12:00:00Z').toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+    },
+
     /** Every YYYY-MM-DD in a month. `month` is 1–12. */
     monthDays(year, month) {
         const n = new Date(Date.UTC(year, month, 0)).getUTCDate();
@@ -171,6 +192,61 @@ const ui = {
 
     statusChip(status) {
         return this.chip(VOCAB.status[status] || status, VOCAB.statusTone[status]);
+    },
+
+    /** A status as a quiet word with a coloured dot, for rows that should not shout. */
+    word(text, tone = 'idle') {
+        return `<span class="word t-${tone}">${esc(text)}</span>`;
+    },
+
+    statusWord(status) {
+        return this.word(VOCAB.status[status] || status, VOCAB.statusTone[status] || 'idle');
+    },
+
+    projectWord(status) {
+        return this.word(VOCAB.projectStatus[status] || status, VOCAB.projectTone[status] || 'idle');
+    },
+
+    /**
+     * One task, the same everywhere: a status dot you can click, the
+     * title (click for details), and one quiet line of context.
+     * Clicks are handled once, in app.wireGlobal().
+     */
+    taskRow(w, { who = true, project = true, when = 'due', note = false } = {}) {
+        const open = VOCAB.openStatuses.includes(w.status);
+        const bits = [];
+        if (who) bits.push(esc(personName(w.owner_name)));
+        if (project && w.projects?.name) bits.push(`<a href="#projects/${escAttr(w.projects.slug)}" data-project="${escAttr(w.projects.slug)}">${esc(w.projects.name)}</a>`);
+        if (when === 'due' && open && w.due_date) {
+            const d = dates.relativeDue(w.due_date);
+            bits.push(`<span class="${d.tone === 'bad' ? 't-bad-ink' : d.tone === 'warn' ? 't-warn-ink' : ''}">${esc(d.text)}</span>`);
+        }
+        if (when === 'done' || (when === 'due' && !open)) {
+            const on = w.completed_at ? dates.iso(w.completed_at) : null;
+            if (on) bits.push(`Finished ${esc(dates.short(on))}`);
+            else if (!open) bits.push(esc(VOCAB.status[w.status]));
+        }
+        if (w.status === 'blocked') bits.push(`<span class="t-bad-ink">Blocked</span>`);
+        if (w.output_link) bits.push(`<a href="${escAttr(w.output_link)}" target="_blank" rel="noopener">Open &#8599;</a>`);
+
+        const clickable = !auth.isLeader && (auth.isAdmin || auth.keys.includes(w.owner_name) || w.assigned_by === auth.userId);
+        return `<div class="task ${open ? '' : 'is-closed'}">
+                    <button class="dot s-${w.status}" ${clickable && open ? `data-cycle="${w.id}"` : 'disabled'}
+                            title="${esc(VOCAB.status[w.status])}${clickable && open ? ', click to move it on' : ''}"></button>
+                    <div class="task-main">
+                        <div class="task-title"><a href="#" data-task="${w.id}">${esc(w.title)}</a></div>
+                        <div class="task-meta">${bits.join(' <span class="sep">·</span> ')}</div>
+                        ${note && w.rm_remarks ? `<div class="task-note">${esc(w.rm_remarks)}</div>` : ''}
+                    </div>
+                </div>`;
+    },
+
+    /** "3 of 5" with a small bar. */
+    count(done, total, tone = null) {
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        return `<div class="count"><span class="num">${done} of ${total}</span>
+                    ${this.measure({ value: pct, max: 100, size: 'xs', tone: tone || (pct === 100 ? 'good' : pct ? 'accent' : 'idle') })}
+                </div>`;
     },
 
     /**

@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;550;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/app.css?v=6">
+    <link rel="stylesheet" href="css/app.css?v=7">
 </head>
 <body>
 
@@ -30,22 +30,18 @@
         </div>
 
         <div class="rail-nav">
-            <a href="#overview" class="rail-link" data-view="overview">Overview</a>
             <a href="#home" class="rail-link active" data-view="home">
-                Home <span class="rail-count hidden" id="count-home"></span>
+                Today <span class="rail-count hidden" id="count-home"></span>
             </a>
-            <a href="#goals" class="rail-link" data-view="goals">Goals</a>
-            <a href="#scorecard" class="rail-link" data-view="scorecard">KRAs &amp; KPIs</a>
-            <a href="#worklog" class="rail-link" data-view="worklog">Work log</a>
+            <a href="#plan" class="rail-link" data-view="plan">Plan</a>
+            <a href="#scorecard" class="rail-link" data-view="scorecard">KPIs</a>
+            <a href="#projects" class="rail-link" data-view="projects">Projects</a>
             <a href="#work" class="rail-link" data-view="work">
-                Delegations <span class="rail-count hidden" id="count-work"></span>
+                Tasks <span class="rail-count hidden" id="count-work"></span>
             </a>
             <a href="#calendar" class="rail-link" data-view="calendar">Calendar</a>
-            <a href="#attendance" class="rail-link" data-view="attendance">Attendance</a>
-            <a href="#documents" class="rail-link" data-view="documents">
-                Documents <span class="rail-count hidden" id="count-documents"></span>
-            </a>
-            <a href="#people" class="rail-link" data-view="people">People</a>
+            <a href="#team" class="rail-link" data-view="team">Team</a>
+            <a href="#documents" class="rail-link" data-view="documents">Documents</a>
         </div>
 
         <div class="rail-foot">
@@ -100,199 +96,87 @@
     <!-- ============ Views ============ -->
     <main class="main">
 
-        <!-- Overview: the leadership read of the vertical -->
-        <section class="view" id="view-overview">
-            <div class="view-head">
-                <div>
-                    <h2 class="h-page">Growth &amp; Ops</h2>
-                    <p class="view-head-purpose">
-                        What the vertical committed to this year, where it has got to, and what it
-                        has shipped. Progress is counted from the work itself.
-                    </p>
-                </div>
-                <div class="view-figure">
-                    <div class="view-figure-val" id="overview-figure">—</div>
-                    <span class="eyebrow" id="overview-figure-label">The year so far</span>
-                </div>
-            </div>
-            <div id="overview-body">
-                <p class="loading-note">Loading…</p>
-            </div>
-        </section>
-
-        <!-- Home: what needs you today -->
         <section class="view active" id="view-home">
             <div class="view-head">
                 <div>
-                    <h2 class="h-page" id="home-greeting">Home</h2>
-                    <p class="view-head-purpose">What needs you today, and what the team shipped recently.</p>
+                    <div class="view-date" id="home-date"></div>
+                    <h2 class="h-page" id="home-greeting">Today</h2>
                 </div>
-                <div class="view-figure">
-                    <div class="view-figure-val" id="home-figure">—</div>
-                    <span class="eyebrow" id="home-figure-label">Open items</span>
-                </div>
+                <div class="view-actions" id="home-actions"></div>
             </div>
-            <div id="home-body">
-                <p class="loading-note">Loading…</p>
-            </div>
+            <div id="home-body"><p class="loading-note">Loading…</p></div>
         </section>
 
-        <!-- Goals: company year → team quarter -->
-        <section class="view" id="view-goals">
+        <section class="view" id="view-plan">
             <div class="view-head">
                 <div>
-                    <h2 class="h-page">Goals</h2>
-                    <p class="view-head-purpose">
-                        What we are working towards this week, this month and this year. Point tasks at a
-                        goal in Delegations and its progress counts itself.
-                    </p>
-                </div>
-                <div class="view-figure">
-                    <div class="view-figure-val" id="goals-figure">—<small>%</small></div>
-                    <span class="eyebrow">Quarter progress</span>
+                    <h2 class="h-page">Plan</h2>
+                    <p class="view-head-purpose">What we are working towards, from this week to the year, and what happened to the plan made in April.</p>
                 </div>
             </div>
-            <div class="view-actions" id="goals-actions" style="margin-bottom:var(--s4)"></div>
-            <div id="goals-body">
-                <p class="loading-note">Loading…</p>
-            </div>
+            <div id="plan-body"><p class="loading-note">Loading…</p></div>
         </section>
 
-        <!-- Scorecard: KRAs and KPIs -->
         <section class="view" id="view-scorecard">
             <div class="view-head">
                 <div>
-                    <h2 class="h-page">KRAs &amp; KPIs</h2>
-                    <p class="view-head-purpose">
-                        Every responsibility area and the measures under it. Give each measure a score
-                        out of 5, by the week or by the quarter. What was actually done sits in Work log.
-                    </p>
-                </div>
-                <div class="view-figure">
-                    <div class="view-figure-val" id="scorecard-figure">—<small>/5</small></div>
-                    <span class="eyebrow" id="scorecard-figure-label">Weighted score</span>
+                    <h2 class="h-page">KPIs</h2>
+                    <p class="view-head-purpose">Every measure under each responsibility area, scored out of 5 by the week or by the quarter. Open a measure to see the work behind it and what is planned.</p>
                 </div>
             </div>
-            <div id="scorecard-body">
-                <p class="loading-note">Loading…</p>
-            </div>
+            <div id="scorecard-body"><p class="loading-note">Loading…</p></div>
         </section>
 
-        <!-- Work log: what was done, under each measure -->
-        <section class="view" id="view-worklog">
-            <div class="view-head">
+        <section class="view" id="view-projects">
+            <div class="view-head" id="projects-head">
                 <div>
-                    <h2 class="h-page">Work log</h2>
-                    <p class="view-head-purpose">
-                        What has been done under each measure, newest first, with dates, notes
-                        and links. Add work as you finish it.
-                    </p>
+                    <h2 class="h-page">Projects</h2>
+                    <p class="view-head-purpose">The streams of work, what each has produced, and what comes next.</p>
                 </div>
-                <div class="view-figure">
-                    <div class="view-figure-val" id="worklog-figure">—</div>
-                    <span class="eyebrow" id="worklog-figure-label">Logged</span>
-                </div>
+                <div class="view-actions" id="projects-actions"></div>
             </div>
-            <div id="worklog-body">
-                <p class="loading-note">Loading…</p>
-            </div>
+            <div id="projects-body"><p class="loading-note">Loading…</p></div>
         </section>
 
-        <!-- Delegations: the single work tracker -->
         <section class="view" id="view-work">
             <div class="view-head">
                 <div>
-                    <h2 class="h-page">Delegations</h2>
-                    <p class="view-head-purpose">
-                        Every task the team is carrying: yours, what you handed to someone else,
-                        and what the interns are doing. Add a task, set a due date, attach notes and a link.
-                    </p>
+                    <h2 class="h-page">Tasks</h2>
+                    <p class="view-head-purpose">What is on each person's plate. Add a task, hand it to someone, give it a date, a note and a link.</p>
                 </div>
-                <div class="view-figure">
-                    <div class="view-figure-val" id="work-figure">—</div>
-                    <span class="eyebrow" id="work-figure-label">Showing</span>
-                </div>
+                <div class="view-actions" id="work-actions"></div>
             </div>
-            <div id="work-body">
-                <p class="loading-note">Loading…</p>
-            </div>
+            <div id="work-body"><p class="loading-note">Loading…</p></div>
         </section>
 
-        <!-- Calendar: what got finished, week by week -->
         <section class="view" id="view-calendar">
             <div class="view-head">
                 <div>
                     <h2 class="h-page">Calendar</h2>
-                    <p class="view-head-purpose">
-                        The month at a glance: what is due on each day, and what was finished.
-                    </p>
-                </div>
-                <div class="view-figure">
-                    <div class="view-figure-val" id="calendar-figure">—</div>
-                    <span class="eyebrow" id="calendar-figure-label">Finished</span>
+                    <p class="view-head-purpose">The month: what is due on each day, and what was finished.</p>
                 </div>
             </div>
-            <div id="calendar-body">
-                <p class="loading-note">Loading…</p>
-            </div>
+            <div id="calendar-body"><p class="loading-note">Loading…</p></div>
         </section>
 
-        <!-- Attendance: who is in, and the month's record -->
-        <section class="view" id="view-attendance">
+        <section class="view" id="view-team">
             <div class="view-head">
                 <div>
-                    <h2 class="h-page">Attendance</h2>
-                    <p class="view-head-purpose">
-                        Check in when you arrive and out when you leave, from the button at the
-                        bottom of the menu. Times are taken from the server, not your device.
-                    </p>
-                </div>
-                <div class="view-figure">
-                    <div class="view-figure-val" id="attendance-figure">·</div>
-                    <span class="eyebrow" id="attendance-figure-label">Today</span>
+                    <h2 class="h-page">Team</h2>
+                    <p class="view-head-purpose">Who is in today, the month's attendance, and who is on the team.</p>
                 </div>
             </div>
-            <div id="attendance-body">
-                <p class="loading-note">Loading…</p>
-            </div>
+            <div id="team-body"><p class="loading-note">Loading…</p></div>
         </section>
 
-        <!-- Documents: a tracker, not a link list -->
         <section class="view" id="view-documents">
             <div class="view-head">
                 <div>
                     <h2 class="h-page">Documents</h2>
-                    <p class="view-head-purpose">
-                        The sheets and docs the team works in, and the reports we have produced.
-                    </p>
-                </div>
-                <div class="view-figure">
-                    <div class="view-figure-val" id="documents-figure">—</div>
-                    <span class="eyebrow">Need a review</span>
+                    <p class="view-head-purpose">The sheets and docs the team works in, and the reports we have produced.</p>
                 </div>
             </div>
-            <div id="documents-body">
-                <p class="loading-note">Loading…</p>
-            </div>
-        </section>
-
-        <!-- People: team, interns, Growth Lab -->
-        <section class="view" id="view-people">
-            <div class="view-head">
-                <div>
-                    <h2 class="h-page">People</h2>
-                    <p class="view-head-purpose">
-                        The team and the interns — what each person is carrying, and how
-                        onboarding is going for anyone new.
-                    </p>
-                </div>
-                <div class="view-actions">
-                    <a href="lab/" target="_blank" rel="noopener" class="btn">Growth Lab &#8599;</a>
-                </div>
-            </div>
-            <div id="people-body">
-                <p class="loading-note">Loading…</p>
-            </div>
+            <div id="documents-body"><p class="loading-note">Loading…</p></div>
         </section>
 
     </main>
@@ -302,20 +186,18 @@
 <div class="toast-stack" id="toast-stack"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=15"></script>
-<script src="js/data.js?v=15"></script>
-<script src="js/ui.js?v=15"></script>
-<script src="js/auth.js?v=15"></script>
-<script src="js/views/overview.js?v=15"></script>
-<script src="js/views/home.js?v=15"></script>
-<script src="js/views/goals.js?v=15"></script>
-<script src="js/views/scorecard.js?v=15"></script>
-<script src="js/views/worklog.js?v=15"></script>
-<script src="js/views/work.js?v=15"></script>
-<script src="js/views/calendar.js?v=15"></script>
-<script src="js/views/attendance.js?v=15"></script>
-<script src="js/views/documents.js?v=15"></script>
-<script src="js/views/people.js?v=15"></script>
-<script src="js/app.js?v=15"></script>
+<script src="js/config.js?v=16"></script>
+<script src="js/data.js?v=16"></script>
+<script src="js/ui.js?v=16"></script>
+<script src="js/auth.js?v=16"></script>
+<script src="js/views/home.js?v=16"></script>
+<script src="js/views/plan.js?v=16"></script>
+<script src="js/views/scorecard.js?v=16"></script>
+<script src="js/views/projects.js?v=16"></script>
+<script src="js/views/work.js?v=16"></script>
+<script src="js/views/calendar.js?v=16"></script>
+<script src="js/views/team.js?v=16"></script>
+<script src="js/views/documents.js?v=16"></script>
+<script src="js/app.js?v=16"></script>
 </body>
 </html>

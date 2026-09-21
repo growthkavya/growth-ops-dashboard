@@ -10,43 +10,86 @@
  * basis for a conversation, and a flag with no context is not a verdict.
  */
 
-const attendanceView = {
+const teamView = {
     month: null,        // 'YYYY-MM' being shown
     cache: {},          // month -> rows, for months other than the current one
 
     render() {
-        const body = document.getElementById('attendance-body');
+        const body = document.getElementById('team-body');
         if (!this.month) this.month = dates.today().slice(0, 7);
 
         const today = dates.today();
         const people = this.people();
         const todays = store.attendance.filter(r => r.work_date === today);
 
-        if (auth.isAdmin || !app.onRegister()) {
-            const inNow = people.filter(p => todays.some(r => r.member_key === p.key && r.check_in_at)).length;
-            document.getElementById('attendance-figure').innerHTML = `${inNow}<small>/${people.length}</small>`;
-            document.getElementById('attendance-figure-label').textContent = 'Checked in today';
-        } else {
-            const mine = todays.find(r => r.member_key === auth.key);
-            document.getElementById('attendance-figure').textContent =
-                mine?.check_in_at ? dates.time(mine.check_in_at) : '·';
-            document.getElementById('attendance-figure-label').textContent =
-                mine?.check_in_at ? 'Checked in' : 'Not checked in';
-        }
-
         body.innerHTML = `
             ${this.todayBlock(people, todays)}
             ${this.registerBlock(people)}
             ${this.summaryBlock(people)}
-            <p class="meta" style="margin-top:var(--s3)">
+            <p class="reg-note">
                 Office hours ${esc(this.clock(CONFIG.office.start))} to ${esc(this.clock(CONFIG.office.end))}, Monday to Saturday.
                 Sunday is a paid weekly off and is marked WO. A check-in after
                 ${esc(this.clock(CONFIG.office.start))} is marked late, and a day under
                 ${CONFIG.office.fullDayHours} hours is marked short. Leave follows the leave policy: apply by email,
                 and the day is marked here once approved.
-            </p>`;
+            </p>
+            ${this.rosterBlock()}
+            ${auth.audience === 'intern' ? '' : this.internsBlock()}`;
 
         this.wire();
+    },
+
+    /* ---------- The team ------------------------------------ */
+
+    rosterBlock() {
+        return `<div class="sec" style="margin-top:36px">
+            <div class="sec-head"><h3 class="sec-title">The team</h3></div>
+            <div class="list">
+                ${CONFIG.team.map(m => {
+                    const theirs = store.workItems.filter(w => w.owner_name === m.key);
+                    const open = store.open(theirs).length;
+                    const kpis = store.kpis.filter(k => k.member === m.key);
+                    return `<div class="people-line">
+                        ${ui.avatar(m.name, m.key)}
+                        <div style="flex:1;min-width:0">
+                            <div style="font-weight:500">${esc(m.name)}</div>
+                            <div class="meta">${esc(m.role)}</div>
+                        </div>
+                        <span class="meta">${open} open${kpis.length ? ` · ${kpis.length} measures` : ''}</span>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>`;
+    },
+
+    internsBlock() {
+        // Only the interns on this team; the rest of the Growth Lab cohort stays in the Lab.
+        const ours = (i) => CONFIG.team.some(m => m.level === 'intern' && (i.name || '').toLowerCase().startsWith(m.name.toLowerCase()));
+        const live   = store.interns.filter(i => ['onboarding', 'active'].includes(i.status));
+        const active = live.filter(ours);
+        const others = live.length - active.length;
+        const past   = store.interns.filter(i => ['completed', 'archived'].includes(i.status) && ours(i));
+        return `<div class="sec">
+            <div class="sec-head">
+                <h3 class="sec-title">Interns</h3>
+                <span class="sec-note"><a href="${escAttr(CONFIG.growthLabUrl)}" target="_blank" rel="noopener">Growth Lab &#8599;</a>
+                    ${auth.isAdmin ? ` · <a href="#" id="intern-new">Add an intern</a>` : ''}</span>
+            </div>
+            <div class="list">
+                ${active.length ? active.map(i => `<div class="people-line">
+                        ${ui.avatar(i.name, CONFIG.internKey)}
+                        <div style="flex:1;min-width:0">
+                            <div style="font-weight:500">${esc(i.name)}</div>
+                            <div class="meta">${esc((i.tags || []).join(', ') || 'No team set')}${i.start_date ? ` · started ${esc(dates.short(i.start_date))}` : ''}</div>
+                        </div>
+                        <span class="meta">${i.status === 'onboarding' ? 'Onboarding' : 'Active'}</span>
+                        <button class="btn btn-quiet btn-sm" data-onboarding="${i.id}">Checklist</button>
+                        ${auth.isAdmin ? `<button class="btn btn-quiet btn-sm" data-intern="${i.id}">Edit</button>` : ''}
+                    </div>`).join('')
+                  : `<div class="task"><span></span><div class="task-main"><div class="task-meta">No interns on the roster.</div></div></div>`}
+                ${past.length || others ? `<div class="list-foot">${past.length ? `Finished: ${past.map(i => esc(i.name)).join(', ')}. ` : ''}${others ? `${others} intern${others === 1 ? '' : 's'} from other teams are in the Growth Lab.` : ''}</div>` : ''}
+            </div>
+        </div>`;
     },
 
     /* ---------- Who and what -------------------------------- */
@@ -313,13 +356,17 @@ const attendanceView = {
     /* ---------- Interaction --------------------------------- */
 
     wire() {
-        const view = document.getElementById('view-attendance');
+        const view = document.getElementById('view-team');
 
         view.querySelectorAll('[data-month]').forEach(btn =>
             btn.addEventListener('click', () => this.shiftMonth(parseInt(btn.dataset.month, 10))));
 
         view.querySelectorAll('[data-edit]').forEach(btn =>
             btn.addEventListener('click', () => this.openEditor(btn.dataset.edit, btn.dataset.date)));
+
+        document.getElementById('intern-new')?.addEventListener('click', (e) => { e.preventDefault(); this.editIntern(); });
+        view.querySelectorAll('[data-intern]').forEach(btn => btn.addEventListener('click', () => this.editIntern(btn.dataset.intern)));
+        view.querySelectorAll('[data-onboarding]').forEach(btn => btn.addEventListener('click', () => this.openOnboarding(btn.dataset.onboarding)));
     },
 
     async shiftMonth(step) {
@@ -405,6 +452,111 @@ const attendanceView = {
                 delete this.cache[iso.slice(0, 7)];
                 await store.reload();
                 if (iso.slice(0, 7) !== dates.today().slice(0, 7)) this.shiftMonth(0);
+            }
+        });
+    },
+
+    async openOnboarding(internId) {
+        const intern = store.interns.find(i => i.id === internId);
+        if (!intern) return;
+
+        const items = await data.onboardingItems(internId);
+        const done = items.filter(i => i.status === 'done').length;
+
+        ui.modal({
+            title: `${intern.name} — onboarding`,
+            wide: true,
+            body: items.length === 0
+                ? `<p class="meta">No checklist for this person. Checklists are copied from the active template when an intern is added.</p>`
+                : `<div style="margin-bottom:var(--s4)">
+                       ${ui.measureRow({ value: done, max: items.length, target: items.length,
+                                         label: `${done}/${items.length}` })}
+                   </div>
+                   <div class="block-body--flush">
+                       ${items.map(i => `
+                           <div class="row-item" style="padding-left:0;padding-right:0">
+                               <button class="dot s-${i.status}" data-onboarding-step="${i.id}"
+                                       title="${esc(VOCAB.status[i.status])} — click to advance"></button>
+                               <div class="row-main">
+                                   <div class="row-title ${i.status === 'done' ? 'strike' : ''}">${esc(i.title)}</div>
+                                   ${i.description ? `<div class="row-sub">${esc(i.description)}</div>` : ''}
+                               </div>
+                               ${i.category ? ui.chip(i.category) : ''}
+                           </div>`).join('')}
+                   </div>`,
+            onSubmit: null
+        });
+
+        document.getElementById('modal-host').querySelectorAll('[data-onboarding-step]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const item = items.find(i => i.id === btn.dataset.onboardingStep);
+                if (!item) return;
+                const cycle = VOCAB.statusCycle;
+                const next = cycle[(cycle.indexOf(item.status) + 1) % cycle.length];
+                await data.updateOnboardingItem(item.id, {
+                    status: next,
+                    completed_at: next === 'done' ? new Date().toISOString() : null
+                });
+                item.status = next;
+                btn.className = `dot s-${next}`;
+                btn.closest('.row-item').querySelector('.row-title')
+                   .classList.toggle('strike', next === 'done');
+            });
+        });
+    },
+
+    editIntern(id = null) {
+        const i = id ? store.interns.find(x => x.id === id) : null;
+
+        const supervisors = store.profiles
+            .filter(p => p.role !== 'intern')
+            .map(p => ({ value: p.id, label: p.full_name || p.email }));
+
+        ui.modal({
+            title: i ? 'Intern' : 'Add an intern',
+            body: `
+                ${ui.field('name', 'Name', { value: i?.name || '', required: true })}
+                <div class="field-pair">
+                    ${ui.field('intern_code', 'Short code', {
+                        value: i?.intern_code || '', required: true,
+                        placeholder: 'akash-01', hint: 'Unique. Used to tell shared-login interns apart.' })}
+                    ${ui.field('email_alias', 'Email', { value: i?.email_alias || '' })}
+                </div>
+                <div class="field-pair">
+                    ${ui.select('supervisor_id', 'Reports to', supervisors, { value: i?.supervisor_id || auth.userId })}
+                    ${ui.select('status', 'Status', [
+                        { value: 'onboarding', label: 'Onboarding' },
+                        { value: 'active', label: 'Active' },
+                        { value: 'completed', label: 'Finished' },
+                        { value: 'archived', label: 'Archived' }
+                    ], { value: i?.status || 'onboarding' })}
+                </div>
+                <div class="field-pair">
+                    ${ui.field('start_date', 'Started', { type: 'date', value: i?.start_date || '' })}
+                    ${ui.field('end_date', 'Ends', { type: 'date', value: i?.end_date || '' })}
+                </div>
+                ${ui.field('tags', 'Team', {
+                    value: (i?.tags || []).join(', '),
+                    placeholder: 'growth_ops, performance',
+                    hint: 'Comma separated. Matches the verticals used in the Growth Lab.' })}
+                ${ui.textarea('notes', 'Notes', { value: i?.notes || '' })}`,
+            submitLabel: i ? 'Save' : 'Add intern',
+            onSubmit: async (form) => {
+                const fields = {
+                    name: (form.get('name') || '').trim(),
+                    intern_code: (form.get('intern_code') || '').trim(),
+                    email_alias: form.get('email_alias') || null,
+                    supervisor_id: form.get('supervisor_id') || null,
+                    status: form.get('status'),
+                    start_date: form.get('start_date') || null,
+                    end_date: form.get('end_date') || null,
+                    tags: (form.get('tags') || '').split(',').map(t => t.trim()).filter(Boolean),
+                    notes: form.get('notes') || null
+                };
+                if (i) await data.updateIntern(i.id, fields);
+                else   await data.createIntern(fields);
+                toast(i ? 'Saved' : 'Intern added');
+                await store.reload();
             }
         });
     }

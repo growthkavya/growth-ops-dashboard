@@ -1,15 +1,11 @@
 /**
- * App shell: one store, one router.
- *
- * The old build had four modules each fetching `actions` independently,
- * which is why the same work appeared in three places and could drift
- * between them. Here there is one store. Views read from it and call
- * store.reload() after a write, so every view is looking at the same
- * rows at the same time.
+ * App shell: one store, one router, one place that handles clicks on
+ * tasks and projects so every view gets the same behaviour for free.
  */
 
 const store = {
     workItems: [],
+    projects: [],
     goals: [],
     kras: [],
     kpis: [],
@@ -19,29 +15,23 @@ const store = {
     interns: [],
     profiles: [],
     activity: [],
-    kpiUpdates: [],
-    attendance: [],     // this month, first of the month to today
+    attendance: [],
     failed: [],
 
     async load() {
         this.failed = [];
-        const results = await Promise.allSettled([
-            data.workItems(), data.goals(), data.kras(), data.kpis(),
-            data.scores(), data.documents(), data.sheets(),
-            data.interns(), data.profiles(), data.activity(30),
-            data.kpiUpdates(), data.attendance(dates.monthStart(), dates.today())
-        ]);
-
-        const keys = ['workItems', 'goals', 'kras', 'kpis', 'scores',
-                      'documents', 'sheets', 'interns', 'profiles', 'activity',
-                      'kpiUpdates', 'attendance'];
-
-        // One failing table shouldn't blank the whole dashboard — RLS can
-        // legitimately deny a member access to a slice. Keep what loaded.
+        const jobs = {
+            workItems: data.workItems(), projects: data.projects(), goals: data.goals(),
+            kras: data.kras(), kpis: data.kpis(), scores: data.scores(),
+            documents: data.documents(), sheets: data.sheets(), interns: data.interns(),
+            profiles: data.profiles(), activity: data.activity(30),
+            attendance: data.attendance(dates.monthStart(), dates.today())
+        };
+        const keys = Object.keys(jobs);
+        const results = await Promise.allSettled(Object.values(jobs));
         results.forEach((r, i) => {
-            if (r.status === 'fulfilled') {
-                this[keys[i]] = r.value;
-            } else {
+            if (r.status === 'fulfilled') this[keys[i]] = r.value;
+            else {
                 const message = r.reason?.message || String(r.reason);
                 console.error(`Could not load ${keys[i]}:`, message);
                 this.failed.push({ table: keys[i], message });
@@ -49,15 +39,8 @@ const store = {
         });
     },
 
-    /**
-     * True when a load failed because a column this build expects isn't
-     * there yet — i.e. migration_v3_cleanup.sql hasn't been run. Worth
-     * distinguishing, because the symptom otherwise is empty screens
-     * with no explanation.
-     */
     needsMigration() {
-        return this.failed.some(f =>
-            /column .* does not exist|could not find a relationship|schema cache/i.test(f.message));
+        return this.failed.some(f => /column .* does not exist|could not find a relationship|schema cache|relation .* does not exist/i.test(f.message));
     },
 
     async reload() {
@@ -65,46 +48,83 @@ const store = {
         app.renderAll();
     },
 
-    /* ---------- Derived views over the same rows ------------ */
+    /* ---------- Work ---------------------------------------- */
 
-    /** Work owned by, or handed out by, the signed-in person. */
+    isOpen(w) { return VOCAB.openStatuses.includes(w.status); },
+
+    open(items = this.workItems) { return items.filter(w => this.isOpen(w)); },
+
+    /** Work owned by, or handed out by, whoever is signed in. */
     mine() {
-        return this.workItems.filter(w =>
-            w.owner_name === auth.key || w.assigned_by === auth.userId);
+        return this.workItems.filter(w => auth.keys.includes(w.owner_name) || w.assigned_by === auth.userId);
     },
 
-    open(items = this.workItems) {
-        return items.filter(w => w.status !== 'done');
+    /** What the signed-in person can see, for the pages that list work. */
+    visibleWork() {
+        return auth.isAdmin || auth.isLeader ? this.workItems : this.mine();
     },
 
-    /** Everything overdue or blocked, for whoever is looking. */
-    needsAttention(items = this.mine()) {
+    late(items = this.mine()) {
         const today = dates.today();
-        return items.filter(w =>
-            w.status !== 'done' &&
-            (w.status === 'blocked' || (w.due_date && w.due_date <= today)));
+        return items.filter(w => this.isOpen(w) && w.due_date && w.due_date < today);
     },
+
+    blocked(items = this.mine()) {
+        return items.filter(w => w.status === 'blocked');
+    },
+
+    needsAttention(items = this.mine()) {
+        return items.filter(w => this.isOpen(w) && (w.status === 'blocked' || (w.due_date && w.due_date < dates.today())));
+    },
+
+    /** Open work due in a date range, earliest first. */
+    dueBetween(from, to, items = this.visibleWork()) {
+        return items.filter(w => this.isOpen(w) && w.due_date && w.due_date >= from && w.due_date <= to)
+            .sort((a, b) => a.due_date.localeCompare(b.due_date));
+    },
+
+    /** Work finished in a date range, newest first. */
+    doneBetween(from, to, items = this.visibleWork()) {
+        return items.filter(w => w.status === 'done' && w.completed_at &&
+                dates.iso(w.completed_at) >= from && dates.iso(w.completed_at) <= to)
+            .sort((a, b) => b.completed_at.localeCompare(a.completed_at));
+    },
+
+    planTasks(tag = CONFIG.plan.tag) {
+        return this.workItems.filter(w => w.plan_tag === tag);
+    },
+
+    /* ---------- Projects ------------------------------------ */
+
+    projectBySlug(slug) { return this.projects.find(p => p.slug === slug); },
+    projectById(id)     { return this.projects.find(p => p.id === id); },
+
+    itemsOf(projectId) {
+        return this.workItems.filter(w => w.project_id === projectId);
+    },
+
+    /** The last day something was finished in a project. */
+    lastActivity(projectId) {
+        return this.itemsOf(projectId)
+            .filter(w => w.status === 'done' && w.completed_at)
+            .map(w => dates.iso(w.completed_at))
+            .sort().pop() || null;
+    },
+
+    /* ---------- Goals --------------------------------------- */
 
     /**
-     * How far a goal has got. If work items are pointed at it, that is the
-     * answer: done divided by linked. A goal with children (the company
-     * goal) averages its yearly children. Only a goal with neither uses
-     * the percentage somebody typed in.
+     * How far a goal has got: done tasks over tasks pointed at it. A
+     * yearly goal averages the quarter goals under it. Only a goal with
+     * neither uses the percentage somebody typed.
      */
     goalProgress(goal) {
-        const linked = this.workItems.filter(w => w.goal_id === goal.id);
+        const linked = this.workItems.filter(w => w.goal_id === goal.id && (this.isOpen(w) || w.status === 'done'));
         if (linked.length) {
             const done = linked.filter(w => w.status === 'done').length;
             return { pct: Math.round((done / linked.length) * 100), from: 'work', done, total: linked.length };
         }
-        // A yearly goal is the sum of the months and weeks spent on that
-        // area, so it moves as the shorter goals are met.
-        let kids = this.goals.filter(g => g.parent_id === goal.id &&
-            (goal.scope === 'company' ? g.type === 'year' : true));
-        if (!kids.length && goal.type === 'year' && goal.kra_id) {
-            kids = this.goals.filter(g => g.kra_id === goal.kra_id &&
-                ['month', 'week'].includes(g.type) && !g.archived_at);
-        }
+        const kids = this.goals.filter(g => g.parent_id === goal.id && !g.archived_at);
         if (kids.length) {
             const each = kids.map(k => this.goalProgress(k).pct);
             return { pct: Math.round(each.reduce((a, b) => a + b, 0) / kids.length), from: 'children', total: kids.length };
@@ -112,32 +132,29 @@ const store = {
         return { pct: goal.progress_pct || 0, from: 'manual' };
     },
 
-    /** Goals for a period, newest first. type is 'week', 'month' or 'year'. */
-    goalsOfType(type) {
-        return this.goals.filter(g => g.type === type && g.scope === 'team')
-            .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    yearGoals() {
+        return this.goals.filter(g => g.type === 'year' && g.scope === 'team')
+            .sort((a, b) => (a.kras?.sort_order ?? 99) - (b.kras?.sort_order ?? 99) || (a.sort_order || 0) - (b.sort_order || 0));
     },
 
-    /** Measures with no score for the period showing on the scorecard. */
+    quarterGoals() {
+        return this.goals.filter(g => g.type === 'quarter' && g.period_year === CONFIG.plan.year && g.period_quarter === CONFIG.plan.quarter)
+            .sort((a, b) => (a.kras?.sort_order ?? 99) - (b.kras?.sort_order ?? 99) || (a.sort_order || 0) - (b.sort_order || 0));
+    },
+
+    /* ---------- Scores -------------------------------------- */
+
     unscored(period, start, member = auth.key) {
         return this.kpis.filter(k => k.member === member &&
             !this.scores.some(s => s.kpi_id === k.id && s.period === period && s.period_start === start));
     },
 
-    kraByCode(code) {
-        return this.kras.find(k => k.kra_code === code);
-    },
+    kraById(id) { return this.kras.find(k => k.id === id); },
 
-    kraById(id) {
-        return this.kras.find(k => k.id === id);
-    },
-
-    /** The signed-in person's attendance row for today, if any. */
     myDay() {
         return this.attendance.find(r => r.member_key === auth.key && r.work_date === dates.today());
     },
 
-    /** Documents and sheets whose review is overdue. */
     staleDocs() {
         const isStale = (d) => {
             if (d.status === 'needs_review') return true;
@@ -151,33 +168,34 @@ const store = {
 
 const app = {
     view: 'home',
+    arg: null,
 
     views: {
-        overview:  () => overviewView,
         home:      () => homeView,
-        goals:     () => goalsView,
+        plan:      () => planView,
         scorecard: () => scorecardView,
-        worklog:   () => worklogView,
+        projects:  () => projectsView,
         work:      () => workView,
         calendar:  () => calendarView,
-        attendance: () => attendanceView,
-        documents: () => documentsView,
-        people:    () => peopleView
+        team:      () => teamView,
+        documents: () => documentsView
+    },
+
+    /** Interns work from their tasks and attendance. Leadership reads the plan, the scores and the projects. */
+    hiddenFor: {
+        intern: ['plan', 'scorecard', 'projects', 'documents'],
+        member: [],
+        admin:  [],
+        leader: ['home', 'work', 'team', 'documents']
     },
 
     async start() {
-        if (!await auth.init()) {
-            window.location.href = 'index.html';
-            return;
-        }
-
-        // Two people share the intern login, so ask which of them this is
-        // before anything loads. Their answer decides whose tasks and
-        // whose attendance this session touches.
+        if (!await auth.init()) { window.location.href = 'index.html'; return; }
         await auth.settleSeat();
 
         this.paintIdentity();
         this.wireNav();
+        this.wireGlobal();
         this.wireTheme();
         this.wireSession();
         this.wireNotifications();
@@ -190,26 +208,23 @@ const app = {
         this.warnIfIncomplete();
 
         document.getElementById('app').style.display = 'flex';
-        this.go(location.hash.replace('#', '') || this.landing(), { replace: true });
+        const [view, arg] = this.parseHash();
+        this.go(view || this.landing(), arg, { replace: true });
     },
 
-    /**
-     * If part of the data didn't load, say so. Silent partial failure is
-     * worse than an error: the dashboard looks fine and quietly under-reports.
-     */
+    parseHash() {
+        const h = location.hash.replace('#', '');
+        const [view, ...rest] = h.split('/');
+        return [view, rest.join('/') || null];
+    },
+
     warnIfIncomplete() {
         if (store.failed.length === 0) return;
-
         const banner = document.createElement('div');
         banner.className = 'notice';
         banner.innerHTML = store.needsMigration()
-            ? `<strong>The database is a version behind.</strong>
-               Run <code>supabase/migration_v3_cleanup.sql</code> in the Supabase SQL editor,
-               then refresh. Until then some sections will be empty.`
-            : `<strong>Some data didn't load.</strong>
-               ${esc(store.failed.map(f => f.table).join(', '))} — refresh, and if it
-               persists check the browser console.`;
-
+            ? `<strong>The database is a version behind.</strong> Ask Kavya to run the latest migration; until then some sections will be empty.`
+            : `<strong>Some data didn't load.</strong> ${esc(store.failed.map(f => f.table).join(', '))}. Refresh, and if it persists check the browser console.`;
         document.querySelector('.main').prepend(banner);
     },
 
@@ -217,10 +232,9 @@ const app = {
         document.getElementById('user-name').textContent = auth.name;
         document.getElementById('user-role').textContent = auth.isShared
             ? `${VOCAB.role[auth.role] || auth.role} · shared login`
-            : (VOCAB.role[auth.role] || auth.role);
+            : (auth.isLeader ? 'Leadership' : (CONFIG.team.find(m => m.key === auth.key)?.role || VOCAB.role[auth.role] || auth.role));
         document.getElementById('switch-seat')?.classList.toggle('hidden', !auth.isShared);
-        document.getElementById('rail-period').textContent =
-            `Q${CONFIG.quarter} · ${CONFIG.quarterLabel}`;
+        document.getElementById('rail-period').textContent = dates.long(dates.today());
 
         const mark = document.getElementById('user-mark');
         mark.textContent = personInitials(auth.name);
@@ -239,10 +253,10 @@ const app = {
                 this.closeRail();
             });
         });
-
-        window.addEventListener('popstate', () =>
-            this.show(location.hash.replace('#', '') || this.landing()));
-
+        window.addEventListener('popstate', () => {
+            const [view, arg] = this.parseHash();
+            this.show(view || this.landing(), arg);
+        });
         const toggle = document.getElementById('rail-toggle');
         const scrim  = document.getElementById('rail-scrim');
         toggle?.addEventListener('click', () => {
@@ -252,63 +266,69 @@ const app = {
         scrim?.addEventListener('click', () => this.closeRail());
     },
 
+    /**
+     * Every task row and project link in the app is wired here, once.
+     * Views only produce markup.
+     */
+    wireGlobal() {
+        document.addEventListener('click', (e) => {
+            const cycle = e.target.closest('[data-cycle]');
+            if (cycle) { e.preventDefault(); workView.cycleStatus(cycle.dataset.cycle); return; }
+
+            const task = e.target.closest('[data-task]');
+            if (task) { e.preventDefault(); workView.openEditor(task.dataset.task); return; }
+
+            const proj = e.target.closest('[data-project]');
+            if (proj) { e.preventDefault(); this.go('projects', proj.dataset.project); return; }
+
+            const goto = e.target.closest('[data-goto]');
+            if (goto) { e.preventDefault(); this.go(goto.dataset.goto, goto.dataset.arg || null); return; }
+        });
+    },
+
     closeRail() {
         document.getElementById('rail').classList.remove('open');
         document.getElementById('rail-scrim').classList.remove('show');
     },
 
-    go(view, { replace = false } = {}) {
-        if (!this.allowed(view)) view = this.landing();
-        history[replace ? 'replaceState' : 'pushState']({}, '', `#${view}`);
-        this.show(view);
-    },
-
-    /** Interns work from their tasks and their attendance; the rest is the team's. */
-    hiddenFor: {
-        intern: ['overview', 'goals', 'scorecard', 'worklog', 'documents', 'people'],
-        member: ['overview'],
-        admin:  ['overview'],
-        leader: ['home', 'work', 'attendance', 'documents', 'people']
+    go(view, arg = null, { replace = false } = {}) {
+        if (!this.allowed(view)) { view = this.landing(); arg = null; }
+        history[replace ? 'replaceState' : 'pushState']({}, '', `#${view}${arg ? '/' + arg : ''}`);
+        this.show(view, arg);
     },
 
     allowed(view) {
         return !!this.views[view] && !(this.hiddenFor[auth.audience] || []).includes(view);
     },
 
-    /** Where each person lands: leadership on the overview, everyone else on Home. */
     landing() {
-        return auth.isLeader ? 'overview' : 'home';
+        return auth.isLeader ? 'plan' : 'home';
     },
 
-    show(view) {
-        if (!this.allowed(view)) view = this.landing();
+    show(view, arg = null) {
+        if (!this.allowed(view)) { view = this.landing(); arg = null; }
+        const changed = view !== this.view || arg !== this.arg;
         this.view = view;
+        this.arg = arg;
 
-        document.querySelectorAll('.rail-link').forEach(l =>
-            l.classList.toggle('active', l.dataset.view === view));
-        document.querySelectorAll('.view').forEach(v =>
-            v.classList.toggle('active', v.id === 'view-' + view));
+        document.querySelectorAll('.rail-link').forEach(l => l.classList.toggle('active', l.dataset.view === view));
+        document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
 
+        const target = this.views[view]();
+        if (typeof target.setArg === 'function') target.setArg(arg);
+        if (changed) { try { target.render(); } catch (err) { console.error('Render failed:', err); } }
         window.scrollTo({ top: 0 });
     },
 
-    /** Every view re-renders from the store. Cheap — it's all in memory. */
     renderAll() {
         Object.values(this.views).forEach(get => {
-            try {
-                get().render();
-            } catch (err) {
-                console.error('Render failed:', err);
-            }
+            try { get().render(); } catch (err) { console.error('Render failed:', err); }
         });
         this.paintCounts();
         this.paintClock();
     },
 
-    /**
-     * Rail counts mean "things waiting on you" — never a total. If a tab
-     * has no number, nothing there needs you.
-     */
+    /** A number on a tab means something there is waiting on you. */
     paintCounts() {
         const set = (id, n, urgent = false) => {
             const el = document.getElementById('count-' + id);
@@ -317,18 +337,11 @@ const app = {
             el.classList.toggle('hidden', !n);
             el.classList.toggle('urgent', urgent);
         };
-
         const attention = store.needsAttention().length;
         set('home', attention, attention > 0);
-        set('work', store.open(store.mine()).length);
-        set('documents', store.staleDocs().length, false);
+        set('work', store.open(store.mine().filter(w => auth.keys.includes(w.owner_name))).length);
     },
 
-    /**
-     * Check-in and check-out, in the rail so it is one tap from every
-     * page. The times shown are the server's, returned by the call.
-     */
-    /** Only the people on the register see the check-in control. */
     onRegister() {
         const me = CONFIG.team.find(m => m.key === auth.key);
         return me ? me.attendance !== false : false;
@@ -342,18 +355,17 @@ const app = {
         const workDay = CONFIG.office.workDays.includes(dates.weekday(dates.today()));
 
         if (!day?.check_in_at) {
-            host.innerHTML = `<button class="btn btn-primary" id="clock-btn" data-clock="in">Check in</button>
-                <div class="rail-clock-line">${workDay ? `Office opens ${esc(attendanceView.clock(CONFIG.office.start))}` : 'Not a working day'}</div>`;
+            host.innerHTML = `<button class="btn btn-primary" data-clock="in">Check in</button>
+                <div class="rail-clock-line">${workDay ? `Office opens ${esc(teamView.clock(CONFIG.office.start))}` : 'Not a working day'}</div>`;
         } else if (!day.check_out_at) {
-            host.innerHTML = `<button class="btn" id="clock-btn" data-clock="out">Check out</button>
+            host.innerHTML = `<button class="btn" data-clock="out">Check out</button>
                 <div class="rail-clock-line">In since <b>${esc(dates.time(day.check_in_at))}</b></div>`;
         } else {
-            host.innerHTML = `<button class="btn btn-quiet btn-sm" id="clock-btn" data-clock="out" title="Checking out again moves your check-out to now">Update check-out</button>
+            host.innerHTML = `<button class="btn btn-quiet btn-sm" data-clock="out" title="Checking out again moves your check-out to now">Update check-out</button>
                 <div class="rail-clock-line"><b>${esc(dates.time(day.check_in_at))}</b> to <b>${esc(dates.time(day.check_out_at))}</b> · ${esc(dates.duration(day.check_in_at, day.check_out_at))}</div>`;
         }
     },
 
-    /** Any [data-clock] button anywhere checks in or out: the rail, Home, Attendance. */
     wireClock() {
         document.addEventListener('click', async (e) => {
             const btn = e.target.closest('[data-clock]');
@@ -361,7 +373,6 @@ const app = {
             const going = btn.dataset.clock;
             if (going === 'out' && store.myDay()?.check_out_at
                 && !confirm('You have already checked out today. Move your check-out to now?')) return;
-
             btn.disabled = true;
             try {
                 const row = going === 'in' ? await data.checkIn() : await data.checkOut();
@@ -370,14 +381,12 @@ const app = {
                 await store.reload();
             } catch (err) {
                 toast(/function .* does not exist|schema cache/i.test(err.message)
-                    ? 'Attendance isn\'t switched on in the database yet. Ask Kavya.'
-                    : err.message, 'bad');
+                    ? 'Attendance isn\'t switched on in the database yet. Ask Kavya.' : err.message, 'bad');
                 btn.disabled = false;
             }
         });
     },
 
-    /** Hand a shared login to the other person, without signing out. */
     wireSeatSwitch() {
         document.getElementById('switch-seat')?.addEventListener('click', async () => {
             await auth.switchSeat();
@@ -391,9 +400,8 @@ const app = {
         document.getElementById('password')?.addEventListener('click', () => {
             ui.modal({
                 title: 'Change your password',
-                body: `
-                    ${ui.field('pw1', 'New password', { type: 'password', required: true, hint: 'At least 8 characters.' })}
-                    ${ui.field('pw2', 'Type it again', { type: 'password', required: true })}`,
+                body: `${ui.field('pw1', 'New password', { type: 'password', required: true, hint: 'At least 8 characters.' })}
+                       ${ui.field('pw2', 'Type it again', { type: 'password', required: true })}`,
                 submitLabel: 'Change password',
                 onSubmit: async (form) => {
                     const a = form.get('pw1') || '';
@@ -409,7 +417,6 @@ const app = {
     wireTheme() {
         const saved = localStorage.getItem('go-theme') || 'light';
         document.documentElement.setAttribute('data-theme', saved);
-
         document.getElementById('theme').addEventListener('click', () => {
             const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', next);
@@ -429,54 +436,33 @@ const app = {
         const bell  = document.getElementById('bell');
         const panel = document.getElementById('notif-panel');
         const badge = document.getElementById('bell-count');
-
         const refreshBadge = async () => {
             const n = await data.unreadCount();
             badge.textContent = n;
             badge.classList.toggle('hidden', n === 0);
         };
-
         bell.addEventListener('click', async (e) => {
             e.stopPropagation();
-            if (!panel.classList.contains('hidden')) {
-                panel.classList.add('hidden');
-                return;
-            }
-
+            if (!panel.classList.contains('hidden')) { panel.classList.add('hidden'); return; }
             const items = await data.notifications();
             panel.innerHTML = items.length === 0
-                ? `<div class="empty" style="padding:var(--s5)">
-                       <p class="empty-body">Nothing new. You're up to date.</p>
-                   </div>`
+                ? `<div class="empty" style="padding:var(--s5)"><p class="empty-body">Nothing new.</p></div>`
                 : items.map(n => `
                     <div class="notif-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}">
                         <div>${esc(n.message || n.event_type)}</div>
                         <div class="meta">${esc(n.intern_name ? n.intern_name + ' · ' : '')}${dates.ago(n.created_at)}</div>
                     </div>`).join('')
                   + `<div style="padding:var(--s3);text-align:center;border-top:1px solid var(--line)">
-                        <button class="btn btn-quiet btn-sm" id="mark-all">Mark all as read</button>
-                     </div>`;
-
+                        <button class="btn btn-quiet btn-sm" id="mark-all">Mark all as read</button></div>`;
             panel.classList.remove('hidden');
-
-            panel.querySelectorAll('.notif-item').forEach(el => {
-                el.addEventListener('click', async () => {
-                    await data.markRead(el.dataset.id);
-                    panel.classList.add('hidden');
-                    refreshBadge();
-                });
-            });
-
+            panel.querySelectorAll('.notif-item').forEach(el => el.addEventListener('click', async () => {
+                await data.markRead(el.dataset.id); panel.classList.add('hidden'); refreshBadge();
+            }));
             document.getElementById('mark-all')?.addEventListener('click', async (ev) => {
-                ev.stopPropagation();
-                await data.markAllRead();
-                panel.classList.add('hidden');
-                refreshBadge();
+                ev.stopPropagation(); await data.markAllRead(); panel.classList.add('hidden'); refreshBadge();
             });
         });
-
         document.addEventListener('click', () => panel.classList.add('hidden'));
-
         refreshBadge();
         setInterval(refreshBadge, 60000);
     }
@@ -488,8 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.innerHTML = `
             <div class="empty" style="padding:15vh var(--s5)">
                 <p class="empty-title">Growth &amp; Ops didn't load</p>
-                <p class="empty-body">Refresh the page. If it keeps happening, the
-                   database connection is likely down — check with Kavya.</p>
+                <p class="empty-body">Refresh the page. If it keeps happening, the database connection is likely down. Check with Kavya.</p>
             </div>`;
     });
 });

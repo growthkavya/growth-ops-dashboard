@@ -45,6 +45,7 @@ const data = {
                 kpis(name, member, kpi_code),
                 kras(kra_code, name, short_name, sort_order),
                 goals(id, title, scope),
+                projects(id, slug, name),
                 assignee:assignee_id(full_name),
                 assigner:assigned_by(full_name)
             `)
@@ -74,12 +75,40 @@ const data = {
         if (error) throw error;
     },
 
+    /* ---------- Projects ----------------------------------- */
+
+    async projects() {
+        const { data: rows, error } = await sb
+            .from('projects')
+            .select('*, kras(kra_code, name, short_name, sort_order)')
+            .is('archived_at', null)
+            .order('sort_order');
+        if (error) throw error;
+        return rows || [];
+    },
+
+    async createProject(fields) {
+        const { data: row, error } = await sb
+            .from('projects').insert(fields).select().single();
+        if (error) throw error;
+        return row;
+    },
+
+    async updateProject(id, fields) {
+        const { data: row, error } = await sb
+            .from('projects')
+            .update({ ...fields, updated_at: new Date().toISOString() })
+            .eq('id', id).select().single();
+        if (error) throw error;
+        return row;
+    },
+
     /* ---------- Goals -------------------------------------- */
 
     async goals() {
         const { data: rows, error } = await sb
             .from('goals')
-            .select('*, owner:owner_id(full_name), kras(kra_code, short_name)')
+            .select('*, owner:owner_id(full_name), kras(kra_code, short_name, sort_order)')
             .is('archived_at', null)
             .order('sort_order');
         if (error) throw error;

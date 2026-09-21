@@ -1522,3 +1522,246 @@ textarea { resize: vertical; min-height: 72px; }
     .cal-cell { min-height: 72px; padding: 4px; }
     .cal-chip { font-size: 10px; }
 }
+
+/* ============================================================
+   v7: calmer. Fewer boxes, bigger type, one quiet line per row.
+   Everything below overrides what is above; nothing above was
+   removed so the older components still render if referenced.
+   ============================================================ */
+
+body { font-size: 14.5px; }
+
+.main { max-width: 940px; padding: 40px 48px 96px; }
+
+.view-head {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 28px;
+    align-items: flex-end;
+}
+.h-page { font-size: 24px; letter-spacing: -0.02em; }
+.view-head-purpose { font-size: 14px; max-width: 60ch; margin-top: 4px; }
+.view-figure { display: none; }
+.view-date { font-size: 13px; color: var(--ink-3); margin-bottom: 4px; }
+
+/* A section: a heading, an optional note, then a list. */
+.sec { margin-bottom: 36px; }
+.sec-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4);
+    margin-bottom: 10px;
+}
+.sec-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.sec-note  { font-size: 12.5px; color: var(--ink-3); }
+.sec-head .btn { align-self: center; }
+
+.list {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+.list-foot {
+    padding: var(--s3) var(--s4);
+    font-size: 12.5px;
+    color: var(--ink-3);
+    border-top: 1px solid var(--line);
+}
+.list-foot a, .list-foot button { font-size: 12.5px; }
+
+/* ---------- Task rows ------------------------------------- */
+
+.task {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+}
+.task:last-child { border-bottom: none; }
+.task .dot { margin-top: 3px; }
+.task .dot:disabled { cursor: default; }
+.task-title { font-size: 14px; font-weight: 500; line-height: 1.4; }
+.task-title a { color: var(--ink); }
+.task-title a:hover { color: var(--accent); text-decoration: none; }
+.task-meta { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.5; }
+.task-meta a { color: var(--ink-3); }
+.task-meta a:hover { color: var(--accent); }
+.task-meta .sep { color: var(--line-strong); margin: 0 2px; }
+.task-note { font-size: 13px; color: var(--ink-2); margin-top: 6px; line-height: 1.5; max-width: 70ch; }
+.task.is-closed .task-title a { color: var(--ink-3); }
+.task.is-closed .task-title { font-weight: 450; }
+
+.count { display: flex; align-items: center; gap: 10px; min-width: 150px; }
+.count .num { font-size: 12.5px; color: var(--ink-2); white-space: nowrap; min-width: 52px; text-align: right; }
+.count .measure { flex: 1; }
+
+/* A status as a word with a dot, never a coloured pill. */
+.word { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+.word::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--idle); flex-shrink: 0; }
+.word.t-good::before   { background: var(--good); }
+.word.t-warn::before   { background: var(--warn); }
+.word.t-bad::before    { background: var(--bad); }
+.word.t-accent::before { background: var(--accent); }
+
+/* ---------- Waiting on you -------------------------------- */
+
+.nudge {
+    border: 1px solid var(--line-strong);
+    border-left: 3px solid var(--warn);
+    border-radius: var(--radius);
+    background: var(--surface);
+    margin-bottom: 36px;
+}
+.nudge .task { padding-left: 14px; }
+.nudge-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s3);
+    padding: 12px 16px 12px 14px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+}
+.nudge-line:last-child { border-bottom: none; }
+
+/* ---------- Team today ------------------------------------ */
+
+.people-line { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.people-line:last-child { border-bottom: none; }
+.people-line .who { font-size: 14px; }
+.people-line .meta { margin-left: auto; }
+
+/* ---------- Projects -------------------------------------- */
+
+.proj {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 190px;
+    gap: var(--s4);
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+}
+.proj:last-child { border-bottom: none; }
+.proj:hover { background: var(--surface-hover); }
+.proj-name { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+.proj-sum  { font-size: 13px; color: var(--ink-2); margin-top: 2px; line-height: 1.45; max-width: 64ch; }
+.proj-side { text-align: right; font-size: 12.5px; color: var(--ink-3); display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+.proj-head { margin-bottom: 28px; }
+.proj-back { font-size: 13px; color: var(--ink-3); display: inline-block; margin-bottom: 12px; }
+.proj-title { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
+.proj-facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-3); margin-bottom: 14px; }
+.proj-facts b { color: var(--ink-2); font-weight: 500; }
+.proj-text { font-size: 14.5px; line-height: 1.6; max-width: 70ch; color: var(--ink); }
+.proj-next { margin-top: 12px; padding: 12px 14px; background: var(--accent-wash); border-radius: var(--radius-sm); font-size: 14px; line-height: 1.5; max-width: 70ch; }
+.proj-next b { color: var(--accent-ink); font-weight: 600; }
+
+/* ---------- Plan ------------------------------------------ */
+
+.goal {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+}
+.goal:last-child { border-bottom: none; }
+.goal > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) 170px; gap: var(--s4); align-items: center; }
+.goal > summary::-webkit-details-marker { display: none; }
+.goal-title { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+.goal-sub { font-size: 12.5px; color: var(--ink-3); margin-top: 2px; }
+.goal-tasks { margin: 12px 0 0 -16px; width: calc(100% + 32px); border-top: 1px solid var(--line); background: var(--surface-sunk); }
+.goal-tasks .task { padding-left: 32px; }
+.goal-tasks .task:last-child { border-bottom: none; }
+.goal-add { padding: 10px 16px 10px 32px; font-size: 12.5px; }
+
+.plan-intro { font-size: 14.5px; line-height: 1.6; color: var(--ink-2); max-width: 70ch; margin-bottom: 24px; }
+.plan-intro b { color: var(--ink); font-weight: 600; }
+
+.april {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) 70px minmax(0, 1.3fr);
+    gap: var(--s4);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+    align-items: start;
+}
+.april:last-child { border-bottom: none; }
+.april-what { font-weight: 500; }
+.april-who { color: var(--ink-3); font-size: 12.5px; padding-top: 2px; }
+.april-out { color: var(--ink-2); line-height: 1.5; }
+.april-out .word { display: flex; margin-bottom: 2px; }
+
+.tally-line { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 13.5px; color: var(--ink-2); margin-bottom: 18px; }
+.tally-line b { font-family: var(--font-num); font-weight: 500; color: var(--ink); }
+
+/* ---------- KPIs ------------------------------------------ */
+
+.kpi-area {
+    padding: 14px 16px 6px;
+    font-size: 12.5px;
+    color: var(--ink-3);
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-sunk);
+}
+.kpi {
+    border-bottom: 1px solid var(--line);
+}
+.kpi:last-child { border-bottom: none; }
+.kpi > summary {
+    list-style: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 60px 72px;
+    gap: var(--s4);
+    align-items: center;
+    padding: 12px 16px;
+}
+.kpi > summary::-webkit-details-marker { display: none; }
+.kpi > summary:hover { background: var(--surface-hover); }
+.kpi-name { font-size: 14px; font-weight: 500; }
+.kpi-sub  { font-size: 12.5px; color: var(--ink-3); margin-top: 1px; }
+.kpi-w    { font-family: var(--font-num); font-size: 13px; color: var(--ink-3); text-align: right; }
+.kpi-score { text-align: right; }
+.kpi-detail { padding: 4px 16px 16px 16px; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); background: var(--surface-sunk); border-top: 1px solid var(--line); }
+.kpi-detail h4 { font-size: 12px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; margin: 14px 0 6px; }
+.kpi-detail .task { padding-left: 0; padding-right: 0; }
+.kpi-detail .list { background: var(--surface); }
+
+.score-btn {
+    display: inline-grid;
+    place-items: center;
+    min-width: 34px;
+    height: 28px;
+    padding: 0 8px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-num);
+    font-size: 13.5px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink-3);
+}
+.score-btn:hover { border-color: var(--accent); color: var(--accent); }
+.score-btn.v-high { background: var(--good-wash); border-color: transparent; color: var(--good); }
+.score-btn.v-mid  { background: var(--warn-wash); border-color: transparent; color: var(--warn); }
+.score-btn.v-low  { background: var(--bad-wash);  border-color: transparent; color: var(--bad); }
+
+.score-line { font-size: 14px; color: var(--ink-2); margin-bottom: 14px; }
+.score-line b { font-family: var(--font-num); font-weight: 500; color: var(--ink); }
+
+/* ---------- Attendance in Team ---------------------------- */
+
+.reg-note { font-size: 12.5px; color: var(--ink-3); line-height: 1.6; max-width: 72ch; margin-top: 12px; }
+
+@media (max-width: 720px) {
+    .main { padding: 64px 16px 64px; }
+    .proj { grid-template-columns: 1fr; }
+    .proj-side { align-items: flex-start; text-align: left; flex-direction: row; flex-wrap: wrap; gap: 4px 14px; }
+    .goal > summary { grid-template-columns: 1fr; }
+    .april { grid-template-columns: 1fr; gap: 4px; }
+    .kpi > summary { grid-template-columns: minmax(0, 1fr) 44px 60px; }
+}

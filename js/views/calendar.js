@@ -22,10 +22,6 @@ const calendarView = {
         const days = dates.monthDays(y, m);
         const items = this.itemsFor(days[0], days[days.length - 1]);
 
-        document.getElementById('calendar-figure').textContent =
-            items.filter(i => i.kind === 'done').length;
-        document.getElementById('calendar-figure-label').textContent = 'Finished this month';
-
         body.innerHTML = `
             ${this.controls()}
             ${this.grid(days, items)}`;
@@ -41,8 +37,9 @@ const calendarView = {
      */
     itemsFor(from, to) {
         const out = [];
-        for (const w of store.workItems) {
+        for (const w of store.visibleWork()) {
             if (this.person !== 'all' && w.owner_name !== this.person) continue;
+            if (['carried', 'dropped'].includes(w.status)) continue;
 
             if (w.status === 'done' && w.completed_at) {
                 const on = dates.iso(w.completed_at);
@@ -67,9 +64,9 @@ const calendarView = {
                 <button class="btn btn-sm btn-quiet" data-month="1" aria-label="Next month">&#8250;</button>
             </div>
             ${this.month === dates.today().slice(0, 7) ? '' : `<button class="btn btn-sm" data-month="0">Today</button>`}
-            <select id="cal-person" aria-label="Whose work">
+            ${auth.isAdmin || auth.isLeader ? `<select id="cal-person" aria-label="Whose work">
                 ${people.map(p => `<option value="${escAttr(p.value)}" ${this.person === p.value ? 'selected' : ''}>${esc(p.label)}</option>`).join('')}
-            </select>
+            </select>` : ''}
             <span class="meta">Green is finished, amber is due, red is past its date.</span>
         </div>`;
     },
@@ -142,27 +139,7 @@ const calendarView = {
         ui.modal({
             title: dates.long(iso),
             wide: true,
-            body: `<div class="log-items" style="padding:0">
-                ${entries.map(e => `
-                    <div class="log-item" data-edit="${e.w.id}">
-                        <span class="log-when num">${e.kind === 'done' ? 'done' : 'due'}</span>
-                        <div class="log-body">
-                            <div class="log-title">${esc(e.w.title)}</div>
-                            <div class="meta">${esc(personName(e.w.owner_name))}${e.w.kpis ? ' · ' + esc(e.w.kpis.name) : ''}</div>
-                        </div>
-                        <div class="row-end">
-                            ${e.w.output_link ? `<a href="${escAttr(e.w.output_link)}" target="_blank" rel="noopener" class="chip" data-stop="1">Open &#8599;</a>` : ''}
-                            ${ui.statusChip(e.w.status)}
-                        </div>
-                    </div>`).join('')}
-            </div>`
+            body: `<div class="list">${entries.map(e => ui.taskRow(e.w, { when: e.kind === 'done' ? 'done' : 'due' })).join('')}</div>`
         });
-
-        document.querySelectorAll('#modal-host [data-edit]').forEach(row =>
-            row.addEventListener('click', (ev) => {
-                if (ev.target.closest('[data-stop]')) return;
-                if (auth.isLeader) return;
-                workView.openEditor(row.dataset.edit);
-            }));
     }
 };

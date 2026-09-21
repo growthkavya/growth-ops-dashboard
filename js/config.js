@@ -75,6 +75,15 @@ const CONFIG = {
     // what shipped. Matched on the email their login uses.
     leaders: ['vidyutkauntia@ssei.co.in'],
 
+    // The plan the team is working to. Tasks carry plan_tag; goals carry
+    // the quarter. Change both when the next plan is written.
+    plan: { tag: '2026-Q4', year: 2026, quarter: 4, label: 'October to December',
+            from: '2026-10-01', to: '2026-12-31' },
+    previousPlan: { tag: '2026-04', label: 'April 2026', period: 'April to June 2026' },
+
+    // The first week that can fairly be scored against the new KPIs.
+    scoringFrom: '2026-09-21',
+
     growthLabUrl: 'lab/'
 };
 
@@ -87,7 +96,25 @@ const VOCAB = {
         not_started: 'Not started',
         in_progress: 'In progress',
         blocked:     'Blocked',
-        done:        'Done'
+        done:        'Done',
+        dropped:     'Dropped',
+        carried:     'Carried forward'
+    },
+
+    // Which statuses mean "still to do". Dropped and carried are closed.
+    openStatuses: ['not_started', 'in_progress', 'blocked'],
+
+    projectStatus: {
+        live:        'Live',
+        in_progress: 'In progress',
+        done:        'Finished',
+        parked:      'Parked'
+    },
+    projectTone: { live: 'good', in_progress: 'accent', done: 'idle', parked: 'warn' },
+
+    plans: {
+        '2026-04': 'The April 2026 plan',
+        '2026-Q4': 'October to December 2026'
     },
 
     // Clicking a status advances it along this path.
@@ -97,7 +124,9 @@ const VOCAB = {
         not_started: 'idle',
         in_progress: 'accent',
         blocked:     'bad',
-        done:        'good'
+        done:        'good',
+        dropped:     'idle',
+        carried:     'idle'
     },
 
     docStatus: {

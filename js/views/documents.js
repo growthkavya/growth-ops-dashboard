@@ -13,9 +13,6 @@ const documentsView = {
 
     render() {
         const body = document.getElementById('documents-body');
-        const stale = store.staleDocs().length;
-
-        document.getElementById('documents-figure').textContent = stale || '0';
 
         body.innerHTML = `
             <div class="bar">

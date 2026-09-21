@@ -19,56 +19,57 @@ If the change touches CSS or JS, bump the `?v=` on that file's tag in
 
 ---
 
-## The six tabs, and what each one is for
+## The tabs, and what each one is for
 
-Each tab owns one question. If you find yourself adding something that
-answers a question another tab already owns, it belongs in that tab.
+Each tab owns one question. If something answers a question another tab
+already owns, it belongs in that tab.
 
 | Tab | The question it answers |
 |---|---|
-| **Home** | What needs me today? |
-| **Goals** | What are we trying to achieve, and are we getting there? |
-| **KRAs & KPIs** | How is each person performing? |
-| **Delegations** | Who is doing what, right now? |
+| **Today** | What is waiting on me, and what is due this week? |
+| **Plan** | What are we working towards this week, this month, this quarter and this year, and what happened to the plan made in April? |
+| **KPIs** | How is each measure doing, and what work sits behind it? |
+| **Projects** | What are the streams of work, what has each produced, and what is next? |
+| **Tasks** | What is on each person's plate? |
+| **Calendar** | What is due or was finished on each day of the month? |
+| **Team** | Who is in today, what does the month's attendance look like, and who is on the team? |
 | **Documents** | Which sheets and docs can I trust? |
-| **People** | Who's on the team, and what are they carrying? |
 
-Home is the one exception that pulls from elsewhere — quarter progress and
-recent activity — because a quarter going off track is worth seeing unprompted.
-Everything else on Home is actionable in place.
+Leadership (Vidyut) lands on Plan and sees Plan, KPIs, Projects and Calendar,
+read only. Interns see Today, Tasks, Calendar and Team.
 
 ---
 
 ## How the model fits together
 
 ```
-Company goal (annual)            "Grow paid enrolments 20% over CY2026"
-  └─ Team goal (quarterly)       "Cut lead response time to under 2 hours"
-       └─ Work item              "Set up the WhatsApp auto-reply"
+Yearly goal (one per responsibility area)     "One student database the whole company trusts"
+  └─ Quarter goal                             "LeadSquared rebuilt and audited"
+       └─ Task (a work item)                  "First data-quality audit after the rebuild"
+Project (a stream of work)                    "LeadSquared rebuild"  <- every task also belongs to one
 ```
 
-- A **company goal**'s progress is the average of the team goals under it.
-  It is never typed in by hand.
-- A **team goal** carries a progress percentage, an owner, and optionally a KRA.
-  One with no parent appears in its own section — that's deliberate, so
-  unattached work is visible rather than lost.
-- A **work item** is any piece of work. It can link to a goal, a KRA, a KPI,
-  or nothing at all. Ad-hoc work uses `project_tag` instead of forcing a KPI.
+- A **project** is a stream of work the team would name in conversation.
+  Every work item points at one, so the history of a project is one click deep.
+- A **task** can carry a project, a KPI, a quarter goal, and the plan it came
+  from (`plan_tag`: `2026-04` for the April plan, `2026-Q4` for October to December).
+- A **goal**'s progress is counted from its tasks. A yearly goal averages the
+  quarter goals under it. Nothing is typed in by hand.
+- The April plan's items are closed out with two extra statuses: `carried`
+  (continues as a fresh task in the current plan) and `dropped`.
 
 **KRAs and KPIs are a separate axis.** A KRA is a standing area of
-responsibility; a goal is a target for one quarter. Work items can carry both.
-
----
+responsibility; a KPI is scored by the week or by the quarter.
 
 ## Files
 
 ```
 index.html          Sign in
-dashboard.html      The app shell — nav plus one <section> per tab
+dashboard.html      The app shell: nav plus one <section> per tab
 css/app.css         The whole design system
 js/config.js        Period, team, and VOCAB (every user-facing word)
 js/data.js          Every Supabase query. Views never call supabase directly.
-js/ui.js            Shared components — the measure bar, modals, toasts, dates
+js/ui.js            Shared components: the task row, the measure bar, modals, toasts, dates
 js/auth.js          Session and identity
 js/app.js           The store and the router
 js/views/*.js       One file per tab
