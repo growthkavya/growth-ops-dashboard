@@ -1,8 +1,9 @@
 /**
  * Prove migration_v4_team_attendance.sql before it touches the live
  * database. Rebuilds the whole schema in a throwaway Postgres, applies
- * v4 twice, then exercises it as real signed-in users with row-level
- * security switched on: an admin, a member and an intern.
+ * v4 and v5 twice, then exercises them as real signed-in users with
+ * row-level security on: an admin, a member, and the shared login that
+ * two interns use.
  *
  *   npm i @electric-sql/pglite
  *   node supabase/verify_v4.mjs
@@ -67,10 +68,13 @@ console.log('\nBuilding the live schema:');
 await run('supabase stubs', STUBS);
 for (const f of ORDER) await run(f, readFileSync(`${SQL}/${f}`, 'utf8'));
 
-console.log('\nApplying v4 twice:');
+console.log('\nApplying v4 and v5 twice:');
 const v4 = readFileSync(`${SQL}/migration_v4_team_attendance.sql`, 'utf8');
+const v5 = readFileSync(`${SQL}/migration_v5_shared_logins.sql`, 'utf8');
 await run('migration_v4 (1st run)', v4);
 await run('migration_v4 (2nd run)', v4);
+await run('migration_v5 (1st run)', v5);
+await run('migration_v5 (2nd run)', v5);
 
 const KAVYA = '11111111-1111-1111-1111-111111111111';
 const RIYA  = '22222222-2222-2222-2222-222222222222';
@@ -81,7 +85,8 @@ await run('seed people and grants', `
         ('${KAVYA}', 'kavya@x.in'), ('${RIYA}', 'riya@x.in'), ('${PAL}', 'pallak@x.in');
     UPDATE public.profiles SET role='admin',  member_key='kavya'  WHERE id='${KAVYA}';
     UPDATE public.profiles SET role='member', member_key='riya'   WHERE id='${RIYA}';
-    UPDATE public.profiles SET role='intern', member_key='pallak' WHERE id='${PAL}';
+    UPDATE public.profiles SET role='intern', member_key='intern1',
+           seat_keys = ARRAY['palak','rupam'], full_name='Intern Shared Account' WHERE id='${PAL}';
     GRANT USAGE ON SCHEMA public, auth TO authenticated;
     GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
     GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public, auth TO authenticated;
@@ -123,16 +128,48 @@ const r2 = (await as(RIYA, `SELECT * FROM public.attendance_check_in()`)).rows[0
 const r3 = (await as(RIYA, `SELECT * FROM public.attendance_check_out()`)).rows[0];
 r3?.check_out_at ? pass('Riya checks out') : fail('check out', 'no time');
 
-try { await as(PAL, `SELECT * FROM public.attendance_check_out()`); fail('check out before check in', 'allowed'); }
+try { await as(PAL, `SELECT * FROM public.attendance_check_out('palak')`); fail('check out before check in', 'allowed'); }
 catch (e) { pass(`check out before checking in is refused (${e.message})`); }
 
-await as(PAL, `SELECT * FROM public.attendance_check_in()`);
-const palSees = (await as(PAL, `SELECT member_key FROM public.attendance`)).rows;
-palSees.length === 1 && palSees[0].member_key === 'pallak'
-    ? pass('an intern sees only her own days')
-    : fail('intern visibility', JSON.stringify(palSees));
+console.log('\nOne login, two people:');
+const p1 = (await as(PAL, `SELECT * FROM public.attendance_check_in('palak')`)).rows[0];
+const p2 = (await as(PAL, `SELECT * FROM public.attendance_check_in('rupam')`)).rows[0];
+p1?.member_key === 'palak' && p2?.member_key === 'rupam' && p1.id !== p2.id
+    ? pass('Palak and Rupam both check in on the same day, on one login')
+    : fail('two people, one login', JSON.stringify([p1?.member_key, p2?.member_key]));
+
+const out = (await as(PAL, `SELECT * FROM public.attendance_check_out('palak')`)).rows[0];
+const stillIn = (await as(PAL, `SELECT check_out_at FROM public.attendance WHERE member_key='rupam'`)).rows[0];
+out?.check_out_at && !stillIn?.check_out_at
+    ? pass('checking out as Palak leaves Rupam checked in')
+    : fail('separate check-outs', JSON.stringify([out?.check_out_at, stillIn?.check_out_at]));
+
+try { await as(PAL, `SELECT * FROM public.attendance_check_in('riya')`); fail('check in as someone else', 'allowed'); }
+catch (e) { pass('the shared login cannot check in as Riya'); }
+try { await as(RIYA, `SELECT * FROM public.attendance_check_in('palak')`); fail('Riya checks in as Palak', 'allowed'); }
+catch (e) { pass('Riya cannot check in as Palak'); }
+
+const palSees = (await as(PAL, `SELECT member_key FROM public.attendance ORDER BY member_key`)).rows.map(r => r.member_key);
+JSON.stringify(palSees) === JSON.stringify(['palak', 'rupam'])
+    ? pass('the shared login sees its two people and nobody else')
+    : fail('shared login visibility', JSON.stringify(palSees));
 const adminSees = (await as(KAVYA, `SELECT member_key FROM public.attendance`)).rows;
-adminSees.length === 2 ? pass('the admin sees the whole team') : fail('admin visibility', adminSees.length);
+adminSees.length === 3 ? pass('the admin sees the whole team') : fail('admin visibility', adminSees.length);
+
+// Kavya assigns the work; interns only move what they were given.
+await db.exec(`INSERT INTO public.actions (action_id, title, owner_name, status)
+               VALUES ('t-pal', 'Collect OOH photos', 'palak', 'not_started'),
+                      ('t-rup', 'Clean duplicate leads', 'rupam', 'not_started'),
+                      ('t-riy', 'Weekly cohort report', 'riya', 'not_started')`);
+const seen = (await as(PAL, `SELECT owner_name FROM public.actions WHERE action_id LIKE 't-%' ORDER BY owner_name`)).rows.map(r => r.owner_name);
+JSON.stringify(seen) === JSON.stringify(['palak', 'rupam'])
+    ? pass('the shared login sees both their task lists, not Riya\'s')
+    : fail('task visibility', JSON.stringify(seen));
+
+const moved = await as(PAL, `UPDATE public.actions SET status='done' WHERE action_id='t-rup' RETURNING id`);
+moved.rows.length ? pass('either person can move their own tasks along') : fail('intern update', 'refused');
+const poached = await as(PAL, `UPDATE public.actions SET status='done' WHERE action_id='t-riy' RETURNING id`);
+poached.rows.length === 0 ? pass('they cannot touch Riya\'s tasks') : fail('intern reach', 'update went through');
 
 const forged = await as(RIYA, `
     UPDATE public.attendance SET check_in_at = check_in_at - interval '2 hours'

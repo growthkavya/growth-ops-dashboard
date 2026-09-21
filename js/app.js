@@ -95,7 +95,7 @@ const store = {
 
     /** The signed-in person's attendance row for today, if any. */
     myDay() {
-        return this.attendance.find(r => r.user_id === auth.userId && r.work_date === dates.today());
+        return this.attendance.find(r => r.member_key === auth.key && r.work_date === dates.today());
     },
 
     /** Documents and sheets whose review is overdue. */
@@ -130,6 +130,11 @@ const app = {
             return;
         }
 
+        // Two people share the intern login, so ask which of them this is
+        // before anything loads. Their answer decides whose tasks and
+        // whose attendance this session touches.
+        await auth.settleSeat();
+
         this.paintIdentity();
         this.wireNav();
         this.wireTheme();
@@ -137,6 +142,7 @@ const app = {
         this.wireNotifications();
         this.wireClock();
         this.wirePassword();
+        this.wireSeatSwitch();
 
         await store.load();
         this.renderAll();
@@ -168,7 +174,10 @@ const app = {
 
     paintIdentity() {
         document.getElementById('user-name').textContent = auth.name;
-        document.getElementById('user-role').textContent = VOCAB.role[auth.role] || auth.role;
+        document.getElementById('user-role').textContent = auth.isShared
+            ? `${VOCAB.role[auth.role] || auth.role} · shared login`
+            : (VOCAB.role[auth.role] || auth.role);
+        document.getElementById('switch-seat')?.classList.toggle('hidden', !auth.isShared);
         document.getElementById('rail-period').textContent =
             `Q${CONFIG.quarter} · ${CONFIG.quarterLabel}`;
 
@@ -307,6 +316,16 @@ const app = {
                     : err.message, 'bad');
                 btn.disabled = false;
             }
+        });
+    },
+
+    /** Hand a shared login to the other person, without signing out. */
+    wireSeatSwitch() {
+        document.getElementById('switch-seat')?.addEventListener('click', async () => {
+            await auth.switchSeat();
+            this.paintIdentity();
+            await store.reload();
+            toast(`Signed in as ${auth.name}`);
         });
     },
 

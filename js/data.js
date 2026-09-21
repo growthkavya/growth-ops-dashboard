@@ -185,15 +185,18 @@ const data = {
         return rows || [];
     },
 
-    /** Server-stamped. The browser's clock is never trusted with a time. */
+    /**
+     * Server-stamped. The browser's clock is never trusted with a time,
+     * and the person is named so a shared login records the right one.
+     */
     async checkIn() {
-        const { data: row, error } = await sb.rpc('attendance_check_in');
+        const { data: row, error } = await sb.rpc('attendance_check_in', { p_member: auth.key });
         if (error) throw error;
         return row;
     },
 
     async checkOut() {
-        const { data: row, error } = await sb.rpc('attendance_check_out');
+        const { data: row, error } = await sb.rpc('attendance_check_out', { p_member: auth.key });
         if (error) throw error;
         return row;
     },
@@ -204,7 +207,7 @@ const data = {
             .from('attendance')
             .upsert({ ...fields, edited_by: auth.userId, edited_at: new Date().toISOString(),
                       updated_at: new Date().toISOString() },
-                    { onConflict: 'user_id,work_date' })
+                    { onConflict: 'member_key,work_date' })
             .select().single();
         if (error) throw error;
         return row;

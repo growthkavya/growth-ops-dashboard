@@ -43,9 +43,14 @@ const CONFIG = {
     team: [
         { key: 'kavya',  name: 'Kavya',  role: 'AI & Growth Ops Manager', level: 'manager',   color: 'var(--p-kavya)'  },
         { key: 'riya',   name: 'Riya',   role: 'Growth & Ops Associate',  level: 'associate', color: 'var(--p-riya)'   },
-        { key: 'pallak', name: 'Pallak', role: 'Intern',                  level: 'intern',    color: 'var(--p-pallak)' },
+        { key: 'palak',  name: 'Palak',  role: 'Intern',                  level: 'intern',    color: 'var(--p-palak)'  },
         { key: 'rupam',  name: 'Rupam',  role: 'Intern',                  level: 'intern',    color: 'var(--p-rupam)'  }
     ],
+
+    // Palak and Rupam share one login (intern1@ssei.co.in). Which of them
+    // is using it is asked at sign-in and kept for the browser session;
+    // the keys themselves come from profiles.seat_keys.
+    seatPrompt: 'Who is signing in?',
 
     // The old shared intern login still owns some history under this key.
     internKey: 'intern1',

@@ -200,6 +200,39 @@ const ui = {
         return `<p class="loading-note">Loading…</p>`;
     },
 
+    /**
+     * Two people share one login, so the app asks which of them it is
+     * before showing anything. Nothing renders until they answer.
+     */
+    chooseSeat(seats) {
+        return new Promise((resolve) => {
+            const host = document.getElementById('modal-host');
+            host.innerHTML = `
+                <div class="seat-gate">
+                    <div class="seat-card">
+                        <h2>${esc(CONFIG.seatPrompt)}</h2>
+                        <p>This login is shared. Pick your name so your tasks and
+                           attendance are recorded against you.</p>
+                        <div class="seat-list">
+                            ${seats.map(k => `
+                                <button type="button" class="seat-btn" data-seat="${escAttr(k)}">
+                                    ${this.avatar(personName(k), k)}
+                                    <span>${esc(personName(k))}</span>
+                                </button>`).join('')}
+                        </div>
+                        <p class="seat-note">Not you? Use the switch button next to your
+                           name at the bottom of the menu.</p>
+                    </div>
+                </div>`;
+
+            host.querySelectorAll('[data-seat]').forEach(btn =>
+                btn.addEventListener('click', () => {
+                    host.innerHTML = '';
+                    resolve(btn.dataset.seat);
+                }));
+        });
+    },
+
     /* ---------- Modal --------------------------------------- */
 
     /**

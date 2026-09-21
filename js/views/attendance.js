@@ -27,7 +27,7 @@ const attendanceView = {
             document.getElementById('attendance-figure').innerHTML = `${inNow}<small>/${people.length}</small>`;
             document.getElementById('attendance-figure-label').textContent = 'Checked in today';
         } else {
-            const mine = todays.find(r => r.user_id === auth.userId);
+            const mine = todays.find(r => r.member_key === auth.key);
             document.getElementById('attendance-figure').textContent =
                 mine?.check_in_at ? dates.time(mine.check_in_at) : '·';
             document.getElementById('attendance-figure-label').textContent =
@@ -50,9 +50,12 @@ const attendanceView = {
 
     /* ---------- Who and what -------------------------------- */
 
-    /** The admin sees the team; everyone else sees themselves. */
+    /**
+     * The admin sees the team. Everyone else sees themselves, and a
+     * shared login sees both the people who use it.
+     */
     people() {
-        return auth.isAdmin ? CONFIG.team : CONFIG.team.filter(m => m.key === auth.key);
+        return auth.isAdmin ? CONFIG.team : CONFIG.team.filter(m => auth.keys.includes(m.key));
     },
 
     rowsFor(month) {

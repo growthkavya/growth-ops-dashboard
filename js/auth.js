@@ -9,17 +9,62 @@ const auth = {
     user: null,
     profile: null,
 
+    // Which person a shared login is being used by right now.
+    seat: null,
+
     get userId()  { return this.user?.id || null; },
     get email()   { return this.user?.email || ''; },
-    get name()    { return this.profile?.full_name || this.email || 'Unknown'; },
+    get name()    {
+        if (this.seat) return personName(this.seat);
+        return this.profile?.full_name || this.email || 'Unknown';
+    },
+
+    /** The people this login may act as. More than one means it is shared. */
+    get seats()   { return this.profile?.seat_keys || []; },
+    get isShared(){ return this.seats.length > 1; },
+
+    /** Every key this session may own work under. */
+    get keys()    {
+        return this.seats.length ? this.seats : (this.profile?.member_key ? [this.profile.member_key] : []);
+    },
+
     get role()    { return this.profile?.role || 'member'; },
     get isAdmin() { return this.role === 'admin'; },
 
-    /** The person key used by actions.owner_name and kpis.member. */
+    /**
+     * The person key used by actions.owner_name and kpis.member. On a
+     * shared login this is whoever said they were signing in, so their
+     * work and their attendance never land on the other person.
+     */
     get key() {
-        return this.profile?.member_key
+        return this.seat
+            || this.profile?.member_key
             || (this.profile?.full_name || '').toLowerCase().split(' ')[0]
             || null;
+    },
+
+    /**
+     * Settle who is using a shared login. Remembered for the browser
+     * session only: close the tab and it asks again, which is what you
+     * want on a machine two people share.
+     */
+    async settleSeat() {
+        const seats = this.seats;
+        if (seats.length === 0) return;
+        if (seats.length === 1) { this.seat = seats[0]; return; }
+
+        const saved = sessionStorage.getItem('go-seat');
+        if (saved && seats.includes(saved)) { this.seat = saved; return; }
+
+        this.seat = await ui.chooseSeat(seats);
+        sessionStorage.setItem('go-seat', this.seat);
+    },
+
+    /** Hand the login to the other person without signing out. */
+    async switchSeat() {
+        sessionStorage.removeItem('go-seat');
+        this.seat = await ui.chooseSeat(this.seats);
+        sessionStorage.setItem('go-seat', this.seat);
     },
 
     async init() {
@@ -54,6 +99,8 @@ const auth = {
         await sb.auth.signOut();
         this.user = null;
         this.profile = null;
+        this.seat = null;
+        sessionStorage.removeItem('go-seat');
     }
 };
 

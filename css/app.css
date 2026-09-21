@@ -55,7 +55,7 @@
     --p-kavya:       #2563eb;
     --p-riya:        #16a34a;
     --p-intern:      #7c3aed;
-    --p-pallak:      #db2777;
+    --p-palak:       #db2777;
     --p-rupam:       #ea580c;
 
     /* Type */
@@ -101,7 +101,7 @@
     --p-kavya:       #5b8dfa;
     --p-riya:        #45c47b;
     --p-intern:      #a78bfa;
-    --p-pallak:      #f472b6;
+    --p-palak:       #f472b6;
     --p-rupam:       #fb923c;
 }
 
@@ -1338,3 +1338,43 @@ textarea { resize: vertical; min-height: 72px; }
     .kpi-log-row { grid-template-columns: minmax(0, 1fr) 56px 44px; }
     .kpi-log-row .upd-week, .kpi-log-head .upd-week { display: none; }
 }
+
+/* ---------- Who is signing in ----------------------------- */
+
+.seat-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+    padding: var(--s5);
+    background: var(--bg);
+}
+.seat-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: var(--s6) var(--s5);
+    width: min(420px, 100%);
+    text-align: center;
+}
+.seat-card h2 { font-size: 17px; font-weight: 600; margin-bottom: var(--s2); }
+.seat-card p  { font-size: 13px; color: var(--ink-3); margin-bottom: var(--s5); }
+.seat-list { display: flex; flex-direction: column; gap: var(--s2); }
+.seat-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    padding: var(--s3) var(--s4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+}
+.seat-btn:hover { border-color: var(--accent); background: var(--surface-hover); }
+.seat-note { margin-top: var(--s4); font-size: 11.5px; color: var(--ink-4); }
