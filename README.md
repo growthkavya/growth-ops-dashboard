@@ -61,6 +61,21 @@ Project (a stream of work)                    "LeadSquared rebuild"  <- every ta
 **KRAs and KPIs are a separate axis.** A KRA is a standing area of
 responsibility; a KPI is scored by the week or by the quarter.
 
+## Email and the 7 pm summary
+
+Two emails leave the database on their own (`supabase/migration_v8_notifications.sql`):
+
+- **A task handed to someone**: they get a bell notification in the dashboard at once,
+  and an email with the task and a link (`#work/<id>`) that opens it, straight through
+  the sign-in page if needed.
+- **7 pm IST, Monday to Saturday**: the manager gets the team's day: finished today,
+  late or blocked, due by the next working day, and who was in.
+
+Mail is sent by `apps-script/growthops-mail/Code.gs`, a small web app running as the
+GrowthOps Google account. The database calls it with pg_net; its URL and a shared token
+live in `app_settings`, which no signed-in user can read. Until they are set nothing is
+sent and nothing breaks. Bulk loads set `app.silent` so a reseed never sends forty emails.
+
 ## Files
 
 ```
@@ -74,6 +89,7 @@ js/auth.js          Session and identity
 js/app.js           The store and the router
 js/views/*.js       One file per tab
 supabase/*.sql      Migrations, applied in filename order
+apps-script/        The mail script (deploy once from growthops@ssei.co.in)
 lab/                The Growth Lab app (separate, its own README)
 ```
 

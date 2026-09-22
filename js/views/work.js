@@ -9,6 +9,9 @@
 const workView = {
     lens: null,            // 'mine' | 'team' | 'all'
     status: 'open',        // 'open' | 'done' | 'all'
+    openId: null,          // a task to open straight away (from an email link, #work/<id>)
+
+    setArg(arg) { this.openId = arg || null; },
 
     render() {
         const body = document.getElementById('work-body');
@@ -22,6 +25,13 @@ const workView = {
             ${auth.isLeader ? '' : this.capture()}
             ${this.lens === 'team' ? this.grouped(items) : this.flat(items)}`;
         this.wire();
+
+        if (this.openId) {
+            const id = this.openId;
+            this.openId = null;
+            if (this.item(id)) setTimeout(() => this.openEditor(id), 50);
+            else toast('That task is no longer here.', 'bad');
+        }
     },
 
     visible() {

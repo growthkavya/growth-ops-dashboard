@@ -190,7 +190,12 @@ const app = {
     },
 
     async start() {
-        if (!await auth.init()) { window.location.href = 'index.html'; return; }
+        if (!await auth.init()) {
+            // Keep the link from an email across the sign-in page.
+            const next = location.hash ? `?next=${encodeURIComponent(location.hash.slice(1))}` : '';
+            window.location.href = `index.html${next}`;
+            return;
+        }
         await auth.settleSeat();
 
         this.paintIdentity();
@@ -457,6 +462,8 @@ const app = {
             panel.classList.remove('hidden');
             panel.querySelectorAll('.notif-item').forEach(el => el.addEventListener('click', async () => {
                 await data.markRead(el.dataset.id); panel.classList.add('hidden'); refreshBadge();
+                const n = items.find(x => x.id === el.dataset.id);
+                if (n?.link?.startsWith('#')) { const [v, a] = n.link.slice(1).split('/'); this.go(v, a || null); }
             }));
             document.getElementById('mark-all')?.addEventListener('click', async (ev) => {
                 ev.stopPropagation(); await data.markAllRead(); panel.classList.add('hidden'); refreshBadge();

@@ -117,8 +117,12 @@ if (document.getElementById('login-form')) {
     const errorEl = document.getElementById('login-error');
     const btn     = document.getElementById('login-btn');
 
+    // Where to land after signing in: the link that brought the person here, else Today.
+    const next = new URLSearchParams(location.search).get('next');
+    const landing = 'dashboard.html' + (next && /^[a-z]+(\/[A-Za-z0-9-]+)?$/.test(next) ? '#' + next : '');
+
     sb.auth.getSession().then(({ data: { session } }) => {
-        if (session) window.location.href = 'dashboard.html';
+        if (session) window.location.href = landing;
     });
 
     const showError = (msg) => {
@@ -137,7 +141,7 @@ if (document.getElementById('login-form')) {
                 document.getElementById('email').value,
                 document.getElementById('password').value
             );
-            window.location.href = 'dashboard.html';
+            window.location.href = landing;
         } catch (err) {
             // Supabase returns the same message for a wrong password and an
             // unknown address, so say what to do rather than guessing which.
