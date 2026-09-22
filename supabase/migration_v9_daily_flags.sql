@@ -89,14 +89,16 @@ BEGIN
                             + EXTRACT(MINUTE FROM v_att.check_in_at AT TIME ZONE 'Asia/Kolkata')::int - 630;
                 IF v_att.check_in_at IS NOT NULL AND v_late_min > 10 THEN
                     v_pf := v_pf || jsonb_build_object('level', CASE WHEN v_late_min >= 60 THEN 'attention' ELSE 'note' END,
-                        'text', format('Checked in at %s, %s minutes late.', to_char(v_att.check_in_at AT TIME ZONE 'Asia/Kolkata', 'FMHH12:MI am'), v_late_min));
+                        'text', format('Checked in at %s, %s late.', to_char(v_att.check_in_at AT TIME ZONE 'Asia/Kolkata', 'FMHH12:MI am'),
+                            CASE WHEN v_late_min >= 60 THEN format('%sh %sm', v_late_min / 60, v_late_min % 60) ELSE format('%s minutes', v_late_min) END));
                 END IF;
                 IF v_att.check_in_at IS NOT NULL AND v_att.check_out_at IS NULL AND v_att.status = 'present' THEN
                     v_pf := v_pf || jsonb_build_object('level', 'note', 'text', 'No check-out recorded yet.');
                 ELSIF v_att.check_out_at IS NOT NULL THEN
                     v_hours := EXTRACT(EPOCH FROM (v_att.check_out_at - v_att.check_in_at)) / 3600;
                     IF v_att.status = 'present' AND v_hours < 9 THEN
-                        v_pf := v_pf || jsonb_build_object('level', 'note', 'text', format('Short day: %s hours.', to_char(v_hours, 'FM9.9')));
+                        v_pf := v_pf || jsonb_build_object('level', 'note', 'text',
+                            format('Short day: %sh %sm.', floor(v_hours)::int, floor((v_hours - floor(v_hours)) * 60)::int));
                     END IF;
                 END IF;
                 IF v_att.status = 'wfh' THEN

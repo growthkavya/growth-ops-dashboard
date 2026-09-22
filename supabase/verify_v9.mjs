@@ -67,8 +67,8 @@ const by = Object.fromEntries(d.people.map(p => [p.key, p]));
 const texts = (k) => (by[k]?.flags || []).map(f => f.level + ': ' + f.text).join(' | ');
 
 const riya = texts('riya');
-/Checked in at 11:45 am, 75 minutes late/.test(riya) ? pass('late check-in flagged with the minutes') : fail('late check-in', riya);
-/Short day: 6.3 hours/.test(riya) ? pass('short day flagged') : fail('short day', riya);
+/Checked in at 11:45 am, 1h 15m late/.test(riya) ? pass('late check-in flagged with the minutes') : fail('late check-in', riya);
+/Short day: 6h 15m/.test(riya) ? pass('short day flagged') : fail('short day', riya);
 /good: Big day: 4 tasks finished/.test(riya) ? pass('a big day is noted as good') : fail('big day', riya);
 /1 task due today still open/.test(riya) ? pass('due today, still open') : fail('due today', riya);
 /\d+ tasks? overdue, the oldest since \d+ \w+/.test(riya) ? pass('overdue count with the oldest date (the base schema seeds April tasks too)') : fail('overdue', riya);
