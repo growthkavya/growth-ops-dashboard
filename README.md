@@ -68,7 +68,7 @@ Two emails leave the database on their own (`supabase/migration_v8_notifications
 - **A task handed to someone**: they get a bell notification in the dashboard at once,
   and an email with the task and a link (`#work/<id>`) that opens it, straight through
   the sign-in page if needed.
-- **7 pm IST, Monday to Saturday**: the manager gets the team's day: finished today,
+- **8:30 pm IST, Monday to Saturday**: the manager gets the team's day: what is worth a look (no check-in, late or short days, work due today still open, overdue and blocked work, nothing moved), then finished today,
   late or blocked, due by the next working day, and who was in.
 
 Mail is sent by `apps-script/growthops-mail/Code.gs`, a small web app running as the

@@ -1,7 +1,7 @@
 # GrowthOps mail (Apps Script)
 
 Sends the dashboard's two emails from the GrowthOps Google account:
-a task handed to someone, and the 7 pm summary of the team's day.
+a task handed to someone, and the 8 pm summary of the team's day with what is worth a look.
 The database calls it; it holds no data and no database keys.
 
 ## Set up once (about three minutes, from growthops@ssei.co.in)

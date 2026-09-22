@@ -3,7 +3,7 @@
  * behalf of the GrowthOps Google account:
  *
  *   assigned  someone was handed a task
- *   digest    the 7 pm summary of the team's day
+ *   digest    the 8 pm summary of the team's day, with what is worth a look
  *
  * The dashboard's database calls doPost with a JSON body and a shared
  * token. Nothing here talks to the database; the payload carries all it
@@ -80,10 +80,29 @@ function sendDigest_(b) {
   var people = b.people || [];
   var totalDone = people.reduce(function (s, p) { return s + (p.done_today || []).length; }, 0);
   var totalLate = people.reduce(function (s, p) { return s + (p.late || []).length; }, 0);
-  var subject = 'Team day, ' + b.day + ': ' + totalDone + ' finished' + (totalLate ? ', ' + totalLate + ' late' : '');
+  var flags = b.flags || [];
+  var attention = flags.filter(function (f) { return f.level === 'attention'; }).length;
+  var subject = 'Team day, ' + b.day + ': ' + totalDone + ' finished' +
+    (attention ? ', ' + attention + ' to look at' : totalLate ? ', ' + totalLate + ' late' : ', nothing to flag');
 
   var parts = ['<p style="margin:0 0 18px">Hi Kavya, here is the team\'s ' + esc_(b.day) + '.</p>'];
   var textParts = ['Team day, ' + b.day + '\n'];
+
+  // What is worth a look, before the lists.
+  if (b.working_day !== false) {
+    parts.push('<p style="margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#6b7684">Worth a look</p>');
+    if (!flags.length) {
+      parts.push('<p style="margin:0 0 6px;color:#087443">Nothing to flag today.</p>');
+      textParts.push('Worth a look: nothing to flag today.');
+    } else {
+      var order = { attention: 0, note: 1, good: 2 };
+      flags.slice().sort(function (x, y) { return (order[x.level] || 0) - (order[y.level] || 0); }).forEach(function (f) {
+        var colour = f.level === 'attention' ? '#b42318' : f.level === 'good' ? '#087443' : '#a1620a';
+        parts.push('<p style="margin:0 0 6px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + colour + ';margin-right:8px"></span><b>' + esc_(f.who) + '</b>: ' + esc_(f.text) + '</p>');
+        textParts.push('  ' + (f.level === 'attention' ? '!! ' : f.level === 'good' ? '++ ' : '-- ') + f.who + ': ' + f.text);
+      });
+    }
+  }
 
   people.forEach(function (p) {
     var att = p.attendance;
@@ -92,12 +111,14 @@ function sendDigest_(b) {
                 : ('In ' + (att.in || '') + (att.out ? ' to ' + att.out : ', not checked out yet'));
     var h = '<h3 style="margin:22px 0 6px;font-size:16px">' + esc_(p.name) + ' <span style="font-weight:400;color:#6b7684;font-size:13px">' + esc_(attLine) + ' · ' + p.open + ' open</span></h3>';
     h += list_('Finished today', p.done_today, b.home, '#087443');
+    h += list_('Worked on today', p.worked_on, b.home, '#1e5f74', function (t) { return t.status === 'blocked' ? 'blocked' : 'in progress'; });
     h += list_('Late or blocked', p.late, b.home, '#b42318', function (t) { return t.blocked ? 'blocked' : 'due ' + niceDate_(t.due); });
     h += list_('Due by ' + b.next_day, p.next, b.home, '#1e5f74', function (t) { return 'due ' + niceDate_(t.due); });
     parts.push(h);
 
     textParts.push('\n' + p.name + ' (' + attLine + ', ' + p.open + ' open)');
     textParts.push(textList_('Finished today', p.done_today));
+    textParts.push(textList_('Worked on today', p.worked_on));
     textParts.push(textList_('Late or blocked', p.late));
     textParts.push(textList_('Due by ' + b.next_day, p.next));
   });
