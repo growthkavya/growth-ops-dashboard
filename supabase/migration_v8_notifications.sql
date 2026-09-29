@@ -112,7 +112,7 @@ BEGIN
             url := v_url,
             body := p_payload || jsonb_build_object('token', v_token),
             headers := '{"Content-Type": "application/json"}'::jsonb,
-            timeout_milliseconds := 10000
+            timeout_milliseconds := 30000
         ) INTO v_id;
     EXCEPTION WHEN OTHERS THEN
         RAISE NOTICE 'send_mail: %', SQLERRM;    -- never let mail break the write
