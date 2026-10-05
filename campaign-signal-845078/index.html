@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif;background:#fbfbf9}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Campaign Signal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#fbfbf9; --surface:#ffffff; --surface-2:#f2f4f1; --surface-3:#e9ede9;
+  --line:#e0e5df; --line-strong:#c8d0c7;
+  --ink:#111a17; --ink-2:#4a554f; --ink-3:#77827b;
+  --accent:#0f6b4f; --accent-soft:#e3f0ea;
+  --s1:#1baf7a; --s2:#2a78d6; --s3:#eb6834;
+  --good:#1baf7a; --warn:#eda100; --bad:#e34948;
+  --shadow:0 1px 2px rgba(17,26,23,.06), 0 8px 24px -12px rgba(17,26,23,.18);
+  --r:10px;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  --display:"Archivo","IBM Plex Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#101311; --surface:#171b19; --surface-2:#1d221f; --surface-3:#262c28;
+    --line:#2b322d; --line-strong:#3b433d;
+    --ink:#eef2ef; --ink-2:#a9b4ad; --ink-3:#7d8882;
+    --accent:#3fbf90; --accent-soft:#16291f;
+    --s1:#199e70; --s2:#3987e5; --s3:#d95926;
+    --good:#199e70; --warn:#c98500; --bad:#e66767;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#101311; --surface:#171b19; --surface-2:#1d221f; --surface-3:#262c28;
+  --line:#2b322d; --line-strong:#3b433d;
+  --ink:#eef2ef; --ink-2:#a9b4ad; --ink-3:#7d8882;
+  --accent:#3fbf90; --accent-soft:#16291f;
+  --s1:#199e70; --s2:#3987e5; --s3:#d95926;
+  --good:#199e70; --warn:#c98500; --bad:#e66767;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;margin:0}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.015em}
+button,input,select{font:inherit;color:inherit}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* ---------- chrome ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--surface);
+  border-bottom:1px solid var(--line)}
+.top-in{max-width:1500px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.brand b{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.02em}
+.brand span{font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.1em}
+.tabs{display:flex;gap:2px;background:var(--surface-2);padding:3px;border-radius:9px}
+.tab{border:0;background:transparent;color:var(--ink-2);padding:6px 13px;border-radius:7px;
+  font-weight:500;font-size:13px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);font-weight:600}
+.wrap{max-width:1500px;margin:0 auto;padding-inline:20px;padding-block:22px 64px}
+
+/* ---------- leadership ---------- */
+.lead-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+.lead-head h1{font-size:clamp(22px,3.4vw,32px);font-weight:700}
+.period{font-size:12px;color:var(--ink-3);font-family:var(--mono);letter-spacing:.02em}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-bottom:22px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px 15px;
+  position:relative;overflow:hidden}
+.kpi .cap{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3);font-weight:600}
+.kpi .fig{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.6vw,38px);line-height:1.08;
+  margin-top:8px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kpi .sub{font-size:12px;color:var(--ink-2);margin-top:5px}
+.kpi.hero{background:linear-gradient(160deg,var(--accent-soft),var(--surface) 70%);border-color:var(--line-strong)}
+.kpi.hero .fig{color:var(--accent)}
+.spark{display:block;margin-top:10px}
+
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px 12px}
+.card.wide{grid-column:1/-1}
+.card h3{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.card .note{font-size:12px;color:var(--ink-3);margin:3px 0 12px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 6px;padding:0;list-style:none;font-size:12px;color:var(--ink-2)}
+.legend li{display:flex;align-items:center;gap:6px}
+.swatch{width:11px;height:11px;border-radius:3px;flex:none}
+.swatch.line{height:3px;border-radius:2px;width:15px}
+
+svg.chart{display:block;width:100%;height:auto;overflow:visible}
+svg.chart text{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ---------- tables ---------- */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;
+  background:var(--surface-2);position:sticky;top:0;z-index:2}
+tbody tr:hover{background:var(--surface-2)}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;
+  font-family:var(--mono)}
+.pill.up{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.pill.flat{background:var(--surface-3);color:var(--ink-3)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+
+/* ---------- editor ---------- */
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.bar h2{font-size:17px;font-weight:600;margin-right:auto}
+select,input[type=text],input[type=number],input[type=date]{background:var(--surface);border:1px solid var(--line);
+  border-radius:7px;padding:6px 9px;font-size:13px}
+.btn{border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:7px 13px;
+  font-size:13px;font-weight:500;cursor:pointer}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;color:var(--ink-3);padding:5px 8px}
+.btn.ghost:hover{color:var(--bad);background:var(--surface-2)}
+.grid-tbl input,.grid-tbl select{border:1px solid transparent;background:transparent;border-radius:5px;
+  padding:4px 6px;width:100%;min-width:64px}
+.grid-tbl input:hover,.grid-tbl select:hover{border-color:var(--line)}
+.grid-tbl input:focus,.grid-tbl select:focus{border-color:var(--accent);background:var(--surface)}
+.grid-tbl td{padding:3px 5px}
+.grid-tbl td.calc{color:var(--ink-2);font-family:var(--mono);font-variant-numeric:tabular-nums;padding:6px 10px;
+  background:var(--surface-2)}
+.grid-tbl input.name{min-width:190px}
+.grid-tbl input.num{text-align:right}
+.status{font-size:12px;color:var(--ink-3);font-family:var(--mono)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.drop{border:2px dashed var(--line-strong);border-radius:var(--r);padding:34px 20px;text-align:center;
+  background:var(--surface-2);cursor:pointer}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop b{display:block;font-family:var(--display);font-size:16px;margin-bottom:4px}
+.drop span{font-size:13px;color:var(--ink-2)}
+.maprow{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;padding:5px 0;
+  border-bottom:1px solid var(--line);font-size:13px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.field label{display:block;font-size:12px;color:var(--ink-3);font-weight:600;margin-bottom:4px;
+  text-transform:uppercase;letter-spacing:.06em}
+.field input{width:100%}
+.hint{font-size:12px;color:var(--ink-3);margin-top:6px;line-height:1.5}
+.tip{position:fixed;pointer-events:none;z-index:60;background:var(--ink);color:var(--ground);
+  padding:7px 10px;border-radius:7px;font-size:12px;font-family:var(--mono);opacity:0;transition:opacity .1s;
+  box-shadow:var(--shadow);max-width:250px}
+.tip.on{opacity:1}
+.empty{text-align:center;padding:50px 20px;color:var(--ink-3)}
+@media (max-width:640px){
+  .wrap{padding-inline:16px}
+  .top-in{padding:10px 16px}
+  .brand span{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="top"><div class="top-in">
+  <div class="brand"><b>Campaign Signal</b><span>SSEI Growth</span></div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-lead" aria-selected="true">Leadership</button>
+    <button class="tab" role="tab" id="t-data" aria-selected="false">Campaigns</button>
+    <button class="tab" role="tab" id="t-inv"  aria-selected="false">Invoices</button>
+    <button class="tab" role="tab" id="t-imp"  aria-selected="false">Import</button>
+    <button class="tab" role="tab" id="t-set"  aria-selected="false">Rates</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <section id="v-lead"></section>
+  <section id="v-data" hidden></section>
+  <section id="v-inv"  hidden></section>
+  <section id="v-imp"  hidden></section>
+  <section id="v-set"  hidden></section>
+</div>
+<div class="tip" id="tip"></div>
+
+<script id="seed" type="application/json">{"months":{"2026-06":{"month":"2026-06","rows":[{"id":"r6","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"CFA all enrolled","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":39063,"sent":11879,"delivered":11712,"read":6405,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r7","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"CA All Enrolled","goal":"","category":"Marketing","number":"Website No.","targeted":83913,"sent":39801,"delivered":35769,"read":7719,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r8","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"FRM All","goal":"","category":"Marketing","number":"Main No","targeted":1777,"sent":634,"delivered":628,"read":388,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r9","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"Stock Market All","goal":"","category":"Marketing","number":"Main No","targeted":337,"sent":181,"delivered":180,"read":96,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r10","date":"2026-06-18","campaign":"FM Webinar (20th June)","cohort":"Scholarship all leads","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5554,"delivered":5302,"read":3441,"clicks":130,"unique":null,"conversions":null,"revenue":null},{"id":"r11","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"CFA Level 1 Enrolled","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":4834,"sent":2375,"delivered":2359,"read":1511,"clicks":49,"unique":null,"conversions":null,"revenue":null},{"id":"r12","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"FRM Enquired","goal":"","category":"Marketing","number":"Main No","targeted":2219,"sent":1020,"delivered":978,"read":348,"clicks":25,"unique":null,"conversions":null,"revenue":null},{"id":"r13","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"FRM Registered ","goal":"","category":"Marketing","number":"Main No","targeted":2012,"sent":954,"delivered":943,"read":540,"clicks":20,"unique":null,"conversions":null,"revenue":null},{"id":"r14","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"Risk Explore","goal":"","category":"Marketing","number":"Main No","targeted":1935,"sent":980,"delivered":970,"read":623,"clicks":9,"unique":null,"conversions":null,"revenue":null},{"id":"r15","date":"2026-06-18","campaign":"FRM Webinar (21st June)","cohort":"Scholarship all leads","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5203,"delivered":4965,"read":3087,"clicks":70,"unique":null,"conversions":null,"revenue":null},{"id":"r16","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CA Foundation","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":1801,"sent":969,"delivered":932,"read":471,"clicks":10,"unique":null,"conversions":null,"revenue":null},{"id":"r17","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CA Intermediate","goal":"","category":"Marketing","number":"Main No","targeted":8188,"sent":4759,"delivered":4676,"read":2608,"clicks":49,"unique":null,"conversions":null,"revenue":null},{"id":"r18","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CA Final","goal":"","category":"Marketing","number":"Main No","targeted":45619,"sent":21452,"delivered":20857,"read":11586,"clicks":187,"unique":null,"conversions":null,"revenue":null},{"id":"r19","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"ACCA","goal":"","category":"Marketing","number":"Main No","targeted":1214,"sent":808,"delivered":751,"read":543,"clicks":26,"unique":null,"conversions":null,"revenue":null},{"id":"r20","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"Scholaraship","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5225,"delivered":4956,"read":3177,"clicks":90,"unique":null,"conversions":null,"revenue":null},{"id":"r21","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"B2B Seminar Attendees","goal":"","category":"Marketing","number":"Main No","targeted":245,"sent":160,"delivered":156,"read":71,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r22","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CMA ","goal":"","category":"Marketing","number":"Main No","targeted":158,"sent":100,"delivered":100,"read":69,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r23","date":"2026-06-24","campaign":"Vidyut's Webinar (28th June)","cohort":"CFA Level 1 May'26","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":565,"sent":312,"delivered":310,"read":199,"clicks":17,"unique":null,"conversions":null,"revenue":null},{"id":"r24","date":"2026-06-24","campaign":"Vidyut's Webinar (28th June)","cohort":"CFA Level 2 May'26","goal":"","category":"Marketing","number":"Main No","targeted":122,"sent":65,"delivered":65,"read":37,"clicks":2,"unique":null,"conversions":null,"revenue":null},{"id":"r25","date":"2026-06-24","campaign":"Vidyut's Webinar (28th June)","cohort":"FRM May'26 (149)","goal":"","category":"Marketing","number":"Main No","targeted":149,"sent":96,"delivered":94,"read":62,"clicks":5,"unique":null,"conversions":null,"revenue":null},{"id":"r26","date":"2026-06-30","campaign":"ACCA Webinar (4th July)","cohort":"B2B all ","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":16354,"sent":9188,"delivered":8615,"read":4137,"clicks":135,"unique":null,"conversions":null,"revenue":null},{"id":"r27","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"CFA L1 Current ","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":4317,"sent":2256,"delivered":2246,"read":1446,"clicks":249,"unique":null,"conversions":null,"revenue":null},{"id":"r28","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"CFA L2 Current","goal":"","category":"Marketing","number":"Main No","targeted":911,"sent":475,"delivered":472,"read":308,"clicks":58,"unique":null,"conversions":null,"revenue":null},{"id":"r29","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"CFA L3 Current","goal":"","category":"Marketing","number":"Main No","targeted":479,"sent":272,"delivered":270,"read":161,"clicks":52,"unique":null,"conversions":null,"revenue":null},{"id":"r30","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"FRM Enquired","goal":"","category":"Marketing","number":"Main No","targeted":2221,"sent":1133,"delivered":1109,"read":743,"clicks":50,"unique":null,"conversions":null,"revenue":null},{"id":"r31","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"Risk Explore","goal":"","category":"Marketing","number":"Main No","targeted":1935,"sent":869,"delivered":856,"read":527,"clicks":23,"unique":null,"conversions":null,"revenue":null}]},"2026-07":{"month":"2026-07","rows":[{"id":"r32","date":"2026-07-03","campaign":"B2B Webinar (4th July)","cohort":"Medicaps data","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":375,"sent":206,"delivered":203,"read":171,"clicks":15,"unique":null,"conversions":null,"revenue":null},{"id":"r33","date":"2026-07-04","campaign":"AI Webinar (July 5th) 1 day to Reminder","cohort":"Registered for webinar","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":404,"sent":395,"delivered":393,"read":295,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r34","date":"2026-07-04","campaign":"CFA Level 2 Preparation Strategy (5th July)","cohort":"CFA Level 1 May'26 Cleared","goal":"Webinar Attendees","category":"Marketing","number":"Main No","targeted":152,"sent":144,"delivered":143,"read":102,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r35","date":"2026-07-06","campaign":"ACCA Webinar (11th July)","cohort":"CA Foundation","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":517,"sent":279,"delivered":275,"read":129,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r36","date":"2026-07-06","campaign":"ACCA Webinar (11th July)","cohort":"CA Inter current ","goal":"","category":"Marketing","number":"Main No","targeted":6084,"sent":3349,"delivered":3275,"read":1860,"clicks":44,"unique":null,"conversions":null,"revenue":null},{"id":"r37","date":"2026-07-06","campaign":"ACCA Webinar (11th July)","cohort":"CA Final","goal":"","category":"Marketing","number":"Main No","targeted":18057,"sent":8827,"delivered":8628,"read":4984,"clicks":201,"unique":null,"conversions":null,"revenue":null},{"id":"r38","date":"2026-07-07","campaign":"Alumni Alpha Initiative","cohort":"Alumni Alpha","goal":"alumni story/testimonial","category":"Marketing","number":"Main No","targeted":589,"sent":182,"delivered":166,"read":127,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r39","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"FRM not interested ","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":919,"sent":554,"delivered":540,"read":338,"clicks":13,"unique":null,"conversions":null,"revenue":null},{"id":"r40","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"Analyst Stack Not Interested","goal":"","category":"Marketing","number":"Main No","targeted":5919,"sent":3260,"delivered":2961,"read":1938,"clicks":22,"unique":null,"conversions":null,"revenue":null},{"id":"r41","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"scholarship all leads ","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5211,"delivered":4910,"read":3081,"clicks":31,"unique":null,"conversions":null,"revenue":null},{"id":"r42","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CFA Level 1 Not enrolled ","goal":"","category":"Marketing","number":"Main No","targeted":3247,"sent":1689,"delivered":1659,"read":968,"clicks":32,"unique":null,"conversions":null,"revenue":null},{"id":"r43","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CA Foundation current","goal":"","category":"Marketing","number":"Main No","targeted":44,"sent":29,"delivered":29,"read":18,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r44","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CA Inter current ","goal":"","category":"Marketing","number":"Main No","targeted":445,"sent":271,"delivered":267,"read":154,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r45","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CA Final current","goal":"","category":"Marketing","number":"Main No","targeted":1516,"sent":849,"delivered":838,"read":564,"clicks":20,"unique":null,"conversions":null,"revenue":null},{"id":"r46","date":"2026-07-07","campaign":"Post AI Webinar Msg (5th July)","cohort":"Webinar Attendees","goal":"Give access to session recordings","category":"Marketing","number":"Main No","targeted":403,"sent":326,"delivered":326,"read":245,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r47","date":"2026-07-08","campaign":"ACCA Webinar (11th July)","cohort":"ACCA All Leads","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":679,"sent":446,"delivered":431,"read":330,"clicks":21,"unique":null,"conversions":null,"revenue":null},{"id":"r48","date":"2026-07-08","campaign":"ACCA Webinar (11th July)","cohort":"ACCA all from past webinar","goal":"","category":"Marketing","number":"Main No","targeted":206,"sent":140,"delivered":139,"read":93,"clicks":12,"unique":null,"conversions":null,"revenue":null},{"id":"r49","date":"2026-07-09","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":20,"sent":19,"delivered":19,"read":15,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r50","date":"2026-07-09","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"","goal":"","category":"Utility","number":"Main No","targeted":15,"sent":15,"delivered":15,"read":14,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r51","date":"2026-07-10","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"","goal":"","category":"Utility","number":"Main No","targeted":63,"sent":59,"delivered":58,"read":43,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r52","date":"2026-07-10","campaign":"CA Final AFM Portfolio Managemnet Question Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":29,"sent":25,"delivered":24,"read":22,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r53","date":"2026-07-10","campaign":"ACCA 11th July Webinar reminder 1 day to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":68,"sent":67,"delivered":67,"read":46,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r54","date":"2026-07-11","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":67,"sent":62,"delivered":59,"read":48,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r55","date":"2026-07-11","campaign":"CFA 12th July Webinar Reminder 1 day to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":131,"sent":127,"delivered":125,"read":104,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r56","date":"2026-07-11","campaign":"ACCA 11th July Webinar reminder 1 hour to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":68,"sent":67,"delivered":68,"read":43,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r57","date":"2026-07-11","campaign":"ACCA 11th July Webinar reminder LIVE","cohort":"","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":68,"sent":67,"delivered":68,"read":41,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r58","date":"2026-07-12","campaign":"CFA 12th July Webinar Reminder 1 hour to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":131,"sent":127,"delivered":124,"read":100,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r59","date":"2026-07-12","campaign":"CFA 12th July Webinar Reminder LIVE","cohort":"","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":131,"sent":127,"delivered":124,"read":100,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r60","date":"2026-07-13","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":35,"sent":34,"delivered":34,"read":26,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r61","date":"2026-07-13","campaign":"CA Final AFM Portfolio Managemnet Question Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":48,"sent":45,"delivered":43,"read":32,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r62","date":"2026-07-13","campaign":"CA Final AFM Forex Part 2","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":43,"sent":38,"delivered":37,"read":30,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r63","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modeling All Qualified Leads","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":690,"sent":399,"delivered":396,"read":255,"clicks":null,"unique":null,"conversions":9,"revenue":182000},{"id":"r64","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modeling All Past Webinar Registrants","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1348,"sent":926,"delivered":923,"read":607,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r65","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"AS Not Interested","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":5919,"sent":3358,"delivered":3017,"read":1890,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r66","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 3 Current ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":852,"sent":442,"delivered":442,"read":440,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r67","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 2 Current","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1005,"sent":588,"delivered":583,"read":382,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r68","date":"2026-07-14","campaign":"Webinar or class","cohort":"Finance Career Utsav","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":9785,"sent":5497,"delivered":5128,"read":3126,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r69","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"AS Not Interested","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":5919,"sent":1992,"delivered":1818,"read":1149,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r70","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 3 Current ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":852,"sent":273,"delivered":273,"read":131,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r71","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 2 Current","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1005,"sent":344,"delivered":344,"read":209,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r72","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modeling All Past Webinar Registrants ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1348,"sent":632,"delivered":629,"read":392,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r73","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modleing All Leads ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":690,"sent":245,"delivered":243,"read":147,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r74","date":"2026-07-16","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"FRM Not Enrolled","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":256,"sent":146,"delivered":144,"read":94,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r75","date":"2026-07-17","campaign":"FRM CLass Access","cohort":"Form Responders ","goal":"Class Access","category":"Utility","number":"Main No","targeted":34,"sent":32,"delivered":32,"read":25,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r76","date":"2026-07-18","campaign":"Finance Lab Nudge","cohort":"All Scholarship Leads","goal":"WA Community Joins","category":"Marketing","number":"Main No","targeted":9727,"sent":4990,"delivered":4679,"read":2650,"clicks":189,"unique":null,"conversions":null,"revenue":null},{"id":"r77","date":"2026-07-20","campaign":"PR survey Nudge","cohort":"All SSEI Current Students","goal":"Survey Responses","category":"Utility","number":"9230188090","targeted":7911,"sent":7106,"delivered":7050,"read":4650,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r78","date":"2026-07-20","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"All Alumni","goal":"Webinar Registrations","category":"Marketing","number":"9230188090","targeted":42502,"sent":9707,"delivered":9594,"read":6397,"clicks":483,"unique":null,"conversions":null,"revenue":null},{"id":"r80","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"FM Past all webinar attendees","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":690,"sent":438,"delivered":431,"read":227,"clicks":19,"unique":null,"conversions":null,"revenue":null},{"id":"r81","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"CFA qualified leads","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":531,"sent":352,"delivered":352,"read":220,"clicks":37,"unique":null,"conversions":null,"revenue":null},{"id":"r82","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"CFA All Enrolled","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":6582,"sent":3590,"delivered":3566,"read":2129,"clicks":170,"unique":null,"conversions":null,"revenue":null},{"id":"r83","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"AS All leads","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":10773,"sent":5700,"delivered":5273,"read":3028,"clicks":188,"unique":null,"conversions":null,"revenue":null},{"id":"r84","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"CA All Enrolled","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":1729,"sent":1037,"delivered":1025,"read":703,"clicks":51,"unique":null,"conversions":null,"revenue":null},{"id":"r85","date":"2026-07-23","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"Scholarship All leads","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":9727,"sent":5964,"delivered":5529,"read":2750,"clicks":104,"unique":null,"conversions":null,"revenue":null},{"id":"r86","date":"2026-07-23","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"FRM Part 1 & 2","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":947,"sent":573,"delivered":572,"read":354,"clicks":29,"unique":null,"conversions":null,"revenue":null},{"id":"r87","date":"2026-07-24","campaign":"Webiste Launch Invite","cohort":"Form Responders ","goal":"Launch Attendees","category":"Marketing","number":"Main No","targeted":42,"sent":27,"delivered":27,"read":21,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r88","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"Alumni All","goal":"Conversion","category":"Utility","number":"Main No","targeted":42502,"sent":31845,"delivered":30366,"read":16034,"clicks":null,"unique":null,"conversions":103,"revenue":2580202},{"id":"r89","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"SSEI Students","goal":"","category":"Utility","number":"Main No","targeted":5986,"sent":5502,"delivered":5442,"read":3242,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r90","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"All Leads (1st half)","goal":"Conversion","category":"Marketing","number":"Main No","targeted":43013,"sent":24952,"delivered":23892,"read":13619,"clicks":1000,"unique":null,"conversions":null,"revenue":null},{"id":"r92","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"All leads (2nd half)","goal":"Conversion","category":"Marketing","number":"Main No","targeted":69999,"sent":15506,"delivered":15336,"read":8682,"clicks":463,"unique":null,"conversions":null,"revenue":null},{"id":"r94","date":"2026-07-25","campaign":"Faculty Recruitment","cohort":"Alumni all leads","goal":"Recruitement","category":"Marketing","number":"Main No","targeted":42502,"sent":15975,"delivered":15153,"read":7874,"clicks":63,"unique":null,"conversions":null,"revenue":null},{"id":"r95","date":"2026-07-25","campaign":"Claude vs Nifty 500 Webinar (26th July) 1 day to go reminder","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":899,"sent":874,"delivered":873,"read":661,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r96","date":"2026-07-25","campaign":"B2b medicaps","cohort":"Medicaps leads by shubham","goal":"Counselling Session","category":"Marketing","number":"Main No","targeted":1064,"sent":493,"delivered":487,"read":327,"clicks":null,"unique":null,"conversions":1,"revenue":37100},{"id":"r97","date":"2026-07-26","campaign":"Claude vs Nifty 500 Webinar (26th July) 1 hour to go reminder","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":899,"sent":874,"delivered":873,"read":642,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r98","date":"2026-07-26","campaign":"Claude vs Nifty 500 Webinar (26th July) Live","cohort":"","goal":"","category":"Utility","number":"Main No","targeted":899,"sent":873,"delivered":870,"read":616,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r99","date":"2026-07-27","campaign":"Claude vs Nifty 500 Webinar (26th July) Post webinar nudge","cohort":"Webinar Attendees","goal":"Resource Access","category":"Utility","number":"Main No","targeted":624,"sent":601,"delivered":601,"read":406,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r100","date":"2026-07-27","campaign":"Claude vs Nifty 500 Webinar (26th July) Post webinar nudge","cohort":"Webinar Non Attendees","goal":"Webinar Recording Access","category":"Utility","number":"Main No","targeted":543,"sent":359,"delivered":357,"read":232,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r101","date":"2026-07-27","campaign":"Faculty Recruitment","cohort":"Alumni all leads","goal":"Recruitement","category":"Marketing","number":"9230188090","targeted":42502,"sent":9056,"delivered":8714,"read":5012,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r102","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"CMA all students","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":158,"sent":101,"delivered":99,"read":56,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r103","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"ACCA All leads except enrolled ","goal":"","category":"Marketing","number":"Main No","targeted":872,"sent":593,"delivered":554,"read":383,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r104","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"B2B Seminar","goal":"","category":"Marketing","number":"Main No","targeted":375,"sent":223,"delivered":218,"read":127,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r105","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"ACCA all webinar ","goal":"","category":"Marketing","number":"Main No","targeted":439,"sent":319,"delivered":313,"read":177,"clicks":null,"unique":null,"conversions":null,"revenue":null}]},"2026-08":{"month":"2026-08","rows":[{"id":"r79","date":"2026-08-21","campaign":"B2B Medicaps","cohort":"B2B Medicaps data by Shubham","goal":"Counselling Session","category":"Marketing","number":"Main No","targeted":1064,"sent":565,"delivered":556,"read":397,"clicks":7,"unique":null,"conversions":0,"revenue":0},{"id":"r106","date":"2026-08-01","campaign":"ACCA Webinar (2nd August) 1 Day to go reminder","cohort":"Webinar Registrants","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":69,"sent":63,"delivered":62,"read":44,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r107","date":"2026-08-01","campaign":"ACCA Webinar (2nd August) 1 hour to go reminder","cohort":"","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":69,"sent":63,"delivered":61,"read":43,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r108","date":"2026-08-01","campaign":"ACCA Webinar (2nd August) Live","cohort":"","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":69,"sent":63,"delivered":61,"read":42,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r109","date":"2026-08-03","campaign":"ACCA Webinar (2nd August)  Post Webinar msg","cohort":"Webinar Attendees","goal":"Awareness","category":"Utility","number":"Main No","targeted":29,"sent":29,"delivered":29,"read":18,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r111","date":"2026-08-04","campaign":"ACCA Webinar (2nd August)  Post Webinar msg","cohort":"Webinar Non Attendees","goal":"Awareness","category":"Utility","number":"Main No","targeted":40,"sent":34,"delivered":32,"read":18,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r113","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Attendees from 3rd year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":28,"sent":21,"delivered":20,"read":15,"clicks":1,"unique":null,"conversions":2,"revenue":70100},{"id":"r115","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Attendees from 2nd year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":65,"sent":55,"delivered":51,"read":32,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r117","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Attendees from 1st year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":170,"sent":143,"delivered":143,"read":105,"clicks":11,"unique":null,"conversions":null,"revenue":null},{"id":"r119","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Non Attendees from 1st year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":971,"sent":799,"delivered":798,"read":530,"clicks":55,"unique":null,"conversions":null,"revenue":null},{"id":"r121","date":"2026-08-06","campaign":"Nudge to Xavier's College (2)","cohort":"All Xaviers Database: Seminar Attendees + Non Attendees","goal":"Conversion","category":"Marketing","number":"Main No","targeted":1234,"sent":994,"delivered":983,"read":577,"clicks":30,"unique":null,"conversions":0,"revenue":0},{"id":"r123","date":"2026-08-07","campaign":"B2B Medicaps","cohort":"B2B nudge","goal":"Conversion","category":"Marketing","number":"Main No","targeted":528,"sent":209,"delivered":190,"read":121,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r125","date":"2026-08-10","campaign":"Nudge to Xavier's College (3)","cohort":"Gupshup Failed","goal":"Conversion","category":"Marketing","number":"Main No","targeted":278,"sent":114,"delivered":112,"read":59,"clicks":4,"unique":null,"conversions":0,"revenue":0},{"id":"r127","date":"2026-08-10","campaign":"Nudge to Xavier's College (3)","cohort":"Gupshup Msg Read But Not Engaged","goal":"Conversion","category":"Marketing","number":"Main No","targeted":646,"sent":602,"delivered":584,"read":398,"clicks":20,"unique":null,"conversions":null,"revenue":null},{"id":"r129","date":"2026-08-10","campaign":"CFA Level 1 Nudge","cohort":"CFA L1 All leads Except Enrolled & Marketing Junk","goal":"Conversion","category":"Marketing","number":"Main No","targeted":2113,"sent":1294,"delivered":1258,"read":528,"clicks":43,"unique":null,"conversions":21,"revenue":706292},{"id":"r130","date":"2026-08-11","campaign":"CA Final AFm Equity Class 2","cohort":"Form Responders","goal":"Resource Access","category":"Utility","number":"Main No","targeted":20,"sent":20,"delivered":20,"read":14,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r131","date":"2026-08-12","campaign":"CFA Level 2 Nudge","cohort":"CFA L1 passed (from G-form), but not enrolled with ssei","goal":"Conversion","category":"Marketing","number":"Main No","targeted":40,"sent":28,"delivered":28,"read":18,"clicks":4,"unique":null,"conversions":2,"revenue":90000},{"id":"r132","date":"2026-08-12","campaign":"CFA Level 2 Nudge","cohort":"CFa L2 All Leads Except Enrolled & Marketing Junk","goal":"","category":"Marketing","number":"Main No","targeted":649,"sent":416,"delivered":404,"read":181,"clicks":8,"unique":null,"conversions":null,"revenue":null},{"id":"r133","date":"2026-08-18","campaign":"Webinar: The Interview Skills That Separate a Shortlist from an Offer (22nd August)","cohort":"CA, FRM, Analyst Stack, ACCA, Financial Modeling, CFA Level 2, CFA Level 3- Enrolled, CFA Level 1: Full Immersion, Live Focused, Accelarate - Current Students","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":7499,"sent":5067,"delivered":5010,"read":2315,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r134","date":"2026-08-18","campaign":"Webinar: The Interview Skills That Separate a Shortlist from an Offer (22nd August)","cohort":"CA, FRM, Analyst Stack, ACCA, Financial Modeling, CFA Level 2, CFA Level 3- Qualified and Partially Qualified Leads","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":275,"sent":183,"delivered":183,"read":85,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r135","date":"2026-08-18","campaign":"Webinar- CFA After 25: The Working Professional\u2019s Route\n(23rd August)","cohort":"CFA not interested leads (Money constrain, time issues, will take it later sometime)","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":12030,"sent":7901,"delivered":7622,"read":3517,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r136","date":"2026-08-18","campaign":"Webinar- CFA After 25: The Working Professional\u2019s Route\n(23rd August)","cohort":"CFA Live Focused, and Accelerate all Leads (Excluding Won)","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":654,"sent":379,"delivered":371,"read":187,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r137","date":"2026-08-20","campaign":"FRM New Entry Window (29th August)","cohort":"FRM Part 1 Qualified and partially Qualified","goal":"Enrollments","category":"Marketing","number":"Main No","targeted":856,"sent":560,"delivered":560,"read":301,"clicks":16,"unique":null,"conversions":7,"revenue":195000},{"id":"r138","date":"2026-08-20","campaign":"CFA Level 1 New Entry Window (24th August)","cohort":"CFA Level 1 Qualified and Partially Qualified","goal":"Enrollments","category":"Marketing","number":"Main No","targeted":911,"sent":475,"delivered":472,"read":242,"clicks":34,"unique":null,"conversions":16,"revenue":638499},{"id":"r139","date":"2026-08-21","campaign":"Gaurav Gill 22nd Aug Webinar Reminder 1 day to go","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":360,"sent":348,"delivered":345,"read":247,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r140","date":"2026-08-22","campaign":"Gaurav Gill 22nd Aug Webinar Reminder 1 hr to go","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":360,"sent":348,"delivered":344,"read":223,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r141","date":"2026-08-22","campaign":"Gaurav Gill 22nd Aug Webinar Reminder Live","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":360,"sent":348,"delivered":342,"read":214,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r142","date":"2026-08-22","campaign":"CFA after 25: Webinar (23rd Aug) 1 day to go reminder","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":124,"sent":116,"delivered":116,"read":77,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r143","date":"2026-08-23","campaign":"CFA after 25: Webinar (23rd Aug) 1 hr to go reminder","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":124,"sent":116,"delivered":116,"read":76,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r144","date":"2026-08-23","campaign":"CFA after 25: Webinar (23rd Aug) Live reminder","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":124,"sent":117,"delivered":117,"read":75,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r145","date":"2026-08-24","campaign":"Gaurav Gill 22nd Aug Post Webinar Msgs","cohort":"Webinar Attendees","goal":"Webinar Registration + Converstion","category":"Marketing","number":"Main No","targeted":262,"sent":166,"delivered":164,"read":95,"clicks":null,"unique":null,"conversions":1,"revenue":50000},{"id":"r146","date":"2026-08-24","campaign":"Gaurav Gill 22nd Aug Post Webinar Msgs","cohort":"Webinar Registered","goal":"Webinar Registration + Converstion","category":"Marketing","number":"Main No","targeted":121,"sent":75,"delivered":74,"read":41,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r147","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 2 Aug'26 Exam Givers","goal":"Conversion","category":"Marketing","number":"Main No","targeted":1132,"sent":735,"delivered":730,"read":328,"clicks":15,"unique":null,"conversions":8,"revenue":240000},{"id":"r148","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 1 May& Feb 2026, CFA level 2 Not Enrolled","goal":"","category":"Marketing","number":"Main No","targeted":154,"sent":109,"delivered":106,"read":50,"clicks":16,"unique":null,"conversions":null,"revenue":null},{"id":"r149","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 1, not taken Level 2 from cohortisation report","goal":"","category":"Marketing","number":"Main No","targeted":7998,"sent":4522,"delivered":4445,"read":1807,"clicks":66,"unique":null,"conversions":null,"revenue":null},{"id":"r150","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 2 Qualified/Partially Qualified ","goal":"","category":"Marketing","number":"Main No","targeted":35,"sent":25,"delivered":25,"read":11,"clicks":0,"unique":null,"conversions":null,"revenue":null},{"id":"r151","date":"2026-08-25","campaign":"CFA After 25 (23rd Aug) Post Webinar Msgs","cohort":"Webinar Attendees","goal":"Conversion","category":"Marketing","number":"Main No","targeted":59,"sent":42,"delivered":42,"read":26,"clicks":null,"unique":null,"conversions":0,"revenue":0},{"id":"r152","date":"2026-08-25","campaign":"CFA After 25 (23rd Aug) Post Webinar Msgs","cohort":"Webinar Registered","goal":"Conversion","category":"Utility","number":"Main No","targeted":63,"sent":44,"delivered":44,"read":20,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r153","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"CFA Level 3 Qualified, Partially Qualified","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":10,"sent":4,"delivered":4,"read":2,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r154","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"Financial Modeling Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":11,"sent":6,"delivered":6,"read":2,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r155","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"Analyst Stack Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":117,"sent":66,"delivered":66,"read":34,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r156","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"ACCA Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":22,"sent":13,"delivered":13,"read":10,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r157","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"CA Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":62,"sent":38,"delivered":38,"read":22,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r158","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"All current student","goal":"","category":"Marketing","number":"Main No","targeted":7343,"sent":4088,"delivered":4047,"read":2015,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r159","date":"2026-08-26","campaign":"FRM New Entry Window (29th August)","cohort":"FRM Part 1 Qualified and partially Qualified","goal":"Conversion","category":"Marketing","number":"Main No","targeted":84,"sent":47,"delivered":47,"read":29,"clicks":2,"unique":null,"conversions":null,"revenue":null},{"id":"r160","date":"2026-08-28","campaign":"Srishti Lamba Webinar 2 day to go reminder","cohort":"Webinar Registrants","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":408,"sent":395,"delivered":394,"read":285,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r161","date":"2026-08-29","campaign":"Srishti Lamba Webinar 1 day to go reminder","cohort":"Webinar Registrants","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":462,"sent":438,"delivered":437,"read":293,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r162","date":"2026-08-29","campaign":"CFA Aug'26 Attempt Webinar (2nd Septempber)","cohort":"CFA May'26 attempt, next lvl not enrolled","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":853,"sent":458,"delivered":452,"read":219,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r163","date":"2026-08-29","campaign":"CFA Aug'26 Attempt Webinar (2nd Septempber)","cohort":"CFA all current students","goal":"","category":"Marketing","number":"Main No","targeted":4776,"sent":2741,"delivered":2717,"read":1311,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r164","date":"2026-08-29","campaign":"CFA Aug'26 Attempt Webinar (2nd Septempber)","cohort":"CFA Aug'26 attempt","goal":"","category":"Marketing","number":"Main No","targeted":1458,"sent":888,"delivered":883,"read":434,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r165","date":"2026-08-30","campaign":"Srishti Lamba Webinar (2nd Sept) 1 hr to go reminder","cohort":"Webinar Registrants","goal":"Webinar Registrations","category":"Utility","number":"Main No","targeted":462,"sent":439,"delivered":438,"read":273,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r166","date":"2026-08-30","campaign":"Srishti Lamba Webinar (2nd Sept) live reminder","cohort":"Webinar Registrants","goal":"Webinar Registrations","category":"Utility","number":"Main No","targeted":462,"sent":438,"delivered":434,"read":265,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r167","date":"2026-08-31","campaign":"Srishti Lamba Webinar (2nd Sept) Post Webinar msg","cohort":"Webinar Attendees","goal":"Conversions","category":"Marketing","number":"Performance No.","targeted":126,"sent":86,"delivered":85,"read":49,"clicks":15,"unique":null,"conversions":0,"revenue":0},{"id":"r168","date":"2026-08-31","campaign":"CFA Level 1 New Entry Window Nudge (2nd September)","cohort":"CFA Level 1 Qialified and Partially Qualified","goal":"Conversions","category":"Marketing","number":"Main No","targeted":200,"sent":128,"delivered":127,"read":62,"clicks":7,"unique":null,"conversions":5,"revenue":203500},{"id":"r169","date":"2026-08-31","campaign":"Kumar Saurav AS 30th Aug Class","cohort":"Attendees","goal":"Resources","category":"Marketing","number":"Main No","targeted":36,"sent":35,"delivered":35,"read":25,"clicks":15,"unique":null,"conversions":null,"revenue":null}]},"2026-09":{"month":"2026-09","rows":[{"id":"r170","date":"2026-09-01","campaign":"CFA 6th September Webinar","cohort":"CFA L1 Accelaerate & Live Focused - Q ualified/Partially Qualified","goal":"Conversions","category":"Marketing","number":"Main No","targeted":648,"sent":436,"delivered":414,"read":270,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r171","date":"2026-09-01","campaign":"CFA Webinar 2nd September Reminder","cohort":"1 day to glo","goal":"Webinar Registrations","category":"Utility","number":"Main No","targeted":172,"sent":163,"delivered":162,"read":125,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r172","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM Part 1 Aug/Nov'25 & May/Aug'27","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":406,"sent":285,"delivered":284,"read":203,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r173","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM extra leads ","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":678,"sent":459,"delivered":456,"read":259,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r174","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM all students","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":965,"sent":608,"delivered":605,"read":363,"clicks":14,"unique":11,"conversions":null,"revenue":null},{"id":"r175","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM extra leads ","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":678,"sent":433,"delivered":423,"read":180,"clicks":3,"unique":3,"conversions":null,"revenue":null}]}},"invoices":{"2026-06":{"month":"2026-06","invoiceNo":"","source":"Not received","marketingMsgs":null,"utilityMsgs":null,"platformFee":20000,"taxable":null,"gst":null,"total":null,"notes":"No invoice or estimate on file for June."},"2026-07":{"month":"2026-07","invoiceNo":"","source":"Estimate","marketingMsgs":null,"utilityMsgs":null,"platformFee":20000,"taxable":null,"gst":null,"total":185000,"notes":"Recollected figure from the growth team, not an invoice. Replace it when the invoice is found."},"2026-08":{"month":"2026-08","invoiceNo":"132727123473","source":"Invoice","marketingMsgs":34238,"utilityMsgs":2878,"platformFee":20000,"taxable":53402.39,"gst":9612.4,"total":63014.79,"notes":"IGST 18%, Maharashtra supplier to West Bengal buyer. Platform fee bills as two lines of Rs 10,000: Console Platform Fee and Advance Messages Fixed Fee. Marketing bills as MMLITE Per Message at 0.9385, utility at 0.13. Covers 5 Gupshup apps; campaigns are sent from 2."},"2026-09":{"month":"2026-09","invoiceNo":"","source":"Not received","marketingMsgs":null,"utilityMsgs":null,"platformFee":20000,"taxable":null,"gst":null,"total":null,"notes":"Invoice not yet received."}},"config":{"marketingRate":0.9385,"utilityRate":0.13,"gstRate":0.18,"platformFee":20000,"metaCPC":15,"googleCPC":50,"currency":"INR"},"stamp":"2026-10-05"}</script>
+<script>
+(function(){
+"use strict";
+/* ============================ state ============================ */
+var DEF={marketingRate:.9385,utilityRate:.13,gstRate:.18,platformFee:20000,metaCPC:15,googleCPC:50};
+var S={cfg:Object.assign({},DEF),months:{},inv:{},ready:false,db:null,note:""};
+var FIELDS=["date","campaign","cohort","goal","category","number","targeted","sent","delivered","read","clicks","unique","conversions","revenue"];
+var NUMF=["targeted","sent","delivered","read","clicks","unique","conversions","revenue"];
+var STANDALONE=!(window.claude&&window.claude.use);
+
+function mk(d){return (d||"").slice(0,7);}
+function n(v){return typeof v==="number"&&isFinite(v)?v:null;}
+function num(v){var x=parseFloat(String(v).replace(/[^0-9.\-]/g,""));return isFinite(x)?x:null;}
+function rate(cat){var c=(cat||"").trim().toLowerCase();
+  return c==="marketing"?S.cfg.marketingRate:(c==="utility"?S.cfg.utilityRate:0);}
+function cost(r){var d=n(r.delivered);return d===null?null:Math.round(d*rate(r.category)*100)/100;}
+
+function inr(v,dp){if(v===null||v===undefined||!isFinite(v))return"—";
+  var neg=v<0;v=Math.abs(v);var s=(dp?v.toFixed(dp):Math.round(v).toString());
+  var p=s.split("."),i=p[0],last3=i.slice(-3),rest=i.slice(0,-3);
+  if(rest)last3=rest.replace(/\B(?=(\d{2})+(?!\d))/g,",")+","+last3;
+  return (neg?"-₹":"₹")+last3+(p[1]?"."+p[1]:"");}
+function cr(v){if(v===null||!isFinite(v))return"—";
+  if(Math.abs(v)>=1e7)return"₹"+(v/1e7).toFixed(2)+" Cr";
+  if(Math.abs(v)>=1e5)return"₹"+(v/1e5).toFixed(2)+" L";
+  return inr(v);}
+function pc(v,dp){return v===null||!isFinite(v)?"—":(v*100).toFixed(dp===undefined?1:dp)+"%";}
+function cnt(v){return v===null||!isFinite(v)?"—":Math.round(v).toLocaleString("en-IN");}
+function mlabel(m){if(!m)return"";var p=m.split("-");
+  return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+p[1]-1]+" "+p[0];}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+/* ============================ derive ============================ */
+function allRows(){var out=[];Object.keys(S.months).sort().forEach(function(m){
+  (S.months[m].rows||[]).forEach(function(r){out.push(r);});});return out;}
+
+function campaigns(rows){                      // group cohort rows into campaigns
+  var map={},order=[];
+  rows.forEach(function(r){
+    var k=(r.campaign||"(unnamed)").trim()+"|"+mk(r.date);
+    if(!map[k]){map[k]={key:k,name:(r.campaign||"(unnamed)").trim(),month:mk(r.date),date:r.date,
+      spend:0,targeted:0,sent:0,delivered:0,read:0,clicks:0,unique:0,mktSpend:0,
+      conversions:null,revenue:null,goal:r.goal||"",cohorts:0};order.push(map[k]);}
+    var g=map[k],c=cost(r);
+    g.cohorts++;
+    if(c!==null){g.spend+=c;if((r.category||"").trim().toLowerCase()==="marketing")g.mktSpend+=c;}
+    NUMF.forEach(function(f){if(f==="conversions"||f==="revenue")return;
+      var v=n(r[f]);if(v!==null)g[f]=(g[f]||0)+v;});
+    var cv=n(r.conversions),rv=n(r.revenue);
+    if(cv!==null)g.conversions=(g.conversions||0)+cv;
+    if(rv!==null)g.revenue=(g.revenue||0)+rv;
+  });
+  order.forEach(function(g){
+    g.cpc=g.clicks>0?g.mktSpend/g.clicks:null;
+    g.convRate=(g.conversions!==null&&g.clicks>0)?g.conversions/g.clicks:null;
+    g.roi=(g.revenue!==null&&g.spend>0)?g.revenue/g.spend:null;
+  });
+  return order;
+}
+function months(){
+  var rows=allRows(),by={};
+  rows.forEach(function(r){
+    var m=mk(r.date);if(!m)return;
+    if(!by[m])by[m]={month:m,spend:0,mktSpend:0,delivered:0,sent:0,targeted:0,read:0,clicks:0,unique:0,
+      conversions:0,revenue:0,campaigns:0};
+    var o=by[m],c=cost(r);
+    if(c!==null){o.spend+=c;if((r.category||"").trim().toLowerCase()==="marketing")o.mktSpend+=c;}
+    ["targeted","sent","delivered","read","clicks","unique","conversions","revenue"].forEach(function(f){
+      var v=n(r[f]);if(v!==null)o[f]+=v;});
+  });
+  campaigns(rows).forEach(function(g){if(by[g.month])by[g.month].campaigns++;});
+  return Object.keys(by).sort().map(function(m){
+    var o=by[m];
+    o.cpc=o.clicks>0?o.mktSpend/o.clicks:null;
+    o.roi=o.spend>0?o.revenue/o.spend:null;
+    o.deliveryRate=o.sent>0?o.delivered/o.sent:null;
+    o.readRate=o.delivered>0?o.read/o.delivered:null;
+    o.clickRate=o.read>0?o.clicks/o.read:null;
+    o.costPerConv=o.conversions>0?o.spend/o.conversions:null;
+    return o;});
+}
+function totals(ms){
+  var t={spend:0,revenue:0,conversions:0,campaigns:0,clicks:0,mktSpend:0,delivered:0,read:0,sent:0};
+  ms.forEach(function(m){["spend","revenue","conversions","campaigns","clicks","mktSpend","delivered","read","sent"]
+    .forEach(function(f){t[f]+=m[f]||0;});});
+  t.roi=t.spend>0?t.revenue/t.spend:null;
+  t.cpc=t.clicks>0?t.mktSpend/t.clicks:null;
+  t.costPerConv=t.conversions>0?t.spend/t.conversions:null;
+  t.readRate=t.delivered>0?t.read/t.delivered:null;
+  return t;
+}
+
+/* ---------- what Gupshup should bill us, and what it did ---------- */
+function invFor(m){
+  return S.inv[m]||{month:m,invoiceNo:"",source:"Not received",marketingMsgs:null,utilityMsgs:null,
+    platformFee:S.cfg.platformFee,taxable:null,gst:null,total:null,notes:""};
+}
+function billing(mo){
+  var iv=invFor(mo.month);
+  var fee=n(iv.platformFee);if(fee===null)fee=S.cfg.platformFee;
+  var sub=mo.spend+fee, gst=sub*S.cfg.gstRate, ours=sub+gst;
+  var billed=n(iv.total);
+  return {month:mo.month,msgSpend:mo.spend,fee:fee,gst:gst,ours:ours,
+    billed:billed,source:iv.source||"Not received",invoiceNo:iv.invoiceNo||"",
+    gap:billed===null?null:ours-billed,
+    gapPc:(billed===null||billed===0)?null:(ours-billed)/billed,
+    notes:iv.notes||""};
+}
+function reconRows(){return months().map(billing);}
+
+/* ============================ charts ============================ */
+var TIP=document.getElementById("tip");
+function tipOn(e,html){TIP.innerHTML=html;TIP.classList.add("on");
+  var x=e.clientX+14,y=e.clientY+14;
+  if(x+TIP.offsetWidth>innerWidth-8)x=e.clientX-TIP.offsetWidth-14;
+  if(y+TIP.offsetHeight>innerHeight-8)y=e.clientY-TIP.offsetHeight-14;
+  TIP.style.left=x+"px";TIP.style.top=y+"px";}
+function tipOff(){TIP.classList.remove("on");}
+function niceMax(mx){if(!(mx>0))return 1;
+  var p=Math.pow(10,Math.floor(Math.log10(mx))),f=mx/p,s=f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10;
+  return s*p;}
+
+/* grouped / single vertical bars with direct labels */
+function barChart(o){
+  var W=o.width||640,H=o.height||230,L=52,R=14,T=16,B=34;
+  var iw=W-L-R, ih=H-T-B, cats=o.cats, series=o.series;
+  var mx=0;series.forEach(function(s){s.values.forEach(function(v){if(v!==null&&v>mx)mx=v;});});
+  var top=niceMax(mx*1.18)||1;
+  var g=iw/Math.max(cats.length,1), bw=Math.min((g*.62)/series.length, 46);
+  var s=[];
+  s.push('<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(o.title)+'">');
+  [0,.25,.5,.75,1].forEach(function(f){
+    var y=T+ih-ih*f;
+    s.push('<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>');
+    s.push('<text x="'+(L-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="10" fill="var(--ink-3)">'
+      +esc(o.fmtAxis(top*f))+'</text>');
+  });
+  cats.forEach(function(c,i){
+    var cx=L+g*i+g/2;
+    var total=bw*series.length+2*(series.length-1);
+    series.forEach(function(se,j){
+      var v=se.values[i]; if(v===null||v===undefined)return;
+      var h=Math.max(top>0?(v/top)*ih:0, v>0?2.5:0);
+      var x=cx-total/2+j*(bw+2), y=T+ih-h;
+      s.push('<rect class="bar" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)
+        +'" height="'+h.toFixed(1)+'" rx="4" fill="'+se.color+'" data-t="'
+        +esc(c+" · "+se.name+" · "+o.fmtTip(v))+'"/>');
+      if(o.labels!==false)
+        s.push('<text x="'+(x+bw/2).toFixed(1)+'" y="'+(y-5).toFixed(1)+'" text-anchor="middle" font-size="10" '
+          +'font-weight="600" fill="var(--ink-2)">'+esc(o.fmtLabel(v))+'</text>');
+    });
+    s.push('<text x="'+cx.toFixed(1)+'" y="'+(T+ih+17)+'" text-anchor="middle" font-size="11" '
+      +'fill="var(--ink-2)">'+esc(c)+'</text>');
+  });
+  (o.rules||[]).forEach(function(r){
+    var y=T+ih-(top>0?(r.value/top)*ih:0);
+    if(y<T-2||y>T+ih+2)return;
+    s.push('<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="'+r.color
+      +'" stroke-width="2" stroke-dasharray="5 4"/>');
+    s.push('<text x="'+(W-R)+'" y="'+(y-6).toFixed(1)+'" text-anchor="end" font-size="10" font-weight="600" fill="'
+      +r.color+'">'+esc(r.label)+'</text>');
+  });
+  s.push('<line x1="'+L+'" x2="'+(W-R)+'" y1="'+(T+ih)+'" y2="'+(T+ih)+'" stroke="var(--line-strong)" stroke-width="1"/>');
+  s.push('</svg>');
+  return s.join("");
+}
+/* horizontal bars, labelled at the end */
+function hbarChart(o){
+  var rows=o.rows, rowH=30, W=o.width||640, H=rows.length*rowH+18, L=o.labelW||210, R=86;
+  var mx=0;rows.forEach(function(r){if(r.value>mx)mx=r.value;});
+  var top=niceMax(mx)||1, iw=W-L-R;
+  var s=['<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(o.title)+'">'];
+  rows.forEach(function(r,i){
+    var y=i*rowH+6, w=Math.max((r.value/top)*iw, r.value>0?3:0);
+    s.push('<text x="0" y="'+(y+15)+'" font-size="11.5" fill="var(--ink-2)" font-family="var(--sans)">'
+      +esc(r.label.length>32?r.label.slice(0,31)+"…":r.label)+'</text>');
+    s.push('<rect class="bar" x="'+L+'" y="'+y+'" width="'+w.toFixed(1)+'" height="19" rx="4" fill="'+(r.color||"var(--s1)")
+      +'" data-t="'+esc(r.label+" · "+o.fmtTip(r.value))+'"/>');
+    s.push('<text x="'+(L+w+8).toFixed(1)+'" y="'+(y+14)+'" font-size="11" font-weight="600" fill="var(--ink-2)">'
+      +esc(o.fmtLabel(r.value))+'</text>');
+  });
+  s.push('</svg>');return s.join("");
+}
+function sparkline(vals,color){
+  var W=200,H=34,mx=Math.max.apply(null,vals.concat([0])),mn=0;
+  if(mx<=0)mx=1;
+  var pts=vals.map(function(v,i){return [ (i/(Math.max(vals.length-1,1)))*W, H-2-((v-mn)/(mx-mn))*(H-6) ];});
+  var d=pts.map(function(p,i){return (i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1);}).join(" ");
+  var area=d+" L"+W+" "+H+" L0 "+H+" Z";
+  return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" width="100%" height="34" aria-hidden="true">'
+    +'<path d="'+area+'" fill="'+color+'" opacity=".13"/>'
+    +'<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+    +'<circle cx="'+pts[pts.length-1][0].toFixed(1)+'" cy="'+pts[pts.length-1][1].toFixed(1)
+    +'" r="3.2" fill="'+color+'"/></svg>';
+}
+function wireTips(root){
+  root.querySelectorAll("[data-t]").forEach(function(el){
+    el.addEventListener("mousemove",function(e){tipOn(e,el.getAttribute("data-t"));});
+    el.addEventListener("mouseleave",tipOff);
+  });
+}
+
+/* ============================ views ============================ */
+function viewLead(){
+  var ms=months(), t=totals(ms), el=document.getElementById("v-lead");
+  if(!ms.length){el.innerHTML='<div class="empty"><h2>No campaigns yet</h2><p>Add them on the Campaigns tab, '
+    +'or bring a spreadsheet in through Import.</p></div>';return;}
+  var cats=ms.map(function(m){return mlabel(m.month).replace(" "," ");});
+  var camps=campaigns(allRows()).filter(function(c){return c.revenue;})
+      .sort(function(a,b){return b.revenue-a.revenue;}).slice(0,8);
+  var last=ms[ms.length-1];
+
+  var h=[];
+  h.push('<div class="lead-head"><h1>What WhatsApp returned</h1>'
+    +'<div class="period">'+esc(mlabel(ms[0].month))+' – '+esc(mlabel(last.month))
+    +'  ·  '+cnt(t.campaigns)+' campaigns</div></div>');
+
+  h.push('<div class="kpis">');
+  h.push('<div class="kpi hero"><div class="cap">Return on investment</div><div class="fig">'
+    +(t.roi===null?"—":Math.round(t.roi*100).toLocaleString("en-IN")+"%")+'</div>'
+    +'<div class="sub">'+cr(t.revenue)+' back on '+cr(t.spend)+' spent</div>'
+    +sparkline(ms.map(function(m){return m.roi||0;}),"var(--s1)")+'</div>');
+  h.push('<div class="kpi"><div class="cap">Revenue attributed</div><div class="fig">'+cr(t.revenue)+'</div>'
+    +'<div class="sub">'+cnt(t.conversions)+' conversions</div>'
+    +sparkline(ms.map(function(m){return m.revenue;}),"var(--s2)")+'</div>');
+  h.push('<div class="kpi"><div class="cap">Amount spent</div><div class="fig">'+cr(t.spend)+'</div>'
+    +'<div class="sub">'+inr(t.costPerConv)+' per conversion</div>'
+    +sparkline(ms.map(function(m){return m.spend;}),"var(--s3)")+'</div>');
+  h.push('<div class="kpi"><div class="cap">Cost per click</div><div class="fig">'+inr(t.cpc,2)+'</div>'
+    +'<div class="sub">Meta '+inr(S.cfg.metaCPC)+' · Google '+inr(S.cfg.googleCPC)+'</div>'
+    +sparkline(ms.map(function(m){return m.cpc||0;}),"var(--s1)")+'</div>');
+  h.push('</div>');
+
+  h.push('<div class="grid">');
+
+  h.push('<div class="card wide"><h3>Spend against revenue</h3>'
+    +'<p class="note">Every rupee we put in, beside every rupee that came back.</p>'
+    +'<ul class="legend"><li><i class="swatch" style="background:var(--s3)"></i>Spent</li>'
+    +'<li><i class="swatch" style="background:var(--s2)"></i>Revenue attributed</li></ul>'
+    +barChart({title:"Spend against revenue",cats:cats,width:900,height:250,
+      series:[{name:"Spent",color:"var(--s3)",values:ms.map(function(m){return m.spend;})},
+              {name:"Revenue",color:"var(--s2)",values:ms.map(function(m){return m.revenue;})}],
+      fmtAxis:cr,fmtLabel:cr,fmtTip:inr})+'</div>');
+
+  h.push('<div class="card"><h3>Return on investment</h3>'
+    +'<p class="note">Revenue attributed divided by what that month cost, as a percentage.</p>'
+    +barChart({title:"ROI by month",cats:cats,
+      series:[{name:"ROI",color:"var(--s1)",values:ms.map(function(m){return m.roi===null?null:m.roi*100;})}],
+      fmtAxis:function(v){return Math.round(v).toLocaleString("en-IN")+"%";},
+      fmtLabel:function(v){return Math.round(v).toLocaleString("en-IN")+"%";},
+      fmtTip:function(v){return v.toFixed(1)+"%";}})+'</div>');
+
+  h.push('<div class="card"><h3>Conversions</h3>'
+    +'<p class="note">Purchases credited to a campaign in that month.</p>'
+    +barChart({title:"Conversions by month",cats:cats,
+      series:[{name:"Conversions",color:"var(--s2)",values:ms.map(function(m){return m.conversions;})}],
+      fmtAxis:function(v){return Math.round(v);},fmtLabel:cnt,fmtTip:cnt})+'</div>');
+
+  h.push('<div class="card"><h3>Cost per click against the market</h3>'
+    +'<p class="note">Our blended cost per click, with the Meta and Google benchmarks drawn across.</p>'
+    +'<ul class="legend"><li><i class="swatch" style="background:var(--s1)"></i>WhatsApp</li>'
+    +'<li><i class="swatch line" style="background:var(--s2)"></i>Meta '+inr(S.cfg.metaCPC)+'</li>'
+    +'<li><i class="swatch line" style="background:var(--s3)"></i>Google '+inr(S.cfg.googleCPC)+'</li></ul>'
+    +barChart({title:"Cost per click",cats:cats,
+      series:[{name:"WhatsApp",color:"var(--s1)",values:ms.map(function(m){return m.cpc;})}],
+      rules:[{value:S.cfg.metaCPC,color:"var(--s2)",label:"Meta"},
+             {value:S.cfg.googleCPC,color:"var(--s3)",label:"Google"}],
+      fmtAxis:function(v){return inr(v);},fmtLabel:function(v){return inr(v,2);},
+      fmtTip:function(v){return inr(v,2)+" per click";}})+'</div>');
+
+  var rchart=reconRows().filter(function(r){return r.billed!==null;});
+  if(rchart.length)
+    h.push('<div class="card"><h3>Our figure against the bill</h3>'
+      +'<p class="note">What our message log says the month cost, beside what Gupshup charged.</p>'
+      +'<ul class="legend"><li><i class="swatch" style="background:var(--s1)"></i>Our figure</li>'
+      +'<li><i class="swatch" style="background:var(--s3)"></i>Gupshup billed</li></ul>'
+      +barChart({title:"Our figure against the bill",
+        cats:rchart.map(function(r){return mlabel(r.month).replace(" "," ");}),
+        series:[{name:"Ours",color:"var(--s1)",values:rchart.map(function(r){return r.ours;})},
+                {name:"Billed",color:"var(--s3)",values:rchart.map(function(r){return r.billed;})}],
+        fmtAxis:cr,fmtLabel:cr,fmtTip:function(v){return inr(v,2);}})+'</div>');
+
+  if(camps.length)
+    h.push('<div class="card"><h3>Where the revenue came from</h3>'
+      +'<p class="note">Top campaigns by revenue attributed.</p>'
+      +hbarChart({title:"Top campaigns",rows:camps.map(function(c){
+        return {label:c.name,value:c.revenue,color:"var(--s1)"};}),
+        fmtLabel:cr,fmtTip:inr})+'</div>');
+
+  h.push('</div>');
+
+  /* ---- invoice reconciliation ---- */
+  var rr=reconRows(), checked=rr.filter(function(r){return r.billed!==null;});
+  h.push('<div class="card wide" style="margin-top:14px"><h3>Does this tie to the Gupshup bill?</h3>'
+   +'<p class="note">What our own message log says the month should cost, set against what Gupshup actually billed. '
+   +'Message cost plus the platform fee plus GST at '+pc(S.cfg.gstRate,0)+'.</p>'
+   +'<div class="scroll"><table><thead><tr><th>Month</th><th>Messages</th><th>Platform fee</th>'
+   +'<th>GST</th><th>Our figure</th><th>Gupshup billed</th><th>Difference</th><th>Source</th></tr></thead><tbody>');
+  rr.forEach(function(r){
+    var st=r.gapPc===null?'<span class="pill flat">not billed yet</span>'
+      :(Math.abs(r.gapPc)<=0.05?'<span class="pill up">'+pc(r.gapPc)+'</span>'
+        :'<span class="pill warn">'+pc(r.gapPc)+'</span>');
+    h.push('<tr><td>'+esc(mlabel(r.month))+'</td><td class="n">'+inr(r.msgSpend,2)+'</td><td class="n">'
+      +inr(r.fee)+'</td><td class="n">'+inr(r.gst,2)+'</td><td class="n"><b>'+inr(r.ours,2)+'</b></td><td class="n">'
+      +(r.billed===null?"—":inr(r.billed,2))+'</td><td class="n">'
+      +(r.gap===null?"—":inr(r.gap,2))+' '+st+'</td><td style="text-align:right">'
+      +esc(r.source)+(r.invoiceNo?' <span class="status">'+esc(r.invoiceNo)+'</span>':'')+'</td></tr>');
+  });
+  h.push('</tbody></table></div>');
+  if(checked.length){
+    var w=0,b=0;checked.forEach(function(r){w+=r.ours;b+=r.billed;});
+    h.push('<p class="hint"><b>Where we land:</b> across the '+checked.length+' month'
+      +(checked.length>1?'s':'')+' we can check, our log accounts for '+inr(w)+' of the '+inr(b)
+      +' billed, a difference of '+pc((w-b)/b)+'. Our figure sits slightly under the bill every month and '
+      +'that is expected: the invoice covers every Gupshup app on the account, while the campaign log covers '
+      +'only the numbers campaigns are sent from. The automated and transactional traffic on the other apps is '
+      +'real cost we do not raise campaigns for.</p>');
+  }
+  h.push('</div>');
+
+  /* ---- is the rate itself fair ---- */
+  var mktMsgs=0,utilMsgs=0;
+  allRows().forEach(function(r){
+    var d=n(r.delivered);if(d===null)return;
+    var c=(r.category||"").trim().toLowerCase();
+    if(c==="marketing")mktMsgs+=d;else if(c==="utility")utilMsgs+=d;});
+  h.push('<div class="card wide" style="margin-top:14px"><h3>Is the Gupshup cost reasonable?</h3>'
+   +'<p class="note">Four tests, each one a number anyone can re-check.</p>'
+   +'<div class="scroll"><table><thead><tr><th>Test</th><th>What we pay</th><th>What it is measured against</th>'
+   +'<th>Verdict</th></tr></thead><tbody>'
+   +'<tr><td>Rate per marketing message</td><td class="n">'+inr(S.cfg.marketingRate,4)+'</td>'
+   +'<td style="text-align:right">Billed on the invoice as MMLITE Per Message</td>'
+   +'<td style="text-align:right"><span class="pill up">matches the invoice</span></td></tr>'
+   +'<tr><td>Rate per utility message</td><td class="n">'+inr(S.cfg.utilityRate,2)+'</td>'
+   +'<td style="text-align:right">Billed utility line</td>'
+   +'<td style="text-align:right"><span class="pill up">matches the invoice</span></td></tr>'
+   +'<tr><td>Cost per click</td><td class="n">'+inr(t.cpc,2)+'</td>'
+   +'<td style="text-align:right">Meta '+inr(S.cfg.metaCPC)+' &middot; Google '+inr(S.cfg.googleCPC)+'</td>'
+   +'<td style="text-align:right">'+(t.cpc===null?'<span class="pill flat">—</span>'
+      :(t.cpc<=S.cfg.googleCPC?'<span class="pill up">under Google</span>'
+        :'<span class="pill warn">above both</span>'))+'</td></tr>'
+   +'<tr><td>Cost per conversion</td><td class="n">'+inr(t.costPerConv)+'</td>'
+   +'<td style="text-align:right">Average order '+inr(t.conversions?t.revenue/t.conversions:null)+'</td>'
+   +'<td style="text-align:right">'+(t.costPerConv===null?'<span class="pill flat">—</span>'
+      :'<span class="pill up">'+(t.revenue/t.spend).toFixed(1)+'x back</span>')+'</td></tr>'
+   +'</tbody></table></div>'
+   +'<p class="hint">Volume behind it: '+cnt(mktMsgs)+' marketing and '+cnt(utilMsgs)
+   +' utility messages delivered, '+cnt(t.clicks)+' clicks, '+cnt(t.conversions)+' conversions. '
+   +'The platform fee is fixed at '+inr(S.cfg.platformFee)+' a month whatever the volume, so cost per '
+   +'message falls as we send more.</p></div>');
+
+  h.push('<div class="card wide" style="margin-top:14px"><h3>Month by month</h3>'
+    +'<p class="note">The same figures as numbers, for anyone who wants them.</p><div class="scroll"><table>'
+    +'<thead><tr><th>Month</th><th>Campaigns</th><th>Spent</th><th>Delivered</th><th>Clicks</th>'
+    +'<th>Conversions</th><th>Revenue</th><th>ROI</th><th>CPC</th><th>vs Meta</th></tr></thead><tbody>');
+  ms.forEach(function(m){
+    h.push('<tr><td>'+esc(mlabel(m.month))+'</td><td class="n">'+cnt(m.campaigns)+'</td><td class="n">'
+      +inr(m.spend)+'</td><td class="n">'+cnt(m.delivered)+'</td><td class="n">'+cnt(m.clicks)+'</td><td class="n">'
+      +cnt(m.conversions)+'</td><td class="n">'+inr(m.revenue)+'</td><td class="n">'
+      +(m.roi===null?'<span class="pill flat">—</span>':'<span class="pill '+(m.roi>1?"up":"flat")+'">'
+        +Math.round(m.roi*100).toLocaleString("en-IN")+'%</span>')
+      +'</td><td class="n">'+inr(m.cpc,2)+'</td><td class="n">'
+      +(m.cpc===null?"—":inr(m.cpc-S.cfg.metaCPC,2))+'</td></tr>');
+  });
+  h.push('<tr style="font-weight:600;background:var(--surface-2)"><td>All months</td><td class="n">'+cnt(t.campaigns)
+    +'</td><td class="n">'+inr(t.spend)+'</td><td class="n">'+cnt(t.delivered)+'</td><td class="n">'+cnt(t.clicks)
+    +'</td><td class="n">'+cnt(t.conversions)+'</td><td class="n">'+inr(t.revenue)+'</td><td class="n">'
+    +(t.roi===null?"—":Math.round(t.roi*100).toLocaleString("en-IN")+"%")+'</td><td class="n">'+inr(t.cpc,2)
+    +'</td><td class="n">'+(t.cpc===null?"—":inr(t.cpc-S.cfg.metaCPC,2))+'</td></tr>');
+  h.push('</tbody></table></div></div>');
+  el.innerHTML=h.join("");
+  wireTips(el);
+}
+
+var curMonth=null;
+function viewData(){
+  var el=document.getElementById("v-data"), keys=Object.keys(S.months).sort();
+  if(!curMonth||keys.indexOf(curMonth)<0)curMonth=keys[keys.length-1]||thisMonth();
+  var rows=(S.months[curMonth]&&S.months[curMonth].rows)||[];
+  var h=['<div class="bar"><h2>Campaigns</h2>',
+    '<label class="status" for="msel">Month</label><select id="msel">'];
+  var ks=keys.slice();if(ks.indexOf(curMonth)<0)ks.push(curMonth);ks.sort();
+  ks.forEach(function(k){h.push('<option value="'+k+'"'+(k===curMonth?" selected":"")+'>'+esc(mlabel(k))+'</option>');});
+  h.push('</select><button class="btn" id="addmonth">New month</button>',
+    '<button class="btn primary" id="addrow">Add campaign row</button>',
+    '<span class="status" id="saved"></span></div>');
+  h.push('<div class="panel" style="padding:0"><div class="scroll"><table class="grid-tbl"><thead><tr>'
+    +'<th>Date</th><th>Campaign</th><th>Cohort</th><th>Category</th><th>Targeted</th><th>Sent</th>'
+    +'<th>Delivered</th><th>Read</th><th>Clicks</th><th>Unique</th><th>Conversions</th><th>Revenue ₹</th>'
+    +'<th>Sent %</th><th>Delivered %</th><th>Read %</th><th>Click %</th><th>CTR</th><th>Cost ₹</th>'
+    +'<th>CPC ₹</th><th></th></tr></thead><tbody id="tb">');
+  rows.forEach(function(r,i){h.push(rowHtml(r,i));});
+  h.push('</tbody></table></div></div>');
+  h.push('<p class="hint">Percentages, cost, cost per click, conversion rate and ROI are worked out for you. '
+    +'Cost uses the rates on the Rates tab: marketing '+inr(S.cfg.marketingRate,4)+' and utility '
+    +inr(S.cfg.utilityRate,2)+' per delivered message. Everything saves as you type.</p>');
+  el.innerHTML=h.join("");
+  el.querySelector("#msel").onchange=function(){curMonth=this.value;viewData();};
+  el.querySelector("#addrow").onclick=function(){
+    if(!S.months[curMonth])S.months[curMonth]={month:curMonth,rows:[]};
+    S.months[curMonth].rows.push(blank(curMonth));save(curMonth);viewData();};
+  el.querySelector("#addmonth").onclick=function(){
+    var next=nextMonth(ks[ks.length-1]||thisMonth());
+    if(!S.months[next]){S.months[next]={month:next,rows:[blank(next)]};save(next);}
+    curMonth=next;viewData();};
+  bindGrid(el);
+}
+function thisMonth(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2);}
+function nextMonth(m){var p=m.split("-"),y=+p[0],mm=+p[1]+1;if(mm>12){mm=1;y++;}
+  return y+"-"+("0"+mm).slice(-2);}
+function blank(m){return {id:"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+  date:m+"-01",campaign:"",cohort:"",goal:"",category:"Marketing",number:"",
+  targeted:null,sent:null,delivered:null,read:null,clicks:null,unique:null,conversions:null,revenue:null};}
+function rowHtml(r,i){
+  var c=cost(r), cpc=(c!==null&&n(r.clicks)>0)?c/r.clicks:null;
+  function f(a,b){var x=n(r[a]),y=n(r[b]);return (x!==null&&y>0)?x/y:null;}
+  function inp(f,cls,type){return '<td><input id="f-'+i+'-'+f+'" class="'+(cls||"")+'" type="'+(type||"text")
+    +'" data-i="'+i+'" data-f="'+f+'" value="'+esc(r[f]===null||r[f]===undefined?"":r[f])+'"></td>';}
+  return '<tr>'+inp("date","","date")
+    +inp("campaign","name")+inp("cohort")
+    +'<td><select data-i="'+i+'" data-f="category" id="f-'+i+'-category">'
+      +["Marketing","Utility","Service","—"].map(function(o){
+        return '<option'+((r.category||"")===o?" selected":"")+'>'+o+'</option>';}).join("")+'</select></td>'
+    +inp("targeted","num","number")+inp("sent","num","number")+inp("delivered","num","number")
+    +inp("read","num","number")+inp("clicks","num","number")+inp("unique","num","number")
+    +inp("conversions","num","number")+inp("revenue","num","number")
+    +'<td class="calc">'+pc(f("sent","targeted"))+'</td>'
+    +'<td class="calc">'+pc(f("delivered","sent"))+'</td>'
+    +'<td class="calc">'+pc(f("read","delivered"))+'</td>'
+    +'<td class="calc">'+pc(f("clicks","read"))+'</td>'
+    +'<td class="calc">'+pc(f("unique","read"))+'</td>'
+    +'<td class="calc">'+(c===null?"—":inr(c,2))+'</td>'
+    +'<td class="calc">'+(cpc===null?"—":inr(cpc,2))+'</td>'
+    +'<td><button class="btn ghost" data-del="'+i+'" title="Remove this row">Remove</button></td></tr>';
+}
+function bindGrid(el){
+  var tb=el.querySelector("#tb");
+  if(!tb)return;
+  tb.addEventListener("change",function(e){
+    var t=e.target;
+    if(!t||!t.getAttribute||!t.getAttribute("data-f"))return;
+    var i=+t.getAttribute("data-i"),f=t.getAttribute("data-f"),r=S.months[curMonth].rows[i];
+    if(!r)return;
+    r[f]=NUMF.indexOf(f)>=0?num(t.value):t.value;
+    save(curMonth);
+    var tr=t.closest("tr"),tmp=document.createElement("tbody");
+    tmp.innerHTML=rowHtml(r,i);
+    tr.parentNode.replaceChild(tmp.firstElementChild,tr);
+  });
+  tb.addEventListener("click",function(e){
+    var b=e.target&&e.target.closest?e.target.closest("[data-del]"):null;
+    if(!b)return;
+    S.months[curMonth].rows.splice(+b.getAttribute("data-del"),1);
+    save(curMonth);viewData();
+  });
+}
+
+function viewInv(){
+  var el=document.getElementById("v-inv");
+  var keys={};Object.keys(S.months).forEach(function(k){keys[k]=1;});
+  Object.keys(S.inv).forEach(function(k){keys[k]=1;});
+  var ks=Object.keys(keys).sort();
+  var h=['<div class="bar"><h2>Gupshup invoices</h2><span class="status" id="inv-saved"></span></div>'];
+  if(!ks.length){el.innerHTML=h.join("")+'<div class="empty">Add campaigns first and the months appear here.</div>';return;}
+  h.push('<div class="panel" style="padding:0"><div class="scroll"><table class="grid-tbl"><thead><tr>'
+    +'<th>Month</th><th>Source</th><th>Invoice no.</th><th>Marketing msgs billed</th><th>Utility msgs billed</th>'
+    +'<th>Platform fee ₹</th><th>Taxable ₹</th><th>GST ₹</th><th>Invoice total ₹</th>'
+    +'<th>Our figure ₹</th><th>Difference</th><th>Notes</th></tr></thead><tbody>');
+  var ms={};months().forEach(function(m){ms[m.month]=m;});
+  ks.forEach(function(k){
+    var iv=invFor(k);
+    var b=ms[k]?billing(ms[k]):null;
+    function i(f,type,cls){return '<td><input id="i-'+k+'-'+f+'" class="'+(cls||"num")+'" type="'+(type||"number")
+      +'" data-m="'+k+'" data-if="'+f+'" value="'+esc(iv[f]===null||iv[f]===undefined?"":iv[f])+'"></td>';}
+    h.push('<tr><td style="padding:6px 10px;font-weight:600;white-space:nowrap">'+esc(mlabel(k))+'</td>'
+      +'<td><select data-m="'+k+'" data-if="source" id="i-'+k+'-source">'
+        +["Invoice","Estimate","Not received"].map(function(o){
+          return '<option'+(iv.source===o?" selected":"")+'>'+o+'</option>';}).join("")+'</select></td>'
+      +i("invoiceNo","text","")+i("marketingMsgs")+i("utilityMsgs")+i("platformFee")
+      +i("taxable")+i("gst")+i("total")
+      +'<td class="calc">'+(b?inr(b.ours,2):"—")+'</td>'
+      +'<td class="calc">'+(b&&b.gap!==null?inr(b.gap,2)+" ("+pc(b.gapPc)+")":"—")+'</td>'
+      +'<td><input id="i-'+k+'-notes" type="text" style="min-width:260px" data-m="'+k
+      +'" data-if="notes" value="'+esc(iv.notes||"")+'"></td></tr>');
+  });
+  h.push('</tbody></table></div></div>');
+  h.push('<p class="hint">Type the invoice straight off the PDF. <b>Our figure</b> is worked out from the campaign '
+    +'log: delivered messages at the rates on the Rates tab, plus the platform fee, plus GST. <b>Difference</b> '
+    +'is ours minus theirs, so a small negative number is the healthy case. Mark a month <b>Estimate</b> when the '
+    +'figure is a recollection rather than a document, so nobody mistakes it for a bill.</p>');
+  el.innerHTML=h.join("");
+  el.querySelectorAll("[data-if]").forEach(function(c){
+    c.addEventListener("change",function(){
+      var m=c.getAttribute("data-m"),f=c.getAttribute("data-if");
+      if(!S.inv[m])S.inv[m]=invFor(m);
+      S.inv[m].month=m;
+      S.inv[m][f]=(f==="invoiceNo"||f==="notes"||f==="source")?c.value:num(c.value);
+      saveInv(m);viewLead();viewInv();
+    });
+  });
+}
+function saveInv(m){
+  var e=document.getElementById("inv-saved");if(e)e.textContent="Saving…";
+  clearTimeout(timers["i"+m]);
+  timers["i"+m]=setTimeout(function(){
+    write("invoices/"+m,S.inv[m]).then(function(ok){
+      var e2=document.getElementById("inv-saved");if(e2)e2.textContent=ok?"Saved":"Saved on this device only";});
+  },600);
+}
+
+function viewImport(){
+  var el=document.getElementById("v-imp");
+  el.innerHTML='<div class="bar"><h2>Import</h2></div>'
+   +'<div class="panel"><div class="drop" id="drop" tabindex="0" role="button">'
+   +'<b>Drop a CSV here</b><span>or click to choose a file &middot; campaign sheet, delivery or click report, conversions sheet</span>'
+   +'<input type="file" id="file" accept=".csv,.txt" hidden></div>'
+   +'<div id="imp-out"></div>'
+   +'<p class="hint">Three things you can do with a file, once you have pointed its columns at the right fields. '
+   +'<b>Add as new campaign rows</b> brings a fresh month in. <b>Update delivery and click figures</b> takes a '
+   +'Gupshup delivery or click report and writes targeted, sent, delivered, read and clicks onto rows that are '
+   +'already there, matched on campaign name, and on cohort too when you map that column. '
+   +'<b>Fill in conversions and revenue</b> takes a conversions sheet and writes just those two numbers. '
+   +'Nothing is overwritten except the fields you mapped.</p></div>';
+  var drop=el.querySelector("#drop"), file=el.querySelector("#file");
+  drop.onclick=function(){file.click();};
+  drop.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();file.click();}};
+  drop.ondragover=function(e){e.preventDefault();drop.classList.add("over");};
+  drop.ondragleave=function(){drop.classList.remove("over");};
+  drop.ondrop=function(e){e.preventDefault();drop.classList.remove("over");
+    if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0]);};
+  file.onchange=function(){if(file.files[0])readFile(file.files[0]);};
+}
+function parseCSV(text){
+  var rows=[],row=[],cell="",q=false;
+  text=text.replace(/^﻿/,"");
+  for(var i=0;i<text.length;i++){var ch=text[i];
+    if(q){if(ch==='"'){if(text[i+1]==='"'){cell+='"';i++;}else q=false;}else cell+=ch;}
+    else if(ch==='"')q=true;
+    else if(ch===","){row.push(cell);cell="";}
+    else if(ch==="\n"){row.push(cell);rows.push(row);row=[];cell="";}
+    else if(ch!=="\r")cell+=ch;}
+  if(cell!==""||row.length){row.push(cell);rows.push(row);}
+  return rows.filter(function(r){return r.some(function(c){return String(c).trim()!=="";});});
+}
+var IMPORTED=null;
+function readFile(f){
+  var fr=new FileReader();
+  fr.onload=function(){
+    var rows=parseCSV(String(fr.result));
+    if(rows.length<2){document.getElementById("imp-out").innerHTML=
+      '<p class="hint" style="color:var(--bad)">That file has no rows under its header.</p>';return;}
+    IMPORTED={head:rows[0].map(function(h){return String(h).trim();}),body:rows.slice(1),name:f.name};
+    showMapper();
+  };
+  fr.readAsText(f);
+}
+function guess(h,keys){h=h.toLowerCase();
+  for(var i=0;i<keys.length;i++)if(h.indexOf(keys[i])>=0)return true;return false;}
+function showMapper(){
+  var TARGETS=[["skip","Do not import"],["date","Campaign date"],["campaign","Campaign name"],
+    ["cohort","Cohort"],["category","Message category"],["targeted","Targeted"],["sent","Sent"],
+    ["delivered","Delivered"],["read","Read"],["clicks","Total clicks"],["unique","Unique clicks"],
+    ["conversions","Conversions"],["revenue","Revenue"]];
+  var G={date:["date"],campaign:["campaign name","campaign"],cohort:["cohort"],category:["category","type"],
+    targeted:["targeted","target"],sent:["sent"],delivered:["delivered","deliver"],read:["read"],
+    clicks:["total click","clicks"],unique:["unique"],conversions:["conversion"],revenue:["revenue","amount","value"]};
+  var h=['<h3 style="margin-top:18px;font-family:var(--display);font-size:15px">'+esc(IMPORTED.name)+' &middot; '
+    +IMPORTED.body.length+' rows</h3>',
+    '<p class="hint">Point each column at what it holds. Anything left on “Do not import” is ignored.</p>',
+    '<div style="margin:12px 0">'];
+  IMPORTED.head.forEach(function(col,i){
+    var pick="skip";
+    Object.keys(G).forEach(function(k){if(pick==="skip"&&guess(col,G[k]))pick=k;});
+    h.push('<div class="maprow"><span>'+esc(col||"(column "+(i+1)+")")+'</span><select data-col="'+i+'">'
+      +TARGETS.map(function(t){return '<option value="'+t[0]+'"'+(t[0]===pick?" selected":"")+'>'+t[1]+'</option>';}).join("")
+      +'</select></div>');
+  });
+  h.push('</div><div class="bar"><button class="btn primary" id="do-camp">Add as new campaign rows</button>'
+    +'<button class="btn" id="do-del">Update delivery and click figures</button>'
+    +'<button class="btn" id="do-conv">Fill in conversions and revenue</button>'
+    +'<span class="status" id="imp-msg"></span></div>');
+  var out=document.getElementById("imp-out");out.innerHTML=h.join("");
+  out.querySelector("#do-camp").onclick=function(){applyImport("rows");};
+  out.querySelector("#do-del").onclick=function(){applyImport("delivery");};
+  out.querySelector("#do-conv").onclick=function(){applyImport("conv");};
+}
+function readMap(){
+  var m={};document.querySelectorAll("[data-col]").forEach(function(s){
+    var v=s.value;if(v!=="skip")m[v]=+s.getAttribute("data-col");});return m;}
+function applyImport(mode){
+  var m=readMap(),msg=document.getElementById("imp-msg");
+  if(m.campaign===undefined){msg.textContent="Point one column at the campaign name first.";return;}
+  var added=0,touched=0,mset={};
+  IMPORTED.body.forEach(function(r){
+    function g(f){return m[f]===undefined?null:String(r[m[f]]==null?"":r[m[f]]).trim();}
+    var name=g("campaign");if(!name)return;
+    if(mode==="delivery"){
+      var want=["targeted","sent","delivered","read","clicks","unique"].filter(function(f){
+        return m[f]!==undefined&&num(r[m[f]])!==null;});
+      if(!want.length)return;
+      var coh=g("cohort");
+      Object.keys(S.months).forEach(function(k){
+        (S.months[k].rows||[]).forEach(function(row){
+          if((row.campaign||"").trim().toLowerCase()!==name.toLowerCase())return;
+          if(coh&&(row.cohort||"").trim().toLowerCase()!==coh.toLowerCase())return;
+          want.forEach(function(f){row[f]=num(r[m[f]]);});
+          mset[k]=1;touched++;
+        });
+      });
+    }else if(mode==="conv"){
+      var cv=m.conversions!==undefined?num(r[m.conversions]):null;
+      var rv=m.revenue!==undefined?num(r[m.revenue]):null;
+      if(cv===null&&rv===null)return;
+      Object.keys(S.months).forEach(function(k){
+        var hit=null;
+        (S.months[k].rows||[]).forEach(function(row){
+          if(!hit&&(row.campaign||"").trim().toLowerCase()===name.toLowerCase())hit=row;});
+        if(hit){if(cv!==null)hit.conversions=cv;if(rv!==null)hit.revenue=rv;mset[k]=1;touched++;}
+      });
+    }else{
+      var d=g("date")||"";
+      var iso=/^\d{4}-\d{2}-\d{2}/.test(d)?d.slice(0,10):toIso(d);
+      var mo=mk(iso)||curMonth||thisMonth();
+      if(!S.months[mo])S.months[mo]={month:mo,rows:[]};
+      var row=blank(mo);row.date=iso||mo+"-01";row.campaign=name;
+      ["cohort","category"].forEach(function(f){if(m[f]!==undefined)row[f]=g(f);});
+      NUMF.forEach(function(f){if(m[f]!==undefined)row[f]=num(r[m[f]]);});
+      if(!row.category)row.category="Marketing";
+      S.months[mo].rows.push(row);mset[mo]=1;added++;
+    }
+  });
+  Object.keys(mset).forEach(save);
+  msg.textContent=mode==="rows"?(added+" rows added."):(touched+" row"+(touched===1?"":"s")+" updated.");
+  if(added||touched){viewLead();viewData();}
+}
+function toIso(s){
+  var m=String(s).match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+  if(!m)return "";var y=m[3].length===2?"20"+m[3]:m[3];
+  return y+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[1]).slice(-2);
+}
+
+function viewSet(){
+  var el=document.getElementById("v-set"),c=S.cfg;
+  el.innerHTML='<div class="bar"><h2>Rates and benchmarks</h2></div><div class="panel"><div class="fields">'
+   +fld("marketingRate","Marketing rate ₹ per delivered message",c.marketingRate,"0.0001")
+   +fld("utilityRate","Utility rate ₹ per delivered message",c.utilityRate,"0.01")
+   +fld("metaCPC","Meta benchmark cost per click ₹",c.metaCPC,"0.5")
+   +fld("googleCPC","Google benchmark cost per click ₹",c.googleCPC,"0.5")
+   +fld("platformFee","Platform fee ₹ per month",c.platformFee,"100")
+   +fld("gstRate","GST rate",c.gstRate,"0.01")
+   +'</div><p class="hint">Campaign cost is delivered messages multiplied by the rate for that message category. '
+   +'The benchmarks are planning figures supplied by the growth team, not measured from a live ad account. '
+   +'Change anything here and every figure on every tab follows.</p></div>'
+   +(STANDALONE?('<div class="panel" style="margin-top:14px"><h2 style="font-size:16px;font-weight:600">'
+     +'Your data</h2><p class="hint" style="margin-top:4px">On this address your edits are kept in this '
+     +'browser only, so they do not reach anyone else until the page is rebuilt. Save the file and send it '
+     +'over, and the next build carries your changes for everyone.</p>'
+     +'<div class="bar" style="margin-top:12px"><a class="btn primary" id="dl" download="campaign-signal-data.json">'
+     +'Save my data to a file</a><button class="btn" id="ld">Load a data file</button>'
+     +'<input type="file" id="ldf" accept=".json" hidden><span class="status" id="io-msg"></span></div></div>'):'');
+  el.querySelectorAll("[data-cfg]").forEach(function(i){
+    i.addEventListener("change",function(){
+      var v=parseFloat(i.value);if(isFinite(v)){S.cfg[i.getAttribute("data-cfg")]=v;saveCfg();viewLead();viewData();}
+    });
+  });
+  var dl=el.querySelector("#dl");
+  if(dl){
+    dl.href=URL.createObjectURL(new Blob([JSON.stringify(
+      {months:S.months,invoices:S.inv,config:S.cfg,stamp:new Date().toISOString().slice(0,10)},null,1)],
+      {type:"application/json"}));
+    var ldf=el.querySelector("#ldf");
+    el.querySelector("#ld").onclick=function(){ldf.click();};
+    ldf.onchange=function(){
+      var f=ldf.files[0];if(!f)return;
+      var fr=new FileReader();
+      fr.onload=function(){
+        try{
+          var d=JSON.parse(String(fr.result));
+          if(d.config)S.cfg=Object.assign({},DEF,d.config);
+          Object.keys(d.months||{}).forEach(function(k){S.months[k]=d.months[k];save(k);});
+          Object.keys(d.invoices||{}).forEach(function(k){S.inv[k]=d.invoices[k];saveInv(k);});
+          saveCfg();el.querySelector("#io-msg").textContent="Loaded.";viewLead();viewSet();
+        }catch(e){el.querySelector("#io-msg").textContent="That file could not be read as campaign data.";}
+      };
+      fr.readAsText(f);
+    };
+  }
+}
+function fld(k,label,v,step){
+  return '<div class="field"><label for="c-'+k+'">'+esc(label)+'</label>'
+    +'<input id="c-'+k+'" type="number" step="'+step+'" data-cfg="'+k+'" value="'+v+'"></div>';
+}
+
+/* ============================ persistence ============================ */
+var timers={};
+function save(month){
+  render();
+  if(!S.months[month])return;
+  clearTimeout(timers[month]);
+  timers[month]=setTimeout(function(){
+    stamp("Saving…");
+    write("months/"+month,{month:month,rows:S.months[month].rows}).then(function(ok){
+      stamp(ok?"Saved":"Saved on this device only");});
+  },700);
+}
+function saveCfg(){
+  clearTimeout(timers.cfg);
+  timers.cfg=setTimeout(function(){write("settings/config",S.cfg);},500);
+}
+function stamp(t){var e=document.getElementById("saved");if(e)e.textContent=t;}
+function write(path,data){
+  try{localStorage.setItem("cs:"+path,JSON.stringify(data));}catch(e){}
+  if(!S.db)return Promise.resolve(false);
+  return S.db.doc(path).set(data).then(function(){return true;}).catch(function(){return false;});
+}
+function render(){viewLead();}
+
+/* ============================ boot ============================ */
+function switchTo(id){
+  [["t-lead","v-lead"],["t-data","v-data"],["t-inv","v-inv"],["t-imp","v-imp"],["t-set","v-set"]].forEach(function(p){
+    var on=p[0]===id;
+    document.getElementById(p[0]).setAttribute("aria-selected",on?"true":"false");
+    document.getElementById(p[1]).hidden=!on;
+  });
+  if(id==="t-data")viewData();
+  if(id==="t-inv")viewInv();
+  if(id==="t-imp")viewImport();
+  if(id==="t-set")viewSet();
+  try{localStorage.setItem("cs:tab",id);}catch(e){}
+}
+["t-lead","t-data","t-inv","t-imp","t-set"].forEach(function(id){
+  document.getElementById(id).onclick=function(){switchTo(id);};});
+
+function fromSeed(){                       /* so the page is never blank for a viewer without db */
+  try{
+    var el=document.getElementById("seed");
+    if(!el)return;
+    var d=JSON.parse(el.textContent||"{}");
+    if(d.config)S.cfg=Object.assign({},DEF,d.config);
+    Object.keys(d.months||{}).forEach(function(k){S.months[k]=d.months[k];});
+    Object.keys(d.invoices||{}).forEach(function(k){S.inv[k]=d.invoices[k];});
+  }catch(e){}
+}
+function fromLocal(){
+  try{
+    var cfg=localStorage.getItem("cs:settings/config");
+    if(cfg)S.cfg=Object.assign({},DEF,JSON.parse(cfg));
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(k&&k.indexOf("cs:months/")===0){var d=JSON.parse(localStorage.getItem(k));if(d&&d.month)S.months[d.month]=d;}
+      if(k&&k.indexOf("cs:invoices/")===0){var v=JSON.parse(localStorage.getItem(k));if(v&&v.month)S.inv[v.month]=v;}
+    }
+  }catch(e){}
+}
+function boot(){
+  fromSeed();
+  fromLocal();
+  render();
+  try{var t=localStorage.getItem("cs:tab");if(t)switchTo(t);}catch(e){}
+  if(!window.claude||!window.claude.use)return;
+  window.claude.use("db").then(function(db){
+    if(!db)return;
+    S.db=db;
+    return Promise.all([
+      db.doc("settings/config").get().then(function(d){
+        if(d&&d.exists)S.cfg=Object.assign({},DEF,d.data()||{});
+      }).catch(function(){}),
+      db.collection("months").get().then(function(res){
+        ((res&&res.docs)||[]).forEach(function(d){
+          var v=d.exists?d.data():null;
+          if(v&&v.month)S.months[v.month]=v;
+        });
+      }).catch(function(){}),
+      db.collection("invoices").get().then(function(res){
+        ((res&&res.docs)||[]).forEach(function(d){
+          var v=d.exists?d.data():null;
+          if(v&&v.month)S.inv[v.month]=v;
+        });
+      }).catch(function(){})
+    ]).then(function(){
+      render();
+      var open=document.querySelector('.tab[aria-selected="true"]');
+      if(open&&open.id!=="t-lead")switchTo(open.id);
+    });
+  }).catch(function(){});
+}
+boot();
+})();
+</script>
+
+</body>
+</html>
