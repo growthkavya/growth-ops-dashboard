@@ -74,6 +74,11 @@ button,input,select{font:inherit;color:inherit}
 .lead-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:16px}
 .lead-head h1{font-size:clamp(22px,3.4vw,32px);font-weight:700}
 .period{font-size:12px;color:var(--ink-3);font-family:var(--mono);letter-spacing:.02em}
+.pick{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:99px;
+  padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer}
+.chip:hover{border-color:var(--line-strong);color:var(--ink)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-bottom:22px}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px 15px;
   position:relative;overflow:hidden}
@@ -258,23 +263,30 @@ function months(){
   });
   campaigns(rows).forEach(function(g){if(by[g.month])by[g.month].campaigns++;});
   return Object.keys(by).sort().map(function(m){
-    var o=by[m];
-    o.cpc=o.clicks>0?o.mktSpend/o.clicks:null;
-    o.roi=o.spend>0?o.revenue/o.spend:null;
+    var o=by[m], iv=S.inv[m]||{};
+    var fee=n(iv.platformFee);if(fee===null)fee=S.cfg.platformFee;
+    o.fee=fee;                                    /* Gupshup platform fee for the month */
+    o.gst=(o.spend+fee)*S.cfg.gstRate;
+    o.bill=o.spend+fee+o.gst;                     /* what the month really costs us */
+    o.cpc=o.clicks>0?o.mktSpend/o.clicks:null;    /* media spend only, the usual CPC convention */
+    o.roi=o.bill>0?o.revenue/o.bill:null;         /* ROI is measured against the full bill */
     o.deliveryRate=o.sent>0?o.delivered/o.sent:null;
     o.readRate=o.delivered>0?o.read/o.delivered:null;
     o.clickRate=o.read>0?o.clicks/o.read:null;
-    o.costPerConv=o.conversions>0?o.spend/o.conversions:null;
+    o.costPerConv=o.conversions>0?o.bill/o.conversions:null;
     return o;});
 }
 function totals(ms){
-  var t={spend:0,revenue:0,conversions:0,campaigns:0,clicks:0,mktSpend:0,delivered:0,read:0,sent:0};
-  ms.forEach(function(m){["spend","revenue","conversions","campaigns","clicks","mktSpend","delivered","read","sent"]
+  var t={spend:0,revenue:0,conversions:0,campaigns:0,clicks:0,mktSpend:0,delivered:0,read:0,sent:0,fee:0};
+  ms.forEach(function(m){["spend","revenue","conversions","campaigns","clicks","mktSpend","delivered","read","sent","fee"]
     .forEach(function(f){t[f]+=m[f]||0;});});
-  t.roi=t.spend>0?t.revenue/t.spend:null;
+  t.gst=(t.spend+t.fee)*S.cfg.gstRate;
+  t.bill=t.spend+t.fee+t.gst;
+  t.roi=t.bill>0?t.revenue/t.bill:null;
   t.cpc=t.clicks>0?t.mktSpend/t.clicks:null;
-  t.costPerConv=t.conversions>0?t.spend/t.conversions:null;
+  t.costPerConv=t.conversions>0?t.bill/t.conversions:null;
   t.readRate=t.delivered>0?t.read/t.delivered:null;
+  t.months=ms.length;
   return t;
 }
 
@@ -285,8 +297,7 @@ function invFor(m){
 }
 function billing(mo){
   var iv=invFor(mo.month);
-  var fee=n(iv.platformFee);if(fee===null)fee=S.cfg.platformFee;
-  var sub=mo.spend+fee, gst=sub*S.cfg.gstRate, ours=sub+gst;
+  var ours=mo.bill, gst=mo.gst, fee=mo.fee;
   var billed=n(iv.total);
   return {month:mo.month,msgSpend:mo.spend,fee:fee,gst:gst,ours:ours,
     billed:billed,source:iv.source||"Not received",invoiceNo:iv.invoiceNo||"",
@@ -389,44 +400,62 @@ function wireTips(root){
 }
 
 /* ============================ views ============================ */
+var period="all";
 function viewLead(){
-  var ms=months(), t=totals(ms), el=document.getElementById("v-lead");
+  var ms=months(), el=document.getElementById("v-lead");
   if(!ms.length){el.innerHTML='<div class="empty"><h2>No campaigns yet</h2><p>Add them on the Campaigns tab, '
     +'or bring a spreadsheet in through Import.</p></div>';return;}
+  if(period!=="all"&&!ms.some(function(m){return m.month===period;}))period="all";
+  var sel=period==="all"?ms:ms.filter(function(m){return m.month===period;});
+  var t=totals(sel);
   var cats=ms.map(function(m){return mlabel(m.month).replace(" "," ");});
-  var camps=campaigns(allRows()).filter(function(c){return c.revenue;})
+  var camps=campaigns(allRows()).filter(function(c){
+      return c.revenue&&(period==="all"||c.month===period);})
       .sort(function(a,b){return b.revenue-a.revenue;}).slice(0,8);
   var last=ms[ms.length-1];
+  var spark=function(f){return period==="all"?ms.map(f):sel.map(f);};
 
   var h=[];
   h.push('<div class="lead-head"><h1>What WhatsApp returned</h1>'
     +'<div class="period">'+esc(mlabel(ms[0].month))+' – '+esc(mlabel(last.month))
-    +'  ·  '+cnt(t.campaigns)+' campaigns</div></div>');
+    +'  ·  '+cnt(totals(ms).campaigns)+' campaigns tracked</div></div>');
+
+  h.push('<div class="pick" role="group" aria-label="Period">'
+    +'<button class="chip'+(period==="all"?" on":"")+'" data-p="all">All time</button>'
+    +ms.map(function(m){return '<button class="chip'+(period===m.month?" on":"")+'" data-p="'+m.month+'">'
+      +esc(mlabel(m.month))+'</button>';}).join("")+'</div>');
 
   h.push('<div class="kpis">');
   h.push('<div class="kpi hero"><div class="cap">Return on investment</div><div class="fig">'
     +(t.roi===null?"—":Math.round(t.roi*100).toLocaleString("en-IN")+"%")+'</div>'
-    +'<div class="sub">'+cr(t.revenue)+' back on '+cr(t.spend)+' spent</div>'
-    +sparkline(ms.map(function(m){return m.roi||0;}),"var(--s1)")+'</div>');
+    +'<div class="sub">'+cr(t.revenue)+' back on '+cr(t.bill)+' of total cost</div>'
+    +sparkline(spark(function(m){return m.roi||0;}),"var(--s1)")+'</div>');
   h.push('<div class="kpi"><div class="cap">Revenue attributed</div><div class="fig">'+cr(t.revenue)+'</div>'
-    +'<div class="sub">'+cnt(t.conversions)+' conversions</div>'
-    +sparkline(ms.map(function(m){return m.revenue;}),"var(--s2)")+'</div>');
-  h.push('<div class="kpi"><div class="cap">Amount spent</div><div class="fig">'+cr(t.spend)+'</div>'
-    +'<div class="sub">'+inr(t.costPerConv)+' per conversion</div>'
-    +sparkline(ms.map(function(m){return m.spend;}),"var(--s3)")+'</div>');
+    +'<div class="sub">'+cnt(t.conversions)+' conversions · '+inr(t.costPerConv)+' each</div>'
+    +sparkline(spark(function(m){return m.revenue;}),"var(--s2)")+'</div>');
+  h.push('<div class="kpi"><div class="cap">Total cost</div><div class="fig">'+cr(t.bill)+'</div>'
+    +'<div class="sub">'+inr(t.spend)+' messages + '+inr(t.fee)+' platform fee + '+inr(t.gst)+' GST</div>'
+    +sparkline(spark(function(m){return m.bill;}),"var(--s3)")+'</div>');
+  h.push('<div class="kpi"><div class="cap">Conversions</div><div class="fig">'+cnt(t.conversions)+'</div>'
+    +'<div class="sub">from '+cnt(t.clicks)+' clicks on '+cnt(t.delivered)+' messages</div>'
+    +sparkline(spark(function(m){return m.conversions;}),"var(--s2)")+'</div>');
   h.push('<div class="kpi"><div class="cap">Cost per click</div><div class="fig">'+inr(t.cpc,2)+'</div>'
     +'<div class="sub">Meta '+inr(S.cfg.metaCPC)+' · Google '+inr(S.cfg.googleCPC)+'</div>'
-    +sparkline(ms.map(function(m){return m.cpc||0;}),"var(--s1)")+'</div>');
+    +sparkline(spark(function(m){return m.cpc||0;}),"var(--s1)")+'</div>');
   h.push('</div>');
+  if(period==="all"&&ms.length&&ms[0].month==="2026-06")
+    h.push('<p class="hint" style="margin:-8px 0 16px">Tracking started in July. June holds a handful of '
+      +'campaigns that were logged before conversions were being attributed, so its spend is real but its '
+      +'revenue reads zero. Pick a month above to look at any period on its own.</p>');
 
   h.push('<div class="grid">');
 
-  h.push('<div class="card wide"><h3>Spend against revenue</h3>'
-    +'<p class="note">Every rupee we put in, beside every rupee that came back.</p>'
-    +'<ul class="legend"><li><i class="swatch" style="background:var(--s3)"></i>Spent</li>'
+  h.push('<div class="card wide"><h3>Cost against revenue</h3>'
+    +'<p class="note">The full monthly cost, messages plus platform fee plus GST, beside every rupee that came back.</p>'
+    +'<ul class="legend"><li><i class="swatch" style="background:var(--s3)"></i>Total cost</li>'
     +'<li><i class="swatch" style="background:var(--s2)"></i>Revenue attributed</li></ul>'
-    +barChart({title:"Spend against revenue",cats:cats,width:900,height:250,
-      series:[{name:"Spent",color:"var(--s3)",values:ms.map(function(m){return m.spend;})},
+    +barChart({title:"Cost against revenue",cats:cats,width:900,height:250,
+      series:[{name:"Total cost",color:"var(--s3)",values:ms.map(function(m){return m.bill;})},
               {name:"Revenue",color:"var(--s2)",values:ms.map(function(m){return m.revenue;})}],
       fmtAxis:cr,fmtLabel:cr,fmtTip:inr})+'</div>');
 
@@ -527,36 +556,43 @@ function viewLead(){
    +'<td style="text-align:right">'+(t.cpc===null?'<span class="pill flat">—</span>'
       :(t.cpc<=S.cfg.googleCPC?'<span class="pill up">under Google</span>'
         :'<span class="pill warn">above both</span>'))+'</td></tr>'
-   +'<tr><td>Cost per conversion</td><td class="n">'+inr(t.costPerConv)+'</td>'
+   +'<tr><td>Cost per conversion, all in</td><td class="n">'+inr(t.costPerConv)+'</td>'
    +'<td style="text-align:right">Average order '+inr(t.conversions?t.revenue/t.conversions:null)+'</td>'
    +'<td style="text-align:right">'+(t.costPerConv===null?'<span class="pill flat">—</span>'
-      :'<span class="pill up">'+(t.revenue/t.spend).toFixed(1)+'x back</span>')+'</td></tr>'
+      :'<span class="pill up">'+(t.revenue/t.bill).toFixed(1)+'x back</span>')+'</td></tr>'
    +'</tbody></table></div>'
    +'<p class="hint">Volume behind it: '+cnt(mktMsgs)+' marketing and '+cnt(utilMsgs)
    +' utility messages delivered, '+cnt(t.clicks)+' clicks, '+cnt(t.conversions)+' conversions. '
    +'The platform fee is fixed at '+inr(S.cfg.platformFee)+' a month whatever the volume, so cost per '
    +'message falls as we send more.</p></div>');
 
+  var tAll=totals(ms);
   h.push('<div class="card wide" style="margin-top:14px"><h3>Month by month</h3>'
-    +'<p class="note">The same figures as numbers, for anyone who wants them.</p><div class="scroll"><table>'
-    +'<thead><tr><th>Month</th><th>Campaigns</th><th>Spent</th><th>Delivered</th><th>Clicks</th>'
-    +'<th>Conversions</th><th>Revenue</th><th>ROI</th><th>CPC</th><th>vs Meta</th></tr></thead><tbody>');
-  ms.forEach(function(m){
-    h.push('<tr><td>'+esc(mlabel(m.month))+'</td><td class="n">'+cnt(m.campaigns)+'</td><td class="n">'
-      +inr(m.spend)+'</td><td class="n">'+cnt(m.delivered)+'</td><td class="n">'+cnt(m.clicks)+'</td><td class="n">'
-      +cnt(m.conversions)+'</td><td class="n">'+inr(m.revenue)+'</td><td class="n">'
+    +'<p class="note">How each month\'s cost is built up, and what it returned. Total cost is what we '
+    +'actually pay: messages at the tracked rates, plus the platform fee, plus GST at '+pc(S.cfg.gstRate,0)+'.</p>'
+    +'<div class="scroll"><table>'
+    +'<thead><tr><th>Month</th><th>Campaigns</th><th>Delivered</th><th>Clicks</th><th>Messages ₹</th>'
+    +'<th>Platform fee</th><th>GST</th><th>Total cost</th><th>Conversions</th><th>Revenue</th>'
+    +'<th>ROI</th><th>CPC</th></tr></thead><tbody>');
+  function mrow(m,label,bold){
+    return '<tr'+(bold?' style="font-weight:600;background:var(--surface-2)"':'')+'><td>'+esc(label)
+      +'</td><td class="n">'+cnt(m.campaigns)+'</td><td class="n">'+cnt(m.delivered)+'</td><td class="n">'
+      +cnt(m.clicks)+'</td><td class="n">'+inr(m.spend,2)+'</td><td class="n">'+inr(m.fee)+'</td><td class="n">'
+      +inr(m.gst,2)+'</td><td class="n"><b>'+inr(m.bill,2)+'</b></td><td class="n">'+cnt(m.conversions)
+      +'</td><td class="n">'+inr(m.revenue)+'</td><td class="n">'
       +(m.roi===null?'<span class="pill flat">—</span>':'<span class="pill '+(m.roi>1?"up":"flat")+'">'
         +Math.round(m.roi*100).toLocaleString("en-IN")+'%</span>')
-      +'</td><td class="n">'+inr(m.cpc,2)+'</td><td class="n">'
-      +(m.cpc===null?"—":inr(m.cpc-S.cfg.metaCPC,2))+'</td></tr>');
-  });
-  h.push('<tr style="font-weight:600;background:var(--surface-2)"><td>All months</td><td class="n">'+cnt(t.campaigns)
-    +'</td><td class="n">'+inr(t.spend)+'</td><td class="n">'+cnt(t.delivered)+'</td><td class="n">'+cnt(t.clicks)
-    +'</td><td class="n">'+cnt(t.conversions)+'</td><td class="n">'+inr(t.revenue)+'</td><td class="n">'
-    +(t.roi===null?"—":Math.round(t.roi*100).toLocaleString("en-IN")+"%")+'</td><td class="n">'+inr(t.cpc,2)
-    +'</td><td class="n">'+(t.cpc===null?"—":inr(t.cpc-S.cfg.metaCPC,2))+'</td></tr>');
+      +'</td><td class="n">'+inr(m.cpc,2)+'</td></tr>';
+  }
+  ms.forEach(function(m){h.push(mrow(m,mlabel(m.month),false));});
+  h.push(mrow(tAll,"All months",true));
   h.push('</tbody></table></div></div>');
   el.innerHTML=h.join("");
+  el.querySelectorAll("[data-p]").forEach(function(b){
+    b.onclick=function(){period=b.getAttribute("data-p");
+      try{localStorage.setItem("cs:period",period);}catch(e){}
+      viewLead();};
+  });
   wireTips(el);
 }
 
@@ -943,6 +979,7 @@ function fromLocal(){
 function boot(){
   fromSeed();
   fromLocal();
+  try{var p=localStorage.getItem("cs:period");if(p)period=p;}catch(e){}
   render();
   try{var t=localStorage.getItem("cs:tab");if(t)switchTo(t);}catch(e){}
   if(!window.claude||!window.claude.use)return;
