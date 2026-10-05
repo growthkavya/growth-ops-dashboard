@@ -4,388 +4,503 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mumbai Trip Report</title>
-<meta name="description" content="What the SSEI team did in Mumbai, 27 Sep to 2 Oct 2026: the student meetup, four podcasts, 28 videos, OOH and PR meetings, what we learned and what happens next.">
+<meta name="description" content="What the SSEI team did in Mumbai, 27 Sep to 2 Oct 2026: the student meetup, four podcasts, 28 videos, OOH and PR groundwork, what we learned and what happens next.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap">
 <style>
-/* Layout: team-photo masthead with the trip in numbers, a full-bleed interactive map band, then one reading column. SSEI brand navy + gold. */
+/* Layout: photo-collage masthead; a Mumbai local "line" as the section menu (each section is a station);
+   then full-width bands that alternate ground colours. SSEI navy + gold. */
 :root {
   color-scheme: light;
-  --ground: #F4F6FA; --card: #FFFFFF; --ink: #121C30; --mut: #5A6478; --line: #DCE1EA;
-  --navy: #0E2A5E; --navy-ink: #0E2A5E; --gold: #D4A02B; --gold-ink: #8A6512;
-  --tint: #E7ECF5; --on-navy: #F3F6FB; --on-navy-mut: #B9C5DB; --on-navy-line: rgba(255,255,255,0.18);
-  --sea: #D7E2F0; --land: #FFFFFF; --land-edge: #AFBED6; --rail: #0E2A5E;
-  --ch-sir: #0E2A5E; --ch-fin: #1F6F5C; --ch-ssei: #8A4B12;
-  --ch-sir-bg: #E3E9F4; --ch-fin-bg: #E0EFEA; --ch-ssei-bg: #F6EBDD;
-  --menu-bg: rgba(244, 246, 250, 0.94);
+  --ground: #F3F5F9; --band: #E9EEF6; --card: #FFFFFF; --ink: #111A2E; --mut: #566179; --line: #D8DEE9;
+  --navy: #0E2A5E; --navy-ink: #0E2A5E; --gold: #D4A02B; --gold-ink: #8A6512; --gold-soft: #F6E7C1;
+  --deep: #081A3D; --on-deep: #F2F5FA; --on-deep-mut: #A8B5CE; --on-deep-line: rgba(255,255,255,0.16);
+  --sea: #D5E0EF; --land: #FFFFFF; --land-edge: #A9B9D3; --rail: #0E2A5E;
+  --ch-sir: #0E2A5E; --ch-fin: #1D6B58; --ch-ssei: #9A5317;
+  --live: #1E7A4C;
+  --shadow: 0 1px 2px rgba(10,22,50,0.06), 0 8px 24px rgba(10,22,50,0.08);
+  --menu-bg: rgba(243, 245, 249, 0.95);
   --f-display: "DM Serif Display", Georgia, "Times New Roman", serif;
   --f-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-sign: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --ground: #0D1422; --card: #151E31; --ink: #E6EAF2; --mut: #9AA5BB; --line: #26324A;
-    --navy: #0A1F47; --navy-ink: #A9C1F0; --gold: #E2B54A; --gold-ink: #E2B54A;
-    --tint: #1A2540; --on-navy: #EEF2F9; --on-navy-mut: #A9B6CF;
-    --sea: #101C33; --land: #1E2A42; --land-edge: #3A4C72; --rail: #A9C1F0;
-    --ch-sir: #A9C1F0; --ch-fin: #6FC3A8; --ch-ssei: #E8A867;
-    --ch-sir-bg: #1A2747; --ch-fin-bg: #15302A; --ch-ssei-bg: #33261A;
-    --menu-bg: rgba(13, 20, 34, 0.94);
+    --ground: #0C1322; --band: #111A2D; --card: #172137; --ink: #E7EBF3; --mut: #9CA7BD; --line: #27324A;
+    --navy: #0A1F47; --navy-ink: #AFC5F2; --gold: #E3B64B; --gold-ink: #E3B64B; --gold-soft: #3A2F16;
+    --deep: #060F24; --on-deep-mut: #A2AFC9;
+    --sea: #0F1A30; --land: #1C2840; --land-edge: #3A4D74; --rail: #AFC5F2;
+    --ch-sir: #AFC5F2; --ch-fin: #72C6AA; --ch-ssei: #EAA96A;
+    --live: #4CC38A;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.3);
+    --menu-bg: rgba(12, 19, 34, 0.95);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ground: #0D1422; --card: #151E31; --ink: #E6EAF2; --mut: #9AA5BB; --line: #26324A;
-  --navy: #0A1F47; --navy-ink: #A9C1F0; --gold: #E2B54A; --gold-ink: #E2B54A;
-  --tint: #1A2540; --on-navy: #EEF2F9; --on-navy-mut: #A9B6CF;
-  --sea: #101C33; --land: #1E2A42; --land-edge: #3A4C72; --rail: #A9C1F0;
-  --ch-sir: #A9C1F0; --ch-fin: #6FC3A8; --ch-ssei: #E8A867;
-  --ch-sir-bg: #1A2747; --ch-fin-bg: #15302A; --ch-ssei-bg: #33261A;
-  --menu-bg: rgba(13, 20, 34, 0.94);
+  --ground: #0C1322; --band: #111A2D; --card: #172137; --ink: #E7EBF3; --mut: #9CA7BD; --line: #27324A;
+  --navy: #0A1F47; --navy-ink: #AFC5F2; --gold: #E3B64B; --gold-ink: #E3B64B; --gold-soft: #3A2F16;
+  --deep: #060F24; --on-deep-mut: #A2AFC9;
+  --sea: #0F1A30; --land: #1C2840; --land-edge: #3A4D74; --rail: #AFC5F2;
+  --ch-sir: #AFC5F2; --ch-fin: #72C6AA; --ch-ssei: #EAA96A;
+  --live: #4CC38A;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.3);
+  --menu-bg: rgba(12, 19, 34, 0.95);
 }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; display: block; }
 a { color: var(--navy-ink); }
-a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
 h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
-h3 { font-size: 1.05rem; font-weight: 700; line-height: 1.35; }
 p { margin: 0; }
-.wrap { max-width: 1120px; margin: 0 auto; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
-.lede { color: var(--mut); max-width: 62ch; font-size: 1.05rem; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
 
-/* Section heading: gold kicker rule + label, big display title */
-.sec-head { display: grid; gap: 14px; margin-bottom: 32px; }
-.kicker { display: flex; align-items: center; gap: 12px; font-size: 0.76rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-ink); }
-.kicker::before { content: ""; width: 36px; height: 2px; background: var(--gold); flex: none; }
-.sec-head h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(2.1rem, 5vw, 3.3rem); line-height: 1.04; letter-spacing: -0.01em; color: var(--ink); max-width: 20ch; }
-.sec-head h2 em { font-style: italic; color: var(--gold-ink); }
+/* Shared heading */
+.band { padding-block: 88px; scroll-margin-top: 64px; }
+.band.alt { background: var(--band); }
+.head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 16px 48px; align-items: end; margin-bottom: 44px; }
+.head .stn { grid-column: 1 / -1; }
+.stn { display: inline-flex; align-items: center; gap: 10px; font: 700 0.95rem/1 var(--f-sign); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-ink); }
+.stn::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
+.head h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(2.2rem, 4.8vw, 3.6rem); line-height: 1.02; letter-spacing: -0.012em; }
+.head h2 em { font-style: italic; color: var(--gold-ink); }
+.head p { color: var(--mut); font-size: 1.06rem; max-width: 52ch; }
+@media (max-width: 820px) { .head { grid-template-columns: 1fr; align-items: start; } .band { padding-block: 64px; } }
 
-/* Masthead with team photo */
-.mast { position: relative; color: var(--on-navy); background: var(--navy); overflow: hidden; }
-.mast .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
-.mast::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(7,19,45,0.94) 0%, rgba(7,19,45,0.82) 45%, rgba(7,19,45,0.45) 100%); }
-.mast .wrap { position: relative; z-index: 1; padding-block: 72px 44px; }
-.mast .kicker { color: var(--gold); }
-.mast h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(3rem, 9vw, 5.6rem); line-height: 0.98; margin-top: 18px; letter-spacing: -0.015em; }
-.mast h1 em { font-style: italic; color: var(--gold); }
-.mast .intro { margin-top: 20px; max-width: 58ch; color: var(--on-navy-mut); font-size: 1.1rem; }
-.stats { display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 48px; border-top: 1px solid var(--on-navy-line); }
-.stat { padding: 18px 18px 4px 0; display: grid; gap: 4px; align-content: start; }
-.stat + .stat { padding-left: 18px; border-left: 1px solid var(--on-navy-line); }
-.stat b { font-family: var(--f-display); font-weight: 400; font-size: clamp(2rem, 4vw, 2.8rem); line-height: 1; color: #fff; font-variant-numeric: tabular-nums; }
-.stat span { font-size: 0.86rem; color: var(--on-navy-mut); line-height: 1.4; }
+/* Masthead */
+.mast { background: var(--deep); color: var(--on-deep); padding-block: 56px 0; overflow: hidden; }
+.mast-grid { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 48px; align-items: center; }
+.mast .stn { color: var(--gold); }
+.mast .stn::before { box-shadow: 0 0 0 3px rgba(212,160,43,0.25); }
+.mast h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(3.2rem, 7.4vw, 6.2rem); line-height: 0.95; letter-spacing: -0.02em; margin-top: 22px; }
+.mast h1 em { display: block; font-style: italic; color: var(--gold); }
+.mast .intro { margin-top: 24px; color: var(--on-deep-mut); font-size: 1.1rem; max-width: 46ch; }
+.mast .route { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 8px; }
+.mast .route span { font: 600 0.95rem/1 var(--f-sign); letter-spacing: 0.06em; text-transform: uppercase; color: var(--on-deep); border: 1px solid var(--on-deep-line); border-radius: 999px; padding: 7px 12px; }
+.collage { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 150px); gap: 10px; }
+.collage figure { margin: 0; border-radius: 12px; overflow: hidden; background: #1A2B52; position: relative; }
+.collage img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.collage figure:hover img { transform: scale(1.04); }
+.collage figcaption { position: absolute; left: 8px; bottom: 8px; font: 600 0.82rem/1 var(--f-sign); letter-spacing: 0.06em; text-transform: uppercase; background: rgba(6,15,36,0.72); color: #fff; padding: 5px 8px; border-radius: 6px; }
+.c1 { grid-column: 1 / 3; grid-row: 1; } .c2 { grid-column: 3; grid-row: 1 / 3; } .c3 { grid-column: 4; grid-row: 1 / 3; }
+.c4 { grid-column: 1; grid-row: 2 / 4; } .c5 { grid-column: 2; grid-row: 2; } .c6 { grid-column: 2; grid-row: 3; } .c7 { grid-column: 3 / 5; grid-row: 3; }
+.stats { margin-top: 56px; display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--on-deep-line); }
+.stat { padding: 22px 20px 26px 0; display: grid; gap: 6px; align-content: start; }
+.stat + .stat { padding-left: 20px; border-left: 1px solid var(--on-deep-line); }
+.stat b { font-family: var(--f-display); font-weight: 400; font-size: clamp(2.2rem, 4vw, 3rem); line-height: 1; color: #fff; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.88rem; color: var(--on-deep-mut); line-height: 1.4; }
+@media (max-width: 960px) { .mast-grid { grid-template-columns: 1fr; } .collage { grid-template-rows: repeat(3, 110px); } }
 @media (max-width: 760px) {
+  .collage { grid-template-rows: repeat(3, 84px); gap: 6px; } .collage figcaption { display: none; }
   .stats { grid-template-columns: repeat(2, 1fr); }
-  .stat, .stat + .stat { padding: 16px 12px 12px 0; border-left: 0; border-bottom: 1px solid var(--on-navy-line); }
-  .stat:nth-child(even) { padding-left: 14px; border-left: 1px solid var(--on-navy-line); }
+  .stat, .stat + .stat { padding: 16px 12px 16px 0; border-left: 0; border-bottom: 1px solid var(--on-deep-line); }
+  .stat:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--on-deep-line); }
   .stat:last-child { grid-column: 1 / -1; border-bottom: 0; }
 }
 
-/* Menu */
-.menu { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--menu-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-.menu .wrap { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-block: 8px; }
-.menu .wrap::-webkit-scrollbar { display: none; }
-.menu a { flex: none; text-decoration: none; color: var(--mut); font-size: 0.86rem; font-weight: 600; padding: 7px 12px; border-radius: 999px; }
-.menu a:hover { color: var(--ink); background: var(--tint); }
+/* Station menu: the local train line */
+.line-nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: var(--menu-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.line-nav .wrap { overflow-x: auto; scrollbar-width: none; }
+.line-nav .wrap::-webkit-scrollbar { display: none; }
+.line-nav ol { position: relative; list-style: none; margin: 0; padding: 12px 0 10px; display: flex; min-width: max-content; }
+.line-nav ol::before { content: ""; position: absolute; left: 22px; right: 22px; top: 21px; height: 3px; background: var(--line); border-radius: 2px; }
+.line-nav li { flex: 1 0 auto; }
+.line-nav a { position: relative; display: grid; justify-items: center; gap: 6px; padding-inline: 14px; text-decoration: none; color: var(--mut); font: 600 0.92rem/1 var(--f-sign); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.line-nav a::before { content: ""; width: 13px; height: 13px; border-radius: 50%; background: var(--card); border: 3px solid var(--line); transition: background 0.2s, border-color 0.2s, transform 0.2s; }
+.line-nav a:hover { color: var(--ink); }
+.line-nav a:hover::before { border-color: var(--gold); }
+.line-nav a.on { color: var(--ink); }
+.line-nav a.on::before { background: var(--gold); border-color: var(--navy-ink); transform: scale(1.15); }
 
-section { padding-block: 80px 8px; scroll-margin-top: 56px; }
-
-/* Map band (full bleed) */
-.map-band { background: var(--sea); padding-block: 72px 64px; margin-top: 0; }
-.map-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 36px; align-items: start; }
-.map-box { position: relative; background: var(--sea); border-radius: 16px; }
-.map-box svg { display: block; width: 100%; height: auto; max-height: 82vh; margin-inline: auto; }
-.map-box:fullscreen { display: grid; place-items: center; padding: 24px; border-radius: 0; }
-.map-box:fullscreen svg { height: calc(100vh - 48px); max-height: none; width: auto; }
-.fs-btn { position: absolute; top: 12px; right: 12px; z-index: 3; display: inline-flex; align-items: center; gap: 8px; font: 700 0.82rem var(--f-body); color: var(--on-navy); background: var(--navy); border: 0; border-radius: 999px; padding: 9px 14px; cursor: pointer; }
+/* Map */
+.map-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.map-box { position: relative; background: var(--sea); border-radius: 18px; border: 1px solid var(--line); overflow: hidden; }
+.map-box svg { display: block; width: 100%; height: auto; max-height: 760px; margin-inline: auto; }
+.map-box:fullscreen { display: grid; place-items: center; border-radius: 0; }
+.map-box:fullscreen svg { height: 100vh; max-height: none; width: auto; }
+.fs-btn { position: absolute; top: 14px; right: 14px; z-index: 3; display: inline-flex; align-items: center; gap: 8px; font: 700 0.82rem var(--f-body); color: #fff; background: var(--navy); border: 0; border-radius: 999px; padding: 9px 14px; cursor: pointer; box-shadow: var(--shadow); }
 .fs-btn svg { width: 14px; height: 14px; }
 .land { fill: var(--land); stroke: var(--land-edge); stroke-width: 1; }
-.sea-label { fill: var(--mut); font: italic 13px var(--f-display); letter-spacing: 0.1em; }
-.rail { fill: none; stroke: var(--rail); stroke-width: 2.5; stroke-dasharray: 2 5; stroke-linecap: round; opacity: 0.75; }
-.rail-label { fill: var(--rail); font: 700 9.5px var(--f-body); letter-spacing: 0.06em; text-transform: uppercase; }
+.sea-label { fill: var(--mut); font: italic 13px var(--f-display); letter-spacing: 0.12em; }
+.rail { fill: none; stroke: var(--rail); stroke-width: 2.5; stroke-dasharray: 1 5; stroke-linecap: round; opacity: 0.8; }
+.rail-label { fill: var(--rail); font: 700 10px var(--f-sign); letter-spacing: 0.1em; text-transform: uppercase; }
 .pin { cursor: pointer; outline: none; }
 .pin .halo { fill: var(--gold); opacity: 0.22; transition: r 0.2s, opacity 0.2s; }
 .pin .dot { fill: var(--gold); stroke: var(--navy); stroke-width: 2; }
-.pin text { fill: var(--ink); font: 700 11px var(--f-body); paint-order: stroke; stroke: var(--land); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
+.pin text { fill: var(--ink); font: 700 12px var(--f-sign); letter-spacing: 0.04em; text-transform: uppercase; paint-order: stroke; stroke: var(--land); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
 .pin.base .dot { fill: var(--navy-ink); stroke: var(--land); }
-.pin:hover .halo, .pin:focus .halo, .pin.on .halo { r: 15; opacity: 0.45; }
-.pin:focus-visible .dot { stroke: var(--gold-ink); stroke-width: 3; }
-.tip { position: absolute; z-index: 4; width: min(260px, 70%); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(10, 20, 45, 0.18); pointer-events: none; font-size: 0.88rem; line-height: 1.45; }
+.pin:hover .halo, .pin:focus .halo, .pin.on .halo { r: 16; opacity: 0.5; }
+.tip { position: absolute; z-index: 4; width: 230px; background: var(--card); color: var(--ink); border-radius: 14px; overflow: hidden; box-shadow: 0 14px 40px rgba(6, 15, 36, 0.28); pointer-events: none; }
+.tip img { width: 100%; height: 130px; object-fit: cover; }
+.tip div { padding: 10px 12px 12px; font-size: 0.86rem; line-height: 1.45; }
 .tip b { display: block; font-size: 0.95rem; margin-bottom: 2px; }
 .tip span { color: var(--mut); }
-.places { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
-.places li { display: grid; grid-template-columns: 14px 1fr; gap: 12px; padding: 12px 8px; border-bottom: 1px solid var(--land-edge); border-radius: 8px; cursor: default; }
-.places li.on { background: var(--card); }
-.places .mk { width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--navy); margin-top: 6px; }
-.places .mk.base { background: var(--navy-ink); border-color: var(--card); }
-.places .mk.rail { width: 14px; height: 0; border: 0; border-top: 3px dotted var(--rail); border-radius: 0; margin-top: 11px; background: none; }
-.places b { display: block; font-size: 0.97rem; }
-.places span { color: var(--mut); font-size: 0.9rem; }
-.map-hint { margin-top: 14px; font-size: 0.82rem; color: var(--mut); }
-@media (max-width: 860px) { .map-layout { grid-template-columns: 1fr; } .map-box svg { max-height: 90vh; } }
+.places { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.places li { display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: center; padding: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; transition: border-color 0.2s, box-shadow 0.2s; }
+.places li.on { border-color: var(--gold); box-shadow: var(--shadow); }
+.places .pic { width: 56px; height: 56px; border-radius: 9px; overflow: hidden; background: var(--band); display: grid; place-items: center; }
+.places .pic img { width: 100%; height: 100%; object-fit: cover; }
+.places .pic i { width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--navy); }
+.places .pic i.base { background: var(--navy-ink); border-color: var(--card); }
+.places .pic i.rail { width: 26px; height: 0; border: 0; border-top: 3px dotted var(--rail); border-radius: 0; background: none; }
+.places b { display: block; font-size: 0.93rem; line-height: 1.3; }
+.places span { display: block; color: var(--mut); font-size: 0.83rem; line-height: 1.4; }
+@media (max-width: 980px) { .map-layout { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .places { grid-template-columns: 1fr; } }
 
 /* Meetup */
-.meetup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 36px; align-items: start; }
-.prose { display: grid; gap: 14px; max-width: 62ch; }
-.funnel { display: grid; gap: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
-.funnel h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--mut); }
-.fbar { display: grid; gap: 6px; }
-.fbar .lbl { display: flex; justify-content: space-between; gap: 12px; font-size: 0.92rem; }
-.fbar .lbl b { font-variant-numeric: tabular-nums; }
-.fbar .track { height: 12px; border-radius: 6px; background: var(--tint); overflow: hidden; }
-.fbar .fill { height: 100%; border-radius: 6px; background: var(--navy-ink); }
-.fbar.hot .fill { background: var(--gold); }
-.funnel .note { font-size: 0.86rem; color: var(--mut); border-top: 1px solid var(--line); padding-top: 12px; }
-@media (max-width: 820px) { .meetup { grid-template-columns: 1fr; } }
+.meet-photos { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; margin-bottom: 40px; }
+.meet-photos { height: 440px; }
+.meet-photos figure { margin: 0; border-radius: 16px; overflow: hidden; background: var(--band); height: 100%; }
+.meet-photos img { width: 100%; height: 100%; object-fit: cover; }
+.meet-body { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 48px; align-items: start; }
+.prose { display: grid; gap: 14px; font-size: 1.04rem; }
+.prose p { max-width: 58ch; }
+.dots-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); }
+.dots-card h3 { font: 700 0.95rem/1 var(--f-sign); letter-spacing: 0.12em; text-transform: uppercase; color: var(--mut); margin-bottom: 16px; }
+.dots { display: grid; grid-template-columns: repeat(25, 1fr); gap: 4px; }
+.dots i { aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--land-edge); }
+.dots i.c { background: var(--sea); border-color: var(--sea); }
+.dots i.s { background: var(--gold); border-color: var(--gold); }
+.dots.alumni { grid-template-columns: repeat(25, 1fr); margin-top: 10px; }
+.dots i.a { background: var(--navy-ink); border-color: var(--navy-ink); }
+.legend { margin-top: 18px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 16px; font-size: 0.88rem; }
+.legend div { display: flex; gap: 10px; align-items: center; }
+.legend i { flex: none; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--land-edge); }
+.legend b { font-variant-numeric: tabular-nums; }
+.dots-note { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--mut); font-size: 0.88rem; }
+@media (max-width: 860px) { .meet-body { grid-template-columns: 1fr; gap: 28px; } .meet-photos { grid-template-columns: 1fr; height: auto; } .meet-photos figure { aspect-ratio: 16 / 10; height: auto; } }
 
-/* Podcasts: screenshot behind each guest */
-.guests { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.guest { position: relative; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; background: var(--navy); color: #fff; display: grid; align-content: end; }
-.guest img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.guest::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,19,45,0) 35%, rgba(7,19,45,0.92) 100%); }
-.guest .ini { position: absolute; top: 18px; left: 18px; z-index: 1; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid var(--gold); color: var(--gold); font: 400 1.3rem var(--f-display); display: grid; place-items: center; }
-.guest img ~ .ini { display: none; }
-.guest .who { position: relative; z-index: 1; padding: 18px; display: grid; gap: 2px; }
-.guest b { font-size: 1.15rem; line-height: 1.3; }
-.guest span { color: #D5DCEA; font-size: 0.86rem; line-height: 1.4; }
-.callout { margin-top: 20px; display: flex; gap: 14px; align-items: flex-start; background: var(--tint); border-radius: 12px; padding: 16px 18px; font-size: 0.95rem; }
-.when { flex: none; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; background: var(--gold); color: #1B1405; padding: 4px 9px; border-radius: 999px; margin-top: 2px; }
-@media (max-width: 700px) { .guests { grid-template-columns: 1fr; } }
+/* Podcasts */
+.guests { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.guest { position: relative; aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; background: var(--navy); color: #fff; display: grid; align-content: end; box-shadow: var(--shadow); }
+.guest img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.guest:hover img { transform: scale(1.03); }
+.guest::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,15,36,0) 30%, rgba(6,15,36,0.55) 55%, rgba(6,15,36,0.95) 100%); }
+.guest .who { position: relative; z-index: 1; padding: 22px 24px; display: grid; gap: 4px; }
+.guest .org { font: 700 0.9rem/1 var(--f-sign); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+.guest b { font-family: var(--f-display); font-weight: 400; font-size: 1.7rem; line-height: 1.1; }
+.guest span.role { color: #D4DBE9; font-size: 0.9rem; }
+.note-bar { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--gold); border-radius: 12px; padding: 16px 20px; }
+.when { flex: none; font: 700 0.9rem/1 var(--f-sign); letter-spacing: 0.1em; text-transform: uppercase; background: var(--gold); color: #1B1405; padding: 7px 11px; border-radius: 999px; }
+.note-bar p { flex: 1 1 320px; }
+@media (max-width: 720px) { .guests { grid-template-columns: 1fr; } }
 
-/* Content */
-.channel { margin-top: 48px; }
-.channel:first-of-type { margin-top: 0; }
-.ch-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding-bottom: 14px; border-bottom: 2px solid var(--c); margin-bottom: 20px; }
-.ch-head h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.7rem; color: var(--c); }
-.ch-head span { color: var(--mut); font-size: 0.92rem; }
-.ch-sir { --c: var(--ch-sir); --cbg: var(--ch-sir-bg); }
-.ch-fin { --c: var(--ch-fin); --cbg: var(--ch-fin-bg); }
-.ch-ssei { --c: var(--ch-ssei); --cbg: var(--ch-ssei-bg); }
-.vids { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px 16px; }
-.vid { display: grid; gap: 10px; align-content: start; }
-.thumb { position: relative; aspect-ratio: 4 / 5; border-radius: 12px; overflow: hidden; background: var(--cbg); margin: 0; }
-.thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.thumb .ph { position: absolute; inset: 0; display: grid; align-content: end; padding: 14px; color: var(--c); }
-.thumb .ph strong { font: 400 1.3rem/1.1 var(--f-display); }
-.thumb img ~ .ph { display: none; }
-.badges { position: absolute; top: 10px; left: 10px; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; }
-.badge { background: rgba(10, 18, 35, 0.76); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
-.badge.live { background: #1F7A4D; }
-.vid h4 { font-size: 0.98rem; line-height: 1.35; }
-.vid p { color: var(--mut); font-size: 0.88rem; line-height: 1.5; }
-.tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tags span { font-size: 0.72rem; font-weight: 700; color: var(--c); background: var(--cbg); padding: 3px 9px; border-radius: 999px; }
-@media (max-width: 900px) { .vids { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 640px) { .vids { grid-template-columns: repeat(2, 1fr); } }
+/* Videos */
+.mix { display: grid; gap: 12px; margin-bottom: 28px; }
+.mix-bar { display: grid; grid-template-columns: repeat(28, 1fr); gap: 3px; height: 34px; }
+.mix-bar i { border-radius: 4px; background: var(--c); position: relative; }
+.mix-bar i.live::after { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px var(--live); }
+.mix-key { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 0.9rem; color: var(--mut); }
+.mix-key span { display: inline-flex; align-items: center; gap: 8px; }
+.mix-key i { width: 12px; height: 12px; border-radius: 3px; background: var(--c); }
+.mix-key i.lv { border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px var(--live); width: 8px; height: 8px; }
+.ch-sir { --c: var(--ch-sir); } .ch-fin { --c: var(--ch-fin); } .ch-ssei { --c: var(--ch-ssei); }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+.tabs button { font: 600 0.9rem var(--f-body); color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+.tabs button b { font-weight: 700; color: var(--mut); font-variant-numeric: tabular-nums; }
+.tabs button[aria-pressed="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.tabs button[aria-pressed="true"] b { color: var(--ground); opacity: 0.7; }
+.group + .group { margin-top: 48px; }
+.group[hidden] { display: none; }
+.g-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 18px; }
+.g-head h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.8rem; color: var(--c); }
+.g-head span { color: var(--mut); font-size: 0.93rem; }
+.reels { display: grid; grid-template-columns: repeat(7, 1fr); gap: 22px 14px; }
+.ch-sir .reels { grid-template-columns: repeat(8, 1fr); }
+.ch-sir .reel .ttl { font-size: 0.86rem; }
+.reel { display: grid; gap: 10px; align-content: start; }
+.reel figure { position: relative; margin: 0; aspect-ratio: 9 / 15; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, var(--c), color-mix(in srgb, var(--c) 55%, #000)); box-shadow: var(--shadow); }
+.reel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.reel:hover img { transform: scale(1.05); }
+.reel figure::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,15,36,0) 50%, rgba(6,15,36,0.85) 100%); }
+.reel .ttl { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 1; color: #fff; font-weight: 700; font-size: 0.92rem; line-height: 1.25; text-wrap: balance; }
+.reel .ph { position: absolute; top: 14px; left: 12px; right: 12px; color: rgba(255,255,255,0.9); font: 400 1.25rem/1.15 var(--f-display); }
+.reel img ~ .ph, .reel img ~ .play { display: none; }
+.reel .play { position: absolute; left: 50%; top: 45%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.75); display: grid; place-items: center; }
+.reel .play::before { content: ""; margin-left: 4px; border-left: 13px solid rgba(255,255,255,0.85); border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
+.reel .chips { position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.chip { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.03em; padding: 3px 8px; border-radius: 999px; background: rgba(6,15,36,0.78); color: #fff; }
+.chip.live { background: var(--live); color: #fff; }
+.reel p { color: var(--mut); font-size: 0.84rem; line-height: 1.45; }
+.reel .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.reel .tags span { font-size: 0.7rem; font-weight: 700; color: var(--c); border: 1px solid var(--c); padding: 2px 8px; border-radius: 999px; }
+@media (max-width: 1080px) { .reels, .ch-sir .reels { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 680px) { .reels, .ch-sir .reels { grid-template-columns: repeat(2, 1fr); gap: 18px 12px; } .reel p { font-size: 0.8rem; } }
 
-/* Meetings */
-.meet { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.meet article { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: grid; gap: 12px; align-content: start; }
-.meet ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
-.meet .insight { background: var(--tint); border-radius: 10px; padding: 12px 14px; font-size: 0.93rem; }
-.meet .insight b { color: var(--gold-ink); }
-.meet .foot { font-size: 0.88rem; color: var(--mut); border-top: 1px solid var(--line); padding-top: 12px; }
-.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+/* OOH and PR */
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.duo article { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 28px; display: grid; gap: 16px; align-content: start; box-shadow: var(--shadow); }
+.duo .tagline { font: 700 0.95rem/1 var(--f-sign); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-ink); }
+.duo h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.8rem; line-height: 1.1; }
+.spots { display: flex; flex-wrap: wrap; gap: 8px; }
+.spots span { font-weight: 600; font-size: 0.9rem; background: var(--band); border-radius: 999px; padding: 6px 12px; }
+.versus { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.versus div { border-radius: 12px; padding: 14px; display: grid; gap: 4px; }
+.versus .lo { background: var(--band); color: var(--mut); }
+.versus .hi { background: var(--gold-soft); }
+.versus b { font: 700 1.05rem/1.1 var(--f-sign); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
+.versus span { font-size: 0.86rem; line-height: 1.4; }
+.duo .due-line { display: flex; gap: 12px; align-items: center; border-top: 1px solid var(--line); padding-top: 16px; font-size: 0.92rem; color: var(--mut); }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 18px; }
 .shots:not(:has(figure)) { display: none; }
-.shots figure { margin: 0; border-radius: 12px; overflow: hidden; aspect-ratio: 4 / 3; background: var(--tint); }
+.shots figure { margin: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 4 / 3; background: var(--band); }
 .shots img { width: 100%; height: 100%; object-fit: cover; }
-@media (max-width: 760px) { .meet { grid-template-columns: 1fr; } }
+@media (max-width: 820px) { .duo { grid-template-columns: 1fr; } }
 
 /* Learnings */
-.learn { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.learn article { border-top: 3px solid var(--gold); background: var(--card); border-radius: 0 0 12px 12px; padding: 20px 22px 22px; display: grid; gap: 8px; align-content: start; }
-.learn article:last-child:nth-child(odd) { grid-column: 1 / -1; }
-.learn p { color: var(--mut); font-size: 0.95rem; }
-@media (max-width: 760px) { .learn { grid-template-columns: 1fr; } }
+.lessons { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+.lesson { grid-column: span 2; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 26px; display: grid; gap: 12px; align-content: start; }
+.lesson:nth-child(4), .lesson:nth-child(5) { grid-column: span 3; }
+.lesson .ico { width: 44px; height: 44px; border-radius: 12px; background: var(--gold-soft); color: var(--gold-ink); display: grid; place-items: center; }
+.lesson .ico svg { width: 22px; height: 22px; }
+.lesson h3 { font-size: 1.12rem; line-height: 1.3; }
+.lesson p { color: var(--mut); font-size: 0.95rem; }
+.lesson .proof { font-size: 0.86rem; font-weight: 600; color: var(--ink); background: var(--band); border-radius: 10px; padding: 10px 12px; }
+@media (max-width: 900px) { .lessons { grid-template-columns: 1fr 1fr; } .lesson, .lesson:nth-child(4), .lesson:nth-child(5) { grid-column: span 1; } .lesson:nth-child(5) { grid-column: 1 / -1; } }
+@media (max-width: 600px) { .lessons { grid-template-columns: 1fr; } .lesson:nth-child(5) { grid-column: auto; } }
 
 /* Next steps */
-.steps { list-style: none; margin: 0; padding: 0; display: grid; counter-reset: s; }
-.steps li { counter-increment: s; display: grid; grid-template-columns: 44px 1fr auto; gap: 16px; align-items: start; padding: 18px 0; border-bottom: 1px solid var(--line); }
-.steps li::before { content: counter(s); font: 400 1.6rem/1 var(--f-display); color: var(--gold-ink); }
-.steps b { display: block; font-size: 1rem; }
-.steps span { color: var(--mut); font-size: 0.92rem; }
-.steps .due { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--tint); color: var(--navy-ink); white-space: nowrap; }
-.steps .due.thu { background: var(--gold); color: #1B1405; }
-@media (max-width: 560px) { .steps li { grid-template-columns: 32px 1fr; } .steps .due { grid-column: 2; justify-self: start; } }
+.next { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; }
+.col { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
+.col.thu { background: var(--deep); color: var(--on-deep); border-color: var(--deep); }
+.col h3 { font: 700 1.05rem/1 var(--f-sign); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; display: flex; gap: 10px; align-items: center; }
+.col.thu h3 { color: var(--gold); }
+.col ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.col li { padding: 16px 0; border-top: 1px solid var(--line); display: grid; gap: 4px; }
+.col.thu li { border-color: var(--on-deep-line); }
+.col li b { font-size: 1.02rem; }
+.col li span { color: var(--mut); font-size: 0.92rem; }
+.col.thu li span { color: var(--on-deep-mut); }
+@media (max-width: 820px) { .next { grid-template-columns: 1fr; } }
 
-footer { margin-top: 80px; padding-block: 28px 40px; border-top: 1px solid var(--line); color: var(--mut); font-size: 0.85rem; }
+footer { background: var(--deep); color: var(--on-deep-mut); padding-block: 36px; font-size: 0.88rem; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
 </style>
 </head>
 <body>
 
 <header class="mast">
-  <img class="bg" src="team.jpg" alt="" onerror="this.remove()">
   <div class="wrap">
-    <p class="kicker">SSEI team trip · 27 Sep to 2 Oct 2026</p>
-    <h1>Six days in <em>Mumbai</em></h1>
-    <p class="intro">We went to Mumbai to meet our students there, record conversations with some of the city's top fund managers, shoot a season's worth of content and lay the groundwork for outdoor ads and PR. This page sums up what we did, where we went and what comes next.</p>
+    <div class="mast-grid">
+      <div>
+        <p class="stn">SSEI trip report · 27 Sep to 2 Oct 2026</p>
+        <h1>Six days in <em>Mumbai</em></h1>
+        <p class="intro">We went to meet our Mumbai students, sit down with four of the city's top fund house leaders, shoot a season of content and lay the groundwork for outdoor ads and PR. Here is everything we did, where we went and what comes next.</p>
+        <div class="route" aria-label="Places covered"><span>Film City</span><span>Andheri</span><span>Vile Parle</span><span>Bandra</span><span>Dharavi</span><span>Dadar</span><span>Siddhivinayak</span></div>
+      </div>
+      <div class="collage" aria-label="Photos from the trip">
+        <figure class="c1"><img src="thumbs/sir-students.jpg" alt="The meetup" style="object-position:center 40%"><figcaption>The meetup</figcaption></figure><figure class="c2"><img src="thumbs/fin-bappa.jpg" alt="Siddhivinayak" style="object-position:center 40%"><figcaption>Siddhivinayak</figcaption></figure><figure class="c3"><img src="thumbs/sir-vada-pav.jpg" alt="Ashok Vada Pav" style="object-position:center 45%"><figcaption>Ashok Vada Pav</figcaption></figure><figure class="c4"><img src="thumbs/fin-puchka.jpg" alt="Bandra" style="object-position:center 40%"><figcaption>Bandra</figcaption></figure><figure class="c5"><img src="pod-kalpen.jpg" alt="Podcasts" style="object-position:center 62%"><figcaption>Podcasts</figcaption></figure><figure class="c6"><img src="thumbs/fin-local.jpg" alt="Local train" style="object-position:center 30%"><figcaption>Local train</figcaption></figure><figure class="c7"><img src="thumbs/sir-alumni.jpg" alt="Our alumni" style="object-position:center 45%"><figcaption>Our alumni</figcaption></figure>
+      </div>
+    </div>
     <div class="stats">
-      <div class="stat"><b>65+</b><span>students at the meetup, with 10 alumni</span></div>
-      <div class="stat"><b>200</b><span>meetup sign-ups, now with sales</span></div>
+      <div class="stat"><b>65+</b><span>students at the meetup, joined by 10 alumni</span></div>
+      <div class="stat"><b>200</b><span>meetup sign-ups, all handed to sales</span></div>
       <div class="stat"><b>4</b><span>podcasts with fund house leaders</span></div>
-      <div class="stat"><b>28</b><span>videos shot across three pages</span></div>
-      <div class="stat"><b>3</b><span>PR agencies met, plus an OOH recce</span></div>
+      <div class="stat"><b>28</b><span>videos shot for three pages</span></div>
+      <div class="stat"><b>3</b><span>PR agencies met, plus an outdoor ads recce</span></div>
     </div>
   </div>
 </header>
 
-<nav class="menu" aria-label="Sections">
+<nav class="line-nav" aria-label="Sections">
   <div class="wrap">
-    <a href="#map">Where we went</a>
-    <a href="#meetup">Student meetup</a>
-    <a href="#podcasts">Podcasts</a>
-    <a href="#content">Videos</a>
-    <a href="#meetings">OOH and PR</a>
-    <a href="#learnings">What we learned</a>
-    <a href="#next">Next steps</a>
+    <ol>
+      <li><a href="#map">Where we went</a></li>
+      <li><a href="#meetup">Meetup</a></li>
+      <li><a href="#podcasts">Podcasts</a></li>
+      <li><a href="#videos">Videos</a></li>
+      <li><a href="#ooh-pr">OOH and PR</a></li>
+      <li><a href="#learnings">Learnings</a></li>
+      <li><a href="#next">Next steps</a></li>
+    </ol>
   </div>
 </nav>
 
-<section id="map" class="map-band">
+<section id="map" class="band">
   <div class="wrap">
-    <div class="sec-head">
-      <p class="kicker">Where we went</p>
+    <div class="head">
+      <p class="stn">Where we went</p>
       <h2>From Film City to <em>Siddhivinayak</em></h2>
-      <p class="lede">We stayed in Santacruz and covered the city by road and by local train. Hover over a pin, or tap it on your phone, to see what we did there.</p>
+      <p>We stayed in Santacruz and covered the city by road and by local train. Hover over a pin or a place to see what we did there.</p>
     </div>
     <div class="map-layout">
       <div class="map-box" id="mapBox">
         <button class="fs-btn" id="fsBtn" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 6V1h5M10 1h5v5M15 10v5h-5M6 15H1v-5"/></svg><span>Full screen</span></button>
-        <svg viewBox="55 248 322 473" role="img" aria-label="Map of Mumbai with the places the team covered">
+        <svg viewBox="60 258 312 453" role="img" aria-label="Map of Mumbai with the places the team covered">
           <rect x="-200" y="-200" width="1000" height="1400" fill="var(--sea)"/>
           <path class="land" d="M39,372L40,373L40,372L39,371L39,372ZM45,153L46,159L51,164L52,168L53,169L56,170L58,175L57,184L56,187L54,188L55,190L52,192L53,197L55,198L60,197L63,198L66,201L67,205L66,210L60,209L59,211L58,224L59,227L65,229L71,226L77,228L81,226L85,219L92,219L92,220L92,227L89,234L90,257L86,279L81,281L78,280L79,282L78,283L76,285L74,284L71,291L68,292L65,292L64,290L58,289L57,291L56,297L57,299L61,302L63,305L62,308L59,310L58,313L61,314L61,313L62,314L64,321L71,326L74,334L74,344L72,346L71,351L72,352L73,359L72,372L71,373L69,372L68,372L68,375L71,374L72,375L73,378L71,378L70,379L70,381L75,380L76,377L80,378L81,380L87,378L89,373L91,373L92,366L90,364L89,359L86,354L90,354L91,352L93,356L94,354L95,355L96,357L96,355L98,353L99,353L101,350L99,349L100,348L105,345L105,342L109,343L107,347L108,348L107,348L106,350L104,352L104,355L110,358L121,368L143,402L150,423L154,444L159,460L160,476L158,482L156,488L153,491L151,490L150,486L151,489L154,492L153,497L151,498L148,495L153,502L150,505L147,503L150,505L148,507L144,503L148,508L148,518L150,526L150,527L147,526L150,527L151,536L150,539L140,537L140,537L150,539L146,551L147,551L147,553L152,555L154,560L149,564L147,572L141,585L139,589L141,592L148,589L150,595L150,593L152,593L153,591L157,589L167,584L167,581L175,574L184,574L186,576L195,570L236,567L253,566L256,569L260,569L263,572L267,572L272,575L273,574L277,577L280,578L281,586L284,604L283,609L277,623L275,631L275,636L281,645L290,655L292,667L290,671L289,685L291,686L294,690L294,694L305,693L307,691L311,693L312,689L316,689L316,694L307,694L308,703L315,700L333,698L334,699L335,707L336,710L338,709L336,703L339,702L338,701L339,701L337,697L339,696L341,699L339,696L342,696L343,694L346,696L348,694L356,695L359,696L365,695L370,697L380,690L393,683L444,643L454,634L459,625L467,611L471,592L468,553L468,546L466,539L463,511L463,477L465,461L471,433L484,404L479,403L484,403L485,398L484,389L477,377L465,369L475,358L481,354L492,334L498,326L500,308L507,287L512,283L508,283L495,274L490,277L483,277L480,265L478,265L471,268L468,266L468,264L466,261L465,263L462,263L461,260L459,258L459,256L458,254L455,254L453,252L453,250L451,248L447,249L445,245L439,239L435,242L428,241L421,242L417,238L421,233L420,208L409,202L400,196L400,193L383,174L372,171L365,173L360,188L357,192L349,194L343,187L345,172L349,168L351,150L354,143L360,138L350,127L339,117L339,98L333,97L328,94L321,94L323,97L312,93L300,92L292,84L285,82L278,76L276,71L272,67L262,65L258,65L258,67L256,65L249,57L249,51L244,50L241,48L238,50L231,45L220,50L216,49L213,45L206,50L203,51L194,50L189,52L184,58L182,63L183,68L190,79L189,83L187,87L182,91L166,99L161,104L136,98L128,92L115,78L105,71L101,71L101,65L99,63L77,65L73,60L62,56L64,60L63,63L61,67L57,69L60,79L60,92L55,112L56,114L56,117L51,122L55,138L49,147L46,150L45,153ZM55,371L61,378L63,378L59,375L60,375L61,374L63,371L61,368L57,367L55,371ZM117,512L118,514L120,512L124,513L122,507L122,503L121,503L120,505L120,501L119,509L117,510L117,512ZM81,815L82,817L82,823L85,827L82,837L86,838L89,827L95,819L104,814L109,810L111,806L115,804L118,800L133,805L139,811L148,822L153,832L153,845L152,853L147,863L140,871L142,871L147,875L150,876L152,878L156,878L156,882L157,883L157,885L155,884L152,889L147,885L151,888L151,890L149,893L145,890L143,890L142,889L146,884L141,890L137,888L135,891L137,895L134,898L135,900L129,904L127,904L120,900L119,897L132,881L113,903L108,912L107,920L108,929L113,938L120,946L118,951L121,949L124,945L129,944L130,943L139,930L139,927L142,927L139,926L140,925L139,925L139,920L142,921L139,917L140,914L141,915L143,914L144,915L146,912L145,909L150,906L157,914L161,905L166,901L170,896L167,893L172,890L172,889L174,889L172,888L176,880L179,879L179,877L177,876L179,875L186,883L191,882L200,872L200,870L200,872L190,881L187,874L192,872L191,869L187,872L186,869L191,866L186,868L185,866L183,866L182,865L184,863L183,861L185,863L190,858L190,854L192,852L195,853L197,863L200,862L197,846L198,847L206,817L204,811L206,802L208,793L211,795L211,798L211,798L212,794L214,794L215,791L214,791L214,793L212,794L208,793L213,774L214,773L218,774L219,772L221,772L215,769L218,769L218,767L214,767L215,763L212,760L213,758L210,757L211,756L217,759L221,758L222,755L226,751L225,748L226,745L213,742L213,740L230,744L238,736L227,709L228,708L230,708L231,705L236,705L238,702L240,703L238,702L236,696L238,687L245,687L249,681L253,683L259,679L261,682L262,676L265,676L266,677L277,678L278,675L285,674L288,672L290,671L292,667L290,654L281,645L276,640L275,635L277,623L283,609L284,601L280,578L277,577L273,574L272,575L267,572L263,572L260,569L256,569L253,566L195,570L186,576L183,576L182,578L185,588L185,591L186,600L185,611L179,627L170,638L164,643L154,649L150,650L146,649L143,646L142,639L133,628L135,637L136,652L137,653L139,652L140,652L136,654L137,658L134,666L131,669L128,668L127,668L128,674L127,676L127,676L123,690L125,707L128,707L128,709L127,710L124,710L121,721L123,723L125,724L128,722L130,723L130,726L128,730L128,735L126,738L122,739L120,735L120,732L119,733L121,740L113,742L109,746L103,760L100,771L97,785L97,788L98,790L96,790L96,791L84,806L81,815ZM322,790L324,791L331,794L333,792L333,794L330,801L332,798L333,799L335,795L337,794L337,795L339,792L342,792L340,792L341,790L338,786L337,787L335,785L334,784L335,782L332,781L332,779L330,780L329,779L328,779L326,786L322,790Z"/>
           <polyline class="rail" points="204.6,404.7 198.5,453.0 192.4,495.9 190.1,524.7 191.5,561.4 203.7,593.6 203.7,625.5 196.7,647.4"/><text class="rail-label" x="198.1" y="527.7">Local train</text>
-          <text class="sea-label" x="67" y="485">Arabian Sea</text>
-          <g class="pin" tabindex="0" role="button" data-id="filmcity" data-title="Film City, Goregaon" data-desc="Shooting for Sir&#x27;s profile at Mumbai&#x27;s film studios." aria-label="Film City, Goregaon: Shooting for Sir&#x27;s profile at Mumbai&#x27;s film studios."><circle class="halo" cx="267.2" cy="308.0" r="10"/><circle class="dot" cx="267.2" cy="308.0" r="5"/><text x="278.2" y="312.0" text-anchor="start">Film City</text></g><g class="pin" tabindex="0" role="button" data-id="andheri" data-title="Andheri" data-desc="One of our stops during the week, on the way through the western suburbs." aria-label="Andheri: One of our stops during the week, on the way through the western suburbs."><circle class="halo" cx="204.6" cy="404.7" r="10"/><circle class="dot" cx="204.6" cy="404.7" r="5"/><text x="215.6" y="408.7" text-anchor="start">Andheri</text></g><g class="pin" tabindex="0" role="button" data-id="vileparle" data-title="Vile Parle" data-desc="Outdoor ad recce around Mithibai College and NMIMS." aria-label="Vile Parle: Outdoor ad recce around Mithibai College and NMIMS."><circle class="halo" cx="183.3" cy="443.4" r="10"/><circle class="dot" cx="183.3" cy="443.4" r="5"/><text x="172.3" y="447.4" text-anchor="end">Vile Parle</text></g><g class="pin" tabindex="0" role="button" data-id="airport" data-title="Mumbai airport" data-desc="Where we shot the Mumbai redevelopment video." aria-label="Mumbai airport: Where we shot the Mumbai redevelopment video."><circle class="halo" cx="248.2" cy="477.0" r="10"/><circle class="dot" cx="248.2" cy="477.0" r="5"/><text x="259.2" y="481.0" text-anchor="start">Airport</text></g><g class="pin base" tabindex="0" role="button" data-id="santacruz" data-title="Santacruz, our base" data-desc="Where we stayed for the week." aria-label="Santacruz, our base: Where we stayed for the week."><circle class="halo" cx="194.6" cy="497.6" r="10"/><circle class="dot" cx="194.6" cy="497.6" r="5"/><text x="183.6" y="501.6" text-anchor="end">Santacruz</text></g><g class="pin" tabindex="0" role="button" data-id="bandra" data-title="Bandra" data-desc="Outdoor ad recce, Bombay Sweet Shop for Sir&#x27;s sweets video and Elco for the puchka video." aria-label="Bandra: Outdoor ad recce, Bombay Sweet Shop for Sir&#x27;s sweets video and Elco for the puchka video."><circle class="halo" cx="165.2" cy="560.0" r="10"/><circle class="dot" cx="165.2" cy="560.0" r="5"/><text x="154.2" y="564.0" text-anchor="end">Bandra</text></g><g class="pin" tabindex="0" role="button" data-id="dharavi" data-title="Dharavi" data-desc="A guided walk through its textile, recycling and leather workshops." aria-label="Dharavi: A guided walk through its textile, recycling and leather workshops."><circle class="halo" cx="221.9" cy="596.0" r="10"/><circle class="dot" cx="221.9" cy="596.0" r="5"/><text x="232.9" y="601.0" text-anchor="start">Dharavi</text></g><g class="pin" tabindex="0" role="button" data-id="dadar" data-title="Ashok Vada Pav, Dadar" data-desc="Sir&#x27;s first vada pav, a stall owner&#x27;s story and vada pav economics." aria-label="Ashok Vada Pav, Dadar: Sir&#x27;s first vada pav, a stall owner&#x27;s story and vada pav economics."><circle class="halo" cx="166.7" cy="638.7" r="10"/><circle class="dot" cx="166.7" cy="638.7" r="5"/><text x="155.7" y="640.7" text-anchor="end">Ashok Vada Pav</text></g><g class="pin" tabindex="0" role="button" data-id="siddhi" data-title="Siddhivinayak Temple" data-desc="Where we shot Bappa Economics." aria-label="Siddhivinayak Temple: Where we shot Bappa Economics."><circle class="halo" cx="167.9" cy="651.4" r="10"/><circle class="dot" cx="167.9" cy="651.4" r="5"/><text x="178.9" y="660.4" text-anchor="start">Siddhivinayak</text></g>
+          <text class="sea-label" x="74" y="485">Arabian Sea</text>
+          <g class="pin" tabindex="0" role="button" data-id="filmcity" data-img="thumbs/sir-film-city.jpg" data-title="Film City, Goregaon" data-desc="Shooting for Sir&#x27;s profile at Mumbai&#x27;s film studios." aria-label="Film City, Goregaon: Shooting for Sir&#x27;s profile at Mumbai&#x27;s film studios."><circle class="halo" cx="267.2" cy="308.0" r="10"/><circle class="dot" cx="267.2" cy="308.0" r="5"/><text x="278.2" y="312.0" text-anchor="start">Film City</text></g><g class="pin" tabindex="0" role="button" data-id="andheri" data-title="Andheri" data-desc="One of our stops during the week, on the way through the western suburbs." aria-label="Andheri: One of our stops during the week, on the way through the western suburbs."><circle class="halo" cx="204.6" cy="404.7" r="10"/><circle class="dot" cx="204.6" cy="404.7" r="5"/><text x="215.6" y="408.7" text-anchor="start">Andheri</text></g><g class="pin" tabindex="0" role="button" data-id="vileparle" data-title="Vile Parle" data-desc="Outdoor ads recce around Mithibai College and NMIMS." aria-label="Vile Parle: Outdoor ads recce around Mithibai College and NMIMS."><circle class="halo" cx="183.3" cy="443.4" r="10"/><circle class="dot" cx="183.3" cy="443.4" r="5"/><text x="172.3" y="447.4" text-anchor="end">Vile Parle</text></g><g class="pin" tabindex="0" role="button" data-id="airport" data-img="thumbs/fin-redevelopment.jpg" data-title="Mumbai airport" data-desc="Where we shot the Mumbai redevelopment video." aria-label="Mumbai airport: Where we shot the Mumbai redevelopment video."><circle class="halo" cx="248.2" cy="477.0" r="10"/><circle class="dot" cx="248.2" cy="477.0" r="5"/><text x="259.2" y="481.0" text-anchor="start">Airport</text></g><g class="pin base" tabindex="0" role="button" data-id="santacruz" data-title="Santacruz, our base" data-desc="Where we stayed for the week." aria-label="Santacruz, our base: Where we stayed for the week."><circle class="halo" cx="194.6" cy="497.6" r="10"/><circle class="dot" cx="194.6" cy="497.6" r="5"/><text x="183.6" y="501.6" text-anchor="end">Santacruz</text></g><g class="pin" tabindex="0" role="button" data-id="bandra" data-img="thumbs/fin-puchka.jpg" data-title="Bandra" data-desc="Outdoor ads recce, Bombay Sweet Shop for Sir&#x27;s sweets video and Elco for the puchka video." aria-label="Bandra: Outdoor ads recce, Bombay Sweet Shop for Sir&#x27;s sweets video and Elco for the puchka video."><circle class="halo" cx="165.2" cy="560.0" r="10"/><circle class="dot" cx="165.2" cy="560.0" r="5"/><text x="154.2" y="564.0" text-anchor="end">Bandra</text></g><g class="pin" tabindex="0" role="button" data-id="dharavi" data-img="thumbs/fin-dharavi-industries.jpg" data-title="Dharavi" data-desc="A guided walk through its textile, recycling and leather workshops." aria-label="Dharavi: A guided walk through its textile, recycling and leather workshops."><circle class="halo" cx="221.9" cy="596.0" r="10"/><circle class="dot" cx="221.9" cy="596.0" r="5"/><text x="232.9" y="601.0" text-anchor="start">Dharavi</text></g><g class="pin" tabindex="0" role="button" data-id="dadar" data-img="thumbs/sir-vada-pav.jpg" data-title="Ashok Vada Pav, Dadar" data-desc="Sir&#x27;s first vada pav, a stall owner&#x27;s story and vada pav economics." aria-label="Ashok Vada Pav, Dadar: Sir&#x27;s first vada pav, a stall owner&#x27;s story and vada pav economics."><circle class="halo" cx="166.7" cy="638.7" r="10"/><circle class="dot" cx="166.7" cy="638.7" r="5"/><text x="155.7" y="640.7" text-anchor="end">Ashok Vada Pav</text></g><g class="pin" tabindex="0" role="button" data-id="siddhi" data-img="thumbs/fin-bappa.jpg" data-title="Siddhivinayak Temple" data-desc="Where we shot Bappa Economics." aria-label="Siddhivinayak Temple: Where we shot Bappa Economics."><circle class="halo" cx="167.9" cy="651.4" r="10"/><circle class="dot" cx="167.9" cy="651.4" r="5"/><text x="178.9" y="661.4" text-anchor="start">Siddhivinayak</text></g>
         </svg>
         <div class="tip" id="tip" hidden></div>
       </div>
-      <div>
-        <ul class="places" id="places">
-          <li data-id="filmcity"><i class="mk" aria-hidden="true"></i><div><b>Film City, Goregaon</b><span>Shooting for Sir&#x27;s profile at Mumbai&#x27;s film studios.</span></div></li><li data-id="andheri"><i class="mk" aria-hidden="true"></i><div><b>Andheri</b><span>One of our stops during the week, on the way through the western suburbs.</span></div></li><li data-id="vileparle"><i class="mk" aria-hidden="true"></i><div><b>Vile Parle</b><span>Outdoor ad recce around Mithibai College and NMIMS.</span></div></li><li data-id="airport"><i class="mk" aria-hidden="true"></i><div><b>Mumbai airport</b><span>Where we shot the Mumbai redevelopment video.</span></div></li><li data-id="santacruz"><i class="mk base" aria-hidden="true"></i><div><b>Santacruz, our base</b><span>Where we stayed for the week.</span></div></li><li data-id="bandra"><i class="mk" aria-hidden="true"></i><div><b>Bandra</b><span>Outdoor ad recce, Bombay Sweet Shop for Sir&#x27;s sweets video and Elco for the puchka video.</span></div></li><li data-id="dharavi"><i class="mk" aria-hidden="true"></i><div><b>Dharavi</b><span>A guided walk through its textile, recycling and leather workshops.</span></div></li><li data-id="dadar"><i class="mk" aria-hidden="true"></i><div><b>Ashok Vada Pav, Dadar</b><span>Sir&#x27;s first vada pav, a stall owner&#x27;s story and vada pav economics.</span></div></li><li data-id="siddhi"><i class="mk" aria-hidden="true"></i><div><b>Siddhivinayak Temple</b><span>Where we shot Bappa Economics.</span></div></li><li data-id="rail"><i class="mk rail" aria-hidden="true"></i><div><b>Mumbai local, Western line</b><span>How we got around, and the story behind our Mumbai local economics video.</span></div></li>
+      <ul class="places" id="places">
+        <li data-id="filmcity"><div class="pic"><img src="thumbs/sir-film-city.jpg" alt="" loading="lazy"></div><div><b>Film City, Goregaon</b><span>Shooting for Sir&#x27;s profile at Mumbai&#x27;s film studios.</span></div></li><li data-id="andheri"><div class="pic"><i class=""></i></div><div><b>Andheri</b><span>One of our stops during the week, on the way through the western suburbs.</span></div></li><li data-id="vileparle"><div class="pic"><i class=""></i></div><div><b>Vile Parle</b><span>Outdoor ads recce around Mithibai College and NMIMS.</span></div></li><li data-id="airport"><div class="pic"><img src="thumbs/fin-redevelopment.jpg" alt="" loading="lazy"></div><div><b>Mumbai airport</b><span>Where we shot the Mumbai redevelopment video.</span></div></li><li data-id="santacruz"><div class="pic"><i class="base"></i></div><div><b>Santacruz, our base</b><span>Where we stayed for the week.</span></div></li><li data-id="bandra"><div class="pic"><img src="thumbs/fin-puchka.jpg" alt="" loading="lazy"></div><div><b>Bandra</b><span>Outdoor ads recce, Bombay Sweet Shop for Sir&#x27;s sweets video and Elco for the puchka video.</span></div></li><li data-id="dharavi"><div class="pic"><img src="thumbs/fin-dharavi-industries.jpg" alt="" loading="lazy"></div><div><b>Dharavi</b><span>A guided walk through its textile, recycling and leather workshops.</span></div></li><li data-id="dadar"><div class="pic"><img src="thumbs/sir-vada-pav.jpg" alt="" loading="lazy"></div><div><b>Ashok Vada Pav, Dadar</b><span>Sir&#x27;s first vada pav, a stall owner&#x27;s story and vada pav economics.</span></div></li><li data-id="siddhi"><div class="pic"><img src="thumbs/fin-bappa.jpg" alt="" loading="lazy"></div><div><b>Siddhivinayak Temple</b><span>Where we shot Bappa Economics.</span></div></li><li data-id="rail"><div class="pic"><img src="thumbs/fin-local.jpg" alt="" loading="lazy"></div><div><b>Mumbai local, Western line</b><span>How we got around, and the story behind our local train economics video.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="meetup" class="band alt">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">The student meetup</p>
+      <h2>Students stayed for <em>more than four hours</em></h2>
+      <p>The meetup was the centre of the trip, and the clearest sign that Mumbai wants more of SSEI.</p>
+    </div>
+    <div class="meet-photos">
+      <figure><img src="thumbs/sir-students.jpg" alt="Students listening at the SSEI Mumbai meetup" loading="lazy"></figure>
+      <figure><img src="thumbs/sir-alumni.jpg" alt="SSEI alumni and team together at the meetup" loading="lazy"></figure>
+    </div>
+    <div class="meet-body">
+      <div class="prose">
+        <p>More than 65 students came, along with 10 of our alumni, and the conversations ran for over four hours. Nobody was in a hurry to leave, and that tells us more than any feedback form could.</p>
+        <p>We promoted the evening ahead of time and got close to 200 sign-ups, with 150 people confirming they would come. Every one of those leads is now with the sales team, ready for follow-up calls, ad retargeting and invites to our next Mumbai event.</p>
+        <p>Two of our videos came out of this evening: students in conversation with Sir, and alumni on what learning with him was like.</p>
+      </div>
+      <div class="dots-card">
+        <h3>200 sign-ups, one dot each</h3>
+        <div class="dots" aria-hidden="true"><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="s"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i class="c"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="dots alumni" aria-hidden="true"><i class="a"></i><i class="a"></i><i class="a"></i><i class="a"></i><i class="a"></i><i class="a"></i><i class="a"></i><i class="a"></i><i class="a"></i><i class="a"></i></div>
+        <div class="legend">
+          <div><i style="background:var(--gold);border-color:var(--gold)"></i><span><b>65+</b> students came</span></div>
+          <div><i style="background:var(--sea);border-color:var(--sea)"></i><span><b>85</b> confirmed, didn't make it</span></div>
+          <div><i></i><span><b>~50</b> signed up only</span></div>
+          <div><i style="background:var(--navy-ink);border-color:var(--navy-ink)"></i><span><b>10</b> alumni joined them</span></div>
+        </div>
+        <p class="dots-note">About 1 in 3 people who signed up came in person. All 200 leads are now with sales.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="podcasts" class="band">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Podcasts</p>
+      <h2>Four conversations with people who <em>run India's money</em></h2>
+      <p>Long-form podcasts with leaders from Mumbai's fund houses. We are reviewing the footage and speaking to editors now.</p>
+    </div>
+    <div class="guests">
+      <div class="guest"><img style="object-position: center 62%" src="pod-kalpen.jpg" alt="Kalpen Parekh during the podcast recording" loading="lazy" onerror="this.remove()"><div class="who"><span class="org">DSP Mutual Fund</span><b>Kalpen Parekh</b><span class="role">MD and CEO</span></div></div>
+      <div class="guest"><img src="pod-kenneth.jpg" alt="Kenneth Andrade during the podcast recording" loading="lazy" onerror="this.remove()"><div class="who"><span class="org">Old Bridge Capital</span><b>Kenneth Andrade</b><span class="role">Founder</span></div></div>
+      <div class="guest"><img src="pod-anand.jpg" alt="Anand during the podcast recording" loading="lazy" onerror="this.remove()"><div class="who"><span class="org">Tata Asset Management</span><b>Anand</b><span class="role">CEO</span></div></div>
+      <div class="guest"><img style="object-position: center 66%" src="pod-nikhil.jpg" alt="Nikhil Ranka during the podcast recording" loading="lazy" onerror="this.remove()"><div class="who"><span class="org">Nuvama Wealth Management</span><b>Nikhil Ranka</b><span class="role">CIO</span></div></div>
+    </div>
+    <div class="note-bar"><span class="when">By Thu, 8 Oct</span><p>Leadership gets the edit and rollout plan: how each episode is cut, which clips come out of it and when it all goes live.</p></div>
+  </div>
+</section>
+
+<section id="videos" class="band alt">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Videos</p>
+      <h2>28 videos, shot for <em>three pages</em></h2>
+      <p>Each block below is one video. Two are already live and the rest are in the edit, going out over the coming weeks.</p>
+    </div>
+    <div class="mix">
+      <div class="mix-bar" aria-hidden="true"><i class="ch-sir"></i><i class="ch-sir"></i><i class="ch-sir"></i><i class="ch-sir"></i><i class="ch-sir"></i><i class="ch-sir"></i><i class="ch-sir"></i><i class="ch-sir"></i><i class="ch-fin live"></i><i class="ch-fin live"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-fin"></i><i class="ch-ssei"></i><i class="ch-ssei"></i><i class="ch-ssei"></i><i class="ch-ssei"></i><i class="ch-ssei"></i></div>
+      <div class="mix-key"><span class="ch-sir"><i></i>Sir's profile · 8</span><span class="ch-fin"><i></i>FinLab · 15</span><span class="ch-ssei"><i></i>SSEI · 5</span><span><i class="lv"></i>Live now</span></div>
+    </div>
+    <div class="tabs" role="group" aria-label="Filter videos by page"><button type="button" data-f="all" aria-pressed="true">All <b>28</b></button><button type="button" data-f="sir" aria-pressed="false">Sir's profile <b>8</b></button><button type="button" data-f="fin" aria-pressed="false">FinLab <b>15</b></button><button type="button" data-f="ssei" aria-pressed="false">SSEI <b>5</b></button></div>
+    <div class="group ch-sir" data-ch="sir"><div class="g-head"><h3>Sir's profile</h3><span>8 videos · Sir in Mumbai: food, people and the city</span></div><div class="reels"><article class="reel"><figure><img src="thumbs/sir-vada-pav.jpg" alt="Thumbnail for Sir tries Ashok Vada Pav" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">Sir&#x27;s profile</span><span class="play" aria-hidden="true"></span><span class="ttl">Sir tries Ashok Vada Pav</span></figure><p>Behind the scenes as Sir tastes the city&#x27;s most famous vada pav.</p></article><article class="reel"><figure><img src="thumbs/sir-students.jpg" alt="Thumbnail for Students in conversation with Sir" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">Sir&#x27;s profile</span><span class="play" aria-hidden="true"></span><span class="ttl">Students in conversation with Sir</span></figure><p>Students put their questions to Sir at the meetup.</p></article><article class="reel"><figure><img src="thumbs/sir-alumni.jpg" alt="Thumbnail for Alumni on learning with Sir" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">Sir&#x27;s profile</span><span class="play" aria-hidden="true"></span><span class="ttl">Alumni on learning with Sir</span></figure><p>Our alumni on what Sir&#x27;s classes meant to them.</p></article><article class="reel"><figure><img src="thumbs/sir-sweets.jpg" alt="Thumbnail for How Indian sweets went Western" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">Sir&#x27;s profile</span><span class="play" aria-hidden="true"></span><span class="ttl">How Indian sweets went Western</span></figure><p>At Bombay Sweet Shop in Bandra, on old favourites reinvented.</p></article><article class="reel"><figure><img src="thumbs/sir-film-city.jpg" alt="Thumbnail for Film City" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">Sir&#x27;s profile</span><span class="play" aria-hidden="true"></span><span class="ttl">Film City</span></figure><p>Sir at Goregaon&#x27;s Film City.</p></article><article class="reel"><figure><img src="thumbs/sir-bollywood-quiz.jpg" alt="Thumbnail for Bollywood quiz: Vidyut vs Sir" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">Sir&#x27;s profile</span><span class="play" aria-hidden="true"></span><span class="ttl">Bollywood quiz: Vidyut vs Sir</span></figure><p>Vidyut and Sir go head to head on Bollywood trivia.</p></article><article class="reel"><figure><img src="thumbs/sir-chole-vada.jpg" alt="Thumbnail for Chole bhature vs vada pav" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">Sir&#x27;s profile</span><span class="play" aria-hidden="true"></span><span class="ttl">Chole bhature vs vada pav</span></figure><p>The trip&#x27;s closing video: Delhi&#x27;s favourite against Mumbai&#x27;s.</p></article><article class="reel"><figure><img src="thumbs/sir-photo-dump.jpg" alt="Thumbnail for Mumbai photo dump" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">Sir&#x27;s profile</span><span class="play" aria-hidden="true"></span><span class="ttl">Mumbai photo dump</span></figure><p>The whole trip in a quick run of pictures.</p></article></div></div><div class="group ch-fin" data-ch="fin"><div class="g-head"><h3>FinLab</h3><span>15 videos · Everyday Mumbai, explained through money</span></div><div class="reels"><article class="reel"><figure><div class=chips><span class="chip live">Live</span></div><img src="thumbs/fin-puchka.jpg" alt="Thumbnail for LCOLK Puchka Wala" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">LCOLK Puchka Wala</span></figure><p>A puchka seller&#x27;s story and how the stall makes money.</p></article><article class="reel"><figure><div class=chips><span class="chip live">Live</span></div><img src="thumbs/fin-dhandha-woman.jpg" alt="Thumbnail for Dhandha Decode: the vada pav stall owner" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Dhandha Decode: the vada pav stall owner</span></figure><p>A woman who runs her own stall near Ashok Vada Pav.</p></article><article class="reel"><figure><img src="thumbs/fin-vadapav-econ.jpg" alt="Thumbnail for Vada Pav Economics with Sir and Vidyut" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Vada Pav Economics with Sir and Vidyut</span></figure><p>What it costs to make and sell Mumbai&#x27;s favourite snack.</p></article><article class="reel"><figure><img src="thumbs/fin-irani-chai.jpg" alt="Thumbnail for Irani chai" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Irani chai</span></figure><p>Inside one of Mumbai&#x27;s old Irani cafés.</p></article><article class="reel"><figure><img src="thumbs/fin-chai-coffee.jpg" alt="Thumbnail for ₹50 Irani chai vs ₹500 coffee" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">₹50 Irani chai vs ₹500 coffee</span></figure><p>The same break, and why one costs ten times more.</p></article><article class="reel"><figure><img src="thumbs/fin-bappa.jpg" alt="Thumbnail for Bappa Economics" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Bappa Economics</span></figure><p>The business around Ganpati, shot at Siddhivinayak.</p></article><article class="reel"><figure><div class=chips><span class="chip">2 videos</span></div><img src="thumbs/fin-dharavi-industries.jpg" alt="Thumbnail for Dharavi industry breakdown" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Dharavi industry breakdown</span></figure><p>How Dharavi&#x27;s textile and recycling trades work.</p></article><article class="reel"><figure><img src="thumbs/fin-dharavi-leather.jpg" alt="Thumbnail for Dhandha Decode: Dharavi leather" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Dhandha Decode: Dharavi leather</span></figure><p>How the leather workshops make and sell their goods.</p></article><article class="reel"><figure><img src="thumbs/fin-dharavi-broll.jpg" alt="Thumbnail for Dharavi, in pictures" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Dharavi, in pictures</span></figure><p>A voiceover video built from our Dharavi footage.</p></article><article class="reel"><figure><img src="thumbs/fin-local.jpg" alt="Thumbnail for Mumbai local economics" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Mumbai local economics</span></figure><p>How the local train keeps the city&#x27;s economy moving.</p></article><article class="reel"><figure><img src="thumbs/fin-redevelopment.jpg" alt="Thumbnail for Mumbai redevelopment: the airport" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Mumbai redevelopment: the airport</span></figure><p>What redevelopment around the airport means for the city.</p></article><article class="reel"><figure><img src="thumbs/fin-auto.jpg" alt="Thumbnail for Auto rickshaw economics" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Auto rickshaw economics</span></figure><p>What an auto driver earns, spends and keeps in a day.</p></article><article class="reel"><figure><img src="thumbs/fin-finquiz.jpg" alt="Thumbnail for FinQuiz" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">FinQuiz</span></figure><p>Our finance quiz, taken to people in Mumbai.</p></article><article class="reel"><figure><img src="thumbs/fin-broke.jpg" alt="Thumbnail for Broke or Woke" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">FinLab</span><span class="play" aria-hidden="true"></span><span class="ttl">Broke or Woke</span></figure><p>An episode of Broke or Woke, shot in Mumbai.</p></article></div></div><div class="group ch-ssei" data-ch="ssei"><div class="g-head"><h3>SSEI</h3><span>5 videos · Career stories and practical help for students</span></div><div class="reels"><article class="reel"><figure><div class=chips><span class="chip">3 videos</span></div><img src="thumbs/ssei-vidyut-story.jpg" alt="Thumbnail for Vidyut&#x27;s personal story" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">SSEI</span><span class="play" aria-hidden="true"></span><span class="ttl">Vidyut&#x27;s personal story</span></figure><div class=tags><span>Student testimonial</span><span>Fan list</span></div><p>A three-part series where Vidyut shares his own journey.</p></article><article class="reel"><figure><img src="thumbs/ssei-fixmycv.jpg" alt="Thumbnail for FixMyCV with Vidyut" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">SSEI</span><span class="play" aria-hidden="true"></span><span class="ttl">FixMyCV with Vidyut</span></figure><p>Vidyut on what makes a CV work, for our FixMyCV service.</p></article><article class="reel"><figure><img src="thumbs/ssei-mock-interviews.jpg" alt="Thumbnail for Mock interviews" loading="lazy" onerror="this.remove()"><span class="ph" aria-hidden="true">SSEI</span><span class="play" aria-hidden="true"></span><span class="ttl">Mock interviews</span></figure><p>Students go through real interview practice with us.</p></article></div></div>
+  </div>
+</section>
+
+<section id="ooh-pr" class="band">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">OOH and PR</p>
+      <h2>Groundwork for <em>outdoor ads and PR</em> in Mumbai</h2>
+      <p>Two sets of meetings that feed into the plans going to leadership this Thursday.</p>
+    </div>
+    <div class="duo">
+      <article>
+        <p class="tagline">Outdoor ads recce</p>
+        <h3>We walked the spots near the colleges</h3>
+        <div class="spots"><span>Mithibai College</span><span>NMIMS</span><span>Bandra</span></div>
+        <div class="versus">
+          <div class="lo"><b>Hoardings</b><span>Hard to get right in Mumbai: limited, crowded and costly spots.</span></div>
+          <div class="hi"><b>Bus ads</b><span>Reach far more of the students we want as they move around the city.</span></div>
+        </div>
+        <p class="due-line"><span class="when">By Thu, 8 Oct</span>Mumbai outdoor plan, with the full detail on bus ads.</p>
+      </article>
+      <article>
+        <p class="tagline">PR agency meetings</p>
+        <h3>Three of Mumbai's leading agencies, face to face</h3>
+        <div class="spots"><span>BrandPR</span><span>Bloomingdales</span><span>Glad You Came</span></div>
+        <p>We met each agency to see who could take SSEI's story further, in Mumbai and nationally.</p>
+        <p class="due-line"><span class="when">By Thu, 8 Oct</span>PR plan for next quarter, with a review of last quarter.</p>
+      </article>
+    </div>
+    <div class="shots" aria-label="Photos from the recce and PR meetings">
+      <figure><img src="ooh-1.jpg" alt="Outdoor ads recce in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
+      <figure><img src="ooh-2.jpg" alt="Outdoor ads recce in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
+      <figure><img src="ooh-3.jpg" alt="Outdoor ads recce in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
+      <figure><img src="pr-1.jpg" alt="PR agency meeting in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
+    </div>
+  </div>
+</section>
+
+<section id="learnings" class="band alt">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">What we learned</p>
+      <h2>Five things we'll do <em>differently</em> next time</h2>
+      <p>What worked, what didn't, and how we plan the next city trip because of it.</p>
+    </div>
+    <div class="lessons">
+      <article class="lesson"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/></svg></div><h3>Expect about a third of sign-ups to come</h3><p>That's normal, and now we have a number to plan the venue, food and follow-up around.</p><p class="proof">Mumbai meetup: ~200 signed up, 65+ came.</p></article>
+      <article class="lesson"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 5h16v11H4z"/><path d="M8 20h8M12 16v4"/><path d="M10 8.5v4l3.5-2z"/></svg></div><h3>Plan the edit before the shoot</h3><p>Editing now decides how fast our content goes out. Editors and timelines should be lined up before we press record.</p><p class="proof">28 videos and 4 podcasts shot in six days.</p></article>
+      <article class="lesson"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div><h3>Always travel with a local</h3><p>Someone who knows the city makes the trip personal. We reach the right places, see how people really live and shoot better content.</p></article>
+      <article class="lesson"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M12 13v5M9.5 15.5h5"/></svg></div><h3>Keep a spare day</h3><p>Only once we are in a place do we see what else is worth doing there. A packed itinerary leaves no room for those ideas.</p></article>
+      <article class="lesson"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></div><h3>Set targets we can actually hit</h3><p>We aimed too high this time. A realistic daily target gets more finished work in the end.</p><p class="proof">Plan was 10 videos in one day. Not physically possible.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="next" class="band">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Next steps</p>
+      <h2>What happens <em>next</em></h2>
+      <p>Three plans land with leadership this Thursday. Content rollout and festive planning follow.</p>
+    </div>
+    <div class="next">
+      <div class="col thu">
+        <h3>By Thursday, 8 Oct</h3>
+        <ul>
+          <li><b>Mumbai outdoor ads plan</b><span>Built from the recce at Mithibai, NMIMS and Bandra, with bus ads as the lead option.</span></li>
+          <li><b>PR plan for next quarter</b><span>With a review of last quarter's work, so leadership can decide the way forward.</span></li>
+          <li><b>Podcast edit and rollout plan</b><span>Edited episodes go to marketing for organic posting and to the performance team for ads.</span></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3>After that</h3>
+        <ul>
+          <li><b>Roll out the videos we shot</b><span>Editing and posting across Sir's profile, FinLab and SSEI.</span></li>
+          <li><b>Festive content plan for FinLab</b><span>A festive season content plan, shared with leadership.</span></li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<main class="wrap">
-
-  <section id="meetup">
-    <div class="sec-head">
-      <p class="kicker">The student meetup</p>
-      <h2>Students stayed for <em>more than four hours</em></h2>
-    </div>
-    <div class="meetup">
-      <div class="prose">
-        <p>The meetup was the centre of the trip. More than 65 students came, along with 10 of our alumni, and the conversations ran for over four hours. Nobody was in a hurry to leave, and that tells us more than any feedback form could.</p>
-        <p>We promoted it ahead of time and got close to 200 sign-ups, with 150 people confirming they would come. Every one of those leads is now with the sales team. We can follow up with them directly, retarget them in ads and invite them to our next Mumbai event.</p>
-        <p>Two of the videos below came out of this evening: students talking with Sir, and alumni talking about what learning with him was like.</p>
-      </div>
-      <div class="funnel" aria-label="Meetup sign-ups to attendance">
-        <h3>From sign-up to the room</h3>
-        <div class="fbar"><div class="lbl"><span>Signed up</span><b>~200</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
-        <div class="fbar"><div class="lbl"><span>Confirmed they'd come</span><b>150</b></div><div class="track"><div class="fill" style="width:75%"></div></div></div>
-        <div class="fbar hot"><div class="lbl"><span>Students who came</span><b>65+</b></div><div class="track"><div class="fill" style="width:32.5%"></div></div></div>
-        <div class="fbar hot"><div class="lbl"><span>Alumni who joined them</span><b>10</b></div><div class="track"><div class="fill" style="width:5%"></div></div></div>
-        <p class="note">About 1 in 3 people who signed up came in person. All 200 leads have gone to sales.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="podcasts">
-    <div class="sec-head">
-      <p class="kicker">Podcasts</p>
-      <h2>Four conversations with people who <em>run India's money</em></h2>
-      <p class="lede">We recorded four long-form podcasts with leaders from Mumbai's fund houses. We're now going through the footage and talking to editors.</p>
-    </div>
-    <div class="guests">
-      <div class="guest"><img style="object-position: center 62%" src="pod-kalpen.jpg" alt="Kalpen Parekh during the podcast recording" onerror="this.remove()"><div class="ini">KP</div><div class="who"><b>Kalpen Parekh</b><span>MD and CEO, DSP Mutual Fund</span></div></div>
-      <div class="guest"><img src="pod-kenneth.jpg" alt="Kenneth Andrade during the podcast recording" onerror="this.remove()"><div class="ini">KA</div><div class="who"><b>Kenneth Andrade</b><span>Old Bridge Capital</span></div></div>
-      <div class="guest"><img src="pod-anand.jpg" alt="Anand during the podcast recording" onerror="this.remove()"><div class="ini">A</div><div class="who"><b>Anand</b><span>CEO, Tata Asset Management</span></div></div>
-      <div class="guest"><img style="object-position: center 66%" src="pod-nikhil.jpg" alt="Nikhil Ranka during the podcast recording" onerror="this.remove()"><div class="ini">NR</div><div class="who"><b>Nikhil Ranka</b><span>CIO, Nuvama Wealth Management</span></div></div>
-    </div>
-    <div class="callout"><span class="when">Thu, 8 Oct</span><p>Leadership will get the edit and rollout plan: how each episode gets cut, what clips come out of it and when it all goes live.</p></div>
-  </section>
-
-  <section id="content">
-    <div class="sec-head">
-      <p class="kicker">Videos</p>
-      <h2>28 videos, shot for <em>three pages</em></h2>
-      <p class="lede">We shot for Sir's profile, for FinLab and for SSEI. The ones marked Live are already out. The rest are being edited and will go out over the coming weeks.</p>
-    </div>
-    <div class="channel ch-sir"><div class="ch-head"><h3>Sir's profile</h3><span>8 videos · Sir in Mumbai: food, people and the city</span></div><div class="vids"><article class="vid"><figure class="thumb"><img src="thumbs/sir-vada-pav.jpg" alt="Thumbnail for Sir tries Ashok Vada Pav" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Sir tries Ashok Vada Pav</strong></div></figure><h4>Sir tries Ashok Vada Pav</h4><p>Behind the scenes as Sir tastes the city&#x27;s most famous vada pav.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/sir-students.jpg" alt="Thumbnail for Students in conversation with Sir" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Students in conversation with Sir</strong></div></figure><h4>Students in conversation with Sir</h4><p>Moments from the meetup as students put their questions to Sir.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/sir-alumni.jpg" alt="Thumbnail for Alumni on learning with Sir" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Alumni on learning with Sir</strong></div></figure><h4>Alumni on learning with Sir</h4><p>Our alumni talk about what Sir&#x27;s classes meant to them.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/sir-sweets.jpg" alt="Thumbnail for How Indian sweets went Western" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>How Indian sweets went Western</strong></div></figure><h4>How Indian sweets went Western</h4><p>At Bombay Sweet Shop in Bandra, on how old favourites are being reinvented.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/sir-film-city.jpg" alt="Thumbnail for Film City" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Film City</strong></div></figure><h4>Film City</h4><p>Sir at Goregaon&#x27;s Film City.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/sir-bollywood-quiz.jpg" alt="Thumbnail for Bollywood quiz: Vidyut vs Sir" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Bollywood quiz: Vidyut vs Sir</strong></div></figure><h4>Bollywood quiz: Vidyut vs Sir</h4><p>Vidyut and Sir go head to head on Bollywood trivia.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/sir-chole-vada.jpg" alt="Thumbnail for Chole bhature vs vada pav" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Chole bhature vs vada pav</strong></div></figure><h4>Chole bhature vs vada pav</h4><p>The closing video of the trip: Delhi&#x27;s favourite against Mumbai&#x27;s.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/sir-photo-dump.jpg" alt="Thumbnail for Mumbai photo dump" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Mumbai photo dump</strong></div></figure><h4>Mumbai photo dump</h4><p>The whole trip in a quick run of pictures.</p></article></div></div><div class="channel ch-fin"><div class="ch-head"><h3>FinLab</h3><span>15 videos · Everyday Mumbai, explained through money</span></div><div class="vids"><article class="vid"><figure class="thumb"><div class=badges><span class="badge live">Live</span></div><img src="thumbs/fin-puchka.jpg" alt="Thumbnail for LCOLK Puchka Wala" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>LCOLK Puchka Wala</strong></div></figure><h4>LCOLK Puchka Wala</h4><p>The story of a puchka seller and how the stall makes money.</p></article><article class="vid"><figure class="thumb"><div class=badges><span class="badge live">Live</span></div><img src="thumbs/fin-dhandha-woman.jpg" alt="Thumbnail for Dhandha Decode: the vada pav stall owner" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Dhandha Decode: the vada pav stall owner</strong></div></figure><h4>Dhandha Decode: the vada pav stall owner</h4><p>A woman who runs her own stall near Ashok Vada Pav, and how her business works.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-vadapav-econ.jpg" alt="Thumbnail for Vada Pav Economics with Sir and Vidyut" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Vada Pav Economics with Sir and Vidyut</strong></div></figure><h4>Vada Pav Economics with Sir and Vidyut</h4><p>What it costs to make and sell Mumbai&#x27;s favourite snack, and where the money goes.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-irani-chai.jpg" alt="Thumbnail for Irani chai" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Irani chai</strong></div></figure><h4>Irani chai</h4><p>Inside one of Mumbai&#x27;s old Irani cafés.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-chai-coffee.jpg" alt="Thumbnail for ₹50 Irani chai vs ₹500 coffee" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>₹50 Irani chai vs ₹500 coffee</strong></div></figure><h4>₹50 Irani chai vs ₹500 coffee</h4><p>The same break at an Irani café and a coffee chain, and why one costs ten times more.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-bappa.jpg" alt="Thumbnail for Bappa Economics" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Bappa Economics</strong></div></figure><h4>Bappa Economics</h4><p>The business that runs around Ganpati, Mumbai&#x27;s biggest festival.</p></article><article class="vid"><figure class="thumb"><div class=badges><span class="badge">2 videos</span></div><img src="thumbs/fin-dharavi-industries.jpg" alt="Thumbnail for Dharavi industry breakdown" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Dharavi industry breakdown</strong></div></figure><h4>Dharavi industry breakdown</h4><p>Two videos on how Dharavi&#x27;s textile and recycling trades work.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-dharavi-leather.jpg" alt="Thumbnail for Dhandha Decode: Dharavi leather" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Dhandha Decode: Dharavi leather</strong></div></figure><h4>Dhandha Decode: Dharavi leather</h4><p>How Dharavi&#x27;s leather workshops make and sell their goods.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-dharavi-broll.jpg" alt="Thumbnail for Dharavi, in pictures" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Dharavi, in pictures</strong></div></figure><h4>Dharavi, in pictures</h4><p>A voiceover video built from our Dharavi footage.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-local.jpg" alt="Thumbnail for Mumbai local economics" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Mumbai local economics</strong></div></figure><h4>Mumbai local economics</h4><p>How the local train keeps the city&#x27;s economy moving.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-redevelopment.jpg" alt="Thumbnail for Mumbai redevelopment: the airport" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Mumbai redevelopment: the airport</strong></div></figure><h4>Mumbai redevelopment: the airport</h4><p>What redevelopment around the airport means for the city.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-auto.jpg" alt="Thumbnail for Auto rickshaw economics" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Auto rickshaw economics</strong></div></figure><h4>Auto rickshaw economics</h4><p>What an auto driver earns, spends and keeps in a day.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-finquiz.jpg" alt="Thumbnail for FinQuiz" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>FinQuiz</strong></div></figure><h4>FinQuiz</h4><p>Our finance quiz, taken to people in Mumbai.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/fin-broke.jpg" alt="Thumbnail for Broke or Woke" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Broke or Woke</strong></div></figure><h4>Broke or Woke</h4><p>An episode of Broke or Woke, shot in Mumbai.</p></article></div></div><div class="channel ch-ssei"><div class="ch-head"><h3>SSEI</h3><span>5 videos · Career stories and practical help for students</span></div><div class="vids"><article class="vid"><figure class="thumb"><div class=badges><span class="badge">3 videos</span></div><img src="thumbs/ssei-vidyut-story.jpg" alt="Thumbnail for Vidyut&#x27;s personal story" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Vidyut&#x27;s personal story</strong></div></figure><h4>Vidyut&#x27;s personal story</h4><div class=tags><span>Student testimonial</span><span>Fan list</span></div><p>A three-part series where Vidyut shares his own journey.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/ssei-fixmycv.jpg" alt="Thumbnail for FixMyCV with Vidyut" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>FixMyCV with Vidyut</strong></div></figure><h4>FixMyCV with Vidyut</h4><p>Vidyut on what makes a CV work, for our FixMyCV service.</p></article><article class="vid"><figure class="thumb"><img src="thumbs/ssei-mock-interviews.jpg" alt="Thumbnail for Mock interviews" loading="lazy" onerror="this.remove()"><div class="ph" aria-hidden="true"><strong>Mock interviews</strong></div></figure><h4>Mock interviews</h4><p>Students go through real interview practice with us.</p></article></div></div>
-  </section>
-
-  <section id="meetings">
-    <div class="sec-head">
-      <p class="kicker">OOH and PR</p>
-      <h2>Getting ready for <em>outdoor ads and PR</em> in Mumbai</h2>
-    </div>
-    <div class="meet">
-      <article>
-        <h3>Outdoor ads: we walked the spots</h3>
-        <p>We scouted ad spots around the colleges our students come from, so the Mumbai plan is built on what we saw on the ground.</p>
-        <ul><li>Mithibai College, Vile Parle</li><li>NMIMS, Vile Parle</li><li>Bandra</li></ul>
-        <p class="insight"><b>What we saw:</b> Mumbai is not an easy city for hoardings. Buses reach far more of the people we want, so our plan leans towards bus ads. The full detail is in Thursday's proposal.</p>
-        <p class="foot">Mumbai outdoor plan goes to leadership by Thursday, 8 Oct.</p>
-      </article>
-      <article>
-        <h3>PR: three agencies, face to face</h3>
-        <p>We met three of Mumbai's leading PR agencies to see who could take SSEI's story further in the city and nationally.</p>
-        <ul><li>BrandPR</li><li>Bloomingdales</li><li>Glad You Came</li></ul>
-        <p class="foot">PR plan for the next quarter, with a look back at last quarter, goes to leadership by Thursday, 8 Oct.</p>
-      </article>
-    </div>
-    <div class="shots" aria-label="Photos from the OOH recce and PR meetings">
-      <figure><img src="ooh-1.jpg" alt="OOH recce in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
-      <figure><img src="ooh-2.jpg" alt="OOH recce in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
-      <figure><img src="ooh-3.jpg" alt="OOH recce in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
-      <figure><img src="pr-1.jpg" alt="PR agency meeting in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
-    </div>
-  </section>
-
-  <section id="learnings">
-    <div class="sec-head">
-      <p class="kicker">What we learned</p>
-      <h2>Five things we'll do <em>differently</em> next time</h2>
-    </div>
-    <div class="learn">
-      <article><h3>Expect about a third of sign-ups to show up</h3><p>At the Mumbai meetup, close to 200 people signed up and 65+ came. That's about one in three, which is fine. It gives us a reliable number to plan the venue, food and follow-up around.</p></article>
-      <article><h3>Plan the edit before the shoot</h3><p>We shot 28 videos and 4 podcasts in six days, and editing is now what decides how fast they go out. Next time, editors and timelines get lined up before we start shooting.</p></article>
-      <article><h3>Always travel with a local</h3><p>Someone who knows the city makes the trip more personal. We get to the right places, see more of how people really live and shoot better content because of it.</p></article>
-      <article><h3>Keep a spare day</h3><p>Only once we are in a place do we see what else is worth doing there. A packed itinerary leaves no room for those ideas, so one free day should be built in.</p></article>
-      <article><h3>Set targets we can actually hit</h3><p>We aimed too high this time. Shooting 10 videos in a single day was not physically possible. A realistic daily target gets more finished work in the end.</p></article>
-    </div>
-  </section>
-
-  <section id="next">
-    <div class="sec-head">
-      <p class="kicker">Next steps</p>
-      <h2>What happens <em>next</em></h2>
-    </div>
-    <ol class="steps">
-      <li><div><b>Share the Mumbai outdoor ads plan</b><span>Built from the recce at Mithibai, NMIMS and Bandra, with bus ads as the lead option.</span></div><span class="due thu">Thu, 8 Oct</span></li>
-      <li><div><b>Share the PR plan for the next quarter</b><span>With a review of last quarter's work, so leadership can decide how to move forward.</span></div><span class="due thu">Thu, 8 Oct</span></li>
-      <li><div><b>Finish the podcast rollout plan</b><span>Once edited, the episodes go to the marketing team for organic posting and to the performance team for ads.</span></div><span class="due thu">Thu, 8 Oct</span></li>
-      <li><div><b>Roll out the videos we shot</b><span>Editing and posting across Sir's profile, FinLab and SSEI.</span></div><span class="due">Ongoing</span></li>
-      <li><div><b>Plan festive content for FinLab</b><span>A festive season content plan, shared with leadership.</span></div><span class="due">Next</span></li>
-    </ol>
-  </section>
-
-</main>
-
 <footer>
-  <div class="wrap">SSEI Growth and Ops · Mumbai trip, 27 Sep to 2 Oct 2026 · Prepared October 2026</div>
+  <div class="wrap"><span>SSEI Growth and Ops</span><span>Mumbai trip, 27 Sep to 2 Oct 2026 · Prepared October 2026</span></div>
 </footer>
 
 <script>
 (function () {
+  /* Map: hover cards and full screen */
   var box = document.getElementById('mapBox'), tip = document.getElementById('tip');
   var pins = box.querySelectorAll('.pin'), items = document.querySelectorAll('#places li');
   function show(id) {
@@ -393,13 +508,13 @@ footer { margin-top: 80px; padding-block: 28px 40px; border-top: 1px solid var(-
     pins.forEach(function (p) { p.classList.toggle('on', p === pin); });
     items.forEach(function (li) { li.classList.toggle('on', li.dataset.id === id); });
     if (!pin) { tip.hidden = true; return; }
-    tip.innerHTML = '<b>' + pin.dataset.title + '</b><span>' + pin.dataset.desc + '</span>';
+    tip.innerHTML = (pin.dataset.img ? '<img src="' + pin.dataset.img + '" alt="">' : '') + '<div><b>' + pin.dataset.title + '</b><span>' + pin.dataset.desc + '</span></div>';
     tip.hidden = false;
     var r = pin.querySelector('.dot').getBoundingClientRect(), b = box.getBoundingClientRect();
     var x = r.left - b.left + r.width / 2, y = r.top - b.top;
     var w = tip.offsetWidth, h = tip.offsetHeight;
-    var left = Math.min(Math.max(8, x - w / 2), b.width - w - 8);
-    var top = y - h - 12; if (top < 8) top = y + r.height + 12;
+    var left = Math.min(Math.max(10, x - w / 2), b.width - w - 10);
+    var top = y - h - 14; if (top < 10) top = Math.min(y + r.height + 14, b.height - h - 10);
     tip.style.left = left + 'px'; tip.style.top = top + 'px';
   }
   function hide() { pins.forEach(function (p) { p.classList.remove('on'); }); items.forEach(function (li) { li.classList.remove('on'); }); tip.hidden = true; }
@@ -416,14 +531,33 @@ footer { margin-top: 80px; padding-block: 28px 40px; border-top: 1px solid var(-
   });
   document.addEventListener('click', function (e) { if (!e.target.closest('.pin')) hide(); });
   var fs = document.getElementById('fsBtn');
-  if (!box.requestFullscreen) { fs.hidden = true; }
-  fs.addEventListener('click', function () {
-    if (document.fullscreenElement) document.exitFullscreen(); else box.requestFullscreen();
+  if (!box.requestFullscreen) fs.hidden = true;
+  fs.addEventListener('click', function () { if (document.fullscreenElement) document.exitFullscreen(); else box.requestFullscreen(); });
+  document.addEventListener('fullscreenchange', function () { fs.querySelector('span').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; hide(); });
+
+  /* Video filters */
+  var tabs = document.querySelectorAll('.tabs button'), groups = document.querySelectorAll('.group');
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      tabs.forEach(function (o) { o.setAttribute('aria-pressed', String(o === t)); });
+      groups.forEach(function (g) { g.hidden = t.dataset.f !== 'all' && g.dataset.ch !== t.dataset.f; });
+    });
   });
-  document.addEventListener('fullscreenchange', function () {
-    fs.querySelector('span').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen';
-    hide();
-  });
+
+  /* Station menu: highlight the section in view */
+  var links = document.querySelectorAll('.line-nav a');
+  var map = {}; links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) {
+          links.forEach(function (a) { a.classList.remove('on'); });
+          var a = map[e.target.id]; if (a) { a.classList.add('on'); var w = a.closest('.wrap'); w.scrollLeft = a.offsetLeft - w.clientWidth / 2 + a.offsetWidth / 2; }
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    Object.keys(map).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+  }
 })();
 </script>
 </body>
