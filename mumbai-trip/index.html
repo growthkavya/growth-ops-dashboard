@@ -242,7 +242,10 @@ p { margin: 0; }
 .spots { display: flex; flex-wrap: wrap; gap: 8px; }
 .spots span { font-weight: 600; font-size: 0.9rem; background: var(--band); border-radius: 999px; padding: 6px 12px; }
 .versus { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.versus div { border-radius: 12px; padding: 14px; display: grid; gap: 4px; }
+.versus div { border-radius: 12px; padding: 10px 10px 14px; display: grid; gap: 6px; align-content: start; }
+.versus figure { margin: 0 0 6px; border-radius: 9px; overflow: hidden; aspect-ratio: 4 / 5; background: var(--card); }
+.versus figure img { width: 100%; height: 100%; object-fit: cover; }
+.versus b, .versus span { padding-inline: 4px; }
 .versus .lo { background: var(--band); color: var(--mut); }
 .versus .hi { background: var(--gold-soft); }
 .versus b { font: 700 1.05rem/1.1 var(--f-sign); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
@@ -428,8 +431,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
         <h3>We walked the spots near the colleges</h3>
         <div class="spots"><span>Mithibai College</span><span>NMIMS</span><span>Bandra</span></div>
         <div class="versus">
-          <div class="lo"><b>Hoardings</b><span>Hard to get right in Mumbai: limited, crowded and costly spots.</span></div>
-          <div class="hi"><b>Bus ads</b><span>Reach far more of the students we want as they move around the city.</span></div>
+          <div class="lo"><figure><img src="ooh-nmims.jpg" alt="A single hoarding above the Mithibai College gate at NMIMS, with autos parked below" loading="lazy" style="object-position: 40% center"></figure><b>Hoardings</b><span>Hard to get right in Mumbai. Outside NMIMS and Mithibai there is one hoarding above the gate, competing with traffic and autos.</span></div>
+          <div class="hi"><figure><img src="ooh-bus.jpg" alt="A BEST bus wrapped in a Zell Education ad for accounting careers" loading="lazy" style="object-position: center 45%"></figure><b>Bus ads</b><span>Reach far more students as they move around the city. Zell Education, who also sell accounting courses, already wrap BEST buses.</span></div>
         </div>
         <p class="due-line"><span class="when">By Thu, 8 Oct</span>Mumbai outdoor plan, with the full detail on bus ads.</p>
       </article>
@@ -442,9 +445,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
       </article>
     </div>
     <div class="shots" aria-label="Photos from the recce and PR meetings">
-      <figure><img src="ooh-1.jpg" alt="Outdoor ads recce in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
-      <figure><img src="ooh-2.jpg" alt="Outdoor ads recce in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
-      <figure><img src="ooh-3.jpg" alt="Outdoor ads recce in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
       <figure><img src="pr-1.jpg" alt="PR agency meeting in Mumbai" loading="lazy" onerror="this.parentNode.remove()"></figure>
     </div>
   </div>
