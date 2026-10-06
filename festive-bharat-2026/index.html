@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Festive Bharat 2026</title>
+<meta name="description" content="SSEI's festival-season content trip plan, Oct 2026 to Jan 2027: the money behind India's biggest festivals, in two phases, with itinerary and costs.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+/* Festive Bharat: SSEI navy and gold, warmed with marigold and sindoor for the festival season.
+   Layout: masthead, sticky section rail, full-width bands. All data lives in the DATA block at the end. */
+:root {
+  color-scheme: light;
+  --ground: #FBF8F2; --band: #F4EEE2; --card: #FFFFFF; --ink: #16182A; --mut: #5E6175; --line: #E4DCCB;
+  --navy: #0E2A5E; --navy-ink: #0E2A5E; --gold: #D4A02B; --gold-ink: #8A6512; --gold-soft: #F6E7C1;
+  --sindoor: #B5361F; --sindoor-soft: #F8E0D8; --leaf: #2D6A4F; --leaf-soft: #DCEFE4;
+  --deep: #0B1736; --on-deep: #F6F2EA; --on-deep-mut: #B9C0D3; --on-deep-line: rgba(255,255,255,0.16);
+  --l-desh: #0E2A5E; --l-dhandha: #9A5317; --l-ghar: #2D6A4F;
+  --shadow: 0 1px 2px rgba(30,22,10,0.05), 0 10px 28px rgba(30,22,10,0.07);
+  --rail-bg: rgba(251, 248, 242, 0.95);
+  --f-display: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --f-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-sign: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #0E1220; --band: #141A2B; --card: #1A2134; --ink: #ECEAE4; --mut: #A4A9BA; --line: #2B3349;
+    --navy: #0A1F47; --navy-ink: #AFC5F2; --gold: #E3B64B; --gold-ink: #E3B64B; --gold-soft: #3A2F16;
+    --sindoor: #F08A6E; --sindoor-soft: #3D1F18; --leaf: #7CC9A2; --leaf-soft: #1B3328;
+    --deep: #070C1C; --on-deep-mut: #A9B1C6;
+    --l-desh: #AFC5F2; --l-dhandha: #EAA96A; --l-ghar: #7CC9A2;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 28px rgba(0,0,0,0.3);
+    --rail-bg: rgba(14, 18, 32, 0.95);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #0E1220; --band: #141A2B; --card: #1A2134; --ink: #ECEAE4; --mut: #A4A9BA; --line: #2B3349;
+  --navy: #0A1F47; --navy-ink: #AFC5F2; --gold: #E3B64B; --gold-ink: #E3B64B; --gold-soft: #3A2F16;
+  --sindoor: #F08A6E; --sindoor-soft: #3D1F18; --leaf: #7CC9A2; --leaf-soft: #1B3328;
+  --deep: #070C1C; --on-deep-mut: #A9B1C6;
+  --l-desh: #AFC5F2; --l-dhandha: #EAA96A; --l-ghar: #7CC9A2;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 28px rgba(0,0,0,0.3);
+  --rail-bg: rgba(14, 18, 32, 0.95);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { background: var(--ground); color: var(--ink); font: 400 1rem/1.6 var(--f-body); overflow-x: hidden; }
+img { max-width: 100%; display: block; }
+a { color: var(--navy-ink); text-underline-offset: 3px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+@media (min-width: 700px) { .wrap { padding-inline: 28px; } }
+
+/* Section labels and headings */
+.stn { display: inline-flex; align-items: center; gap: 10px; font: 700 0.95rem/1 var(--f-sign); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-ink); }
+.stn::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
+.band { padding-block: 84px; scroll-margin-top: 56px; }
+.band.alt { background: var(--band); }
+.head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); gap: 16px 48px; align-items: end; margin-bottom: 40px; }
+.head .stn { grid-column: 1 / -1; }
+.head h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(2.1rem, 4.6vw, 3.4rem); line-height: 1.04; letter-spacing: -0.012em; }
+.head h2 em { font-style: italic; color: var(--gold-ink); }
+.head p { color: var(--mut); font-size: 1.05rem; max-width: 56ch; }
+@media (max-width: 820px) { .head { grid-template-columns: 1fr; align-items: start; } .band { padding-block: 60px; } }
+h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.6rem; line-height: 1.15; }
+.lede { font-size: 1.12rem; max-width: 64ch; }
+.mut { color: var(--mut); }
+.small { font-size: 0.9rem; }
+
+/* Toran: a strip of marigold and leaf at the top of the page */
+.toran { height: 22px; background:
+  radial-gradient(circle at 11px 6px, var(--gold) 0 6px, transparent 6.5px) 0 0 / 22px 22px repeat-x,
+  radial-gradient(circle at 11px 15px, #E07A1F 0 4px, transparent 4.5px) 0 0 / 22px 22px repeat-x,
+  var(--deep); }
+
+/* Masthead */
+.mast { background: var(--deep); color: var(--on-deep); padding-block: 52px 0; overflow: hidden; position: relative; }
+.mast .stn { color: var(--gold); }
+.mast .stn::before { box-shadow: 0 0 0 3px rgba(212,160,43,0.25); }
+.mast-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 48px; align-items: end; }
+.mast h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(3rem, 7.6vw, 6.4rem); line-height: 0.95; letter-spacing: -0.02em; margin-top: 22px; }
+.mast h1 em { display: block; font-style: italic; color: var(--gold); font-size: 0.56em; line-height: 1.05; margin-top: 10px; }
+.mast .intro { margin-top: 22px; color: var(--on-deep-mut); font-size: 1.12rem; max-width: 50ch; }
+.mast .intro b { color: var(--on-deep); font-weight: 600; }
+.lenses-mini { display: grid; gap: 10px; }
+.lenses-mini div { border: 1px solid var(--on-deep-line); border-radius: 14px; padding: 14px 16px; }
+.lenses-mini b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 1.45rem; color: var(--on-deep); }
+.lenses-mini span { color: var(--on-deep-mut); font-size: 0.93rem; }
+.lenses-mini i { font-style: normal; font: 700 0.8rem/1 var(--f-sign); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 44px; border-top: 1px solid var(--on-deep-line); }
+.stat { padding: 22px 20px 26px 0; }
+.stat + .stat { padding-left: 20px; border-left: 1px solid var(--on-deep-line); }
+.stat b { display: block; font-family: var(--f-display); font-weight: 400; font-size: clamp(2rem, 3.6vw, 2.8rem); line-height: 1; color: var(--gold); }
+.stat span { display: block; margin-top: 8px; color: var(--on-deep-mut); font-size: 0.92rem; }
+@media (max-width: 960px) { .mast-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .stat, .stat + .stat { padding: 16px 12px 16px 0; border-left: 0; border-bottom: 1px solid var(--on-deep-line); }
+  .stat:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--on-deep-line); }
+  .stat:nth-last-child(-n+2) { border-bottom: 0; }
+}
+
+/* Section rail */
+.rail { position: sticky; top: 0; z-index: 20; background: var(--rail-bg); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.rail ol { list-style: none; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-block: 8px; }
+.rail ol::-webkit-scrollbar { display: none; }
+.rail a { display: block; white-space: nowrap; text-decoration: none; color: var(--mut); font: 600 0.98rem/1 var(--f-sign); letter-spacing: 0.06em; text-transform: uppercase; padding: 9px 12px; border-radius: 999px; }
+.rail a:hover { color: var(--ink); background: var(--band); }
+.rail a.on { color: var(--ink); background: var(--gold-soft); }
+
+/* Why now */
+.why { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 40px; align-items: start; }
+.why .copy p + p { margin-top: 16px; }
+.why .copy p { font-size: 1.08rem; }
+.quote { margin-top: 26px; padding: 22px 24px; border-left: 4px solid var(--gold); background: var(--card); border-radius: 0 14px 14px 0; box-shadow: var(--shadow); font-family: var(--f-display); font-size: 1.45rem; line-height: 1.3; }
+.polaroid { background: var(--card); padding: 12px 12px 16px; border-radius: 10px; box-shadow: var(--shadow); transform: rotate(-1.6deg); max-width: 420px; justify-self: center; }
+.polaroid img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; background: var(--band); }
+.polaroid figcaption { margin-top: 12px; font-size: 0.92rem; color: var(--mut); }
+.polaroid figcaption b { color: var(--ink); }
+@media (max-width: 860px) { .why { grid-template-columns: 1fr; } .polaroid { transform: none; } }
+
+/* Lenses */
+.lenses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.lens { background: var(--card); border-radius: 18px; padding: 26px 24px; box-shadow: var(--shadow); border-top: 5px solid var(--c); }
+.lens .tag { font: 700 0.85rem/1 var(--f-sign); letter-spacing: 0.14em; text-transform: uppercase; color: var(--c); }
+.lens h3 { margin-top: 10px; font-size: 1.9rem; }
+.lens .en { color: var(--mut); font-size: 0.95rem; margin-top: 2px; }
+.lens p.what { margin-top: 14px; }
+.lens ul { margin-top: 14px; padding-left: 18px; color: var(--mut); font-size: 0.95rem; }
+.lens ul li + li { margin-top: 4px; }
+.lens.desh { --c: var(--l-desh); } .lens.dhandha { --c: var(--l-dhandha); } .lens.ghar { --c: var(--l-ghar); }
+@media (max-width: 900px) { .lenses { grid-template-columns: 1fr; } }
+.sir { margin-top: 28px; display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; background: var(--deep); color: var(--on-deep); border-radius: 18px; padding: 24px 26px; }
+.sir .badge { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--gold); color: var(--deep); font: 700 1.5rem/1 var(--f-display); }
+.sir h3 { color: var(--on-deep); font-size: 1.5rem; }
+.sir p { color: var(--on-deep-mut); margin-top: 6px; }
+.sir p b { color: var(--on-deep); }
+@media (max-width: 560px) { .sir { grid-template-columns: 1fr; } }
+
+/* Calendar */
+.cal-card { background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 22px 22px 16px; }
+.cal-scroll { overflow-x: auto; }
+.cal-scroll svg { display: block; min-width: 760px; width: 100%; height: auto; }
+.cal-legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 12px; font-size: 0.9rem; color: var(--mut); }
+.cal-legend i { display: inline-block; width: 22px; height: 10px; border-radius: 6px; vertical-align: middle; margin-right: 6px; }
+.note-box { margin-top: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.note { background: var(--card); border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow); }
+.note b { display: block; margin-bottom: 4px; }
+.note p { color: var(--mut); font-size: 0.97rem; }
+@media (max-width: 760px) { .note-box { grid-template-columns: 1fr; } }
+
+/* Festival cards */
+.fests { display: grid; gap: 20px; }
+.fest { background: var(--card); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; display: grid; grid-template-columns: 300px minmax(0, 1fr); }
+.fest .side { background: var(--deep); color: var(--on-deep); padding: 26px 24px; position: relative; }
+.fest .side .ph { font: 700 0.8rem/1 var(--f-sign); letter-spacing: 0.14em; text-transform: uppercase; display: inline-block; padding: 6px 10px; border-radius: 999px; background: var(--gold); color: var(--deep); }
+.fest .side .ph.p2 { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+.fest .side .ph.tbd { background: transparent; color: var(--on-deep-mut); border: 1px dashed var(--on-deep-mut); }
+.fest .side h3 { color: var(--on-deep); font-size: 2rem; margin-top: 16px; }
+.fest .side .when { margin-top: 8px; font: 700 1.15rem/1.2 var(--f-sign); letter-spacing: 0.05em; text-transform: uppercase; color: var(--gold); }
+.fest .side .where { color: var(--on-deep-mut); margin-top: 4px; }
+.fest .side .hook { margin-top: 18px; color: var(--on-deep); font-size: 0.98rem; }
+.fest .body { padding: 24px 26px 26px; }
+.fest .facts { display: flex; flex-wrap: wrap; gap: 8px; }
+.fest .facts span { background: var(--band); border-radius: 10px; padding: 8px 12px; font-size: 0.9rem; line-height: 1.35; }
+.fest .facts span b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 1.3rem; color: var(--ink); }
+.fest .facts span { color: var(--mut); }
+.fest .rows { margin-top: 18px; display: grid; gap: 10px; }
+.fest .row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 14px; padding-top: 10px; border-top: 1px solid var(--line); }
+.fest .row .k { font: 700 1rem/1.2 var(--f-sign); letter-spacing: 0.05em; text-transform: uppercase; color: var(--c); }
+.fest .row.desh { --c: var(--l-desh); } .fest .row.dhandha { --c: var(--l-dhandha); } .fest .row.ghar { --c: var(--l-ghar); } .fest .row.film { --c: var(--sindoor); }
+.fest .row p { font-size: 0.98rem; }
+.fest .row p .lesson { color: var(--mut); }
+@media (max-width: 900px) { .fest { grid-template-columns: 1fr; } .fest .row { grid-template-columns: 1fr; gap: 2px; } }
+
+/* Phases */
+.decide { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 36px; }
+.opt { background: var(--card); border-radius: 18px; padding: 24px; box-shadow: var(--shadow); border: 2px solid transparent; }
+.opt.rec { border-color: var(--gold); }
+.opt .tag { font: 700 0.85rem/1 var(--f-sign); letter-spacing: 0.14em; text-transform: uppercase; color: var(--mut); }
+.opt.rec .tag { color: var(--gold-ink); }
+.opt h3 { margin-top: 8px; }
+.opt p { margin-top: 10px; color: var(--mut); }
+.opt ul { margin-top: 10px; padding-left: 18px; }
+@media (max-width: 760px) { .decide { grid-template-columns: 1fr; } }
+.phase { margin-top: 28px; }
+.phase-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 14px; }
+.phase-head h3 { font-size: 2rem; }
+.phase-head .pill { font: 700 0.85rem/1 var(--f-sign); letter-spacing: 0.12em; text-transform: uppercase; padding: 7px 11px; border-radius: 999px; background: var(--gold-soft); color: var(--gold-ink); }
+.phase-head .pill.gate { background: var(--sindoor-soft); color: var(--sindoor); }
+.stops { list-style: none; position: relative; }
+.stops::before { content: ""; position: absolute; left: 15px; top: 10px; bottom: 10px; width: 3px; background: var(--gold); border-radius: 3px; opacity: 0.6; }
+.stop { position: relative; padding: 0 0 18px 48px; }
+.stop::before { content: ""; position: absolute; left: 6px; top: 6px; width: 21px; height: 21px; border-radius: 50%; background: var(--card); border: 4px solid var(--gold); }
+.stop.home::before { border-color: var(--navy-ink); }
+.stop.opt-stop::before { border-style: dashed; border-color: var(--mut); }
+.stop .card { background: var(--card); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+.stop .top { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+.stop .date { font: 700 1.1rem/1.2 var(--f-sign); letter-spacing: 0.05em; text-transform: uppercase; color: var(--gold-ink); }
+.stop .place { font-weight: 700; font-size: 1.08rem; }
+.stop .meta { font-size: 0.88rem; color: var(--mut); }
+.stop ul { margin-top: 8px; padding-left: 18px; font-size: 0.96rem; }
+.stop ul li + li { margin-top: 2px; }
+.gatebox { margin-top: 8px; background: var(--sindoor-soft); border-radius: 14px; padding: 18px 20px; }
+.gatebox b { color: var(--sindoor); }
+.gatebox ul { margin-top: 8px; padding-left: 18px; }
+
+/* Costs */
+.cost-ctl { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; margin-bottom: 16px; }
+.seg { display: inline-flex; background: var(--band); border-radius: 999px; padding: 4px; }
+.seg button { border: 0; background: transparent; color: var(--mut); font: 600 0.95rem/1 var(--f-body); padding: 9px 14px; border-radius: 999px; cursor: pointer; }
+.seg button.on { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+.tbl-wrap { overflow-x: auto; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); }
+table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 700 0.9rem/1.2 var(--f-sign); letter-spacing: 0.08em; text-transform: uppercase; color: var(--mut); background: var(--band); }
+td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr.phase-row td { background: var(--gold-soft); font-weight: 700; }
+tr.grand td { background: var(--deep); color: var(--on-deep); font-weight: 700; border-bottom: 0; }
+td .sub { display: block; color: var(--mut); font-size: 0.85rem; font-weight: 400; }
+tr.grand td .sub { color: var(--on-deep-mut); }
+.cost-cards { margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.cost-cards .note b { font-family: var(--f-display); font-weight: 400; font-size: 1.55rem; line-height: 1.2; color: var(--ink); }
+@media (max-width: 860px) { .cost-cards { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  #cost-table thead { display: none; }
+  #cost-table tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; border-bottom: 1px solid var(--line); }
+  #cost-table td { border-bottom: 0; }
+  #cost-table td:nth-child(2):not(:last-child) { grid-column: 1 / -1; order: 3; padding-top: 0; color: var(--mut); font-size: 0.88rem; }
+  #cost-table td.num { white-space: normal; text-align: right; max-width: 150px; }
+}
+details.assume { margin-top: 18px; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 16px 20px; }
+details.assume summary { cursor: pointer; font-weight: 700; }
+details.assume ul { margin-top: 10px; padding-left: 18px; color: var(--mut); font-size: 0.95rem; }
+
+/* Formats */
+.formats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.fmt { background: var(--card); border-radius: 16px; padding: 20px 20px 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.fmt .kind { font: 700 0.8rem/1 var(--f-sign); letter-spacing: 0.14em; text-transform: uppercase; color: var(--mut); }
+.fmt h3 { margin-top: 8px; font-size: 1.5rem; }
+.fmt .en { color: var(--mut); font-size: 0.9rem; }
+.fmt p { margin-top: 10px; font-size: 0.96rem; }
+.fmt .ex { margin-top: auto; padding-top: 12px; font-size: 0.88rem; color: var(--mut); }
+.fmt.new { border-top: 4px solid var(--sindoor); }
+.fmt.hero { grid-column: span 3; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 28px; background: var(--deep); color: var(--on-deep); }
+.fmt.hero .kind { color: var(--gold); }
+.fmt.hero h3 { color: var(--on-deep); font-size: 2.2rem; }
+.fmt.hero p, .fmt.hero li { color: var(--on-deep-mut); }
+.fmt.hero p b, .fmt.hero li b { color: var(--on-deep); }
+.fmt.hero ul { padding-left: 18px; margin-top: 10px; }
+.fmt.hero li + li { margin-top: 6px; }
+.fmt-key { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 16px; color: var(--mut); font-size: 0.9rem; }
+.fmt-key i { display: inline-block; width: 18px; height: 4px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+@media (max-width: 900px) { .formats { grid-template-columns: 1fr; } .fmt.hero { grid-column: auto; grid-template-columns: 1fr; } }
+
+/* Measure, risks, asks */
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+.asks { list-style: none; counter-reset: a; display: grid; gap: 12px; }
+.asks li { counter-increment: a; background: var(--card); border-radius: 14px; padding: 16px 18px 16px 62px; position: relative; box-shadow: var(--shadow); }
+.asks li::before { content: counter(a); position: absolute; left: 16px; top: 14px; width: 32px; height: 32px; border-radius: 50%; background: var(--gold); color: var(--deep); display: grid; place-items: center; font: 700 1.1rem/1 var(--f-display); }
+.asks li b { display: block; }
+.asks li span { color: var(--mut); font-size: 0.95rem; }
+.intl { margin-top: 20px; }
+.src { columns: 2 320px; column-gap: 32px; font-size: 0.9rem; }
+.src li { break-inside: avoid; margin-bottom: 6px; color: var(--mut); }
+.src h4 { font: 700 0.95rem/1.2 var(--f-sign); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); margin: 16px 0 6px; break-after: avoid; }
+.src ul { list-style: none; }
+footer { background: var(--deep); color: var(--on-deep-mut); padding-block: 36px; font-size: 0.9rem; }
+.theme-btn { position: fixed; right: 14px; bottom: 14px; z-index: 30; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); box-shadow: var(--shadow); cursor: pointer; font-size: 1.1rem; }
+@media print { .rail, .theme-btn { display: none; } .band { padding-block: 32px; } .fest, .stop .card, .lens { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="toran" aria-hidden="true"></div>
+<header class="mast">
+  <div class="wrap">
+    <div class="mast-grid">
+      <div>
+        <p class="stn">SSEI content trip plan · Oct 2026 to Jan 2027</p>
+        <h1>Festive Bharat <em>the money behind the magic</em></h1>
+        <p class="intro">A content trip across India's festival season, from Mahalaya in Kolkata to New Year's Eve. We film the culture people love, and show the <b>economics, businesses and household money decisions</b> moving underneath it. Planned in two phases, with phase two unlocked by phase one's results.</p>
+      </div>
+      <div class="lenses-mini" aria-label="The three lenses">
+        <div><i>The nation</i><b>Desh Ka Hisaab</b><span>What the festival is worth to the state and the country</span></div>
+        <div><i>The business</i><b>Dhandha Decode</b><span>How the people who make the festival earn from it</span></div>
+        <div><i>The household</i><b>Ghar Ka Hisaab</b><span>How families budget, borrow, save and spend for it</span></div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>₹6.05 lakh cr</b><span>India's Navratri-to-Diwali trade in 2025, a record (CAIT)</span></div>
+      <div class="stat"><b>8</b><span>major festivals, plus Hornbill for discussion</span></div>
+      <div class="stat"><b>2</b><span>phases; we recommend approving phase one now</span></div>
+      <div class="stat"><b>3 days</b><span>the most we stay in any one city</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="rail" aria-label="Sections">
+  <div class="wrap"><ol>
+    <li><a href="#why">Why now</a></li>
+    <li><a href="#idea">The idea</a></li>
+    <li><a href="#calendar">Calendar</a></li>
+    <li><a href="#festivals">Festivals</a></li>
+    <li><a href="#phases">Phases and itinerary</a></li>
+    <li><a href="#costs">Costs</a></li>
+    <li><a href="#content">Content</a></li>
+    <li><a href="#measure">Measure and risks</a></li>
+    <li><a href="#decide">Decisions</a></li>
+    <li><a href="#sources">Sources</a></li>
+  </ol></div>
+</nav>
+
+<main>
+<section class="band" id="why">
+  <div class="wrap">
+    <div class="why">
+      <div class="copy">
+        <p class="stn">Why now</p>
+        <h2 class="head-h" style="font-family:var(--f-display);font-weight:400;font-size:clamp(2.1rem,4.6vw,3.4rem);line-height:1.04;margin:14px 0 22px">The festival we <em style="color:var(--gold-ink)">just missed</em></h2>
+        <p>One of our biggest regrets from the Mumbai trip (27 Sep to 2 Oct) is that we missed Ganeshotsav, Mumbai's biggest festival, by just a few days. The city had only just finished its immersions when we landed. A festival that size is a whole economy on the street, and we were there to see only its last traces.</p>
+        <p>We have said that this year SSEI wants to focus on putting out good, quality content. The festival season is the one time of year when culture, spending, credit and gold all peak together, and every city has a money story waiting to be told. We feel there is no better time for us to execute this than now.</p>
+        <p class="quote">We will not miss the next one. Mahalaya is on 10 Oct, and the season runs straight through to New Year's Eve.</p>
+      </div>
+      <figure class="polaroid">
+        <img src="../mumbai-trip/thumbs/fin-bappa.jpg" alt="Ganpati at Siddhivinayak, Mumbai, shot on the Mumbai trip" loading="lazy">
+        <figcaption><b>Siddhivinayak, Mumbai, Sep 2026.</b> The closest we got to Ganeshotsav. Mumbai's Ganesh festival trade was estimated at ₹30,000 to 40,000 crore in 2025 by a trade body.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="band alt" id="idea">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">The idea</p>
+      <h2>One festival, <em>three kinds of money</em></h2>
+      <p>Every Indian festival is a small, complete economy. A pandal has fundraising, a budget, sponsors, suppliers, contract labour and a hard deadline. A garba night has ticket pricing and inventory risk. We show people the money moving underneath something they already love, with the culture first and the finance lesson landing as the "aha".</p>
+    </div>
+    <div class="lenses">
+      <article class="lens desh">
+        <p class="tag">The nation · macro</p>
+        <h3>Desh Ka Hisaab</h3>
+        <p class="en">The nation's accounts</p>
+        <p class="what">What a festival adds to a state's economy: footfall, tourism, GST, government grants, railway specials, festive retail and credit.</p>
+        <ul><li>GDP and GSDP contribution, the multiplier effect</li><li>Public spending and cost recovery</li><li>Seasonality, inflation, the RBI's view of festive demand</li></ul>
+      </article>
+      <article class="lens dhandha">
+        <p class="tag">The business · our existing series</p>
+        <h3>Dhandha Decode</h3>
+        <p class="en">Decoding the business</p>
+        <p class="what">One maker, trader or organiser at a time: idol makers, textile traders, garba organisers, boatmen, bakers, jewellers.</p>
+        <ul><li>Working capital and the cash conversion cycle</li><li>Pricing power, margins, break-even</li><li>Inventory risk, advance orders, trade credit</li></ul>
+      </article>
+      <article class="lens ghar">
+        <p class="tag">The household · personal finance</p>
+        <h3>Ghar Ka Hisaab</h3>
+        <p class="en">The family's accounts</p>
+        <p class="what">How a family plans for the festival: the shopping budget, the EMI, the gold coin, the trip home, the gifts.</p>
+        <ul><li>Budgeting and sinking funds</li><li>EMIs, BNPL and credit card debt</li><li>Gold as an asset, tax on gifts</li></ul>
+      </article>
+    </div>
+    <div class="sir">
+      <div class="badge" aria-hidden="true">S</div>
+      <div>
+        <h3>Our first choice: Sir travels with us</h3>
+        <p>Every one of these stories is stronger with <b>Sir on location</b>: explaining the economics at a pandal, at a Surat textile market or on the ghats. If Sir can join, the trips are built around his days. If not, <b>the team travels</b> and Sir records his explainers from the studio using our footage. The costs below show both.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="calendar">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Calendar</p>
+      <h2>The season, <em>in two phases</em></h2>
+      <p>Phase one covers Mahalaya, Durga Puja and Navratri in October. Phase two covers Diwali, Chhath and Dev Deepawali in November, and Christmas and New Year in December, once phase one has proven itself.</p>
+    </div>
+    <div class="cal-card">
+      <div class="cal-legend"><span><i style="background:var(--gold)"></i>Phase one</span><span><i style="background:var(--navy-ink);opacity:.75"></i>Phase two</span><span><i style="border:1.5px dashed var(--mut)"></i>For discussion</span></div>
+      <div class="cal-scroll"><svg id="cal" role="img" aria-label="Festival dates from October 2026 to January 2027, split into phase one and phase two"></svg></div>
+    </div>
+    <div class="note-box">
+      <div class="note"><b>Shouldn't Dussehra be in Ayodhya?</b><p>Ayodhya's signature celebration is Deepotsav, on the eve of Diwali (7 Nov), which marks Ram's return home. That is the bigger spectacle and the better money story, so Ayodhya sits in phase two on Diwali. Dussehra itself (20 Oct) falls inside Durga Puja week, and Bengal celebrates it as Bijoya Dashami (21 Oct), so phase one captures it in Kolkata.</p></div>
+      <div class="note"><b>Major festivals only</b><p>We dropped smaller regional fairs and kept the festivals with national weight. Guru Nanak Jayanti falls on the same day as Dev Deepawali (24 Nov), so we can cover only one; Varanasi is the stronger visual and money story. Hornbill in Nagaland stays open for discussion.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band alt" id="festivals">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">The festivals</p>
+      <h2>What we film, <em>and the money in it</em></h2>
+      <p>Each festival is planned across all three lenses. Figures are the latest we could verify; trade-body and press estimates are not audited, and we label them as estimates on screen.</p>
+    </div>
+    <div class="fests" id="fests"></div>
+  </div>
+</section>
+
+<section class="band" id="phases">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Phases and itinerary</p>
+      <h2>Two phases, <em>no more than three days a city</em></h2>
+      <p>Short, focused stays keep costs down and energy up. Kolkata stops need no travel or hotel, which keeps phase one lean.</p>
+    </div>
+    <div class="decide">
+      <div class="opt rec">
+        <p class="tag">Our recommendation</p>
+        <h3>Approve phase-wise</h3>
+        <p>Approve phase one now. We review its results on 1 Nov and come back for a go or no-go on phase two, with real numbers in hand.</p>
+        <ul><li>Commits only phase one's budget</li><li>Phase two is shaped by what audiences actually responded to</li><li>We hold refundable bookings for Varanasi and Goa, which sell out early</li></ul>
+      </div>
+      <div class="opt">
+        <p class="tag">Alternative</p>
+        <h3>Approve all together</h3>
+        <p>Approve both phases today and we book everything now.</p>
+        <ul><li>Lower fares and better hotels for Varanasi and Goa</li><li>No pause between phases</li><li>Commits the full budget before any results are in</li></ul>
+      </div>
+    </div>
+    <div id="phase-list"></div>
+  </div>
+</section>
+
+<section class="band alt" id="costs">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Costs</p>
+      <h2>Estimated cost, <em>per trip</em></h2>
+      <p>All-inclusive estimates for a team of two: travel, stay, local transport, food, a local fixer where needed, passes and a 10% buffer. Ranges run from booking now (low) to booking late in peak season (high).</p>
+    </div>
+    <div class="cost-ctl">
+      <div class="seg" role="group" aria-label="Who travels">
+        <button type="button" data-sir="1" class="on">Team of 2 with Sir</button>
+        <button type="button" data-sir="0">Team of 2 only</button>
+      </div>
+      <span class="mut small" id="cost-note"></span>
+    </div>
+    <div class="tbl-wrap"><table id="cost-table"></table></div>
+    <div class="cost-cards" id="cost-cards"></div>
+    <details class="assume"><summary>How we estimated these numbers</summary><ul id="assume"></ul></details>
+  </div>
+</section>
+
+<section class="band" id="content">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Content</p>
+      <h2>Beyond reels: <em>new formats to try</em></h2>
+      <p>Mumbai proved our short formats work. This season we add long-form YouTube, built as one city, one film, with Shorts cut from every film, and a set of new series that only a festival can give us.</p>
+    </div>
+    <p class="lede" style="margin-bottom:18px">Every format carries one of our three lenses: <b>Desh Ka Hisaab</b> for the nation, <b>Dhandha Decode</b> for the business, <b>Ghar Ka Hisaab</b> for the household.</p>
+    <div class="fmt-key"><span><i style="background:var(--sindoor)"></i>New this season</span><span><i style="background:var(--line)"></i>Already running</span></div>
+    <div class="formats" id="formats"></div>
+  </div>
+</section>
+
+<section class="band alt" id="measure">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Measure and risks</p>
+      <h2>How we know <em>it worked</em></h2>
+      <p>Mumbai is the baseline. The phase one review on 1 Nov compares Puja and Navratri content against it, and decides phase two.</p>
+    </div>
+    <div class="two">
+      <div class="tbl-wrap"><table id="measure-table"></table></div>
+      <div class="tbl-wrap"><table id="risk-table"></table></div>
+    </div>
+    <div class="intl">
+      <h3 style="margin-bottom:12px">The international lens, one line at a time</h3>
+      <div class="tbl-wrap"><table id="intl-table"></table></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="decide">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Decisions</p>
+      <h2>What we need <em>from you</em></h2>
+      <p>Mahalaya is on Saturday 10 Oct, and the first Kumartuli shoots need a few days before it. We need these answers by Thursday 8 Oct.</p>
+    </div>
+    <ol class="asks">
+      <li><b>Phase-wise or all together</b><span>We recommend approving phase one now and phase two after the 1 Nov review.</span></li>
+      <li><b>Sir's availability</b><span>Our first choice is Sir on location, especially in Surat or Ahmedabad and during Puja week in Kolkata. If not, the team travels and Sir records from the studio.</span></li>
+      <li><b>Budget for phase one</b><span>See the cost section; we will confirm with real quotes within 48 hours of approval.</span></li>
+      <li><b>Who travels</b><span>We will propose the two-person team for each trip.</span></li>
+      <li><b>An SSEI letter for access</b><span>For media passes at pandals, garba grounds and markets.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="band alt" id="sources">
+  <div class="wrap">
+    <div class="head">
+      <p class="stn">Sources</p>
+      <h2>Where the <em>numbers</em> come from</h2>
+      <p>All pages opened on 6 Oct 2026. Travel costs are our estimates from current fares and festive surge reports.</p>
+    </div>
+    <div class="src" id="src"></div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Prepared by the SSEI Growth team · 6 Oct 2026 · Festive Bharat content trip plan</div></footer>
+<button class="theme-btn" type="button" aria-label="Switch light or dark theme" id="theme">◐</button>
+
+<script>
+const DATA = /*DATA_START*/{"calendar": [{"name": "Kumartuli and Mahalaya", "start": "2026-10-08", "end": "2026-10-10", "phase": 1}, {"name": "Navratri, Surat and Ahmedabad", "start": "2026-10-11", "end": "2026-10-19", "phase": 1}, {"name": "Durga Puja, Kolkata", "start": "2026-10-17", "end": "2026-10-21", "phase": 1}, {"name": "Dussehra and Bijoya Dashami", "start": "2026-10-20", "end": "2026-10-21", "phase": 1}, {"name": "Diwali, Ayodhya Deepotsav", "start": "2026-11-06", "end": "2026-11-08", "phase": 2}, {"name": "Chhath Puja", "start": "2026-11-13", "end": "2026-11-16", "phase": 2}, {"name": "Dev Deepawali, Varanasi", "start": "2026-11-24", "end": "2026-11-24", "phase": 2}, {"name": "Hornbill, Nagaland", "start": "2026-12-01", "end": "2026-12-10", "phase": 3}, {"name": "Christmas, Kolkata", "start": "2026-12-23", "end": "2026-12-25", "phase": 2}, {"name": "New Year's Eve, Goa", "start": "2026-12-29", "end": "2027-01-01", "phase": 2}], "phases": [{"name": "Phase one", "pill": "Approve now · 8 to 21 Oct", "lead": "Kolkata for Mahalaya and Durga Puja, with Surat and Ahmedabad for Navratri slotted into the week between them. Two of the four stops are at home.", "stops": [{"date": "8 to 10 Oct", "place": "Kolkata: Kumartuli and Mahalaya", "meta": "Home base, no stay", "home": true, "plan": ["Kumartuli workshops in the final rush: the clay shortage, fixed-price orders, idols packed for export", "Mahalaya at dawn on Sat 10 Oct: tarpan at the Hooghly ghats and chokkhu daan, the painting of the goddess's eyes"]}, {"date": "10 to 13 Oct", "place": "Surat", "meta": "3 nights · fly Sat 10 Oct afternoon (no direct flight on Sundays)", "plan": ["First garba nights on 11 and 12 Oct", "Textile markets on Ring Road on Mon 12 and Tue 13 Oct: traders, weavers, the 300-day payment wait", "Diamond units in Varachha, handled with care", "Evening train to Ahmedabad on 13 Oct"]}, {"date": "13 to 16 Oct", "place": "Ahmedabad", "meta": "3 nights · fly home Fri 16 Oct", "plan": ["A big garba organiser: pass pricing, sponsors, ground costs, break-even", "Vibrant Navratri at GMDC Ground, the state's own festival", "Outfit rental shops and the rent-or-buy question", "Sir's Desh Ka Hisaab on Gujarat, on location if he travels"]}, {"date": "17 to 21 Oct", "place": "Kolkata: Durga Puja to Bijoya Dashami", "meta": "Home base, no stay", "home": true, "plan": ["The pandal P&L with a para committee's treasurer: chanda, sponsors, the state grant", "Dhakis arriving at Sealdah to get hired for the four days", "Puja shopping at Hatibagan and Gariahat; FinQuiz at the pandals", "Dussehra as Bijoya Dashami on 21 Oct: sindoor khela and immersion"]}], "gate": {"title": "1 Nov: phase one review, and the go or no-go for phase two", "items": ["All phase one pieces published, timely ones within 48 hours of the shoot", "Average views per reel at or above the Mumbai trip's average (proposed bar)", "The first long film's average view duration, to decide how much long-form phase two carries", "Cost per finished piece against the estimate"]}}, {"name": "Phase two", "pill": "Subject to the 1 Nov review · 6 Nov to 1 Jan", "gate": null, "lead": "Diwali, Chhath and Dev Deepawali in November, then Christmas and New Year to close the season. Hornbill stays open for discussion.", "stops": [{"date": "6 to 9 Nov", "place": "Ayodhya, via Lucknow", "meta": "3 nights · no direct flight from Kolkata", "plan": ["Dhanteras on 6 Nov in Ayodhya's markets: gold at ₹1.49 lakh per 10g", "Deepotsav on 7 Nov: the diya makers, the hoteliers, the state's spend on a world record", "Diwali on 8 Nov, and Muhurat trading with Sir"]}, {"date": "13 to 16 Nov", "place": "Chhath with Sudhir and Sunil bhaiya", "meta": "3 nights · their home town, or Kolkata's ghats if they celebrate here", "plan": ["Unki Nazar Se: Chhath through the eyes of two of our own team", "The journey home and what it costs: tickets, gifts, offerings, a year's savings", "Nahay Khay, Kharna, then the evening and dawn offerings on 15 and 16 Nov", "Then the wider picture: special trains and the ghat economy"]}, {"date": "23 to 25 Nov", "place": "Varanasi", "meta": "2 nights · book hotels now, refundable", "plan": ["Dev Deepawali on 24 Nov: lakhs of diyas on the ghats", "Boatmen and hotels repricing for one night: surge pricing in action", "Is a ₹10,000 boat seat worth it? A Ghar Ka Hisaab on spending on experiences"]}, {"date": "1 to 3 Dec", "place": "Kohima, Nagaland: Hornbill Festival", "meta": "For discussion · Inner Line Permit needed", "optional": true, "plan": ["Tourism-led growth in a small state economy", "Tribal crafts, food stalls and homestays as small businesses"]}, {"date": "23 to 25 Dec", "place": "Kolkata: Christmas", "meta": "Home base, no stay", "home": true, "plan": ["Park Street lights and the Christmas festival", "Bow Barracks and the city's old bakeries: the plum cake economy", "Christmas gifting and the year-end sale season"]}, {"date": "29 Dec to 1 Jan", "place": "Goa: New Year's Eve", "meta": "3 nights · book now, refundable", "plan": ["Hotels and flights at three times their usual price: peak pricing explained", "Shacks, party organisers and taxi operators: a season's income in one week", "The household angle: the cost of a New Year's Eve, and new year money resolutions"]}]}], "formats": [{"hero": true, "kind": "New this season · YouTube long-form", "name": "Ek Shehar, Ek Film", "en": "One city, one film", "what": "A 15 to 20 minute YouTube film for every city we visit, built in three chapters: <b>Desh Ka Hisaab<\/b>, <b>Dhandha Decode<\/b> and <b>Ghar Ka Hisaab<\/b>. Culture opens the film; the money carries it.", "points": ["<b>Phase one:<\/b> Kolkata (Mahalaya to Dashami) and Gujarat (Surat and Ahmedabad)", "<b>Phase two:<\/b> Ayodhya, Chhath, Varanasi, and a season-finale film on Christmas and New Year", "<b>Shorts from every film:<\/b> 6 to 8 vertical cuts each, so one shoot feeds YouTube, Reels and Shorts", "<b>An experiment we measure:<\/b> watch time and average view duration decide how much long-form we do next year"]}, {"kind": "New · explainer", "name": "Kitne Ka Padta Hai?", "en": "What does it really cost?", "isNew": true, "what": "A price breakdown on screen: every cost that goes into one festival object, from clay to crowd.", "ex": "A Durga idol, a garba night, a boat seat on Dev Deepawali"}, {"kind": "New · macro made simple", "name": "Paise Ki Yatra", "en": "Follow the rupee", "isNew": true, "what": "We spend ₹500 at a festival and follow where it goes next: the multiplier effect, shown rather than told.", "ex": "A Puja purchase, from shop to wholesaler to weaver"}, {"kind": "New · personal stories", "name": "Unki Nazar Se", "en": "Through their eyes", "isNew": true, "what": "First-person festival stories, told by the people living them, with the money woven in.", "ex": "Chhath with Sudhir and Sunil bhaiya; a dhaki's season"}, {"kind": "New · inflation", "name": "Tab vs Ab", "en": "Then and now", "isNew": true, "what": "What a festival cost ten years ago and what it costs today, to teach inflation and compounding. Verified prices only.", "ex": "Dhanteras gold, a garba pass, a Kumartuli idol"}, {"kind": "New · if Sir travels", "name": "Sir Ke Saath", "en": "With Sir", "isNew": true, "what": "Walk-and-talk pieces with Sir on location: he meets the people, asks the money questions, and draws the lesson.", "ex": "Sir at a Surat textile market; Sir on the ghats"}, {"kind": "New · long conversation", "name": "Arthik Adda", "en": "The money adda", "isNew": true, "what": "On-location conversations with the people who run the festival economy, released as podcast and long video.", "ex": "A puja committee treasurer, a textile leader, a jeweller"}, {"kind": "New · data", "name": "Ek Number", "en": "One number, the whole story", "isNew": true, "what": "Carousels built around a single verified number per festival, and what it means.", "ex": "₹6.05 lakh crore; 12,383 special trains"}, {"kind": "New · behind the scenes", "name": "Safarnama", "en": "The travel diary", "isNew": true, "what": "A light vlog of the team on the road. It makes the brand human and teases the films before they drop.", "ex": "Packing for Surat; the 4 am Mahalaya call time"}, {"kind": "New · students", "name": "Festival Economist", "en": "Student challenge", "isNew": true, "what": "Students film 60 seconds on the economics of their own local festival. The best are reposted and win a course discount, which turns the series into lead generation.", "ex": "Open across phase one and phase two"}, {"kind": "New · live", "name": "Seedha Festival Se", "en": "Live from the festival", "isNew": true, "what": "Instagram and YouTube lives from the ground, with Sir taking questions where he can join.", "ex": "Muhurat trading evening on 8 Nov; Mahalaya dawn"}, {"kind": "Running · vox pop", "name": "Broke or Woke", "en": "Festive edition", "what": "Quick street interviews on festive spending, EMIs and gold, ending in one money tip.", "ex": "Puja shopping on EMI; New Year's Eve budgets"}, {"kind": "Running · quiz", "name": "FinQuiz", "en": "At the festival", "what": "Finance questions for crowds at pandals and garba grounds. Fast, fun and shareable.", "ex": "\"What is a Muhurat trade?\" at a Diwali market"}], "measures": [["Long film watch time", "Average view duration tells us if long-form is worth scaling next year"], ["Views, saves and shares", "Shows which story types travel; saves signal real learning value"], ["Follower growth", "The lasting audience on FinLab, Sir's profile and SSEI after the season"], ["Finance questions in comments", "Proof that culture content pulls people into finance"], ["Leads from the challenge and link clicks", "Direct business value"], ["Cost per finished piece", "Keeps every next trip honest"]], "risks": [["Approval lead time", "Kolkata stops need no travel, so Kumartuli starts the day we get a yes"], ["Peak-season prices", "Book refundable fares and hotels now for Varanasi and Goa, which sell out early"], ["Chhath train tickets", "Trains are waitlisted already; we budget for flights"], ["Permissions", "Media passes requested now, an SSEI letter, a local fixer in each new city"], ["Religious and political sensitivity", "Culture first; no comment on rituals; government schemes shown as facts, never opinions"], ["Wrong numbers", "Every figure is sourced or said on camera by someone who knows; estimates labelled"], ["Consent", "Signed release for every interview; option to blur faces or round figures"], ["Stale content", "Timely pieces live within 48 hours; long films are evergreen"], ["Crowds, rain, equipment", "Daily backup to Drive, compact kit, no shooting inside crushes"]], "intl": [["Diwali", "US holiday season", "Sales passed $1 trillion in Nov to Dec 2025, up 4.1% (NRF)"], ["Chhath homecoming", "China's Spring Festival", "596 million domestic trips and ¥803 billion travel spend in 2026"], ["Durga Puja", "Rio Carnival", "R$5.9 billion projected for the city's economy in 2026"], ["Navratri garba", "Oktoberfest, Munich", "€1.6 billion economic value; a record 7.4 million visitors in 2026"], ["Christmas in Kolkata", "German Christmas markets", "About €4 billion of sales and 170 million visits a year"]], "festivals": [{"name": "Mahalaya", "phase": 1, "when": "Sat 10 Oct", "where": "Kolkata: Kumartuli and the Hooghly ghats", "hook": "The dawn that starts Bengal's Puja: tarpan at the ghats, Mahishasuramardini on the radio, and the goddess's eyes painted in Kumartuli.", "facts": [["200+", "Kumartuli workshops idle for about six weeks this summer when clay supply stopped"], ["₹1.5 to 3 lakh", "a fibreglass idol shipped abroad, 80 to 90 days by sea"], ["8 countries", "one workshop's export orders this year, from the US to Uganda"]], "desh": ["How a craft cluster feeds Bengal's festival economy, valued at ₹32,377 crore in a 2019 study.", "Lesson: clusters and supply chains."], "dhandha": ["The clay shock: an artisan's idle weeks, then the final rush on fixed-price orders. And the idols that fly abroad.", "Lesson: input-cost shocks, working capital, export pricing, currency risk."], "ghar": ["When does a Kolkata family start saving for Puja, and how much goes on new clothes?", "Lesson: sinking funds and planning ahead."], "film": "Opens the Kolkata film: from clay to Mahalaya dawn."}, {"name": "Durga Puja and Bijoya Dashami", "phase": 1, "when": "17 to 21 Oct", "where": "Kolkata, Shashthi to Dashami (Dussehra)", "hook": "On UNESCO's heritage list since 2021, and the most closely studied festival economy in India.", "facts": [["₹32,377 cr", "Durga Puja's creative economy in 2019, 2.58% of Bengal's GDP (British Council)"], ["₹46,000 to 65,000 cr", "the range of 2025 industry estimates; none audited"], ["₹1.10 lakh", "state grant per committee in 2025, to about 44,000 committees; ₹1 lakh and needs-based in 2026"]], "desh": ["Why do 2025 estimates differ by ₹19,000 crore? How festival economies are measured, and the fiscal cost of a grant to 44,000 committees.", "Lesson: GSDP, the multiplier, reading estimates critically."], "dhandha": ["The pandal P&L with a para committee's treasurer; dhakis hired at Sealdah; hawkers at Hatibagan and Gariahat (about ₹800 crore across three markets in 2025, an estimate).", "Lesson: budgeting, crowdfunding, gig income, inventory on credit."], "ghar": ["Puja shopping on EMI, and the new-clothes budget of a family of four.", "Lesson: no-cost EMIs, BNPL, credit scores."], "film": "Ek Shehar, Ek Film: Kolkata, from Mahalaya to Bijoya Dashami."}, {"name": "Navratri", "phase": 1, "when": "11 to 19 Oct", "where": "Surat and Ahmedabad, Gujarat", "hook": "Garba joined UNESCO's heritage list in 2023, and has grown into a ticketed industry.", "facts": [["₹1.5 lakh cr", "Surat's yearly textile trade: 220 markets, 75,000+ shops (FOSTTA, 2026)"], ["250 to 300 days", "how long Surat traders waited to be paid in 2025"], ["$22bn to $12.2bn", "India's polished diamond exports, FY23 to FY26"], ["₹499 to ₹1,947", "one night's garba pass in Ahmedabad, 2025"]], "desh": ["Surat's two engines: textiles holding up, diamonds hit by US tariffs (cut from 50% to 18% in Feb 2026). The state's Vibrant Navratri drew 12.71 lakh visitors in 2023.", "Lesson: export dependence, tariffs, tourism spending."], "dhandha": ["The 300-day wait: a textile trader and his weaver. A garba organiser's pass pricing, sponsors and break-even. One chaniya choli, from mill to garba ground.", "Lesson: trade credit, receivables, pricing power, markups and GST."], "ghar": ["Rent the outfit or buy it? And the garba pass on EMI: one Vadodara pass rose 62% in a year.", "Lesson: rent vs buy, depreciation, price inflation."], "film": "Ek Shehar, Ek Film: Gujarat, the land of cloth and diamonds on its nine biggest nights."}, {"name": "Diwali: Ayodhya Deepotsav", "phase": 2, "when": "6 to 8 Nov", "where": "Ayodhya: Dhanteras, Deepotsav and Diwali", "hook": "Deepotsav marks Ram's return home. It set a Guinness record of 26 lakh diyas in 2025, and plans about 30 lakh this year.", "facts": [["₹6.05 lakh cr", "India's Navratri-to-Diwali trade in 2025, a record (CAIT)"], ["16.44 crore", "visitors to Ayodhya in 2024, up from 1.78 crore in 2017 (UP Tourism)"], ["₹1.6 cr to ₹6.4 cr", "an acre of land near the temple, 2019 to 2024"], ["₹1.49 lakh", "gold per 10g today, 13% above Dhanteras 2025"]], "desh": ["A city transformed: how a temple and a festival rewired Ayodhya's economy, from footfall to land prices.", "Lesson: public investment, tourism-led growth, real estate."], "dhandha": ["The diya makers, the new hotels and homestays, and a jeweller's Dhanteras day.", "Lesson: seasonal demand, capacity, pricing."], "ghar": ["Gold at ₹1.49 lakh: jewellery, coins or a gold ETF? And Muhurat trading on 8 Nov with Sir. The Nifty closed higher in 7 straight Muhurat sessions before 2025, and why that proves nothing.", "Lesson: gold as an asset, behavioural finance."], "film": "Ek Shehar, Ek Film: Ayodhya, the economics of a city of light."}, {"name": "Chhath Puja", "phase": 2, "when": "13 to 16 Nov", "where": "With Sudhir and Sunil bhaiya, at home in Bihar or on Kolkata's ghats", "hook": "Bihar's biggest festival and India's biggest homecoming, told through the eyes of two of our own team.", "facts": [["12,383", "festive special train trips in Oct and Nov 2025, up 55% on 2024 (Railways)"], ["₹50,000 cr", "Chhath trade in 2025, ₹15,000 crore of it in Bihar (CAIT estimate)"]], "desh": ["Millions travel home in one week: railway specials, remittances, and the money that flows back to Bihar.", "Lesson: migration and remittances."], "dhandha": ["The soop and daura basket weavers, the thekua makers, the fruit sellers at the ghats.", "Lesson: one-week markets, perishable inventory."], "ghar": ["Unki Nazar Se: what Chhath costs Sudhir and Sunil bhaiya's families, from the journey to the offerings, and how they save for it.", "Lesson: saving for a goal, the true cost of a trip."], "film": "A Chhath film told by our own team: a homecoming, and its economics."}, {"name": "Dev Deepawali", "phase": 2, "when": "Tue 24 Nov", "where": "Varanasi, on Kartik Purnima", "hook": "Fifteen days after Diwali, the Diwali of the gods: every ghat of Varanasi lit with diyas.", "facts": [["10 lakh+", "diyas planned on the ghats in 2025; it is now a state-declared fair"], ["₹3,500 to 13,500", "a shared boat seat on the night, as listed by booking sites"], ["Up to ₹1.5 lakh", "a night in the best ghat-facing rooms in 2025, as reported"]], "desh": ["A state-declared fair: what the government spends, and what the city earns in one night.", "Lesson: public spending vs local income."], "dhandha": ["The boatman who earns a month's income in one evening, and the hotelier who triples rates.", "Lesson: surge pricing, demand spikes, fixed capacity."], "ghar": ["Is a ₹10,000 boat seat worth it? Spending on experiences vs things.", "Lesson: opportunity cost."], "film": "Ek Shehar, Ek Film: Varanasi."}, {"name": "Christmas", "phase": 2, "when": "23 to 25 Dec", "where": "Kolkata: Park Street, Allen Park, Bow Barracks", "hook": "Kolkata's Christmas is a citywide festival, with a state-run Christmas festival on Park Street since 2011.", "facts": [["Since 2011", "the Kolkata Christmas Festival around Allen Park and Park Street"], ["About 132", "families in Bow Barracks, where rent is still a nominal ₹30 a month"], ["About €4bn", "Germany's Christmas markets a year, a global yardstick"]], "desh": ["What a city gains from a season of lights, and Christmas as the world's biggest retail peak.", "Lesson: tourism and retail seasonality."], "dhandha": ["The old bakeries and their plum cakes: one product, one month, a big share of the year's sales.", "Lesson: seasonal businesses and cash flow planning."], "ghar": ["Year-end sales and gifting: how to spend a bonus well.", "Lesson: budgeting, discount vs value."], "film": "Season finale film, part one: Christmas in Kolkata."}, {"name": "New Year's Eve", "phase": 2, "when": "29 Dec to 1 Jan", "where": "Goa", "hook": "India's party capital at three times the usual price, and the night the whole country orders in.", "facts": [["1.08 crore", "tourists in Goa in 2025, a record (Goa Tourism)"], ["+54%", "December 2024 arrivals in Goa over December 2023"], ["75 lakh", "orders delivered by Zomato and Blinkit on New Year's Eve 2025, a record"]], "desh": ["Goa's tourism economy and its December peak, and the national New Year's Eve spending spike.", "Lesson: tourism dependence and seasonality."], "dhandha": ["Shack owners, party organisers and taxi operators: a season's income in one week.", "Lesson: peak pricing, fixed costs."], "ghar": ["What a New Year's Eve really costs, and the money resolutions worth keeping.", "Lesson: budgeting, goal setting, SIPs."], "film": "Season finale film, part two: the year ends in Goa."}, {"name": "Hornbill Festival", "phase": 3, "when": "1 to 10 Dec", "where": "Kisama, near Kohima, Nagaland", "hook": "The festival of festivals, showcasing Nagaland's tribes. A strong idea, open for discussion.", "facts": [["2,14,493", "visitors in 2025, including 2,528 from abroad"], ["₹200 to 300 cr", "economic activity in 2024, according to the state's tourism minister"]], "desh": ["How one ten-day festival powers a small state's tourism economy.", "Lesson: tourism-led growth."], "dhandha": ["Homestays, crafts and food stalls: small businesses with one big week.", "Lesson: small business economics."], "ghar": ["Planning a festival trip to the Northeast on a budget.", "Lesson: travel budgeting."], "film": "Optional film: Nagaland."}], "costs": {"buffer": 0.1, "food": [1500, 2500], "groups": [{"name": "Phase one · 8 to 21 Oct", "short": "Phase one", "legs": [{"name": "Kolkata: Kumartuli and Mahalaya", "dates": "8 to 10 Oct", "nights": 0, "days": 3, "how": "Local cabs and meals; no travel or stay", "cab": [2500, 3500]}, {"name": "Surat and Ahmedabad: Navratri", "dates": "10 to 16 Oct", "nights": 6, "how": "Flights Kolkata to Surat and Ahmedabad to Kolkata, train between them, mid-range hotels, cabs, a local fixer for 4 days, garba passes", "travel": [16000, 23000], "hotel": [3500, 6000], "sirHotel": [9000, 18000], "cab": [2500, 3500], "fixer": [3000, 8000], "fixerDays": 4, "extra": [8000, 21000], "sirExtra": [4000, 10500]}, {"name": "Kolkata: Durga Puja", "dates": "17 to 21 Oct", "nights": 0, "days": 5, "how": "Local cabs at Puja rates and meals; no travel or stay", "cab": [3000, 4500]}]}, {"name": "Phase two · 6 Nov to 1 Jan", "short": "Phase two", "legs": [{"name": "Ayodhya: Diwali and Deepotsav", "dates": "6 to 9 Nov", "nights": 3, "how": "Flights via Lucknow plus road transfer, hotels at Deepotsav rates, cabs, a local fixer for 2 days", "travel": [14000, 22000], "hotel": [6000, 12000], "sirHotel": [15000, 30000], "cab": [2500, 3500], "fixer": [3000, 8000], "fixerDays": 2}, {"name": "Chhath with Sudhir and Sunil bhaiya", "dates": "13 to 16 Nov", "nights": 3, "how": "Return flights to Patna at Chhath fares (trains are waitlisted), hotels, cabs. Much lower if they celebrate in Kolkata", "travel": [12000, 24000], "hotel": [3000, 5000], "sirHotel": [8000, 15000], "cab": [2500, 3000]}, {"name": "Varanasi: Dev Deepawali", "dates": "23 to 25 Nov", "nights": 2, "how": "Flights, hotels at surge rates, cabs, a local fixer for 2 days, shared boat seats on the night", "travel": [12000, 24000], "hotel": [8000, 20000], "sirHotel": [25000, 35000], "cab": [2400, 2600], "fixer": [3000, 8000], "fixerDays": 2, "extra": [7000, 27000], "sirExtra": [3500, 13500]}, {"name": "Kohima: Hornbill Festival", "dates": "1 to 3 Dec", "nights": 2, "optional": true, "how": "Flights to Dimapur, road to Kohima, festival-rate hotels, a local fixer, Inner Line Permits and camera fees", "travel": [12000, 20000], "hotel": [5000, 12000], "sirHotel": [12000, 20000], "cab": [3000, 4000], "fixer": [3000, 8000], "fixerDays": 2, "extra": [1500, 3000]}, {"name": "Kolkata: Christmas", "dates": "23 to 25 Dec", "nights": 0, "days": 3, "how": "Local cabs and meals; no travel or stay", "cab": [2500, 3500]}, {"name": "Goa: New Year's Eve", "dates": "29 Dec to 1 Jan", "nights": 3, "how": "Flights and hotels at peak-season rates, cabs, event entry", "travel": [25000, 45000], "hotel": [10000, 20000], "sirHotel": [25000, 45000], "cab": [3000, 4500], "extra": [6000, 20000], "sirExtra": [3000, 10000]}]}], "assumptions": ["A team of two, one room each in mid-range (3 star) hotels. When Sir travels, he flies with the team and stays in a 4 to 5 star hotel.", "Fares are economy returns. The low end assumes booking this week; the high end assumes late booking at festival surge (Diwali fares rose 30 to 35% on average in 2025, and Patna fares went up to three times normal).", "Food and incidentals at ₹1,500 to 2,500 per person per day. Mumbai's on-ground spends came to about ₹1,650 per person per day.", "A cab with driver on every shoot day, ₹2,400 to 4,500 a day depending on the city and the festival.", "A local fixer at ₹3,000 to 8,000 a day in new cities, for 2 to 4 days. Sudhir and Sunil bhaiya are our guides for Chhath.", "Passes: two garba passes a night in Gujarat, shared boat seats in Varanasi, event entry in Goa.", "A 10% buffer on every trip. Excludes equipment (we use our own kit), editing and any paid crew.", "Real quotes within 48 hours of approval. Booking phase two early, with refundable fares, keeps it near the low end."]}, "sources": [["Dates", [["West Bengal Finance Dept holiday list 2026", "https://finance.wb.gov.in/writereaddata/4188-F(P2).pdf"], ["Drik Panchang: Vijayadashami 2026", "https://www.drikpanchang.com/festivals/vijayadashami/vijayadashami-date-time.html?geoname-id=1274746&year=2026"], ["Drik Panchang: Diwali calendar 2026", "https://www.drikpanchang.com/diwali/diwali-puja-calendar.html?geoname-id=1261481&year=2026"], ["Drik Panchang: Chhath 2026", "https://www.drikpanchang.com/festivals/chhath-puja/chhath-puja-date-time.html?year=2026&geoname-id=1260086"], ["Drik Panchang: Dev Deepawali 2026", "https://www.drikpanchang.com/diwali/dev-diwali/dev-deepawali-date-time.html?geoname-id=1253405&year=2026"], ["Incredible India: Vibrant Navratri 2026", "https://www.incredibleindia.gov.in/en/festivals-and-events/gujarat/Vibrant-Navratri-Festival-2026"], ["Deepotsav 2026 plans (Hans India)", "https://www.thehansindia.com/uttarpradesh/up-to-seek-suggestions-for-deepotsav-2026-plans-drone-show-1124949"], ["Hornbill Festival", "https://en.wikipedia.org/wiki/Hornbill_Festival"]]], ["Bengal", [["Durga Puja economy, 2019 British Council study (Down To Earth)", "https://www.downtoearth.org.in/economy/economic-impacts-of-festivals-a-case-study-of-durga-puja-in-west-bengal-80202"], ["2025 estimate and grant history (The Federal)", "https://thefederal.com/category/states/east/west-bengal/bengal-durga-puja-economy-hits-record-rs-65000-crore-amid-rains-gst-pause-209971"], ["Alternative 2025 estimate (The Federal)", "https://thefederal.com/category/states/east/west-bengal/durga-puja-festivities-economy-rebounds-up-to-by-fifteen-per-cent-209324"], ["UNESCO: Durga Puja in Kolkata", "https://ich.unesco.org/en/RL/durga-puja-in-kolkata-00703"], ["2026 Puja grant (ThePrint)", "https://theprint.in/india/bengal-govt-announces-rs-1-lakh-durga-puja-grant-appeals-to-big-budget-committees-to-forgo-aid/3036149/"], ["Kumartuli export orders (Daily Guardian)", "https://thedailyguardian.com/entertainment-news/less-than-100-days-to-go-kumartuli-gets-durga-idols-ready-for-foreign-markets20260726210932-741659/"], ["Kumartuli clay crisis (National Herald)", "https://www.nationalheraldindia.com/national/bengal-silent-workshops-unfinished-idols-kumartuli-clay-shortage-durga-puja-2026"], ["Dhakis (PARI)", "https://ruralindiaonline.org/article/the-down-but-not-out-dhakis-of-the-durga-puja"], ["Kolkata Christmas Festival", "https://en.wikipedia.org/wiki/Kolkata_Christmas_Festival"], ["Bow Barracks", "https://en.wikipedia.org/wiki/Bow_Barracks"]]], ["Gujarat", [["UNESCO: Garba of Gujarat", "https://ich.unesco.org/en/RL/garba-of-gujarat-01962"], ["Garba pass prices 2025 (DeshGujarat)", "https://deshgujarat.com/2025/09/02/garba-pass-prices-soar-up-to-%E2%82%B910k-in-ahmedabad-navratri-commercialization-in-spotlight/"], ["Vibrant Navratri attendance (Native Planet)", "https://www.nativeplanet.com/news/vibrant-navratri-festival-2024-set-to-begin-in-ahmedabad-check-schedule-highlights-011-013831.html"], ["Surat textile trade (Textile Excellence)", "https://www.textileexcellence.com/single-news/7049/surat-gets-india-s-first-textile-police-station-to-combat-rs-500-crore-annual-fraud"], ["Surat payment cycles (The Secretariat)", "https://thesecretariat.in/article/old-business-ways-not-working-for-textile-players-in-surat"], ["Diamond exports FY26 (DeshGujarat)", "https://deshgujarat.com/2026/04/16/8-5-drop-in-cut-polished-diamonds-impacts-overall-exports-in-fy26/"], ["US tariff cut (DeshGujarat)", "https://deshgujarat.com/2026/02/04/us-tariff-cut-a-booster-dose-for-surat-diamond-exports-say-industry-leaders/"], ["Diamond exports FY23 to FY25 (ThePrint)", "https://theprint.in/economy/covid-sanctions-war-lifes-rough-for-surats-small-diamond-units-salaries-not-guaranteed-anymore/2881883/"]]], ["Diwali, Ayodhya and Chhath", [["CAIT: 2025 festive sales", "https://cait.in/record-breaking-diwali-sales-of-%E2%82%B95-40-lakh-crore-in-goods-65-thousand-crores-in-services-reflect-indias-economic-strength-and-swadeshi-spirit/"], ["Ayodhya footfall (ThePrint)", "https://theprint.in/india/record-tourist-footfall-in-ayodhya-this-year-more-to-visit-for-deepotsav/2767005/"], ["Deepotsav 2025 record (News On Air)", "https://www.newsonair.gov.in/uttar-pradesh-lights-26-lakh-diyas-sets-guinness-world-record-at-ayodhya"], ["Ayodhya land prices (Al Jazeera)", "https://www.aljazeera.com/economy/2024/1/21/in-indias-ayodhya-the-ram-temple-means-land-is-costlier-than-gold"], ["Gold rate today, Delhi (Business Today)", "https://www.businesstoday.in/commodity/gold-rate-in-delhi-today"], ["Dhanteras 2025 sales (Angel One)", "https://www.angelone.in/news/commodities/gold-silver-buying-on-dhanteras-2025-crosses-1-lakh-crore-rs-despite-price-surge"], ["Muhurat trading record (Business Today)", "https://www.businesstoday.in/markets/stocks/story/nifty-up-7-years-straight-in-muhurat-trading-will-samvat-2082-make-it-eight-498995-2025-10-21"], ["CAIT: Chhath trade", "https://cait.in/chhath-puja-a-unique-confluence-of-faith-devotion-and-economic-growth-chhath-pooja-registered-a-trade-of-over-50-thousand-crores/"], ["Festive special trains 2025", "https://www.newkerala.com/news/o/indian-railways-operates-over-43000-special-train-trips-592"]]], ["Varanasi, Goa, New Year and Hornbill", [["Dev Deepawali 2025 diyas (News Mill)", "https://thenewsmill.com/2025/09/varanasis-ghats-to-shine-with-10-lakh-diyas-on-dev-deepawali/"], ["Dev Deepawali boat bookings", "https://kashiyatra.in/dev-deepawali-varanasi-boat-booking/"], ["Dev Deepawali hotel rates (travel blog)", "https://www.itinerarydiary.com/journal/dev-deepawali-varanasi-2026/"], ["Goa 2025 tourist arrivals (Angel One)", "https://www.angelone.in/news/economy/goa-tourist-arrivals-reach-all-time-high-of-1-08-crore-in-2025"], ["Goa 2024 tourism growth", "https://goa-tourism.com/news/goa-records-robust-21-percent-growth-in-tourism-sets-new-milestones-in-2024/"], ["New Year's Eve 2025 orders (Business Upturn)", "https://www.businessupturn.com/business/corporates/zomato-blinkit-hit-record-75-lakh-orders-on-new-years-eve-despite-gig-workers-strike-call-says-ceo-deepinder-goyal/"], ["Hornbill 2025 footfall (EastMojo)", "https://eastmojo.com/nagaland/2025/12/11/hornbill-festival-2025-closes-with-2-14-lakh-footfall-across-10-days/"], ["Hornbill economic activity (Morung Express)", "https://morungexpress.com/25th-edition-generated-rs-200300-crore-tourism-minister"]]], ["Travel costs and international", [["Diwali 2025 airfare surge", "https://www.travelandtourworld.com/news/article/indias-airfares-surge-to-new-heights-this-diwali-season-in-2025-seeing-price-increases-of-30-35-and-straining-travelers-during-peak-travel-time/"], ["Chhath 2025 airfares to Patna", "https://patnapress.com/diwali-chhath-airfare-delhi-patna-rs-20000-festival-demand/"], ["IndiGo: Kolkata to Surat", "https://www.goindigo.in/domestic-flights/kolkata-to-surat-flights.html"], ["Goa December surge", "https://happyfares.in/blog/goa-december-travel-guide-india-2026/"], ["NRF: 2025 holiday sales", "https://nrf.com/media-center/press-releases/cnbc-nrf-retail-monitor-s-december-data-shows-strong-holiday-season-spending"], ["CGTN: Spring Festival travel 2026", "https://news.cgtn.com/news/2026-02-24/Spring-Festival-travel-breaks-record-with-596-million-domestic-trips-1L1OdQkySis/p.html"], ["Rio City Hall: Carnival 2026", "https://en.prefeitura.rio/desenvolvimento-economico/carnaval-2026-deve-movimentar-r-59-bilhoes-na-economia-carioca/"], ["City of Munich: Oktoberfest economic value", "https://stadt.muenchen.de/dam/jcr:493a4fef-827a-457c-8776-348d5ec6e2c2/12_Wirtschaftswert.pdf"], ["DSB: German Christmas markets", "https://www.dsbev.de/volksfeste-weihnachtsmaerkte/"]]]]}/*DATA_END*/;
+</script>
+<script>
+(function () {
+  const D = DATA;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const $ = id => document.getElementById(id);
+
+  /* Festival cards */
+  $('fests').innerHTML = D.festivals.map(f => `
+    <article class="fest">
+      <div class="side">
+        <span class="ph ${f.phase === 1 ? '' : f.phase === 2 ? 'p2' : 'tbd'}">${f.phase === 1 ? 'Phase one' : f.phase === 2 ? 'Phase two' : 'For discussion'}</span>
+        <h3>${esc(f.name)}</h3>
+        <p class="when">${esc(f.when)}</p>
+        <p class="where">${esc(f.where)}</p>
+        <p class="hook">${esc(f.hook)}</p>
+      </div>
+      <div class="body">
+        <div class="facts">${f.facts.map(x => `<span><b>${esc(x[0])}</b>${esc(x[1])}</span>`).join('')}</div>
+        <div class="rows">
+          <div class="row desh"><span class="k">Desh Ka Hisaab</span><p>${esc(f.desh[0])} <span class="lesson">${esc(f.desh[1])}</span></p></div>
+          <div class="row dhandha"><span class="k">Dhandha Decode</span><p>${esc(f.dhandha[0])} <span class="lesson">${esc(f.dhandha[1])}</span></p></div>
+          <div class="row ghar"><span class="k">Ghar Ka Hisaab</span><p>${esc(f.ghar[0])} <span class="lesson">${esc(f.ghar[1])}</span></p></div>
+          <div class="row film"><span class="k">The long film</span><p>${esc(f.film)}</p></div>
+        </div>
+      </div>
+    </article>`).join('');
+
+  /* Itinerary */
+  $('phase-list').innerHTML = D.phases.map(p => `
+    <div class="phase">
+      <div class="phase-head"><h3>${esc(p.name)}</h3><span class="pill ${p.gate ? '' : 'gate'}">${esc(p.pill)}</span></div>
+      <p class="mut" style="margin-bottom:16px;max-width:70ch">${esc(p.lead)}</p>
+      <ol class="stops">${p.stops.map(s => `
+        <li class="stop ${s.home ? 'home' : ''} ${s.optional ? 'opt-stop' : ''}"><div class="card">
+          <div class="top"><span class="date">${esc(s.date)}</span><span class="place">${esc(s.place)}</span><span class="meta">${esc(s.meta)}</span></div>
+          <ul>${s.plan.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+        </div></li>`).join('')}</ol>
+      ${p.gate ? `<div class="gatebox"><b>${esc(p.gate.title)}</b><ul>${p.gate.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+    </div>`).join('');
+
+  /* Costs */
+  const C = D.costs, buf = 1 + C.buffer;
+  const L = n => n >= 100000 ? '₹' + (n / 100000).toFixed(2).replace(/\.?0+$/, '') + ' lakh' : '₹' + (Math.round(n / 1000) * 1000).toLocaleString('en-IN');
+  const range = (a, b) => `${L(a)} to ${L(b)}`;
+  function legCost(g, sir, k) {
+    const days = g.days || g.nights + 1, ppl = 2 + (sir ? 1 : 0);
+    let t = (g.travel ? g.travel.at(k) : 0) * ppl;
+    t += (g.hotel ? g.hotel.at(k) : 0) * g.nights * 2;
+    if (sir) t += (g.sirHotel ? g.sirHotel.at(k) : 0) * g.nights;
+    t += g.cab.at(k) * days;
+    t += C.food.at(k) * ppl * days;
+    t += (g.fixer ? g.fixer.at(k) : 0) * (g.fixerDays || days);
+    t += (g.extra ? g.extra.at(k) : 0) + (sir && g.sirExtra ? g.sirExtra.at(k) : 0);
+    return Math.round(t * buf);
+  }
+  function drawCosts(sir) {
+    let rows = '', grandLo = 0, grandHi = 0, cards = [];
+    D.costs.groups.forEach(gr => {
+      let lo = 0, hi = 0;
+      const body = gr.legs.map(g => {
+        const a = legCost(g, sir, 0), b = legCost(g, sir, 1);
+        if (!g.optional) { lo += a; hi += b; }
+        return `<tr><td><b>${esc(g.name)}</b><span class="sub">${esc(g.dates)} · ${g.nights ? g.nights + ' nights' : 'home base, no stay'}${g.optional ? ' · for discussion, not in totals' : ''}</span></td><td>${esc(g.how)}</td><td class="num">${range(a, b)}</td></tr>`;
+      }).join('');
+      rows += `<tr class="phase-row"><td colspan="2">${esc(gr.name)}</td><td class="num">${range(lo, hi)}</td></tr>` + body;
+      grandLo += lo; grandHi += hi; cards.push([gr.short, lo, hi]);
+    });
+    rows += `<tr class="grand"><td colspan="2">Both phases together<span class="sub">Excludes Hornbill, which is for discussion</span></td><td class="num">${range(grandLo, grandHi)}</td></tr>`;
+    $('cost-table').innerHTML = `<thead><tr><th>Trip</th><th>What is included</th><th class="num">Estimate (all-in)</th></tr></thead><tbody>${rows}</tbody>`;
+    $('cost-cards').innerHTML = cards.map(c => `<div class="note"><span class="mut small">${esc(c[0])}</span><b style="display:block">${range(c[1], c[2])}</b></div>`).join('') +
+      `<div class="note"><span class="mut small">Both phases</span><b style="display:block">${range(grandLo, grandHi)}</b></div>`;
+    $('cost-note').textContent = sir ? 'Sir flies economy with the team and stays in a 4 to 5 star hotel.' : 'Two team members, mid-range hotels, one room each.';
+  }
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.seg button').forEach(x => x.classList.toggle('on', x === b));
+    drawCosts(b.dataset.sir === '1');
+  }));
+  drawCosts(true);
+  $('assume').innerHTML = C.assumptions.map(x => `<li>${esc(x)}</li>`).join('');
+
+  /* Formats */
+  $('formats').innerHTML = D.formats.map(f => f.hero ? `
+    <article class="fmt hero"><div><p class="kind">${esc(f.kind)}</p><h3>${esc(f.name)}</h3><p class="en" style="color:var(--on-deep-mut)">${esc(f.en)}</p><p>${f.what}</p></div><div><ul>${f.points.map(x => `<li>${x}</li>`).join('')}</ul></div></article>` : `
+    <article class="fmt ${f.isNew ? 'new' : ''}"><p class="kind">${esc(f.kind)}</p><h3>${esc(f.name)}</h3><p class="en">${esc(f.en)}</p><p>${esc(f.what)}</p><p class="ex">${esc(f.ex)}</p></article>`).join('');
+
+  /* Tables */
+  const tbl = (id, head, rows) => { $(id).innerHTML = `<thead><tr>${head.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td>${i === 0 ? '<b>' + esc(c) + '</b>' : esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>`; };
+  tbl('measure-table', ['Measure', 'Why it matters'], D.measures);
+  tbl('risk-table', ['Risk', 'How we handle it'], D.risks);
+  tbl('intl-table', ['Indian festival', 'Global parallel', 'Latest figure'], D.intl);
+
+  /* Sources */
+  $('src').innerHTML = D.sources.map(g => `<h4>${esc(g[0])}</h4><ul>${g[1].map(s => `<li><a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a></li>`).join('')}</ul>`).join('');
+
+  /* Calendar */
+  (function () {
+    const svg = $('cal'), rows = D.calendar, W = 1000, left = 230, right = 120, top0 = 44, rh = 30;
+    const t = d => Date.parse(d) / 864e5, lo = t('2026-10-05'), hi = t('2027-01-03');
+    const X = d => left + (t(d) - lo) / (hi - lo) * (W - left - right);
+    const H = top0 + rows.length * rh + 16;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = d => `${Number(d.slice(8))} ${mon.at(Number(d.slice(5, 7)) - 1)}`;
+    const span = (a, b) => a.slice(0, 7) === b.slice(0, 7) ? `${Number(a.slice(8))} to ${day(b)}` : `${day(a)} to ${day(b)}`;
+    let s = '';
+    ['2026-10-01', '2026-11-01', '2026-12-01', '2027-01-01'].forEach(m => {
+      const x = Math.max(X(m), left);
+      s += `<line x1="${x}" x2="${x}" y1="${top0 - 14}" y2="${H - 10}" stroke="var(--line)"/>`;
+      s += `<text x="${x + 6}" y="${top0 - 20}" font-size="15" font-weight="700" fill="var(--mut)" font-family="Barlow Condensed, sans-serif" letter-spacing="1">${mon.at(Number(m.slice(5, 7)) - 1).toUpperCase()} ${m.slice(0, 4)}</text>`;
+    });
+    const gx = X('2026-11-01');
+    const gy = top0 + rows.filter(r => r.phase === 1).length * rh;
+    s += `<line x1="${gx}" x2="${gx}" y1="${gy}" y2="${H - 10}" stroke="var(--sindoor)" stroke-width="2" stroke-dasharray="5 5"/>`;
+    s += `<text x="${gx + 6}" y="${H - 14}" font-size="13" fill="var(--sindoor)" font-weight="700">1 Nov review</text>`;
+    rows.forEach((r, i) => {
+      const y = top0 + i * rh + rh / 2;
+      const col = r.phase === 1 ? 'var(--gold)' : 'var(--navy-ink)';
+      const one = r.start === r.end;
+      s += `<text x="0" y="${y + 5}" font-size="15" fill="var(--ink)" font-weight="${r.phase === 1 ? 700 : 500}">${esc(r.name)}</text>`;
+      if (one) s += `<path d="M${X(r.start)} ${y - 8}l8 8l-8 8l-8 -8z" fill="${r.phase === 3 ? 'none' : col}" stroke="${r.phase === 3 ? 'var(--mut)' : col}" stroke-dasharray="${r.phase === 3 ? '3 3' : ''}"/>`;
+      else s += `<rect x="${X(r.start)}" y="${y - 7}" width="${Math.max(X(r.end) - X(r.start), 6)}" height="14" rx="7" fill="${r.phase === 3 ? 'none' : col}" fill-opacity="${r.phase === 2 ? 0.75 : 1}" stroke="${r.phase === 3 ? 'var(--mut)' : col}" stroke-dasharray="${r.phase === 3 ? '4 3' : ''}"/>`;
+      s += `<text x="${X(r.end) + 12}" y="${y + 5}" font-size="13" fill="var(--mut)">${one ? day(r.start) : span(r.start, r.end)}</text>`;
+    });
+    svg.innerHTML = s;
+  })();
+
+  /* Section rail highlight */
+  const links = [...document.querySelectorAll('.rail a')];
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+  document.querySelectorAll('main section[id]').forEach(s => io.observe(s));
+
+  /* Theme toggle */
+  $('theme').addEventListener('click', () => {
+    const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    r.dataset.theme = dark ? 'light' : 'dark';
+  });
+})();
+</script>
+</body>
+</html>
