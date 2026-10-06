@@ -153,6 +153,8 @@ select,input[type=text],input[type=number],input[type=date]{background:var(--sur
   text-transform:uppercase;letter-spacing:.06em}
 .field input{width:100%}
 .hint{font-size:12px;color:var(--ink-3);margin-top:6px;line-height:1.5}
+.cols{font-family:var(--mono);font-size:11px;color:var(--ink-2);background:var(--surface-2);
+  border-radius:7px;padding:8px 10px;margin:0 0 12px;line-height:1.7}
 .tip{position:fixed;pointer-events:none;z-index:60;background:var(--ink);color:var(--ground);
   padding:7px 10px;border-radius:7px;font-size:12px;font-family:var(--mono);opacity:0;transition:opacity .1s;
   box-shadow:var(--shadow);max-width:250px}
@@ -176,6 +178,7 @@ select,input[type=text],input[type=number],input[type=date]{background:var(--sur
     <button class="tab" role="tab" id="t-data" aria-selected="false">Campaigns</button>
     <button class="tab" role="tab" id="t-inv"  aria-selected="false">Invoices</button>
     <button class="tab" role="tab" id="t-imp"  aria-selected="false">Import</button>
+    <button class="tab" role="tab" id="t-conv" aria-selected="false">Conversions</button>
     <button class="tab" role="tab" id="t-set"  aria-selected="false">Rates</button>
   </div>
 </div></div>
@@ -185,6 +188,7 @@ select,input[type=text],input[type=number],input[type=date]{background:var(--sur
   <section id="v-data" hidden></section>
   <section id="v-inv"  hidden></section>
   <section id="v-imp"  hidden></section>
+  <section id="v-conv" hidden></section>
   <section id="v-set"  hidden></section>
 </div>
 <div class="tip" id="tip"></div>
@@ -194,8 +198,9 @@ select,input[type=text],input[type=number],input[type=date]{background:var(--sur
 (function(){
 "use strict";
 /* ============================ state ============================ */
-var DEF={marketingRate:.9385,utilityRate:.13,gstRate:.18,platformFee:20000,metaCPC:15,googleCPC:50};
-var S={cfg:Object.assign({},DEF),months:{},inv:{},ready:false,db:null,note:""};
+var DEF={marketingRate:.9385,utilityRate:.13,gstRate:.18,platformFee:20000,metaCPC:15,googleCPC:50,
+  windowDays:30};
+var S={cfg:Object.assign({},DEF),months:{},inv:{},orders:[],aud:[],match:null,ready:false,db:null,note:""};
 var FIELDS=["date","campaign","cohort","goal","category","number","targeted","sent","delivered","read","clicks","unique","conversions","revenue"];
 var NUMF=["targeted","sent","delivered","read","clicks","unique","conversions","revenue"];
 var STANDALONE=!(window.claude&&window.claude.use);
@@ -288,6 +293,107 @@ function totals(ms){
   t.readRate=t.delivered>0?t.read/t.delivered:null;
   t.months=ms.length;
   return t;
+}
+
+/* ================= matching people to purchases ================= */
+/* A contact is reduced to a key we can compare: a 10 digit phone, or a lowercased email. */
+function keyOf(v){
+  var s=String(v==null?"":v).trim();
+  if(!s)return "";
+  if(s.indexOf("@")>0)return s.toLowerCase();
+  var d=s.replace(/\D/g,"");
+  return d.length>=10?d.slice(-10):"";
+}
+function keysFrom(vals){
+  var out=[];
+  vals.forEach(function(v){var k=keyOf(v);if(k&&out.indexOf(k)<0)out.push(k);});
+  return out;
+}
+function dnum(iso){                                   /* days since epoch, for window maths */
+  var p=String(iso||"").slice(0,10).split("-");
+  if(p.length!==3)return null;
+  var t=Date.UTC(+p[0],+p[1]-1,+p[2]);
+  return isFinite(t)?Math.round(t/86400000):null;
+}
+function orderIndex(){
+  var ix={};
+  S.orders.forEach(function(o,i){
+    (o.k||[]).forEach(function(k){(ix[k]=ix[k]||[]).push(i);});
+  });
+  return ix;
+}
+/* One entry per campaign-month: when it went out, what it sold, which coupon proves it. */
+function matchTargets(){
+  var out={};
+  allRows().forEach(function(r){
+    var name=(r.campaign||"").trim();if(!name)return;
+    var m=mk(r.date),k=name.toLowerCase()+"|"+m;
+    if(!out[k])out[k]={key:k,name:name,month:m,send:r.date,keyword:"",coupon:""};
+    var o=out[k];
+    if(r.date&&(!o.send||r.date<o.send))o.send=r.date;
+    if(!o.keyword&&r.keyword)o.keyword=String(r.keyword).trim();
+    if(!o.coupon&&r.coupon)o.coupon=String(r.coupon).trim();
+  });
+  return Object.keys(out).map(function(k){return out[k];})
+    .sort(function(a,b){return (a.send||"")<(b.send||"")?-1:1;});
+}
+function runMatch(){
+  var ix=orderIndex(), win=n(S.cfg.windowDays)||30, used={}, detail=[], per={};
+  var audBy={};
+  S.aud.forEach(function(a){
+    var k=(a.campaign||"").trim().toLowerCase();
+    (audBy[k]=audBy[k]||[]).push(a.k);
+  });
+  matchTargets().forEach(function(t){
+    var list=audBy[t.name.toLowerCase()];
+    per[t.key]={name:t.name,month:t.month,conversions:0,revenue:0,audience:list?list.length:0,
+      rule:t.coupon?"Coupon "+t.coupon:(t.keyword?"Product: "+t.keyword:"Any product"),
+      measurable:!!list};
+    if(!list||!list.length)return;
+    var sd=dnum(t.send), kw=(t.keyword||"").toLowerCase(), cp=(t.coupon||"").trim();
+    var seen={};
+    list.forEach(function(k){
+      if(seen[k])return;seen[k]=1;
+      var cands=ix[k]||[], best=null;
+      cands.forEach(function(i){
+        if(used[i])return;
+        var o=S.orders[i];
+        if(cp){ if(String(o.coupon||"").trim()!==cp)return; }
+        else{
+          var od=dnum(o.date);
+          if(od===null||sd===null||od<sd||od-sd>win)return;
+          if(kw&&String(o.product||"").toLowerCase().indexOf(kw)<0)return;
+        }
+        if(best===null||String(S.orders[i].date)<String(S.orders[best].date))best=i;
+      });
+      if(best===null)return;
+      used[best]=1;
+      var o=S.orders[best];
+      per[t.key].conversions++;per[t.key].revenue+=(+o.amount||0);
+      detail.push({campaign:t.name,month:t.month,contact:k,send:t.send,date:o.date,
+        product:o.product,amount:+o.amount||0,coupon:o.coupon||"",rule:per[t.key].rule});
+    });
+  });
+  S.match={when:new Date().toISOString().slice(0,16).replace("T"," "),per:per,detail:detail,
+    orders:S.orders.length,audience:S.aud.length};
+  return S.match;
+}
+function applyMatch(){
+  if(!S.match)return 0;
+  var touched={},done=0;
+  Object.keys(S.match.per).forEach(function(k){
+    var p=S.match.per[k];
+    if(!p.measurable)return;
+    var mo=S.months[p.month];if(!mo)return;
+    var hit=null;
+    (mo.rows||[]).forEach(function(r){
+      if(!hit&&(r.campaign||"").trim().toLowerCase()===p.name.toLowerCase())hit=r;});
+    if(!hit)return;
+    hit.conversions=p.conversions;hit.revenue=p.revenue;
+    touched[p.month]=1;done++;
+  });
+  Object.keys(touched).forEach(save);
+  return done;
 }
 
 /* ---------- what Gupshup should bill us, and what it did ---------- */
@@ -609,7 +715,8 @@ function viewData(){
     '<button class="btn primary" id="addrow">Add campaign row</button>',
     '<span class="status" id="saved"></span></div>');
   h.push('<div class="panel" style="padding:0"><div class="scroll"><table class="grid-tbl"><thead><tr>'
-    +'<th>Date</th><th>Campaign</th><th>Cohort</th><th>Category</th><th>Targeted</th><th>Sent</th>'
+    +'<th>Date</th><th>Campaign</th><th>Cohort</th><th>Category</th><th>Product keyword</th><th>Coupon</th>'
+    +'<th>Targeted</th><th>Sent</th>'
     +'<th>Delivered</th><th>Read</th><th>Clicks</th><th>Unique</th><th>Conversions</th><th>Revenue ₹</th>'
     +'<th>Sent %</th><th>Delivered %</th><th>Read %</th><th>Click %</th><th>CTR</th><th>Cost ₹</th>'
     +'<th>CPC ₹</th><th></th></tr></thead><tbody id="tb">');
@@ -633,7 +740,7 @@ function thisMonth(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMont
 function nextMonth(m){var p=m.split("-"),y=+p[0],mm=+p[1]+1;if(mm>12){mm=1;y++;}
   return y+"-"+("0"+mm).slice(-2);}
 function blank(m){return {id:"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
-  date:m+"-01",campaign:"",cohort:"",goal:"",category:"Marketing",number:"",
+  date:m+"-01",campaign:"",cohort:"",goal:"",category:"Marketing",number:"",keyword:"",coupon:"",
   targeted:null,sent:null,delivered:null,read:null,clicks:null,unique:null,conversions:null,revenue:null};}
 function rowHtml(r,i){
   var c=cost(r), cpc=(c!==null&&n(r.clicks)>0)?c/r.clicks:null;
@@ -645,6 +752,7 @@ function rowHtml(r,i){
     +'<td><select data-i="'+i+'" data-f="category" id="f-'+i+'-category">'
       +["Marketing","Utility","Service","—"].map(function(o){
         return '<option'+((r.category||"")===o?" selected":"")+'>'+o+'</option>';}).join("")+'</select></td>'
+    +inp("keyword")+inp("coupon")
     +inp("targeted","num","number")+inp("sent","num","number")+inp("delivered","num","number")
     +inp("read","num","number")+inp("clicks","num","number")+inp("unique","num","number")
     +inp("conversions","num","number")+inp("revenue","num","number")
@@ -732,27 +840,73 @@ function saveInv(m){
   },600);
 }
 
+/* Four sheets, four importers. Each one declares the columns it understands. */
+var KINDS={
+  campaigns:{title:"Campaign numbers",
+    blurb:"One row per cohort you sent to. Add a product keyword so purchases can be matched, and a coupon if the campaign carried one.",
+    cols:"Date · Campaign name · Cohort · Category · Product keyword · Coupon · Targeted · Sent · Delivered · Read · Total clicks · Unique clicks",
+    fields:[["date","Campaign date"],["campaign","Campaign name"],["cohort","Cohort"],
+      ["category","Message category"],["keyword","Product keyword"],["coupon","Coupon"],
+      ["targeted","Targeted"],["sent","Sent"],["delivered","Delivered"],["read","Read"],
+      ["clicks","Total clicks"],["unique","Unique clicks"]],
+    guess:{date:["date"],campaign:["campaign name","campaign"],cohort:["cohort"],
+      category:["category","message type"],keyword:["keyword","product"],coupon:["coupon"],
+      targeted:["targeted","target"],sent:["sent"],delivered:["delivered","deliver"],read:["read"],
+      clicks:["total click","clicks"],unique:["unique"]},
+    actions:[["rows","Add as new campaign rows"],["delivery","Update delivery and click figures"]]},
+  audience:{title:"Audience lists",
+    blurb:"Who each campaign actually went to, one row per person. The campaign name has to match the campaign sheet.",
+    cols:"Campaign name · Phone and/or Email",
+    fields:[["campaign","Campaign name"],["phone","Phone"],["email","Email"]],
+    guess:{campaign:["campaign"],phone:["phone","mobile","number","contact"],email:["email","mail"]},
+    actions:[["audience","Load this audience"]]},
+  orders:{title:"Purchase data",
+    blurb:"One row per paid order. Load this before the audience lists.",
+    cols:"Phone and/or Email · Order date · Course or product · Amount · Coupon",
+    fields:[["phone","Phone"],["email","Email"],["date","Order date"],["product","Course or product"],
+      ["amount","Amount"],["coupon","Coupon"]],
+    guess:{phone:["phone","mobile","number"],email:["email","mail"],date:["paid","order date","date"],
+      product:["course","product","item"],amount:["amount","total","value","price"],coupon:["coupon"]},
+    actions:[["orders","Load these purchases"]]},
+  invoices:{title:"Gupshup invoices",
+    blurb:"One row per month, straight off the PDF.",
+    cols:"Month · Invoice no. · Marketing messages · Utility messages · Platform fee · Taxable · GST · Total",
+    fields:[["month","Month (yyyy-mm)"],["invoiceNo","Invoice number"],["marketingMsgs","Marketing messages"],
+      ["utilityMsgs","Utility messages"],["platformFee","Platform fee"],["taxable","Taxable"],
+      ["gst","GST"],["total","Invoice total"]],
+    guess:{month:["month","period"],invoiceNo:["invoice no","invoice number","invoice"],
+      marketingMsgs:["marketing"],utilityMsgs:["utility"],platformFee:["platform","fee"],
+      taxable:["taxable","subtotal"],gst:["gst","tax"],total:["total","grand"]},
+    actions:[["invoices","Load these invoices"]]}
+};
 function viewImport(){
   var el=document.getElementById("v-imp");
-  el.innerHTML='<div class="bar"><h2>Import</h2></div>'
-   +'<div class="panel"><div class="drop" id="drop" tabindex="0" role="button">'
-   +'<b>Drop a CSV here</b><span>or click to choose a file &middot; campaign sheet, delivery or click report, conversions sheet</span>'
-   +'<input type="file" id="file" accept=".csv,.txt" hidden></div>'
-   +'<div id="imp-out"></div>'
-   +'<p class="hint">Three things you can do with a file, once you have pointed its columns at the right fields. '
-   +'<b>Add as new campaign rows</b> brings a fresh month in. <b>Update delivery and click figures</b> takes a '
-   +'Gupshup delivery or click report and writes targeted, sent, delivered, read and clicks onto rows that are '
-   +'already there, matched on campaign name, and on cohort too when you map that column. '
-   +'<b>Fill in conversions and revenue</b> takes a conversions sheet and writes just those two numbers. '
-   +'Nothing is overwritten except the fields you mapped.</p></div>';
-  var drop=el.querySelector("#drop"), file=el.querySelector("#file");
-  drop.onclick=function(){file.click();};
-  drop.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();file.click();}};
-  drop.ondragover=function(e){e.preventDefault();drop.classList.add("over");};
-  drop.ondragleave=function(){drop.classList.remove("over");};
-  drop.ondrop=function(e){e.preventDefault();drop.classList.remove("over");
-    if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0]);};
-  file.onchange=function(){if(file.files[0])readFile(file.files[0]);};
+  var h=['<div class="bar"><h2>Import</h2><span class="status">'
+    +cnt(S.orders.length)+' purchases &middot; '+cnt(S.aud.length)+' audience rows loaded</span></div>'];
+  h.push('<p class="hint" style="margin:0 0 14px">Work down the list. Purchases before audience lists, '
+    +'because an audience is only kept for people who appear in the purchase data. Nobody else can convert, '
+    +'so the answer is the same and the page stays small enough to open quickly.</p>');
+  h.push('<div class="grid">');
+  ["campaigns","orders","audience","invoices"].forEach(function(k){
+    var K=KINDS[k];
+    h.push('<div class="card"><h3>'+esc(K.title)+'</h3><p class="note">'+esc(K.blurb)+'</p>'
+      +'<p class="cols">'+esc(K.cols)+'</p>'
+      +'<div class="drop" data-kind="'+k+'" tabindex="0" role="button"><b>Choose a CSV</b>'
+      +'<span>or drop one here</span></div></div>');
+  });
+  h.push('</div><input type="file" id="file" accept=".csv,.txt" hidden><div id="imp-out"></div>');
+  el.innerHTML=h.join("");
+  var file=el.querySelector("#file"), pending=null;
+  el.querySelectorAll("[data-kind]").forEach(function(d){
+    function pick(){pending=d.getAttribute("data-kind");file.value="";file.click();}
+    d.onclick=pick;
+    d.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick();}};
+    d.ondragover=function(e){e.preventDefault();d.classList.add("over");};
+    d.ondragleave=function(){d.classList.remove("over");};
+    d.ondrop=function(e){e.preventDefault();d.classList.remove("over");
+      if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0],d.getAttribute("data-kind"));};
+  });
+  file.onchange=function(){if(file.files[0]&&pending)readFile(file.files[0],pending);};
 }
 function parseCSV(text){
   var rows=[],row=[],cell="",q=false;
@@ -767,13 +921,14 @@ function parseCSV(text){
   return rows.filter(function(r){return r.some(function(c){return String(c).trim()!=="";});});
 }
 var IMPORTED=null;
-function readFile(f){
+function readFile(f,kind){
   var fr=new FileReader();
   fr.onload=function(){
     var rows=parseCSV(String(fr.result));
     if(rows.length<2){document.getElementById("imp-out").innerHTML=
       '<p class="hint" style="color:var(--bad)">That file has no rows under its header.</p>';return;}
-    IMPORTED={head:rows[0].map(function(h){return String(h).trim();}),body:rows.slice(1),name:f.name};
+    IMPORTED={head:rows[0].map(function(h){return String(h).trim();}),body:rows.slice(1),
+      name:f.name,kind:kind||"campaigns"};
     showMapper();
   };
   fr.readAsText(f);
@@ -781,38 +936,93 @@ function readFile(f){
 function guess(h,keys){h=h.toLowerCase();
   for(var i=0;i<keys.length;i++)if(h.indexOf(keys[i])>=0)return true;return false;}
 function showMapper(){
-  var TARGETS=[["skip","Do not import"],["date","Campaign date"],["campaign","Campaign name"],
-    ["cohort","Cohort"],["category","Message category"],["targeted","Targeted"],["sent","Sent"],
-    ["delivered","Delivered"],["read","Read"],["clicks","Total clicks"],["unique","Unique clicks"],
-    ["conversions","Conversions"],["revenue","Revenue"]];
-  var G={date:["date"],campaign:["campaign name","campaign"],cohort:["cohort"],category:["category","type"],
-    targeted:["targeted","target"],sent:["sent"],delivered:["delivered","deliver"],read:["read"],
-    clicks:["total click","clicks"],unique:["unique"],conversions:["conversion"],revenue:["revenue","amount","value"]};
-  var h=['<h3 style="margin-top:18px;font-family:var(--display);font-size:15px">'+esc(IMPORTED.name)+' &middot; '
-    +IMPORTED.body.length+' rows</h3>',
-    '<p class="hint">Point each column at what it holds. Anything left on “Do not import” is ignored.</p>',
+  var K=KINDS[IMPORTED.kind];
+  var TARGETS=[["skip","Do not import"]].concat(K.fields);
+  var h=['<div class="panel" style="margin-top:16px"><h3 style="font-family:var(--display);font-size:15px">'
+    +esc(K.title)+' &middot; '+esc(IMPORTED.name)+' &middot; '+cnt(IMPORTED.body.length)+' rows</h3>',
+    '<p class="hint">Point each column at what it holds. Anything left on "Do not import" is ignored.</p>',
     '<div style="margin:12px 0">'];
   IMPORTED.head.forEach(function(col,i){
     var pick="skip";
-    Object.keys(G).forEach(function(k){if(pick==="skip"&&guess(col,G[k]))pick=k;});
+    Object.keys(K.guess).forEach(function(k){if(pick==="skip"&&guess(col,K.guess[k]))pick=k;});
     h.push('<div class="maprow"><span>'+esc(col||"(column "+(i+1)+")")+'</span><select data-col="'+i+'">'
-      +TARGETS.map(function(t){return '<option value="'+t[0]+'"'+(t[0]===pick?" selected":"")+'>'+t[1]+'</option>';}).join("")
-      +'</select></div>');
+      +TARGETS.map(function(t){return '<option value="'+t[0]+'"'+(t[0]===pick?" selected":"")+'>'
+        +esc(t[1])+'</option>';}).join("")+'</select></div>');
   });
-  h.push('</div><div class="bar"><button class="btn primary" id="do-camp">Add as new campaign rows</button>'
-    +'<button class="btn" id="do-del">Update delivery and click figures</button>'
-    +'<button class="btn" id="do-conv">Fill in conversions and revenue</button>'
-    +'<span class="status" id="imp-msg"></span></div>');
+  h.push('</div><div class="bar">'
+    +K.actions.map(function(a,i){return '<button class="btn'+(i?"":" primary")+'" data-act="'+a[0]+'">'
+      +esc(a[1])+'</button>';}).join("")
+    +'<span class="status" id="imp-msg"></span></div></div>');
   var out=document.getElementById("imp-out");out.innerHTML=h.join("");
-  out.querySelector("#do-camp").onclick=function(){applyImport("rows");};
-  out.querySelector("#do-del").onclick=function(){applyImport("delivery");};
-  out.querySelector("#do-conv").onclick=function(){applyImport("conv");};
+  out.querySelectorAll("[data-act]").forEach(function(b){
+    b.onclick=function(){applyImport(b.getAttribute("data-act"));};});
 }
 function readMap(){
   var m={};document.querySelectorAll("[data-col]").forEach(function(s){
     var v=s.value;if(v!=="skip")m[v]=+s.getAttribute("data-col");});return m;}
 function applyImport(mode){
   var m=readMap(),msg=document.getElementById("imp-msg");
+  function G(r,f){return m[f]===undefined?"":String(r[m[f]]==null?"":r[m[f]]).trim();}
+
+  if(mode==="orders"){
+    if(m.phone===undefined&&m.email===undefined){
+      msg.textContent="Point at least one column at a phone or an email.";return;}
+    if(m.amount===undefined){msg.textContent="Point one column at the amount.";return;}
+    var got=[],skipped=0;
+    IMPORTED.body.forEach(function(r){
+      var ks=keysFrom([G(r,"phone"),G(r,"email")]);
+      var amt=num(r[m.amount]);
+      if(!ks.length||amt===null){skipped++;return;}
+      var d=G(r,"date");
+      got.push({k:ks,date:/^\d{4}-\d{2}-\d{2}/.test(d)?d.slice(0,10):toIso(d),
+        product:G(r,"product"),amount:amt,coupon:G(r,"coupon")});
+    });
+    S.orders=got;writeBig("orders",{rows:got});
+    msg.textContent=cnt(got.length)+" purchases loaded"+(skipped?", "+cnt(skipped)+" skipped for no contact or amount":"")+".";
+    S.match=null;viewImport();return;
+  }
+
+  if(mode==="audience"){
+    if(m.campaign===undefined){msg.textContent="Point one column at the campaign name.";return;}
+    if(m.phone===undefined&&m.email===undefined){
+      msg.textContent="Point at least one column at a phone or an email.";return;}
+    if(!S.orders.length){msg.textContent="Load the purchase data first, then this.";return;}
+    var known={};S.orders.forEach(function(o){(o.k||[]).forEach(function(k){known[k]=1;});});
+    var kept=[],seen={},sizes={},total=0;
+    IMPORTED.body.forEach(function(r){
+      var name=G(r,"campaign");if(!name)return;
+      var ks=keysFrom([G(r,"phone"),G(r,"email")]);if(!ks.length)return;
+      total++;sizes[name]=(sizes[name]||0)+1;
+      ks.forEach(function(k){
+        if(!known[k])return;
+        var id=name.toLowerCase()+"|"+k;if(seen[id])return;seen[id]=1;
+        kept.push({campaign:name,k:k});
+      });
+    });
+    var other=S.aud.filter(function(a){return !sizes[a.campaign];});
+    S.aud=other.concat(kept);
+    writeBig("audience",{rows:S.aud});
+    msg.textContent=cnt(total)+" people read, "+cnt(kept.length)+" of them appear in the purchase data and were kept.";
+    S.match=null;viewImport();return;
+  }
+
+  if(mode==="invoices"){
+    if(m.month===undefined){msg.textContent="Point one column at the month.";return;}
+    var n2=0;
+    IMPORTED.body.forEach(function(r){
+      var mo=G(r,"month");
+      if(/^\d{4}-\d{2}/.test(mo))mo=mo.slice(0,7); else {var iso=toIso(mo);if(iso)mo=iso.slice(0,7);else return;}
+      var iv=invFor(mo);iv.month=mo;
+      ["invoiceNo"].forEach(function(f){if(m[f]!==undefined)iv[f]=G(r,f);});
+      ["marketingMsgs","utilityMsgs","platformFee","taxable","gst","total"].forEach(function(f){
+        if(m[f]!==undefined)iv[f]=num(r[m[f]]);});
+      if(iv.total!==null&&iv.total!==undefined)iv.source="Invoice";
+      S.inv[mo]=iv;saveInv(mo);n2++;
+    });
+    msg.textContent=n2+" invoice row"+(n2===1?"":"s")+" loaded.";
+    viewLead();return;
+  }
+
   if(m.campaign===undefined){msg.textContent="Point one column at the campaign name first.";return;}
   var added=0,touched=0,mset={};
   IMPORTED.body.forEach(function(r){
@@ -847,7 +1057,7 @@ function applyImport(mode){
       var mo=mk(iso)||curMonth||thisMonth();
       if(!S.months[mo])S.months[mo]={month:mo,rows:[]};
       var row=blank(mo);row.date=iso||mo+"-01";row.campaign=name;
-      ["cohort","category"].forEach(function(f){if(m[f]!==undefined)row[f]=g(f);});
+      ["cohort","category","keyword","coupon"].forEach(function(f){if(m[f]!==undefined)row[f]=g(f);});
       NUMF.forEach(function(f){if(m[f]!==undefined)row[f]=num(r[m[f]]);});
       if(!row.category)row.category="Marketing";
       S.months[mo].rows.push(row);mset[mo]=1;added++;
@@ -863,6 +1073,96 @@ function toIso(s){
   return y+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[1]).slice(-2);
 }
 
+function viewConv(){
+  var el=document.getElementById("v-conv");
+  var h=['<div class="bar"><h2>Conversions</h2>'
+    +'<label class="status" for="win">Window</label>'
+    +'<input id="win" type="number" min="1" max="365" step="1" style="width:76px" value="'
+    +(n(S.cfg.windowDays)||30)+'"><span class="status">days after the send</span>'
+    +'<button class="btn primary" id="run">Match purchases to campaigns</button>'
+    +'<span class="status" id="m-msg"></span></div>'];
+  if(!S.orders.length||!S.aud.length){
+    h.push('<div class="panel"><p class="hint" style="margin:0">Two files are needed before this can run: '
+      +'<b>purchase data</b> ('+cnt(S.orders.length)+' loaded) and at least one <b>audience list</b> ('
+      +cnt(S.aud.length)+' rows loaded). Both go in on the Import tab.</p></div>');
+    el.innerHTML=h.join("");bindConv(el);return;
+  }
+  h.push('<div class="panel"><p class="hint" style="margin:0"><b>How a purchase is credited.</b> '
+    +'The buyer has to be on that campaign\'s audience list, matched on phone or on email. '
+    +'The order has to fall on or after the send date and inside the window. '
+    +'The product bought has to contain the campaign\'s product keyword, when one is set. '
+    +'A campaign carrying a coupon ignores all of that and counts only orders stamped with the coupon, '
+    +'because a stamp is proof rather than inference. '
+    +'Each order is credited once, to the earliest campaign that can claim it.</p></div>');
+  if(S.match){
+    var M=S.match, per=Object.keys(M.per).map(function(k){return M.per[k];});
+    var tot=per.reduce(function(a,p){a.c+=p.conversions;a.r+=p.revenue;return a;},{c:0,r:0});
+    var measured=per.filter(function(p){return p.measurable;}).length;
+    h.push('<div class="bar" style="margin-top:16px"><h2 style="font-size:16px">Result</h2>'
+      +'<span class="status">matched '+esc(M.when)+' &middot; '+cnt(M.orders)+' purchases against '
+      +cnt(M.audience)+' audience rows</span>'
+      +'<button class="btn primary" id="apply">Write these onto the campaigns</button>'
+      +(STANDALONE?'<a class="btn" id="dlrep" download="conversion-report.csv">Save the report</a>':'')
+      +'</div>');
+    h.push('<div class="kpis"><div class="kpi"><div class="cap">Conversions found</div><div class="fig">'
+      +cnt(tot.c)+'</div><div class="sub">across '+measured+' measurable campaigns</div></div>'
+      +'<div class="kpi"><div class="cap">Revenue</div><div class="fig">'+cr(tot.r)+'</div>'
+      +'<div class="sub">'+inr(tot.c?tot.r/tot.c:null)+' average order</div></div>'
+      +'<div class="kpi"><div class="cap">Campaigns with no list</div><div class="fig">'
+      +cnt(per.length-measured)+'</div><div class="sub">left out, not counted as zero</div></div></div>');
+    h.push('<div class="card"><h3>By campaign</h3><div class="scroll"><table><thead><tr>'
+      +'<th>Campaign</th><th>Month</th><th>Rule used</th><th>Audience in the purchase data</th>'
+      +'<th>Conversions</th><th>Revenue</th></tr></thead><tbody>');
+    per.sort(function(a,b){return b.revenue-a.revenue;}).forEach(function(p){
+      h.push('<tr><td>'+esc(p.name)+'</td><td style="text-align:right">'+esc(mlabel(p.month))
+        +'</td><td style="text-align:right">'+esc(p.rule)+'</td><td class="n">'
+        +(p.measurable?cnt(p.audience):'<span class="pill flat">no list</span>')+'</td><td class="n">'
+        +(p.measurable?cnt(p.conversions):"—")+'</td><td class="n">'
+        +(p.measurable?inr(p.revenue):"—")+'</td></tr>');
+    });
+    h.push('</tbody></table></div></div>');
+    if(M.detail.length){
+      h.push('<div class="card" style="margin-top:14px"><h3>Every credited purchase</h3>'
+        +'<p class="note">One line per sale, so any of these can be checked against the order itself.</p>'
+        +'<div class="scroll"><table><thead><tr><th>Campaign</th><th>Contact</th><th>Sent</th>'
+        +'<th>Bought</th><th>Product</th><th>Amount</th></tr></thead><tbody>');
+      M.detail.slice(0,400).forEach(function(d){
+        h.push('<tr><td>'+esc(d.campaign)+'</td><td class="n">'+esc(d.contact)+'</td>'
+          +'<td class="n">'+esc(d.send||"")+'</td><td class="n">'+esc(d.date||"")+'</td>'
+          +'<td style="text-align:right">'+esc(d.product)+'</td><td class="n">'+inr(d.amount)+'</td></tr>');
+      });
+      h.push('</tbody></table></div>'
+        +(M.detail.length>400?'<p class="hint">Showing the first 400 of '+cnt(M.detail.length)
+          +'. Save the report for all of them.</p>':'')+'</div>');
+    }
+  }
+  el.innerHTML=h.join("");
+  bindConv(el);
+}
+function bindConv(el){
+  var w=el.querySelector("#win");
+  if(w)w.onchange=function(){var v=parseInt(w.value,10);
+    if(v>0){S.cfg.windowDays=v;saveCfg();S.match=null;viewConv();}};
+  var run=el.querySelector("#run");
+  if(run)run.onclick=function(){
+    if(!S.orders.length||!S.aud.length){
+      el.querySelector("#m-msg").textContent="Load the purchase data and an audience list first.";return;}
+    runMatch();viewConv();};
+  var ap=el.querySelector("#apply");
+  if(ap)ap.onclick=function(){
+    var n2=applyMatch();
+    el.querySelector("#m-msg").textContent=n2+" campaign"+(n2===1?"":"s")+" updated.";
+    viewLead();viewConv();};
+  var dl=el.querySelector("#dlrep");
+  if(dl&&S.match){
+    var head="Campaign,Month,Contact,Sent,Bought,Product,Amount,Coupon,Rule\n";
+    var body=S.match.detail.map(function(d){
+      return [d.campaign,d.month,d.contact,d.send,d.date,d.product,d.amount,d.coupon,d.rule]
+        .map(function(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"';}).join(",");}).join("\n");
+    dl.href=URL.createObjectURL(new Blob([head+body],{type:"text/csv"}));
+  }
+}
+
 function viewSet(){
   var el=document.getElementById("v-set"),c=S.cfg;
   el.innerHTML='<div class="bar"><h2>Rates and benchmarks</h2></div><div class="panel"><div class="fields">'
@@ -872,6 +1172,7 @@ function viewSet(){
    +fld("googleCPC","Google benchmark cost per click ₹",c.googleCPC,"0.5")
    +fld("platformFee","Platform fee ₹ per month",c.platformFee,"100")
    +fld("gstRate","GST rate",c.gstRate,"0.01")
+   +fld("windowDays","Attribution window, days after the send",c.windowDays,"1")
    +'</div><p class="hint">Campaign cost is delivered messages multiplied by the rate for that message category. '
    +'The benchmarks are planning figures supplied by the growth team, not measured from a live ad account. '
    +'Change anything here and every figure on every tab follows.</p></div>'
@@ -932,6 +1233,7 @@ function saveCfg(){
   timers.cfg=setTimeout(function(){write("settings/config",S.cfg);},500);
 }
 function stamp(t){var e=document.getElementById("saved");if(e)e.textContent=t;}
+function writeBig(name,data){return write("bulk/"+name,data);}
 function write(path,data){
   try{localStorage.setItem("cs:"+path,JSON.stringify(data));}catch(e){}
   if(!S.db)return Promise.resolve(false);
@@ -941,7 +1243,8 @@ function render(){viewLead();}
 
 /* ============================ boot ============================ */
 function switchTo(id){
-  [["t-lead","v-lead"],["t-data","v-data"],["t-inv","v-inv"],["t-imp","v-imp"],["t-set","v-set"]].forEach(function(p){
+  [["t-lead","v-lead"],["t-data","v-data"],["t-inv","v-inv"],["t-imp","v-imp"],["t-conv","v-conv"],
+   ["t-set","v-set"]].forEach(function(p){
     var on=p[0]===id;
     document.getElementById(p[0]).setAttribute("aria-selected",on?"true":"false");
     document.getElementById(p[1]).hidden=!on;
@@ -949,10 +1252,11 @@ function switchTo(id){
   if(id==="t-data")viewData();
   if(id==="t-inv")viewInv();
   if(id==="t-imp")viewImport();
+  if(id==="t-conv")viewConv();
   if(id==="t-set")viewSet();
   try{localStorage.setItem("cs:tab",id);}catch(e){}
 }
-["t-lead","t-data","t-inv","t-imp","t-set"].forEach(function(id){
+["t-lead","t-data","t-inv","t-imp","t-conv","t-set"].forEach(function(id){
   document.getElementById(id).onclick=function(){switchTo(id);};});
 
 function fromSeed(){                       /* so the page is never blank for a viewer without db */
@@ -974,6 +1278,8 @@ function fromLocal(){
       if(k&&k.indexOf("cs:months/")===0){var d=JSON.parse(localStorage.getItem(k));if(d&&d.month)S.months[d.month]=d;}
       if(k&&k.indexOf("cs:invoices/")===0){var v=JSON.parse(localStorage.getItem(k));if(v&&v.month)S.inv[v.month]=v;}
     }
+    var ob=localStorage.getItem("cs:bulk/orders");if(ob)S.orders=(JSON.parse(ob)||{}).rows||[];
+    var ab=localStorage.getItem("cs:bulk/audience");if(ab)S.aud=(JSON.parse(ab)||{}).rows||[];
   }catch(e){}
 }
 function boot(){
@@ -1001,7 +1307,11 @@ function boot(){
           var v=d.exists?d.data():null;
           if(v&&v.month)S.inv[v.month]=v;
         });
-      }).catch(function(){})
+      }).catch(function(){}),
+      db.doc("bulk/orders").get().then(function(d){
+        if(d&&d.exists)S.orders=(d.data()||{}).rows||S.orders;}).catch(function(){}),
+      db.doc("bulk/audience").get().then(function(d){
+        if(d&&d.exists)S.aud=(d.data()||{}).rows||S.aud;}).catch(function(){})
     ]).then(function(){
       render();
       var open=document.querySelector('.tab[aria-selected="true"]');
