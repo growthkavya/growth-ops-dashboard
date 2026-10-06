@@ -154,7 +154,49 @@ select,input[type=text],input[type=number],input[type=date]{background:var(--sur
 .field input{width:100%}
 .hint{font-size:12px;color:var(--ink-3);margin-top:6px;line-height:1.5}
 .cols{font-family:var(--mono);font-size:11px;color:var(--ink-2);background:var(--surface-2);
-  border-radius:7px;padding:8px 10px;margin:0 0 12px;line-height:1.7}
+  border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin:0 0 14px;line-height:1.75}
+code{font-family:var(--mono);font-size:.92em;background:var(--surface-3);padding:1px 5px;border-radius:4px}
+
+/* numbered steps on the import page */
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;gap:16px;background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:18px 20px}
+.stepno{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;
+  font-size:14px;margin-top:1px}
+.stepbody{flex:1;min-width:0}
+.stepbody h3{font-size:16px;font-weight:600;margin-bottom:3px}
+.stepbody .note{margin:0 0 12px}
+.stepbody .note input[type=number]{width:62px;padding:2px 6px;font-size:12px}
+.linkrow{display:flex;gap:8px;flex-wrap:wrap}
+.linkrow input{flex:1;min-width:240px}
+.msg{font-size:13px;margin:12px 0 0;padding:9px 12px;border-radius:9px;background:var(--surface-2);
+  color:var(--ink-2);border:1px solid var(--line)}
+.msg.ok{background:color-mix(in srgb,var(--good) 10%,var(--surface));
+  border-color:color-mix(in srgb,var(--good) 32%,var(--line));color:var(--ink)}
+.msg.bad{background:color-mix(in srgb,var(--bad) 9%,var(--surface));
+  border-color:color-mix(in srgb,var(--bad) 32%,var(--line));color:var(--ink)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.tagx{font-family:var(--mono);font-size:11px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:99px;padding:3px 10px;color:var(--ink-2)}
+.tagx.miss{color:var(--ink-3);border-style:dashed}
+table.mini{font-size:12px;margin-top:10px}
+table.mini th,table.mini td{padding:6px 9px}
+.btn.off{opacity:.45;cursor:not-allowed}
+
+/* polish */
+.top{backdrop-filter:saturate(1.4) blur(8px);background:color-mix(in srgb,var(--surface) 88%,transparent)}
+.tab,.chip,.btn,.kpi,.card,.drop{transition:background .14s ease,border-color .14s ease,
+  color .14s ease,box-shadow .14s ease,transform .14s ease}
+.kpi:hover{box-shadow:var(--shadow)}
+.drop{border-radius:12px}
+.drop:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 5%,var(--surface-2))}
+.card{border-radius:14px}
+.btn{border-radius:9px}
+.btn.primary:active{transform:translateY(1px)}
+svg.chart .bar{transition:opacity .12s ease}
+svg.chart:hover .bar{opacity:.72}
+svg.chart .bar:hover{opacity:1}
 .tip{position:fixed;pointer-events:none;z-index:60;background:var(--ink);color:var(--ground);
   padding:7px 10px;border-radius:7px;font-size:12px;font-family:var(--mono);opacity:0;transition:opacity .1s;
   box-shadow:var(--shadow);max-width:250px}
@@ -171,6 +213,7 @@ select,input[type=text],input[type=number],input[type=date]{background:var(--sur
 <body>
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <div class="top"><div class="top-in">
   <div class="brand"><b>Campaign Signal</b><span>SSEI Growth</span></div>
   <div class="tabs" role="tablist">
@@ -178,7 +221,6 @@ select,input[type=text],input[type=number],input[type=date]{background:var(--sur
     <button class="tab" role="tab" id="t-data" aria-selected="false">Campaigns</button>
     <button class="tab" role="tab" id="t-inv"  aria-selected="false">Invoices</button>
     <button class="tab" role="tab" id="t-imp"  aria-selected="false">Import</button>
-    <button class="tab" role="tab" id="t-conv" aria-selected="false">Conversions</button>
     <button class="tab" role="tab" id="t-set"  aria-selected="false">Rates</button>
   </div>
 </div></div>
@@ -188,7 +230,6 @@ select,input[type=text],input[type=number],input[type=date]{background:var(--sur
   <section id="v-data" hidden></section>
   <section id="v-inv"  hidden></section>
   <section id="v-imp"  hidden></section>
-  <section id="v-conv" hidden></section>
   <section id="v-set"  hidden></section>
 </div>
 <div class="tip" id="tip"></div>
@@ -792,8 +833,16 @@ function viewInv(){
   var keys={};Object.keys(S.months).forEach(function(k){keys[k]=1;});
   Object.keys(S.inv).forEach(function(k){keys[k]=1;});
   var ks=Object.keys(keys).sort();
-  var h=['<div class="bar"><h2>Gupshup invoices</h2><span class="status" id="inv-saved"></span></div>'];
-  if(!ks.length){el.innerHTML=h.join("")+'<div class="empty">Add campaigns first and the months appear here.</div>';return;}
+  var h=['<div class="bar"><h2>Gupshup invoices</h2><span class="status" id="inv-saved"></span></div>',
+    '<section class="step" style="margin-bottom:16px"><div class="stepno">↑</div><div class="stepbody">'
+    +'<h3>Bring invoices in from a file</h3>'
+    +'<p class="note">One row per month, straight off the PDF. Anything you leave out you can type below.</p>'
+    +'<p class="cols">Month · Invoice no. · Marketing messages · Utility messages · Platform fee · '
+    +'Taxable · GST · Total</p>'
+    +'<div class="drop" id="inv-drop" tabindex="0" role="button"><b>Choose a file</b>'
+    +'<span>or drop it here · CSV or Excel</span></div><div id="inv-out"></div></div></section>'];
+  if(!ks.length){el.innerHTML=h.join("")
+    +'<div class="empty">Add campaigns first and the months appear here.</div>';bindInvDrop(el);return;}
   h.push('<div class="panel" style="padding:0"><div class="scroll"><table class="grid-tbl"><thead><tr>'
     +'<th>Month</th><th>Source</th><th>Invoice no.</th><th>Marketing msgs billed</th><th>Utility msgs billed</th>'
     +'<th>Platform fee ₹</th><th>Taxable ₹</th><th>GST ₹</th><th>Invoice total ₹</th>'
@@ -830,6 +879,51 @@ function viewInv(){
       saveInv(m);viewLead();viewInv();
     });
   });
+  bindInvDrop(el);
+}
+function bindInvDrop(el){
+  var d=el.querySelector("#inv-drop");if(!d)return;
+  var file=document.createElement("input");
+  file.type="file";file.accept=".csv,.txt,.xlsx,.xls";file.hidden=true;el.appendChild(file);
+  function pick(){file.value="";file.click();}
+  d.onclick=pick;
+  d.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick();}};
+  d.ondragover=function(e){e.preventDefault();d.classList.add("over");};
+  d.ondragleave=function(){d.classList.remove("over");};
+  d.ondrop=function(e){e.preventDefault();d.classList.remove("over");
+    if(e.dataTransfer.files[0])invFile(e.dataTransfer.files[0]);};
+  file.onchange=function(){if(file.files[0])invFile(file.files[0]);};
+}
+function invFile(f){
+  var out=document.getElementById("inv-out");
+  out.innerHTML=msgBox("Reading "+f.name+"…","");
+  sheetsFromFile(f).then(function(sh){takeInvoices(sh[0]);})
+    .catch(function(){out.innerHTML=msgBox("That file could not be read.","bad");});
+}
+function takeInvoices(sheet){
+  var rows=sheet.rows||[],out=document.getElementById("inv-out");
+  if(rows.length<2){out.innerHTML=msgBox("That file has no rows under its header.","bad");return;}
+  var head=rows[0].map(function(x){return String(x==null?"":x).trim();});
+  var C={month:findCol(head,["month","period"]),invoiceNo:findCol(head,["invoice no","invoice number","invoice"]),
+    marketingMsgs:findCol(head,["marketing"]),utilityMsgs:findCol(head,["utility"]),
+    platformFee:findCol(head,["platform","fee"]),taxable:findCol(head,["taxable","subtotal"]),
+    gst:findCol(head,["gst","tax"]),total:findCol(head,["total","grand","amount"])};
+  if(C.month<0){out.innerHTML=msgBox("No month column found. One column has to be the month.","bad");return;}
+  var k=0;
+  rows.slice(1).forEach(function(r){
+    var mo=String(r[C.month]==null?"":r[C.month]).trim();
+    if(/^\d{4}-\d{2}/.test(mo))mo=mo.slice(0,7);
+    else{var iso=toIso(mo);if(!iso)return;mo=iso.slice(0,7);}
+    var iv=invFor(mo);iv.month=mo;
+    if(C.invoiceNo>=0)iv.invoiceNo=String(r[C.invoiceNo]||"").trim();
+    ["marketingMsgs","utilityMsgs","platformFee","taxable","gst","total"].forEach(function(f){
+      if(C[f]>=0)iv[f]=num(r[C[f]]);});
+    if(iv.total!==null&&iv.total!==undefined&&iv.total!=="")iv.source="Invoice";
+    S.inv[mo]=iv;saveInv(mo);k++;
+  });
+  viewLead();viewInv();
+  var o2=document.getElementById("inv-out");
+  if(o2)o2.innerHTML=msgBox(k+" invoice row"+(k===1?"":"s")+" loaded.","ok");
 }
 function saveInv(m){
   var e=document.getElementById("inv-saved");if(e)e.textContent="Saving…";
@@ -840,74 +934,7 @@ function saveInv(m){
   },600);
 }
 
-/* Four sheets, four importers. Each one declares the columns it understands. */
-var KINDS={
-  campaigns:{title:"Campaign numbers",
-    blurb:"One row per cohort you sent to. Add a product keyword so purchases can be matched, and a coupon if the campaign carried one.",
-    cols:"Date · Campaign name · Cohort · Category · Product keyword · Coupon · Targeted · Sent · Delivered · Read · Total clicks · Unique clicks",
-    fields:[["date","Campaign date"],["campaign","Campaign name"],["cohort","Cohort"],
-      ["category","Message category"],["keyword","Product keyword"],["coupon","Coupon"],
-      ["targeted","Targeted"],["sent","Sent"],["delivered","Delivered"],["read","Read"],
-      ["clicks","Total clicks"],["unique","Unique clicks"]],
-    guess:{date:["date"],campaign:["campaign name","campaign"],cohort:["cohort"],
-      category:["category","message type"],keyword:["keyword","product"],coupon:["coupon"],
-      targeted:["targeted","target"],sent:["sent"],delivered:["delivered","deliver"],read:["read"],
-      clicks:["total click","clicks"],unique:["unique"]},
-    actions:[["rows","Add as new campaign rows"],["delivery","Update delivery and click figures"]]},
-  audience:{title:"Audience lists",
-    blurb:"Who each campaign actually went to, one row per person. The campaign name has to match the campaign sheet.",
-    cols:"Campaign name · Phone and/or Email",
-    fields:[["campaign","Campaign name"],["phone","Phone"],["email","Email"]],
-    guess:{campaign:["campaign"],phone:["phone","mobile","number","contact"],email:["email","mail"]},
-    actions:[["audience","Load this audience"]]},
-  orders:{title:"Purchase data",
-    blurb:"One row per paid order. Load this before the audience lists.",
-    cols:"Phone and/or Email · Order date · Course or product · Amount · Coupon",
-    fields:[["phone","Phone"],["email","Email"],["date","Order date"],["product","Course or product"],
-      ["amount","Amount"],["coupon","Coupon"]],
-    guess:{phone:["phone","mobile","number"],email:["email","mail"],date:["paid","order date","date"],
-      product:["course","product","item"],amount:["amount","total","value","price"],coupon:["coupon"]},
-    actions:[["orders","Load these purchases"]]},
-  invoices:{title:"Gupshup invoices",
-    blurb:"One row per month, straight off the PDF.",
-    cols:"Month · Invoice no. · Marketing messages · Utility messages · Platform fee · Taxable · GST · Total",
-    fields:[["month","Month (yyyy-mm)"],["invoiceNo","Invoice number"],["marketingMsgs","Marketing messages"],
-      ["utilityMsgs","Utility messages"],["platformFee","Platform fee"],["taxable","Taxable"],
-      ["gst","GST"],["total","Invoice total"]],
-    guess:{month:["month","period"],invoiceNo:["invoice no","invoice number","invoice"],
-      marketingMsgs:["marketing"],utilityMsgs:["utility"],platformFee:["platform","fee"],
-      taxable:["taxable","subtotal"],gst:["gst","tax"],total:["total","grand"]},
-    actions:[["invoices","Load these invoices"]]}
-};
-function viewImport(){
-  var el=document.getElementById("v-imp");
-  var h=['<div class="bar"><h2>Import</h2><span class="status">'
-    +cnt(S.orders.length)+' purchases &middot; '+cnt(S.aud.length)+' audience rows loaded</span></div>'];
-  h.push('<p class="hint" style="margin:0 0 14px">Work down the list. Purchases before audience lists, '
-    +'because an audience is only kept for people who appear in the purchase data. Nobody else can convert, '
-    +'so the answer is the same and the page stays small enough to open quickly.</p>');
-  h.push('<div class="grid">');
-  ["campaigns","orders","audience","invoices"].forEach(function(k){
-    var K=KINDS[k];
-    h.push('<div class="card"><h3>'+esc(K.title)+'</h3><p class="note">'+esc(K.blurb)+'</p>'
-      +'<p class="cols">'+esc(K.cols)+'</p>'
-      +'<div class="drop" data-kind="'+k+'" tabindex="0" role="button"><b>Choose a CSV</b>'
-      +'<span>or drop one here</span></div></div>');
-  });
-  h.push('</div><input type="file" id="file" accept=".csv,.txt" hidden><div id="imp-out"></div>');
-  el.innerHTML=h.join("");
-  var file=el.querySelector("#file"), pending=null;
-  el.querySelectorAll("[data-kind]").forEach(function(d){
-    function pick(){pending=d.getAttribute("data-kind");file.value="";file.click();}
-    d.onclick=pick;
-    d.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick();}};
-    d.ondragover=function(e){e.preventDefault();d.classList.add("over");};
-    d.ondragleave=function(){d.classList.remove("over");};
-    d.ondrop=function(e){e.preventDefault();d.classList.remove("over");
-      if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0],d.getAttribute("data-kind"));};
-  });
-  file.onchange=function(){if(file.files[0]&&pending)readFile(file.files[0],pending);};
-}
+/* ===================== bringing files in ===================== */
 function parseCSV(text){
   var rows=[],row=[],cell="",q=false;
   text=text.replace(/^﻿/,"");
@@ -920,239 +947,161 @@ function parseCSV(text){
   if(cell!==""||row.length){row.push(cell);rows.push(row);}
   return rows.filter(function(r){return r.some(function(c){return String(c).trim()!=="";});});
 }
-var IMPORTED=null;
-function readFile(f,kind){
-  var fr=new FileReader();
-  fr.onload=function(){
-    var rows=parseCSV(String(fr.result));
-    if(rows.length<2){document.getElementById("imp-out").innerHTML=
-      '<p class="hint" style="color:var(--bad)">That file has no rows under its header.</p>';return;}
-    IMPORTED={head:rows[0].map(function(h){return String(h).trim();}),body:rows.slice(1),
-      name:f.name,kind:kind||"campaigns"};
-    showMapper();
-  };
-  fr.readAsText(f);
-}
-function guess(h,keys){h=h.toLowerCase();
-  for(var i=0;i<keys.length;i++)if(h.indexOf(keys[i])>=0)return true;return false;}
-function showMapper(){
-  var K=KINDS[IMPORTED.kind];
-  var TARGETS=[["skip","Do not import"]].concat(K.fields);
-  var h=['<div class="panel" style="margin-top:16px"><h3 style="font-family:var(--display);font-size:15px">'
-    +esc(K.title)+' &middot; '+esc(IMPORTED.name)+' &middot; '+cnt(IMPORTED.body.length)+' rows</h3>',
-    '<p class="hint">Point each column at what it holds. Anything left on "Do not import" is ignored.</p>',
-    '<div style="margin:12px 0">'];
-  IMPORTED.head.forEach(function(col,i){
-    var pick="skip";
-    Object.keys(K.guess).forEach(function(k){if(pick==="skip"&&guess(col,K.guess[k]))pick=k;});
-    h.push('<div class="maprow"><span>'+esc(col||"(column "+(i+1)+")")+'</span><select data-col="'+i+'">'
-      +TARGETS.map(function(t){return '<option value="'+t[0]+'"'+(t[0]===pick?" selected":"")+'>'
-        +esc(t[1])+'</option>';}).join("")+'</select></div>');
-  });
-  h.push('</div><div class="bar">'
-    +K.actions.map(function(a,i){return '<button class="btn'+(i?"":" primary")+'" data-act="'+a[0]+'">'
-      +esc(a[1])+'</button>';}).join("")
-    +'<span class="status" id="imp-msg"></span></div></div>');
-  var out=document.getElementById("imp-out");out.innerHTML=h.join("");
-  out.querySelectorAll("[data-act]").forEach(function(b){
-    b.onclick=function(){applyImport(b.getAttribute("data-act"));};});
-}
-function readMap(){
-  var m={};document.querySelectorAll("[data-col]").forEach(function(s){
-    var v=s.value;if(v!=="skip")m[v]=+s.getAttribute("data-col");});return m;}
-function applyImport(mode){
-  var m=readMap(),msg=document.getElementById("imp-msg");
-  function G(r,f){return m[f]===undefined?"":String(r[m[f]]==null?"":r[m[f]]).trim();}
-
-  if(mode==="orders"){
-    if(m.phone===undefined&&m.email===undefined){
-      msg.textContent="Point at least one column at a phone or an email.";return;}
-    if(m.amount===undefined){msg.textContent="Point one column at the amount.";return;}
-    var got=[],skipped=0;
-    IMPORTED.body.forEach(function(r){
-      var ks=keysFrom([G(r,"phone"),G(r,"email")]);
-      var amt=num(r[m.amount]);
-      if(!ks.length||amt===null){skipped++;return;}
-      var d=G(r,"date");
-      got.push({k:ks,date:/^\d{4}-\d{2}-\d{2}/.test(d)?d.slice(0,10):toIso(d),
-        product:G(r,"product"),amount:amt,coupon:G(r,"coupon")});
-    });
-    S.orders=got;writeBig("orders",{rows:got});
-    msg.textContent=cnt(got.length)+" purchases loaded"+(skipped?", "+cnt(skipped)+" skipped for no contact or amount":"")+".";
-    S.match=null;viewImport();return;
-  }
-
-  if(mode==="audience"){
-    if(m.campaign===undefined){msg.textContent="Point one column at the campaign name.";return;}
-    if(m.phone===undefined&&m.email===undefined){
-      msg.textContent="Point at least one column at a phone or an email.";return;}
-    if(!S.orders.length){msg.textContent="Load the purchase data first, then this.";return;}
-    var known={};S.orders.forEach(function(o){(o.k||[]).forEach(function(k){known[k]=1;});});
-    var kept=[],seen={},sizes={},total=0;
-    IMPORTED.body.forEach(function(r){
-      var name=G(r,"campaign");if(!name)return;
-      var ks=keysFrom([G(r,"phone"),G(r,"email")]);if(!ks.length)return;
-      total++;sizes[name]=(sizes[name]||0)+1;
-      ks.forEach(function(k){
-        if(!known[k])return;
-        var id=name.toLowerCase()+"|"+k;if(seen[id])return;seen[id]=1;
-        kept.push({campaign:name,k:k});
-      });
-    });
-    var other=S.aud.filter(function(a){return !sizes[a.campaign];});
-    S.aud=other.concat(kept);
-    writeBig("audience",{rows:S.aud});
-    msg.textContent=cnt(total)+" people read, "+cnt(kept.length)+" of them appear in the purchase data and were kept.";
-    S.match=null;viewImport();return;
-  }
-
-  if(mode==="invoices"){
-    if(m.month===undefined){msg.textContent="Point one column at the month.";return;}
-    var n2=0;
-    IMPORTED.body.forEach(function(r){
-      var mo=G(r,"month");
-      if(/^\d{4}-\d{2}/.test(mo))mo=mo.slice(0,7); else {var iso=toIso(mo);if(iso)mo=iso.slice(0,7);else return;}
-      var iv=invFor(mo);iv.month=mo;
-      ["invoiceNo"].forEach(function(f){if(m[f]!==undefined)iv[f]=G(r,f);});
-      ["marketingMsgs","utilityMsgs","platformFee","taxable","gst","total"].forEach(function(f){
-        if(m[f]!==undefined)iv[f]=num(r[m[f]]);});
-      if(iv.total!==null&&iv.total!==undefined)iv.source="Invoice";
-      S.inv[mo]=iv;saveInv(mo);n2++;
-    });
-    msg.textContent=n2+" invoice row"+(n2===1?"":"s")+" loaded.";
-    viewLead();return;
-  }
-
-  if(m.campaign===undefined){msg.textContent="Point one column at the campaign name first.";return;}
-  var added=0,touched=0,mset={};
-  IMPORTED.body.forEach(function(r){
-    function g(f){return m[f]===undefined?null:String(r[m[f]]==null?"":r[m[f]]).trim();}
-    var name=g("campaign");if(!name)return;
-    if(mode==="delivery"){
-      var want=["targeted","sent","delivered","read","clicks","unique"].filter(function(f){
-        return m[f]!==undefined&&num(r[m[f]])!==null;});
-      if(!want.length)return;
-      var coh=g("cohort");
-      Object.keys(S.months).forEach(function(k){
-        (S.months[k].rows||[]).forEach(function(row){
-          if((row.campaign||"").trim().toLowerCase()!==name.toLowerCase())return;
-          if(coh&&(row.cohort||"").trim().toLowerCase()!==coh.toLowerCase())return;
-          want.forEach(function(f){row[f]=num(r[m[f]]);});
-          mset[k]=1;touched++;
-        });
-      });
-    }else if(mode==="conv"){
-      var cv=m.conversions!==undefined?num(r[m.conversions]):null;
-      var rv=m.revenue!==undefined?num(r[m.revenue]):null;
-      if(cv===null&&rv===null)return;
-      Object.keys(S.months).forEach(function(k){
-        var hit=null;
-        (S.months[k].rows||[]).forEach(function(row){
-          if(!hit&&(row.campaign||"").trim().toLowerCase()===name.toLowerCase())hit=row;});
-        if(hit){if(cv!==null)hit.conversions=cv;if(rv!==null)hit.revenue=rv;mset[k]=1;touched++;}
-      });
-    }else{
-      var d=g("date")||"";
-      var iso=/^\d{4}-\d{2}-\d{2}/.test(d)?d.slice(0,10):toIso(d);
-      var mo=mk(iso)||curMonth||thisMonth();
-      if(!S.months[mo])S.months[mo]={month:mo,rows:[]};
-      var row=blank(mo);row.date=iso||mo+"-01";row.campaign=name;
-      ["cohort","category","keyword","coupon"].forEach(function(f){if(m[f]!==undefined)row[f]=g(f);});
-      NUMF.forEach(function(f){if(m[f]!==undefined)row[f]=num(r[m[f]]);});
-      if(!row.category)row.category="Marketing";
-      S.months[mo].rows.push(row);mset[mo]=1;added++;
-    }
-  });
-  Object.keys(mset).forEach(save);
-  msg.textContent=mode==="rows"?(added+" rows added."):(touched+" row"+(touched===1?"":"s")+" updated.");
-  if(added||touched){viewLead();viewData();}
-}
 function toIso(s){
-  var m=String(s).match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
-  if(!m)return "";var y=m[3].length===2?"20"+m[3]:m[3];
+  s=String(s==null?"":s).trim();
+  if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);
+  var m=s.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+  if(!m)return "";
+  var y=m[3].length===2?"20"+m[3]:m[3];
   return y+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[1]).slice(-2);
 }
-
-function viewConv(){
-  var el=document.getElementById("v-conv");
-  var h=['<div class="bar"><h2>Conversions</h2>'
-    +'<label class="status" for="win">Window</label>'
-    +'<input id="win" type="number" min="1" max="365" step="1" style="width:76px" value="'
-    +(n(S.cfg.windowDays)||30)+'"><span class="status">days after the send</span>'
-    +'<button class="btn primary" id="run">Match purchases to campaigns</button>'
-    +'<span class="status" id="m-msg"></span></div>'];
-  if(!S.orders.length||!S.aud.length){
-    h.push('<div class="panel"><p class="hint" style="margin:0">Two files are needed before this can run: '
-      +'<b>purchase data</b> ('+cnt(S.orders.length)+' loaded) and at least one <b>audience list</b> ('
-      +cnt(S.aud.length)+' rows loaded). Both go in on the Import tab.</p></div>');
-    el.innerHTML=h.join("");bindConv(el);return;
-  }
-  h.push('<div class="panel"><p class="hint" style="margin:0"><b>How a purchase is credited.</b> '
-    +'The buyer has to be on that campaign\'s audience list, matched on phone or on email. '
-    +'The order has to fall on or after the send date and inside the window. '
-    +'The product bought has to contain the campaign\'s product keyword, when one is set. '
-    +'A campaign carrying a coupon ignores all of that and counts only orders stamped with the coupon, '
-    +'because a stamp is proof rather than inference. '
-    +'Each order is credited once, to the earliest campaign that can claim it.</p></div>');
-  if(S.match){
-    var M=S.match, per=Object.keys(M.per).map(function(k){return M.per[k];});
-    var tot=per.reduce(function(a,p){a.c+=p.conversions;a.r+=p.revenue;return a;},{c:0,r:0});
-    var measured=per.filter(function(p){return p.measurable;}).length;
-    h.push('<div class="bar" style="margin-top:16px"><h2 style="font-size:16px">Result</h2>'
-      +'<span class="status">matched '+esc(M.when)+' &middot; '+cnt(M.orders)+' purchases against '
-      +cnt(M.audience)+' audience rows</span>'
-      +'<button class="btn primary" id="apply">Write these onto the campaigns</button>'
-      +(STANDALONE?'<a class="btn" id="dlrep" download="conversion-report.csv">Save the report</a>':'')
-      +'</div>');
-    h.push('<div class="kpis"><div class="kpi"><div class="cap">Conversions found</div><div class="fig">'
-      +cnt(tot.c)+'</div><div class="sub">across '+measured+' measurable campaigns</div></div>'
-      +'<div class="kpi"><div class="cap">Revenue</div><div class="fig">'+cr(tot.r)+'</div>'
-      +'<div class="sub">'+inr(tot.c?tot.r/tot.c:null)+' average order</div></div>'
-      +'<div class="kpi"><div class="cap">Campaigns with no list</div><div class="fig">'
-      +cnt(per.length-measured)+'</div><div class="sub">left out, not counted as zero</div></div></div>');
-    h.push('<div class="card"><h3>By campaign</h3><div class="scroll"><table><thead><tr>'
-      +'<th>Campaign</th><th>Month</th><th>Rule used</th><th>Audience in the purchase data</th>'
-      +'<th>Conversions</th><th>Revenue</th></tr></thead><tbody>');
-    per.sort(function(a,b){return b.revenue-a.revenue;}).forEach(function(p){
-      h.push('<tr><td>'+esc(p.name)+'</td><td style="text-align:right">'+esc(mlabel(p.month))
-        +'</td><td style="text-align:right">'+esc(p.rule)+'</td><td class="n">'
-        +(p.measurable?cnt(p.audience):'<span class="pill flat">no list</span>')+'</td><td class="n">'
-        +(p.measurable?cnt(p.conversions):"—")+'</td><td class="n">'
-        +(p.measurable?inr(p.revenue):"—")+'</td></tr>');
-    });
-    h.push('</tbody></table></div></div>');
-    if(M.detail.length){
-      h.push('<div class="card" style="margin-top:14px"><h3>Every credited purchase</h3>'
-        +'<p class="note">One line per sale, so any of these can be checked against the order itself.</p>'
-        +'<div class="scroll"><table><thead><tr><th>Campaign</th><th>Contact</th><th>Sent</th>'
-        +'<th>Bought</th><th>Product</th><th>Amount</th></tr></thead><tbody>');
-      M.detail.slice(0,400).forEach(function(d){
-        h.push('<tr><td>'+esc(d.campaign)+'</td><td class="n">'+esc(d.contact)+'</td>'
-          +'<td class="n">'+esc(d.send||"")+'</td><td class="n">'+esc(d.date||"")+'</td>'
-          +'<td style="text-align:right">'+esc(d.product)+'</td><td class="n">'+inr(d.amount)+'</td></tr>');
-      });
-      h.push('</tbody></table></div>'
-        +(M.detail.length>400?'<p class="hint">Showing the first 400 of '+cnt(M.detail.length)
-          +'. Save the report for all of them.</p>':'')+'</div>');
-    }
-  }
-  el.innerHTML=h.join("");
-  bindConv(el);
+function guess(h,keys){h=String(h).toLowerCase();
+  for(var i=0;i<keys.length;i++)if(h.indexOf(keys[i])>=0)return true;return false;}
+/* A workbook arrives as [{name, rows:[[cell,...]]}] whatever it came from. */
+function sheetsFromBuffer(buf){
+  if(typeof XLSX==="undefined")throw new Error("reader-missing");
+  var wb=XLSX.read(buf,{type:"array"});
+  return wb.SheetNames.map(function(nm){
+    return {name:nm,rows:XLSX.utils.sheet_to_json(wb.Sheets[nm],{header:1,blankrows:false,raw:false})};
+  });
 }
-function bindConv(el){
+function sheetsFromFile(f){
+  return new Promise(function(res,rej){
+    var fr=new FileReader();
+    fr.onerror=function(){rej(new Error("read-failed"));};
+    if(/\.csv$|\.txt$/i.test(f.name)){
+      fr.onload=function(){res([{name:f.name.replace(/\.[^.]+$/,""),rows:parseCSV(String(fr.result))}]);};
+      fr.readAsText(f);
+    }else{
+      fr.onload=function(){
+        try{res(sheetsFromBuffer(new Uint8Array(fr.result)));}catch(e){rej(e);}
+      };
+      fr.readAsArrayBuffer(f);
+    }
+  });
+}
+function sheetsFromLink(url){
+  var m=String(url).match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if(!m)return Promise.reject(new Error("not-a-sheet-link"));
+  return fetch("https://docs.google.com/spreadsheets/d/"+m[1]+"/export?format=xlsx")
+    .then(function(r){if(!r.ok)throw new Error("http-"+r.status);return r.arrayBuffer();})
+    .then(function(b){return sheetsFromBuffer(new Uint8Array(b));});
+}
+/* "CFA Level 1 Nudge - Qualified leads" -> campaign, cohort */
+function splitTab(nm){
+  var s=String(nm||"").trim();
+  var m=s.split(/\s+[-–—|]\s+/);
+  if(m.length>1)return {campaign:m[0].trim(),cohort:m.slice(1).join(" ").trim()};
+  return {campaign:s,cohort:""};
+}
+function knownCampaigns(){
+  var out={};
+  allRows().forEach(function(r){var c=(r.campaign||"").trim();if(c)out[c.toLowerCase()]=c;});
+  return out;
+}
+/* find the column in a header row that holds phones / emails / a named thing */
+function findCol(head,keys){
+  for(var i=0;i<head.length;i++)if(guess(head[i],keys))return i;
+  return -1;
+}
+
+/* ===================== the Import page ===================== */
+var IMPREV=null;                      /* parsed audience preview, waiting to be applied */
+var ORDPREV=null;
+function viewImport(){
+  var el=document.getElementById("v-imp");
+  var h=[];
+  h.push('<div class="bar"><h2>Import</h2><span class="status">'
+    +cnt(S.orders.length)+' purchases · '+cnt(S.aud.length)+' matched audience rows held</span></div>');
+
+  h.push('<div class="steps">');
+  /* ---- step 1, purchases ---- */
+  h.push('<section class="step"><div class="stepno">1</div><div class="stepbody">'
+    +'<h3>Purchase data</h3>'
+    +'<p class="note">Every paid order, one per row. This goes in first, because an audience is only '
+    +'kept for people who actually appear here.</p>'
+    +'<p class="cols">Phone and/or Email · Order date · Course or product · Amount · Coupon</p>'
+    +'<div class="drop" data-kind="orders" tabindex="0" role="button">'
+    +'<b>Choose a file</b><span>or drop it here · CSV or Excel</span></div>'
+    +'<div id="ord-out"></div></div></section>');
+
+  /* ---- step 2, audience ---- */
+  h.push('<section class="step"><div class="stepno">2</div><div class="stepbody">'
+    +'<h3>Audience list</h3>'
+    +'<p class="note">The people each campaign was sent to. One spreadsheet, <b>one tab per cohort</b>, '
+    +'each tab named after the campaign and the cohort, for example '
+    +'<code>CFA Level 1 Nudge - Qualified leads</code>. Every tab needs a phone or an email column.</p>'
+    +'<div class="linkrow"><input type="text" id="gsheet" placeholder="Paste the Google Sheet link"'
+    +' value="'+esc(S.cfg.audienceLink||"")+'"><button class="btn primary" id="pull">Pull the tabs</button></div>'
+    +'<p class="hint" style="margin:6px 0 12px">The sheet has to be shared as <b>anyone with the link can '
+    +'view</b>, or the browser cannot read it. A downloaded file works too.</p>'
+    +'<div class="drop" data-kind="audience" tabindex="0" role="button">'
+    +'<b>Choose a file</b><span>or drop it here · Excel keeps every tab, CSV is one cohort</span></div>'
+    +'<div id="aud-out"></div></div></section>');
+
+  /* ---- step 3, match ---- */
+  var ready=S.orders.length&&S.aud.length;
+  h.push('<section class="step"><div class="stepno">3</div><div class="stepbody">'
+    +'<h3>Match them</h3>'
+    +'<p class="note">A purchase counts for a campaign when the buyer was on that campaign\'s list, '
+    +'matched on phone or on email, and bought on or after the send date within '
+    +'<input type="number" id="win" min="1" max="365" value="'+(n(S.cfg.windowDays)||30)+'"> days. '
+    +'Where a product keyword is set the course bought has to contain it, and where a coupon is set only '
+    +'coupon-stamped orders count. Each order is credited once, to the earliest campaign that claims it.</p>'
+    +'<div class="bar"><button class="btn primary'+(ready?"":" off")+'" id="run"'+(ready?"":" disabled")+'>'
+    +'Match purchases to campaigns</button>'
+    +(S.match?'<button class="btn" id="apply">Write onto the campaigns</button>':'')
+    +(S.match&&STANDALONE?'<a class="btn" id="dlrep" download="conversion-report.csv">Save the report</a>':'')
+    +'<span class="status" id="m-msg">'+(ready?"":"Both files are needed first.")+'</span></div>'
+    +'</div></section>');
+  h.push('</div>');
+
+  h.push('<div id="res"></div>');
+  el.innerHTML=h.join("");
+  renderOrdPrev();renderAudPrev();renderResult();
+  bindImport(el);
+}
+function bindImport(el){
+  var file=document.createElement("input");
+  file.type="file";file.accept=".csv,.txt,.xlsx,.xls";file.hidden=true;el.appendChild(file);
+  var pending=null;
+  el.querySelectorAll("[data-kind]").forEach(function(d){
+    function pick(){pending=d.getAttribute("data-kind");file.value="";file.click();}
+    d.onclick=pick;
+    d.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick();}};
+    d.ondragover=function(e){e.preventDefault();d.classList.add("over");};
+    d.ondragleave=function(){d.classList.remove("over");};
+    d.ondrop=function(e){e.preventDefault();d.classList.remove("over");
+      if(e.dataTransfer.files[0])takeFile(e.dataTransfer.files[0],d.getAttribute("data-kind"));};
+  });
+  file.onchange=function(){if(file.files[0]&&pending)takeFile(file.files[0],pending);};
+
+  var pull=el.querySelector("#pull");
+  if(pull)pull.onclick=function(){
+    var url=el.querySelector("#gsheet").value.trim();
+    var out=el.querySelector("#aud-out");
+    if(!url){out.innerHTML=msgBox("Paste the sheet link first.","bad");return;}
+    S.cfg.audienceLink=url;saveCfg();
+    out.innerHTML=msgBox("Reading the sheet…","");
+    sheetsFromLink(url).then(function(sh){takeAudience(sh);})
+      .catch(function(e){
+        out.innerHTML=msgBox(e.message==="not-a-sheet-link"
+          ?"That does not look like a Google Sheet link. It should contain /spreadsheets/d/."
+          :"The browser could not read that sheet. Open it, choose Share, and set it to "
+           +"“anyone with the link can view”. If it is already shared, download it with "
+           +"File › Download › Microsoft Excel and drop the file in below.","bad");
+      });
+  };
   var w=el.querySelector("#win");
   if(w)w.onchange=function(){var v=parseInt(w.value,10);
-    if(v>0){S.cfg.windowDays=v;saveCfg();S.match=null;viewConv();}};
+    if(v>0){S.cfg.windowDays=v;saveCfg();S.match=null;viewImport();}};
   var run=el.querySelector("#run");
-  if(run)run.onclick=function(){
-    if(!S.orders.length||!S.aud.length){
-      el.querySelector("#m-msg").textContent="Load the purchase data and an audience list first.";return;}
-    runMatch();viewConv();};
+  if(run)run.onclick=function(){runMatch();viewImport();};
   var ap=el.querySelector("#apply");
   if(ap)ap.onclick=function(){
-    var n2=applyMatch();
-    el.querySelector("#m-msg").textContent=n2+" campaign"+(n2===1?"":"s")+" updated.";
-    viewLead();viewConv();};
+    var k=applyMatch();
+    el.querySelector("#m-msg").textContent=k+" campaign"+(k===1?"":"s")+" updated.";
+    viewLead();};
   var dl=el.querySelector("#dlrep");
   if(dl&&S.match){
     var head="Campaign,Month,Contact,Sent,Bought,Product,Amount,Coupon,Rule\n";
@@ -1161,6 +1110,150 @@ function bindConv(el){
         .map(function(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"';}).join(",");}).join("\n");
     dl.href=URL.createObjectURL(new Blob([head+body],{type:"text/csv"}));
   }
+}
+function msgBox(t,kind){
+  return '<p class="msg'+(kind?" "+kind:"")+'">'+esc(t)+'</p>';
+}
+function takeFile(f,kind){
+  var out=document.getElementById(kind==="orders"?"ord-out":"aud-out");
+  out.innerHTML=msgBox("Reading "+f.name+"…","");
+  sheetsFromFile(f).then(function(sh){
+    if(kind==="orders")takeOrders(sh[0],f.name); else takeAudience(sh);
+  }).catch(function(e){
+    out.innerHTML=msgBox(e.message==="reader-missing"
+      ?"The spreadsheet reader did not load. Refresh the page and try again, or save the file as CSV."
+      :"That file could not be read.","bad");
+  });
+}
+/* ---------- purchases ---------- */
+function takeOrders(sheet,name){
+  var rows=sheet.rows||[];
+  if(rows.length<2){document.getElementById("ord-out").innerHTML=
+    msgBox("That file has no rows under its header.","bad");return;}
+  var head=rows[0].map(function(x){return String(x==null?"":x).trim();});
+  var ph=findCol(head,["phone","mobile","number","contact"]),
+      em=findCol(head,["email","mail"]),
+      dt=findCol(head,["paid","order date","date"]),
+      pr=findCol(head,["course","product","item","name"]),
+      am=findCol(head,["amount","total","value","price"]),
+      cp=findCol(head,["coupon","code"]);
+  var got=[],skipped=0;
+  rows.slice(1).forEach(function(r){
+    var ks=keysFrom([ph<0?"":r[ph],em<0?"":r[em]]);
+    var amt=am<0?null:num(r[am]);
+    if(!ks.length||amt===null){skipped++;return;}
+    got.push({k:ks,date:toIso(dt<0?"":r[dt]),product:pr<0?"":String(r[pr]||"").trim(),
+      amount:amt,coupon:cp<0?"":String(r[cp]||"").trim()});
+  });
+  ORDPREV={name:name,total:rows.length-1,kept:got.length,skipped:skipped,
+    cols:{phone:ph,email:em,date:dt,product:pr,amount:am,coupon:cp},head:head};
+  S.orders=got;writeBig("orders",{rows:got});S.match=null;
+  viewImport();
+}
+function renderOrdPrev(){
+  var el=document.getElementById("ord-out");if(!el)return;
+  if(!ORDPREV&&!S.orders.length)return;
+  if(!ORDPREV){el.innerHTML=msgBox(cnt(S.orders.length)+" purchases held from an earlier import.","ok");return;}
+  var c=ORDPREV.cols,named=[];
+  [["phone","Phone"],["email","Email"],["date","Order date"],["product","Product"],["amount","Amount"],
+   ["coupon","Coupon"]].forEach(function(p){
+    named.push('<span class="tagx'+(c[p[0]]<0?" miss":"")+'">'+esc(p[1])+(c[p[0]]<0?" not found"
+      :": "+esc(ORDPREV.head[c[p[0]]]))+'</span>');});
+  el.innerHTML=msgBox(cnt(ORDPREV.kept)+" purchases loaded from "+ORDPREV.name
+    +(ORDPREV.skipped?", "+cnt(ORDPREV.skipped)+" skipped for no contact or no amount":"")+".","ok")
+    +'<div class="tags">'+named.join("")+'</div>';
+}
+/* ---------- audience ---------- */
+function takeAudience(sheets){
+  if(!S.orders.length){document.getElementById("aud-out").innerHTML=
+    msgBox("Load the purchase data first. The audience is trimmed to people who appear in it.","bad");return;}
+  var known={};S.orders.forEach(function(o){(o.k||[]).forEach(function(k){known[k]=1;});});
+  var inTracker=knownCampaigns(), tabs=[], kept=[], seen={};
+  sheets.forEach(function(sh){
+    var rows=sh.rows||[];if(rows.length<2)return;
+    var head=rows[0].map(function(x){return String(x==null?"":x).trim();});
+    var ph=findCol(head,["phone","mobile","number","contact"]), em=findCol(head,["email","mail"]);
+    var sp=splitTab(sh.name), people=0, hits=0;
+    if(ph<0&&em<0){tabs.push({tab:sh.name,campaign:sp.campaign,cohort:sp.cohort,people:0,hits:0,
+      known:!!inTracker[sp.campaign.toLowerCase()],err:"no phone or email column"});return;}
+    rows.slice(1).forEach(function(r){
+      var ks=keysFrom([ph<0?"":r[ph],em<0?"":r[em]]);
+      if(!ks.length)return;
+      people++;
+      ks.forEach(function(k){
+        if(!known[k])return;
+        var id=sp.campaign.toLowerCase()+"|"+k;if(seen[id])return;seen[id]=1;
+        kept.push({campaign:sp.campaign,k:k});hits++;
+      });
+    });
+    tabs.push({tab:sh.name,campaign:sp.campaign,cohort:sp.cohort,people:people,hits:hits,
+      known:!!inTracker[sp.campaign.toLowerCase()],err:""});
+  });
+  S.aud=kept;writeBig("audience",{rows:kept});S.match=null;
+  IMPREV={tabs:tabs,when:new Date().toISOString().slice(0,16).replace("T"," ")};
+  viewImport();
+}
+function renderAudPrev(){
+  var el=document.getElementById("aud-out");if(!el)return;
+  if(!IMPREV){if(S.aud.length)el.innerHTML=msgBox(cnt(S.aud.length)
+    +" matched audience rows held from an earlier import.","ok");return;}
+  var t=IMPREV.tabs, ppl=0, hits=0, unknown=0;
+  t.forEach(function(x){ppl+=x.people;hits+=x.hits;if(!x.known)unknown++;});
+  var h=[msgBox(t.length+" tab"+(t.length===1?"":"s")+" read · "+cnt(ppl)+" people · "+cnt(hits)
+    +" of them appear in the purchase data and were kept.","ok")];
+  h.push('<div class="scroll"><table class="mini"><thead><tr><th>Tab</th><th>Campaign</th><th>Cohort</th>'
+    +'<th>People</th><th>In purchase data</th><th></th></tr></thead><tbody>');
+  t.forEach(function(x){
+    h.push('<tr><td>'+esc(x.tab)+'</td><td>'+esc(x.campaign)+'</td><td>'+esc(x.cohort||"—")
+      +'</td><td class="n">'+cnt(x.people)+'</td><td class="n">'+cnt(x.hits)+'</td><td style="text-align:right">'
+      +(x.err?'<span class="pill warn">'+esc(x.err)+'</span>'
+        :(x.known?'<span class="pill up">campaign found</span>'
+          :'<span class="pill warn">no campaign of this name</span>'))+'</td></tr>');
+  });
+  h.push('</tbody></table></div>');
+  if(unknown)h.push('<p class="hint">A tab marked <b>no campaign of this name</b> will not match anything. '
+    +'The part of the tab name before the dash has to equal the campaign name on the Campaigns tab.</p>');
+  el.innerHTML=h.join("");
+}
+/* ---------- the result ---------- */
+function renderResult(){
+  var el=document.getElementById("res");if(!el||!S.match)return;
+  var M=S.match, per=Object.keys(M.per).map(function(k){return M.per[k];});
+  var tot=per.reduce(function(a,p){a.c+=p.conversions;a.r+=p.revenue;return a;},{c:0,r:0});
+  var measured=per.filter(function(p){return p.measurable;}).length;
+  var h=['<div class="bar" style="margin-top:26px"><h2>Conversions by campaign</h2>'
+    +'<span class="status">matched '+esc(M.when)+'</span></div>'];
+  h.push('<div class="kpis"><div class="kpi"><div class="cap">Conversions</div><div class="fig">'+cnt(tot.c)
+    +'</div><div class="sub">across '+measured+' campaigns with a list</div></div>'
+    +'<div class="kpi"><div class="cap">Revenue</div><div class="fig">'+cr(tot.r)+'</div>'
+    +'<div class="sub">'+inr(tot.c?tot.r/tot.c:null)+' average order</div></div>'
+    +'<div class="kpi"><div class="cap">No audience list</div><div class="fig">'+cnt(per.length-measured)
+    +'</div><div class="sub">left out, never counted as zero</div></div></div>');
+  h.push('<div class="card"><div class="scroll"><table><thead><tr><th>Campaign</th><th>Month</th>'
+    +'<th>Rule used</th><th>Audience in purchases</th><th>Conversions</th><th>Revenue</th>'
+    +'</tr></thead><tbody>');
+  per.sort(function(a,b){return b.revenue-a.revenue;}).forEach(function(p){
+    h.push('<tr><td>'+esc(p.name)+'</td><td style="text-align:right">'+esc(mlabel(p.month))
+      +'</td><td style="text-align:right"><span class="pill flat">'+esc(p.rule)+'</span></td><td class="n">'
+      +(p.measurable?cnt(p.audience):'—')+'</td><td class="n"><b>'
+      +(p.measurable?cnt(p.conversions):'<span class="pill warn">no list</span>')+'</b></td><td class="n">'
+      +(p.measurable?inr(p.revenue):"—")+'</td></tr>');
+  });
+  h.push('</tbody></table></div></div>');
+  if(M.detail.length){
+    h.push('<div class="card" style="margin-top:14px"><h3>Every credited purchase</h3>'
+      +'<p class="note">One line per sale, so any figure here can be checked against the order itself.</p>'
+      +'<div class="scroll"><table><thead><tr><th>Campaign</th><th>Contact</th><th>Sent</th><th>Bought</th>'
+      +'<th>Product</th><th>Amount</th></tr></thead><tbody>');
+    M.detail.slice(0,300).forEach(function(d){
+      h.push('<tr><td>'+esc(d.campaign)+'</td><td class="n">'+esc(d.contact)+'</td><td class="n">'
+        +esc(d.send||"")+'</td><td class="n">'+esc(d.date||"")+'</td><td style="text-align:right">'
+        +esc(d.product)+'</td><td class="n">'+inr(d.amount)+'</td></tr>');
+    });
+    h.push('</tbody></table></div>'+(M.detail.length>300?'<p class="hint">First 300 of '
+      +cnt(M.detail.length)+'. Save the report for all of them.</p>':'')+'</div>');
+  }
+  el.innerHTML=h.join("");
 }
 
 function viewSet(){
@@ -1243,7 +1336,7 @@ function render(){viewLead();}
 
 /* ============================ boot ============================ */
 function switchTo(id){
-  [["t-lead","v-lead"],["t-data","v-data"],["t-inv","v-inv"],["t-imp","v-imp"],["t-conv","v-conv"],
+  [["t-lead","v-lead"],["t-data","v-data"],["t-inv","v-inv"],["t-imp","v-imp"],
    ["t-set","v-set"]].forEach(function(p){
     var on=p[0]===id;
     document.getElementById(p[0]).setAttribute("aria-selected",on?"true":"false");
@@ -1252,11 +1345,10 @@ function switchTo(id){
   if(id==="t-data")viewData();
   if(id==="t-inv")viewInv();
   if(id==="t-imp")viewImport();
-  if(id==="t-conv")viewConv();
   if(id==="t-set")viewSet();
   try{localStorage.setItem("cs:tab",id);}catch(e){}
 }
-["t-lead","t-data","t-inv","t-imp","t-conv","t-set"].forEach(function(id){
+["t-lead","t-data","t-inv","t-imp","t-set"].forEach(function(id){
   document.getElementById(id).onclick=function(){switchTo(id);};});
 
 function fromSeed(){                       /* so the page is never blank for a viewer without db */
