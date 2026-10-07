@@ -6,8 +6,8 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="referrer" content="no-referrer">
 <style>
-:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif;background:#fbfbf9}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}
 img{max-width:100%}
 [hidden]{display:none!important}
 </style>
@@ -208,6 +208,174 @@ svg.chart .bar:hover{opacity:1}
   .brand span{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===================== leadership, rebuilt ===================== */
+.lead2{display:flex;flex-direction:column;gap:16px}
+.l2head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.l2head h1{font-size:clamp(23px,3.6vw,34px);font-weight:700;letter-spacing:-.025em}
+.l2head .period{margin:5px 0 0}
+
+/* the period filter, used on the page and inside every window */
+.rangebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--surface);
+  border:1px solid var(--line);border-radius:14px;padding:9px 11px;box-shadow:var(--shadow)}
+.rb-lab{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-3);font-weight:700}
+.seg{display:flex;gap:2px;background:var(--surface-2);padding:3px;border-radius:11px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--ink-2);padding:6px 12px;border-radius:8px;
+  font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;
+  transition:background .15s ease,color .15s ease,box-shadow .15s ease}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
+  box-shadow:0 1px 2px rgba(17,26,23,.1)}
+.custom{display:flex;gap:7px;align-items:center;font-size:12px;color:var(--ink-3)}
+.custom input{padding:5px 8px;font-size:12.5px}
+
+/* the one number that opens the page */
+.hero{position:relative;display:grid;grid-template-columns:minmax(250px,.9fr) 1.35fr;gap:30px;
+  align-items:center;text-align:left;cursor:pointer;border:1px solid var(--line-strong);
+  border-radius:22px;padding:26px 28px;overflow:hidden;
+  background:radial-gradient(130% 150% at 2% 0%,color-mix(in srgb,var(--accent) 17%,transparent),
+    transparent 58%),var(--surface);
+  box-shadow:0 1px 2px rgba(17,26,23,.05),0 28px 54px -34px rgba(17,26,23,.42);
+  transition:transform .2s cubic-bezier(.2,.8,.25,1),box-shadow .2s ease,border-color .2s ease}
+.hero:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line-strong));
+  box-shadow:0 1px 2px rgba(17,26,23,.05),0 34px 64px -34px rgba(17,26,23,.5)}
+.hero .cap{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.11em;
+  color:var(--ink-3);font-weight:700}
+.hero .fig{font-family:var(--display);font-weight:700;font-size:clamp(46px,8.4vw,88px);line-height:.92;
+  letter-spacing:-.05em;color:var(--accent);margin:12px 0 0;font-variant-numeric:tabular-nums}
+.hero-sub{font-size:14.5px;color:var(--ink-2);margin:10px 0 12px;max-width:30ch}
+.hero .go{display:block;margin-top:14px;font-size:12.5px;font-weight:600;color:var(--accent);
+  opacity:.72;transition:opacity .16s ease,transform .16s ease}
+.hero:hover .go{opacity:1;transform:translateX(3px)}
+.hero-r{min-width:0}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.hero-pills span{display:flex;flex-direction:column;gap:1px;background:var(--surface-2);
+  border:1px solid var(--line);border-radius:11px;padding:8px 13px;font-size:11px;color:var(--ink-3)}
+.hero-pills b{font-family:var(--display);font-size:16px;color:var(--ink);letter-spacing:-.02em}
+
+/* movement against the period before */
+.delta{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11.5px;
+  font-weight:600;border-radius:99px;padding:4px 10px;background:var(--surface-2);color:var(--ink-3)}
+.delta i{font-style:normal;font-weight:400;opacity:.8;font-family:var(--sans)}
+.delta.up{background:color-mix(in srgb,var(--good) 15%,transparent);color:var(--good)}
+.delta.down{background:color-mix(in srgb,var(--bad) 13%,transparent);color:var(--bad)}
+.delta.none{font-family:var(--sans);font-weight:400}
+
+/* the sliding rail of windows */
+.railhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:10px 0 -2px}
+.railhead h2{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.railhead .hint{margin:0;flex:1 1 220px}
+.railnavs{display:flex;gap:6px;margin-left:auto;flex:none}
+.rail-wrap{position:relative;margin-inline:-4px}
+.rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x proximity;padding:6px 4px 14px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.rail::-webkit-scrollbar{display:none}
+.tile{flex:0 0 clamp(226px,23vw,264px);scroll-snap-align:start;display:flex;flex-direction:column;
+  text-align:left;cursor:pointer;background:var(--surface);border:1px solid var(--line);
+  border-radius:17px;padding:15px 16px 12px;
+  box-shadow:0 1px 2px rgba(17,26,23,.04),0 16px 32px -26px rgba(17,26,23,.45);
+  transition:transform .2s cubic-bezier(.2,.8,.25,1),box-shadow .2s ease,border-color .2s ease}
+.tile:hover,.tile:focus-visible{transform:translateY(-4px);border-color:var(--line-strong);
+  box-shadow:0 1px 2px rgba(17,26,23,.05),0 22px 40px -24px rgba(17,26,23,.5)}
+.tile::before{content:"";display:block;width:26px;height:3px;border-radius:99px;background:var(--c);
+  margin-bottom:11px;opacity:.9}
+.tile .cap{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);font-weight:700}
+.tile .fig{font-family:var(--display);font-weight:700;font-size:clamp(24px,3vw,30px);line-height:1.1;
+  letter-spacing:-.03em;margin-top:7px;font-variant-numeric:tabular-nums}
+.tile .sub{font-size:11.5px;color:var(--ink-3);margin-top:4px;min-height:32px;line-height:1.4}
+.tile .nospark{display:block;height:34px;margin-top:10px}
+.tile .go{font-size:11px;font-weight:600;color:var(--accent);margin-top:9px;opacity:0;
+  transition:opacity .16s ease,transform .16s ease}
+.tile:hover .go,.tile:focus-visible .go{opacity:1;transform:translateX(2px)}
+.railnav{width:32px;height:32px;border-radius:50%;border:1px solid var(--line-strong);
+  background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:18px;line-height:1;color:var(--ink-2);box-shadow:var(--shadow);
+  transition:transform .15s ease,color .15s ease,background .15s ease}
+.railnav:hover{color:var(--ink);background:var(--surface-2);transform:scale(1.07)}
+.progress{height:3px;background:var(--surface-3);border-radius:99px;overflow:hidden;margin:-6px 2px 4px}
+.progress i{display:block;height:100%;background:var(--accent);border-radius:99px;opacity:.75}
+.foot{font-size:12px;color:var(--ink-3);line-height:1.65;max-width:95ch;margin:8px 0 0}
+
+/* the window that opens */
+body.locked{overflow:hidden}
+.sheet{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center}
+.sheet[hidden]{display:none}
+.sheet-bg{position:absolute;inset:0;background:color-mix(in srgb,var(--ink) 46%,transparent);
+  backdrop-filter:blur(4px);opacity:0;transition:opacity .24s ease}
+.sheet-card{position:relative;width:min(1120px,100%);max-height:94vh;display:flex;flex-direction:column;
+  background:var(--ground);border:1px solid var(--line-strong);border-bottom:0;
+  border-radius:24px 24px 0 0;overflow:hidden;opacity:0;transform:translateY(26px) scale(.995);
+  box-shadow:0 -14px 70px -24px rgba(0,0,0,.5);
+  transition:transform .3s cubic-bezier(.2,.86,.26,1),opacity .22s ease}
+.sheet.on .sheet-bg{opacity:1}
+.sheet.on .sheet-card{opacity:1;transform:none}
+.sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  padding:18px 22px 15px;border-bottom:1px solid var(--line);
+  background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(8px)}
+.sheet-head .cap{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-3);
+  font-weight:700}
+.sheet-head h2{font-family:var(--display);font-size:clamp(24px,4vw,34px);font-weight:700;
+  letter-spacing:-.035em;margin:4px 0 0;font-variant-numeric:tabular-nums}
+.sheet-head h2 small{font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--ink-3);
+  letter-spacing:0;margin-left:7px}
+.sheet-head .sub{font-size:13px;color:var(--ink-2);margin:4px 0 0}
+.hx{display:flex;gap:6px;flex:none}
+.icb{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--surface);
+  cursor:pointer;color:var(--ink-2);font-size:16px;line-height:1;display:flex;align-items:center;
+  justify-content:center;transition:background .14s ease,color .14s ease}
+.icb:hover{background:var(--surface-2);color:var(--ink)}
+.icb.close{font-size:13px}
+.sheet-body{overflow-y:auto;overscroll-behavior:contain;padding:16px 22px 30px;
+  display:flex;flex-direction:column;gap:14px}
+.sheet-body .grid{margin:0;grid-template-columns:1fr}
+.sheet-body svg.chart{max-width:900px;margin-inline:auto}
+.sheet-body svg.chart.trend{max-width:none}
+.sheet-body .scroll{max-height:62vh;overflow:auto}
+.sheet-body .card{padding:17px 19px 14px}
+.blurb{font-size:13.5px;color:var(--ink-2);line-height:1.62;margin:0;max-width:92ch}
+.blurb .status{display:block;margin-top:3px}
+.bigrow{display:grid;grid-template-columns:minmax(170px,.55fr) 1.45fr;gap:24px;align-items:center}
+.bigrow .cap{font-size:10.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--ink-3);
+  font-weight:700;display:block}
+.bigfig{font-family:var(--display);font-weight:700;font-size:clamp(34px,5.6vw,52px);line-height:1;
+  letter-spacing:-.04em;margin:8px 0 10px;font-variant-numeric:tabular-nums}
+.bigtrend{min-width:0}
+.mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px;margin-top:16px}
+.mini>div{background:var(--surface-2);border:1px solid var(--line);border-radius:11px;
+  padding:9px 11px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.mini b{overflow:hidden;text-overflow:ellipsis}
+.mini span{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:600}
+.mini b{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+tr.tot td{font-weight:700;background:var(--surface-2);border-top:1px solid var(--line-strong)}
+
+/* appearance switch */
+#thm{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface-2);
+  border-radius:99px;padding:5px 12px 5px 10px;font-size:12px;font-weight:600;color:var(--ink-2);
+  cursor:pointer;line-height:1.4}
+#thm:hover{color:var(--ink);border-color:var(--line-strong)}
+#thm span{font-weight:500}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:18px;padding:22px 20px}
+  .bigrow{grid-template-columns:1fr;gap:14px}
+  .sheet-card{max-height:96vh;border-radius:20px 20px 0 0}
+  .sheet-body{padding:14px 15px 26px}
+  .sheet-head{padding:15px 16px 13px}
+}
+@media (max-width:760px){
+  .tabs{flex:1 1 0;min-width:0;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .brand{flex:1 0 100%;margin-right:0}
+  .top-in{gap:10px}
+}
+@media (max-width:640px){
+  .railnavs{display:none}
+  .tile{flex:0 0 min(78vw,264px)}
+  #thm span{display:none}
+  #thm{padding:5px 9px}
+  .rangebar{padding:8px 9px}
+  .seg button{padding:6px 10px;font-size:12px}
+}
 </style>
 </head>
 <body>
@@ -223,6 +391,7 @@ svg.chart .bar:hover{opacity:1}
     <button class="tab" role="tab" id="t-imp"  aria-selected="false">Import</button>
     <button class="tab" role="tab" id="t-set"  aria-selected="false">Rates</button>
   </div>
+  <button id="thm" type="button" aria-label="Appearance">◐<span>Auto</span></button>
 </div></div>
 
 <div class="wrap">
@@ -231,6 +400,13 @@ svg.chart .bar:hover{opacity:1}
   <section id="v-inv"  hidden></section>
   <section id="v-imp"  hidden></section>
   <section id="v-set"  hidden></section>
+</div>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-bg" id="sheet-bg"></div>
+  <div class="sheet-card" id="sheet-card" role="dialog" aria-modal="true" aria-label="Metric detail">
+    <div class="sheet-head" id="sheet-head"></div>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
 </div>
 <div class="tip" id="tip"></div>
 
@@ -547,201 +723,851 @@ function wireTips(root){
 }
 
 /* ============================ views ============================ */
-var period="all";
-function viewLead(){
-  var ms=months(), el=document.getElementById("v-lead");
-  if(!ms.length){el.innerHTML='<div class="empty"><h2>No campaigns yet</h2><p>Add them on the Campaigns tab, '
-    +'or bring a spreadsheet in through Import.</p></div>';return;}
-  if(period!=="all"&&!ms.some(function(m){return m.month===period;}))period="all";
-  var sel=period==="all"?ms:ms.filter(function(m){return m.month===period;});
-  var t=totals(sel);
-  var cats=ms.map(function(m){return mlabel(m.month).replace(" "," ");});
-  var camps=campaigns(allRows()).filter(function(c){
-      return c.revenue&&(period==="all"||c.month===period);})
-      .sort(function(a,b){return b.revenue-a.revenue;}).slice(0,8);
-  var last=ms[ms.length-1];
-  var spark=function(f){return period==="all"?ms.map(f):sel.map(f);};
+/* ====================== leadership: dates ====================== */
+var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function dstr(t){var d=new Date(t);return d.getUTCFullYear()+"-"+("0"+(d.getUTCMonth()+1)).slice(-2)
+  +"-"+("0"+d.getUTCDate()).slice(-2);}
+function dayt(iso){var p=String(iso||"").slice(0,10).split("-");
+  if(p.length!==3)return null;var t=Date.UTC(+p[0],+p[1]-1,+p[2]);return isFinite(t)?t:null;}
+function addDays(iso,k){var t=dayt(iso);return t===null?iso:dstr(t+k*86400000);}
+function spanDays(a,b){var x=dayt(a),y=dayt(b);
+  return (x===null||y===null)?0:Math.round((y-x)/86400000)+1;}
+function monthStart(m){return m+"-01";}
+function monthEnd(m){var p=String(m).split("-");return dstr(Date.UTC(+p[0],+p[1],1)-86400000);}
+function dim(m){return +monthEnd(m).slice(8,10);}
+function dshort(iso){return +iso.slice(8,10)+" "+MON[+iso.slice(5,7)-1];}
+function dlong(iso){return +iso.slice(8,10)+" "+MON[+iso.slice(5,7)-1]+" "+iso.slice(0,4);}
+function dataMonths(){var s={};allRows().forEach(function(r){var m=mk(r.date);if(m)s[m]=1;});
+  return Object.keys(s).sort();}
+var MINFO=null;
+function monthInfo(){
+  if(MINFO)return MINFO;
+  var o={};
+  allRows().forEach(function(r){
+    var m=mk(r.date),d=String(r.date||"").slice(0,10);
+    if(!m||d.length!==10)return;
+    var e=o[m]||(o[m]={d1:d,d2:d,delivered:0});
+    if(d<e.d1)e.d1=d;if(d>e.d2)e.d2=d;
+    var v=n(r.delivered);if(v!==null)e.delivered+=v;
+  });
+  MINFO=o;return o;
+}
+function dataSpan(){var lo=null,hi=null;
+  allRows().forEach(function(r){var d=String(r.date||"").slice(0,10);
+    if(d.length!==10)return;if(lo===null||d<lo)lo=d;if(hi===null||d>hi)hi=d;});
+  return {lo:lo,hi:hi};}
 
-  var h=[];
-  h.push('<div class="lead-head"><h1>What WhatsApp returned</h1>'
-    +'<div class="period">'+esc(mlabel(ms[0].month))+' – '+esc(mlabel(last.month))
-    +'  ·  '+cnt(totals(ms).campaigns)+' campaigns tracked</div></div>');
+/* ====================== leadership: period ====================== */
+var RANGES=[{k:"all",label:"All time"},{k:"y",label:"1 year",days:365},
+  {k:"h",label:"6 months",days:182},{k:"q",label:"Quarter",days:91},
+  {k:"m",label:"30 days",days:30},{k:"w",label:"7 days",days:7},{k:"d",label:"Last day",days:1}];
+var RG={k:"all",month:"",from:"",to:""};
+function rangeDays(k){for(var i=0;i<RANGES.length;i++)if(RANGES[i].k===k)return RANGES[i].days||0;return 0;}
+function resolve(rg){
+  var sp=dataSpan();
+  if(!sp.hi)return {from:"9999-01-01",to:"9999-12-31",label:"No data",note:""};
+  if(rg.k==="all")return {from:sp.lo,to:sp.hi,label:"All time",
+    note:dlong(sp.lo)+" to "+dlong(sp.hi)};
+  if(rg.k==="month"){
+    var m=rg.month||mk(sp.hi);
+    return {from:monthStart(m),to:monthEnd(m),label:mlabel(m),note:"The whole of "+mlabel(m)};}
+  if(rg.k==="custom"){
+    var f=rg.from||sp.lo,t=rg.to||sp.hi;
+    if(f>t){var x=f;f=t;t=x;}
+    return {from:f,to:t,label:dshort(f)+" to "+dshort(t),
+      note:spanDays(f,t)+" days, "+dlong(f)+" to "+dlong(t)};}
+  var d=rangeDays(rg.k)||1, from=addDays(sp.hi,-(d-1));
+  if(from<sp.lo)from=sp.lo;
+  var lab=RANGES.filter(function(r){return r.k===rg.k;})[0];
+  return {from:from,to:sp.hi,label:lab?lab.label:"All time",
+    note:(d===1?"":"The "+d+" days to ")+dlong(sp.hi)};
+}
 
-  h.push('<div class="pick" role="group" aria-label="Period">'
-    +'<button class="chip'+(period==="all"?" on":"")+'" data-p="all">All time</button>'
-    +ms.map(function(m){return '<button class="chip'+(period===m.month?" on":"")+'" data-p="'+m.month+'">'
-      +esc(mlabel(m.month))+'</button>';}).join("")+'</div>');
+/* ====================== leadership: aggregate ====================== */
+var SUMF=["targeted","sent","delivered","read","clicks","unique","conversions","revenue"];
+function agg(from,to,skipBill){
+  var rows=allRows().filter(function(r){var d=String(r.date||"").slice(0,10);
+    return d.length===10&&d>=from&&d<=to;});
+  var o={from:from,to:to,nrows:rows.length,spend:0,mktSpend:0,utilSpend:0,mktMsgs:0,utilMsgs:0,byMonth:{}};
+  SUMF.forEach(function(f){o[f]=0;});
+  rows.forEach(function(r){
+    var c=cost(r),cat=(r.category||"").trim().toLowerCase(),d=n(r.delivered);
+    if(d!==null){var mm=mk(r.date);o.byMonth[mm]=(o.byMonth[mm]||0)+d;}
+    if(c!==null){o.spend+=c;
+      if(cat==="marketing")o.mktSpend+=c;else if(cat==="utility")o.utilSpend+=c;}
+    if(d!==null){if(cat==="marketing")o.mktMsgs+=d;else if(cat==="utility")o.utilMsgs+=d;}
+    SUMF.forEach(function(f){var v=n(r[f]);if(v!==null)o[f]+=v;});
+  });
+  o.camps=campaigns(rows);
+  o.campaigns=o.camps.length;
+  var fee=0,MI=monthInfo();
+  dataMonths().forEach(function(m){
+    var ms=monthStart(m),me=monthEnd(m),e=MI[m]||{d1:ms,d2:me,delivered:0};
+    if(me<from||ms>to)return;
+    var f=n((S.inv[m]||{}).platformFee);if(f===null)f=S.cfg.platformFee;
+    /* the fee is charged by the month, so a window that holds the whole month's
+       sending carries the whole fee. A window that cuts a month pays its share. */
+    if(from<=e.d1&&to>=e.d2){fee+=f;return;}
+    var share;
+    if(e.delivered>0)share=(o.byMonth[m]||0)/e.delivered;
+    else{var a=ms>from?ms:from,b=me<to?me:to;share=spanDays(a,b)/dim(m);}
+    fee+=f*Math.max(0,Math.min(1,share));
+  });
+  o.fee=fee;
+  o.gst=(o.spend+o.fee)*S.cfg.gstRate;
+  o.bill=o.spend+o.fee+o.gst;
+  o.feeGst=o.fee+o.gst;
+  o.roi=o.bill>0?o.revenue/o.bill:null;
+  o.cpc=o.clicks>0?o.mktSpend/o.clicks:null;
+  o.costPerConv=o.conversions>0?o.bill/o.conversions:null;
+  o.aov=o.conversions>0?o.revenue/o.conversions:null;
+  o.deliveryRate=o.sent>0?o.delivered/o.sent:null;
+  o.readRate=o.delivered>0?o.read/o.delivered:null;
+  o.clickRate=o.read>0?o.clicks/o.read:null;
+  o.convRate=o.clicks>0?o.conversions/o.clicks:null;
+  o.costPerMsg=o.delivered>0?o.bill/o.delivered:null;
+  /* what Gupshup billed for the months that sit wholly inside the period */
+  var billed=null,oursB=0,nb=0;
+  if(!skipBill)dataMonths().forEach(function(m){
+    if(monthStart(m)<from||monthEnd(m)>to)return;
+    var t=n((S.inv[m]||{}).total);if(t===null)return;
+    billed=(billed||0)+t;nb++;
+    oursB+=agg(monthStart(m),monthEnd(m),true).bill;
+  });
+  o.billed=billed;o.oursBilled=oursB;o.nBilled=nb;
+  o.gap=billed===null?null:oursB-billed;
+  o.gapPc=(billed===null||billed===0)?null:(oursB-billed)/billed;
+  return o;
+}
+var AGGCACHE={};
+function resetCache(){AGGCACHE={};MINFO=null;}
+function aggc(from,to){
+  if(!from||!to)return agg("9999-01-01","9999-12-31");
+  var k=from+"~"+to;
+  if(!AGGCACHE[k])AGGCACHE[k]=agg(from,to);
+  return AGGCACHE[k];
+}
+function buckets(from,to){
+  monthInfo();
+  var sp=spanDays(from,to),out=[],d,s,e;
+  if(sp<=1)return [{label:dshort(from),from:from,to:from,a:aggc(from,from)}];
+  if(sp<=18){
+    for(d=from;d<=to;d=addDays(d,1))out.push({label:dshort(d),from:d,to:d});
+  }else if(sp<=56){
+    s=from;
+    while(s<=to){e=addDays(s,6);if(e>to)e=to;
+      out.push({label:dshort(s),from:s,to:e});s=addDays(e,1);}
+  }else{
+    dataMonths().forEach(function(m){
+      var ms=monthStart(m),me=monthEnd(m);
+      if(me<from||ms>to)return;
+      out.push({label:mlabel(m),month:m,from:ms>from?ms:from,to:me<to?me:to});
+    });
+  }
+  out.forEach(function(b){b.a=aggc(b.from,b.to);});
+  return out.filter(function(b){return b.a.nrows>0;});
+}
+function prevOf(from,to){
+  var sp=spanDays(from,to)||1,sd=dataSpan();
+  var pt=addDays(from,-1),pf=addDays(pt,-(sp-1));
+  if(!sd.lo||pt<sd.lo)return null;
+  if(pf<sd.lo)pf=sd.lo;
+  var a=aggc(pf,pt);
+  return a.nrows>0?a:null;
+}
 
-  h.push('<div class="kpis">');
-  h.push('<div class="kpi hero"><div class="cap">Return on investment</div><div class="fig">'
-    +(t.roi===null?"—":Math.round(t.roi*100).toLocaleString("en-IN")+"%")+'</div>'
-    +'<div class="sub">'+cr(t.revenue)+' back on '+cr(t.bill)+' of total cost</div>'
-    +sparkline(spark(function(m){return m.roi||0;}),"var(--s1)")+'</div>');
-  h.push('<div class="kpi"><div class="cap">Revenue attributed</div><div class="fig">'+cr(t.revenue)+'</div>'
-    +'<div class="sub">'+cnt(t.conversions)+' conversions · '+inr(t.costPerConv)+' each</div>'
-    +sparkline(spark(function(m){return m.revenue;}),"var(--s2)")+'</div>');
-  h.push('<div class="kpi"><div class="cap">Total cost</div><div class="fig">'+cr(t.bill)+'</div>'
-    +'<div class="sub">'+inr(t.spend)+' messages + '+inr(t.fee)+' platform fee + '+inr(t.gst)+' GST</div>'
-    +sparkline(spark(function(m){return m.bill;}),"var(--s3)")+'</div>');
-  h.push('<div class="kpi"><div class="cap">Conversions</div><div class="fig">'+cnt(t.conversions)+'</div>'
-    +'<div class="sub">from '+cnt(t.clicks)+' clicks on '+cnt(t.delivered)+' messages</div>'
-    +sparkline(spark(function(m){return m.conversions;}),"var(--s2)")+'</div>');
-  h.push('<div class="kpi"><div class="cap">Cost per click</div><div class="fig">'+inr(t.cpc,2)+'</div>'
-    +'<div class="sub">Meta '+inr(S.cfg.metaCPC)+' · Google '+inr(S.cfg.googleCPC)+'</div>'
-    +sparkline(spark(function(m){return m.cpc||0;}),"var(--s1)")+'</div>');
-  h.push('</div>');
-  if(period==="all"&&ms.length&&ms[0].month==="2026-06")
-    h.push('<p class="hint" style="margin:-8px 0 16px">Tracking started in July. June holds a handful of '
-      +'campaigns that were logged before conversions were being attributed, so its spend is real but its '
-      +'revenue reads zero. Pick a month above to look at any period on its own.</p>');
+/* ====================== leadership: metrics ====================== */
+function roiPill(v){
+  if(v===null||!isFinite(v))return '<span class="pill flat">&mdash;</span>';
+  return '<span class="pill '+(v>=1?"up":"warn")+'">'+Math.round(v*100).toLocaleString("en-IN")+'%</span>';
+}
+function pcFig(v){return v===null||!isFinite(v)?"—":Math.round(v).toLocaleString("en-IN")+"%";}
+function KIND(kind){
+  if(kind==="money")return {axis:cr,label:cr,tip:function(v){return inr(v,2);}};
+  if(kind==="money2")return {axis:function(v){return inr(v);},label:function(v){return inr(v,2);},
+    tip:function(v){return inr(v,2);}};
+  if(kind==="count")return {axis:function(v){return cnt(v);},label:cnt,tip:cnt};
+  if(kind==="pct")return {axis:pcFig,label:pcFig,tip:function(v){return v.toFixed(1)+"%";}};
+  return {axis:function(v){return v.toFixed(0)+"%";},label:function(v){return v.toFixed(1)+"%";},
+    tip:function(v){return v.toFixed(2)+"%";}};
+}
+var METRICS=[
+{k:"roi",cap:"Return on investment",kind:"pct",color:"var(--s1)",hero:true,cols:"roi",
+ val:function(a){return a.roi===null?null:a.roi*100;},
+ big:function(a){return a.roi===null?"—":Math.round(a.roi*100).toLocaleString("en-IN")+"%";},
+ sub:function(a){return cr(a.revenue)+" back on "+cr(a.bill)+" of cost";},
+ blurb:"Revenue credited to WhatsApp divided by everything the channel cost in the period: messages at the tracked rates, the Gupshup platform fee, and GST.",
+ extra:function(a,bks){return chartCard("Cost against revenue",
+   "The full cost of each period beside every rupee that came back.",
+   legend2("Total cost","var(--s3)","Revenue","var(--s2)")+
+   barChart({title:"Cost against revenue",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(260),
+     labels:bks.length<=8,
+     series:[{name:"Total cost",color:"var(--s3)",values:bks.map(function(b){return b.a.bill;})},
+             {name:"Revenue",color:"var(--s2)",values:bks.map(function(b){return b.a.revenue;})}],
+     fmtAxis:cr,fmtLabel:cr,fmtTip:inr}))
+   +campTable(a,"roi");}},
 
-  h.push('<div class="grid">');
+{k:"revenue",cap:"Revenue attributed",kind:"money",color:"var(--s2)",cols:"roi",
+ val:function(a){return a.revenue;},big:function(a){return cr(a.revenue);},
+ sub:function(a){return cnt(a.conversions)+" conversions · "+inr(a.aov)+" average order";},
+ blurb:"Purchases matched back to the people a campaign was sent to, inside the attribution window, credited once each.",
+ extra:function(a,bks){return campRevChart(a)+campTable(a,"revenue");}},
 
-  h.push('<div class="card wide"><h3>Cost against revenue</h3>'
-    +'<p class="note">The full monthly cost, messages plus platform fee plus GST, beside every rupee that came back.</p>'
-    +'<ul class="legend"><li><i class="swatch" style="background:var(--s3)"></i>Total cost</li>'
-    +'<li><i class="swatch" style="background:var(--s2)"></i>Revenue attributed</li></ul>'
-    +barChart({title:"Cost against revenue",cats:cats,width:900,height:250,
-      series:[{name:"Total cost",color:"var(--s3)",values:ms.map(function(m){return m.bill;})},
-              {name:"Revenue",color:"var(--s2)",values:ms.map(function(m){return m.revenue;})}],
-      fmtAxis:cr,fmtLabel:cr,fmtTip:inr})+'</div>');
+{k:"conversions",cap:"Conversions",kind:"count",color:"var(--s1)",cols:"conv",
+ val:function(a){return a.conversions;},big:function(a){return cnt(a.conversions);},
+ sub:function(a){return "from "+cnt(a.clicks)+" clicks · "+inr(a.costPerConv)+" each";},
+ blurb:"One conversion is one purchase by somebody who was on a campaign list, bought inside the window, and has not already been credited to an earlier campaign.",
+ extra:function(a,bks){return chartCard("Cost per conversion",
+   "What one conversion cost us, all in.",
+   barChart({title:"Cost per conversion",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(230),
+     labels:bks.length<=8,
+     series:[{name:"Cost per conversion",color:"var(--s3)",
+       values:bks.map(function(b){return b.a.costPerConv;})}],
+     fmtAxis:function(v){return inr(v);},fmtLabel:function(v){return inr(v);},
+     fmtTip:function(v){return inr(v,2);}}))
+   +campTable(a,"conversions");}},
 
-  h.push('<div class="card"><h3>Return on investment</h3>'
-    +'<p class="note">Revenue attributed divided by what that month cost, as a percentage.</p>'
-    +barChart({title:"ROI by month",cats:cats,
-      series:[{name:"ROI",color:"var(--s1)",values:ms.map(function(m){return m.roi===null?null:m.roi*100;})}],
-      fmtAxis:function(v){return Math.round(v).toLocaleString("en-IN")+"%";},
-      fmtLabel:function(v){return Math.round(v).toLocaleString("en-IN")+"%";},
-      fmtTip:function(v){return v.toFixed(1)+"%";}})+'</div>');
+{k:"bill",cap:"Total cost",kind:"money",color:"var(--s3)",cols:"cost",
+ val:function(a){return a.bill;},big:function(a){return cr(a.bill);},
+ sub:function(a){return inr(a.spend)+" messages + "+inr(a.fee)+" fee + "+inr(a.gst)+" GST";},
+ blurb:"Not the invoice. This is our own campaign log priced at the tracked rates, plus the Gupshup platform fee, plus GST. The invoice is then checked against it.",
+ extra:function(a,bks){return chartCard("How the cost is built",
+   "Messages, platform fee and GST, period by period.",
+   legend3("Messages","var(--s1)","Platform fee","var(--s2)","GST","var(--s3)")+
+   barChart({title:"Cost build-up",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(250),
+     labels:false,
+     series:[{name:"Messages",color:"var(--s1)",values:bks.map(function(b){return b.a.spend;})},
+             {name:"Platform fee",color:"var(--s2)",values:bks.map(function(b){return b.a.fee;})},
+             {name:"GST",color:"var(--s3)",values:bks.map(function(b){return b.a.gst;})}],
+     fmtAxis:cr,fmtLabel:cr,fmtTip:inr}))
+   +reconBlock(a);}},
 
-  h.push('<div class="card"><h3>Conversions</h3>'
-    +'<p class="note">Purchases credited to a campaign in that month.</p>'
-    +barChart({title:"Conversions by month",cats:cats,
-      series:[{name:"Conversions",color:"var(--s2)",values:ms.map(function(m){return m.conversions;})}],
-      fmtAxis:function(v){return Math.round(v);},fmtLabel:cnt,fmtTip:cnt})+'</div>');
+{k:"spend",cap:"Message spend",kind:"money",color:"var(--s1)",cols:"msg",
+ val:function(a){return a.spend;},big:function(a){return cr(a.spend);},
+ sub:function(a){return cnt(a.mktMsgs)+" marketing · "+cnt(a.utilMsgs)+" utility delivered";},
+ blurb:"Messages delivered, priced at "+"the marketing and utility rates on the Rates tab. This is the only part of the bill that moves with volume.",
+ extra:function(a,bks){return chartCard("Marketing against utility",
+   "Marketing messages carry the heavy rate. Utility messages are close to free.",
+   legend2("Marketing","var(--s1)","Utility","var(--s2)")+
+   barChart({title:"Marketing against utility",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(240),
+     labels:false,
+     series:[{name:"Marketing",color:"var(--s1)",values:bks.map(function(b){return b.a.mktSpend;})},
+             {name:"Utility",color:"var(--s2)",values:bks.map(function(b){return b.a.utilSpend;})}],
+     fmtAxis:cr,fmtLabel:cr,fmtTip:function(v){return inr(v,2);}}))
+   +rateBlock(a);}},
 
-  h.push('<div class="card"><h3>Cost per click against the market</h3>'
-    +'<p class="note">Our blended cost per click, with the Meta and Google benchmarks drawn across.</p>'
-    +'<ul class="legend"><li><i class="swatch" style="background:var(--s1)"></i>WhatsApp</li>'
-    +'<li><i class="swatch line" style="background:var(--s2)"></i>Meta '+inr(S.cfg.metaCPC)+'</li>'
-    +'<li><i class="swatch line" style="background:var(--s3)"></i>Google '+inr(S.cfg.googleCPC)+'</li></ul>'
-    +barChart({title:"Cost per click",cats:cats,
-      series:[{name:"WhatsApp",color:"var(--s1)",values:ms.map(function(m){return m.cpc;})}],
-      rules:[{value:S.cfg.metaCPC,color:"var(--s2)",label:"Meta"},
-             {value:S.cfg.googleCPC,color:"var(--s3)",label:"Google"}],
-      fmtAxis:function(v){return inr(v);},fmtLabel:function(v){return inr(v,2);},
-      fmtTip:function(v){return inr(v,2)+" per click";}})+'</div>');
+{k:"feeGst",cap:"Fee and GST",kind:"money",color:"var(--s2)",cols:"cost",
+ val:function(a){return a.feeGst;},big:function(a){return cr(a.feeGst);},
+ sub:function(a){return inr(a.fee)+" platform fee, "+inr(a.gst)+" GST";},
+ blurb:"The fixed side of the bill. The platform fee is the same every month whatever we send, so the more we send the less each message costs.",
+ extra:function(a,bks){return chartCard("The fixed side",
+   "Platform fee and GST, period by period.",
+   legend2("Platform fee","var(--s2)","GST","var(--s3)")+
+   barChart({title:"Fee and GST",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(230),
+     labels:false,
+     series:[{name:"Platform fee",color:"var(--s2)",values:bks.map(function(b){return b.a.fee;})},
+             {name:"GST",color:"var(--s3)",values:bks.map(function(b){return b.a.gst;})}],
+     fmtAxis:cr,fmtLabel:cr,fmtTip:inr}))
+   +feeNote(a,bks);}},
 
-  var rchart=reconRows().filter(function(r){return r.billed!==null;});
-  if(rchart.length)
-    h.push('<div class="card"><h3>Our figure against the bill</h3>'
-      +'<p class="note">What our message log says the month cost, beside what Gupshup charged.</p>'
-      +'<ul class="legend"><li><i class="swatch" style="background:var(--s1)"></i>Our figure</li>'
-      +'<li><i class="swatch" style="background:var(--s3)"></i>Gupshup billed</li></ul>'
-      +barChart({title:"Our figure against the bill",
-        cats:rchart.map(function(r){return mlabel(r.month).replace(" "," ");}),
-        series:[{name:"Ours",color:"var(--s1)",values:rchart.map(function(r){return r.ours;})},
-                {name:"Billed",color:"var(--s3)",values:rchart.map(function(r){return r.billed;})}],
-        fmtAxis:cr,fmtLabel:cr,fmtTip:function(v){return inr(v,2);}})+'</div>');
+{k:"cpc",cap:"Cost per click",kind:"money2",color:"var(--s1)",cols:"click",
+ val:function(a){return a.cpc;},big:function(a){return inr(a.cpc,2);},
+ sub:function(){return "Meta "+inr(S.cfg.metaCPC)+" · Google "+inr(S.cfg.googleCPC);},
+ blurb:"Marketing message spend divided by clicks, which is how Meta and Google quote their own numbers, so the three are comparable.",
+ extra:function(a,bks){return chartCard("Against the market",
+   "Our cost per click with the Meta and Google benchmarks drawn across.",
+   '<ul class="legend"><li><i class="swatch" style="background:var(--s1)"></i>WhatsApp</li>'
+   +'<li><i class="swatch line" style="background:var(--s2)"></i>Meta '+inr(S.cfg.metaCPC)+'</li>'
+   +'<li><i class="swatch line" style="background:var(--s3)"></i>Google '+inr(S.cfg.googleCPC)+'</li></ul>'+
+   barChart({title:"Cost per click",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(250),
+     labels:bks.length<=10,
+     series:[{name:"WhatsApp",color:"var(--s1)",values:bks.map(function(b){return b.a.cpc;})}],
+     rules:[{value:S.cfg.metaCPC,color:"var(--s2)",label:"Meta"},
+            {value:S.cfg.googleCPC,color:"var(--s3)",label:"Google"}],
+     fmtAxis:function(v){return inr(v);},fmtLabel:function(v){return inr(v,2);},
+     fmtTip:function(v){return inr(v,2)+" per click";}}))
+   +savedBlock(a);}},
 
-  if(camps.length)
-    h.push('<div class="card"><h3>Where the revenue came from</h3>'
-      +'<p class="note">Top campaigns by revenue attributed.</p>'
-      +hbarChart({title:"Top campaigns",rows:camps.map(function(c){
-        return {label:c.name,value:c.revenue,color:"var(--s1)"};}),
-        fmtLabel:cr,fmtTip:inr})+'</div>');
+{k:"costPerConv",cap:"Cost per conversion",kind:"money2",color:"var(--s3)",cols:"conv",
+ val:function(a){return a.costPerConv;},big:function(a){return inr(a.costPerConv);},
+ sub:function(a){return "against "+inr(a.aov)+" of average order";},
+ blurb:"The whole channel cost divided by conversions. The number to set against what a course actually sells for.",
+ extra:function(a,bks){return chartCard("Cost per conversion against order value",
+   "What we pay to win a sale, beside what that sale is worth.",
+   legend2("Cost per conversion","var(--s3)","Average order","var(--s2)")+
+   barChart({title:"Cost against order value",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(250),
+     labels:false,
+     series:[{name:"Cost per conversion",color:"var(--s3)",
+       values:bks.map(function(b){return b.a.costPerConv;})},
+             {name:"Average order",color:"var(--s2)",values:bks.map(function(b){return b.a.aov;})}],
+     fmtAxis:cr,fmtLabel:cr,fmtTip:inr}))
+   +campTable(a,"conversions");}},
 
-  h.push('</div>');
+{k:"campaigns",cap:"Campaigns run",kind:"count",color:"var(--s2)",cols:"camp",
+ val:function(a){return a.campaigns;},big:function(a){return cnt(a.campaigns);},
+ sub:function(a){return cnt(a.sent)+" messages sent in all";},
+ blurb:"A campaign is one named send, however many cohorts it went to. Cohort level detail sits on the Campaigns tab.",
+ extra:function(a,bks){return campTable(a,"revenue");}},
 
-  /* ---- invoice reconciliation ---- */
-  var rr=reconRows(), checked=rr.filter(function(r){return r.billed!==null;});
-  h.push('<div class="card wide" style="margin-top:14px"><h3>Does this tie to the Gupshup bill?</h3>'
-   +'<p class="note">What our own message log says the month should cost, set against what Gupshup actually billed. '
-   +'Message cost plus the platform fee plus GST at '+pc(S.cfg.gstRate,0)+'.</p>'
-   +'<div class="scroll"><table><thead><tr><th>Month</th><th>Messages</th><th>Platform fee</th>'
-   +'<th>GST</th><th>Our figure</th><th>Gupshup billed</th><th>Difference</th><th>Source</th></tr></thead><tbody>');
+{k:"delivered",cap:"Messages delivered",kind:"count",color:"var(--s1)",cols:"eng",
+ val:function(a){return a.delivered;},big:function(a){return cnt(a.delivered);},
+ sub:function(a){return pc(a.deliveryRate)+" of everything sent landed";},
+ blurb:"Delivered messages are what we are billed for, so this is the volume behind every cost figure.",
+ extra:function(a,bks){return chartCard("The funnel, period by period",
+   "Sent, delivered, read, clicked.",
+   legend3("Delivered","var(--s1)","Read","var(--s2)","Clicks","var(--s3)")+
+   barChart({title:"Funnel",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(250),labels:false,
+     series:[{name:"Delivered",color:"var(--s1)",values:bks.map(function(b){return b.a.delivered;})},
+             {name:"Read",color:"var(--s2)",values:bks.map(function(b){return b.a.read;})},
+             {name:"Clicks",color:"var(--s3)",values:bks.map(function(b){return b.a.clicks;})}],
+     fmtAxis:function(v){return cnt(v);},fmtLabel:cnt,fmtTip:cnt}));}},
+
+{k:"clickRate",cap:"Click rate",kind:"rate",color:"var(--s2)",cols:"eng",
+ val:function(a){return a.clickRate===null?null:a.clickRate*100;},
+ big:function(a){return pc(a.clickRate);},
+ sub:function(a){return cnt(a.clicks)+" clicks on "+cnt(a.read)+" messages read";},
+ blurb:"Clicks as a share of messages read, which is the fairest denominator: a message nobody opened was never a chance to click.",
+ extra:function(a,bks){return chartCard("Read rate and click rate",
+   "How far down the funnel each period got.",
+   legend2("Read rate","var(--s1)","Click rate","var(--s2)")+
+   barChart({title:"Rates",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(240),labels:false,
+     series:[{name:"Read rate",color:"var(--s1)",
+       values:bks.map(function(b){return b.a.readRate===null?null:b.a.readRate*100;})},
+             {name:"Click rate",color:"var(--s2)",
+       values:bks.map(function(b){return b.a.clickRate===null?null:b.a.clickRate*100;})}],
+     fmtAxis:function(v){return v.toFixed(0)+"%";},fmtLabel:function(v){return v.toFixed(1)+"%";},
+     fmtTip:function(v){return v.toFixed(2)+"%";}}));}},
+
+{k:"billcheck",cap:"Invoice match",kind:"pct",color:"var(--s3)",cols:"cost",spark:false,
+ val:function(a){return a.gapPc===null?null:a.gapPc*100;},
+ big:function(a){return a.gapPc===null?"—":(a.gapPc>0?"+":"")+(a.gapPc*100).toFixed(1)+"%";},
+ sub:function(a){return a.billed===null?"No invoice in this period"
+   :inr(a.oursBilled)+" ours vs "+inr(a.billed)+" billed";},
+ blurb:"Our own figure set against what Gupshup actually charged, for the months that sit wholly inside the period.",
+ extra:function(a,bks){return billChart()+reconBlock(a)+fairBlock(a);}}
+];
+function metricOf(k){for(var i=0;i<METRICS.length;i++)if(METRICS[i].k===k)return METRICS[i];return METRICS[0];}
+
+/* ====================== leadership: blocks ====================== */
+function legend2(a,ca,b,cb){return '<ul class="legend"><li><i class="swatch" style="background:'+ca+'"></i>'
+  +esc(a)+'</li><li><i class="swatch" style="background:'+cb+'"></i>'+esc(b)+'</li></ul>';}
+function legend3(a,ca,b,cb,c,cc){return '<ul class="legend"><li><i class="swatch" style="background:'+ca
+  +'"></i>'+esc(a)+'</li><li><i class="swatch" style="background:'+cb+'"></i>'+esc(b)
+  +'</li><li><i class="swatch" style="background:'+cc+'"></i>'+esc(c)+'</li></ul>';}
+function chartCard(title,note,body){
+  return '<div class="card"><h3>'+esc(title)+'</h3><p class="note">'+esc(note)+'</p>'+body+'</div>';}
+
+var COLSETS={
+ roi:[["Total cost",function(a){return inr(a.bill);}],["Revenue",function(a){return inr(a.revenue);}],
+      ["Conversions",function(a){return cnt(a.conversions);}],["ROI",function(a){return roiPill(a.roi);}]],
+ conv:[["Conversions",function(a){return cnt(a.conversions);}],
+      ["Revenue",function(a){return inr(a.revenue);}],
+      ["Cost per conversion",function(a){return inr(a.costPerConv);}],
+      ["Average order",function(a){return inr(a.aov);}],["ROI",function(a){return roiPill(a.roi);}]],
+ cost:[["Messages",function(a){return inr(a.spend,2);}],["Platform fee",function(a){return inr(a.fee);}],
+      ["GST",function(a){return inr(a.gst,2);}],["Total cost",function(a){return "<b>"+inr(a.bill,2)+"</b>";}],
+      ["Revenue",function(a){return inr(a.revenue);}],["ROI",function(a){return roiPill(a.roi);}]],
+ msg:[["Marketing ₹",function(a){return inr(a.mktSpend,2);}],
+      ["Utility ₹",function(a){return inr(a.utilSpend,2);}],
+      ["Delivered",function(a){return cnt(a.delivered);}],
+      ["Per message",function(a){return inr(a.delivered>0?a.spend/a.delivered:null,3);}],
+      ["Total cost",function(a){return inr(a.bill);}]],
+ click:[["Delivered",function(a){return cnt(a.delivered);}],["Read",function(a){return cnt(a.read);}],
+      ["Clicks",function(a){return cnt(a.clicks);}],["Click rate",function(a){return pc(a.clickRate);}],
+      ["Marketing ₹",function(a){return inr(a.mktSpend);}],["CPC",function(a){return inr(a.cpc,2);}]],
+ camp:[["Campaigns",function(a){return cnt(a.campaigns);}],["Delivered",function(a){return cnt(a.delivered);}],
+      ["Total cost",function(a){return inr(a.bill);}],["Revenue",function(a){return inr(a.revenue);}],
+      ["ROI",function(a){return roiPill(a.roi);}]],
+ eng:[["Sent",function(a){return cnt(a.sent);}],["Delivered",function(a){return cnt(a.delivered);}],
+      ["Delivered %",function(a){return pc(a.deliveryRate);}],["Read",function(a){return cnt(a.read);}],
+      ["Read %",function(a){return pc(a.readRate);}],["Clicks",function(a){return cnt(a.clicks);}],
+      ["Click %",function(a){return pc(a.clickRate);}]]
+};
+function bkTable(bks,set,total,title,note){
+  var cols=COLSETS[set]||COLSETS.roi;
+  var h=['<div class="card"><h3>'+esc(title)+'</h3><p class="note">'+esc(note)+'</p>'
+    +'<div class="scroll"><table><thead><tr><th>Period</th>'];
+  cols.forEach(function(c){h.push('<th>'+c[0]+'</th>');});
+  h.push('</tr></thead><tbody>');
+  bks.forEach(function(b){
+    h.push('<tr><td>'+esc(b.label)+'</td>');
+    cols.forEach(function(c){h.push('<td class="n">'+c[1](b.a)+'</td>');});
+    h.push('</tr>');
+  });
+  h.push('<tr class="tot"><td>Whole period</td>');
+  cols.forEach(function(c){h.push('<td class="n">'+c[1](total)+'</td>');});
+  h.push('</tr></tbody></table></div></div>');
+  return h.join("");
+}
+function campTable(a,by){
+  var cs=a.camps.filter(function(c){return c.revenue||c.conversions||c.spend;});
+  if(!cs.length)return "";
+  cs.sort(function(x,y){
+    if(by==="roi")return (y.revenue||0)/Math.max(y.spend,1)-(x.revenue||0)/Math.max(x.spend,1);
+    if(by==="conversions")return (y.conversions||0)-(x.conversions||0);
+    return (y.revenue||0)-(x.revenue||0);});
+  var h=['<div class="card"><h3>Campaign by campaign</h3>'
+   +'<p class="note">Every campaign inside the period. ROI here is measured on message cost alone, '
+   +'because the platform fee and GST belong to the month and not to any one send.</p>'
+   +'<div class="scroll"><table><thead><tr><th>Campaign</th><th>Sent</th><th>Message cost</th>'
+   +'<th>Clicks</th><th>Conversions</th><th>Revenue</th><th>ROI on message cost</th></tr></thead><tbody>'];
+  cs.forEach(function(c){
+    var r=(c.revenue!==null&&c.spend>0)?c.revenue/c.spend:null;
+    h.push('<tr><td>'+esc(c.name)+' <span class="status">'+esc(mlabel(c.month))+'</span></td>'
+      +'<td class="n">'+cnt(c.sent)+'</td><td class="n">'+inr(c.spend,2)+'</td>'
+      +'<td class="n">'+cnt(c.clicks)+'</td><td class="n">'+cnt(c.conversions)+'</td>'
+      +'<td class="n">'+(c.revenue===null?"—":inr(c.revenue))+'</td>'
+      +'<td class="n">'+roiPill(r)+'</td></tr>');
+  });
+  h.push('</tbody></table></div></div>');
+  return h.join("");
+}
+function campRevChart(a){
+  var cs=a.camps.filter(function(c){return c.revenue>0;})
+    .sort(function(x,y){return y.revenue-x.revenue;}).slice(0,10);
+  if(!cs.length)return "";
+  return chartCard("Where the revenue came from","The campaigns that carried the period.",
+    hbarChart({title:"Top campaigns",width:CW(),labelW:narrow()?118:210,
+      rows:cs.map(function(c){return {label:c.name,value:c.revenue,color:"var(--s1)"};}),
+      fmtLabel:cr,fmtTip:inr}));
+}
+function billChart(){
+  var rr=reconRows().filter(function(r){return r.billed!==null;});
+  if(!rr.length)return "";
+  return chartCard("Our figure against the bill",
+    "What our message log says the month cost, beside what Gupshup charged.",
+    legend2("Our figure","var(--s1)","Gupshup billed","var(--s3)")+
+    barChart({title:"Ours against billed",width:CW(),height:CH(250),
+      cats:rr.map(function(r){return mlabel(r.month);}),
+      series:[{name:"Ours",color:"var(--s1)",values:rr.map(function(r){return r.ours;})},
+              {name:"Billed",color:"var(--s3)",values:rr.map(function(r){return r.billed;})}],
+      fmtAxis:cr,fmtLabel:cr,fmtTip:function(v){return inr(v,2);}}));
+}
+function reconBlock(a){
+  var rr=reconRows().filter(function(r){return monthStart(r.month)>=a.from&&monthEnd(r.month)<=a.to;});
+  if(!rr.length)rr=reconRows();
+  var h=['<div class="card"><h3>Does this tie to the Gupshup bill?</h3>'
+   +'<p class="note">Our own message log priced at the tracked rates, plus the platform fee, plus GST at '
+   +pc(S.cfg.gstRate,0)+', set against the invoice.</p>'
+   +'<div class="scroll"><table><thead><tr><th>Month</th><th>Messages</th><th>Platform fee</th><th>GST</th>'
+   +'<th>Our figure</th><th>Gupshup billed</th><th>Difference</th><th>Source</th></tr></thead><tbody>'];
   rr.forEach(function(r){
     var st=r.gapPc===null?'<span class="pill flat">not billed yet</span>'
       :(Math.abs(r.gapPc)<=0.05?'<span class="pill up">'+pc(r.gapPc)+'</span>'
         :'<span class="pill warn">'+pc(r.gapPc)+'</span>');
-    h.push('<tr><td>'+esc(mlabel(r.month))+'</td><td class="n">'+inr(r.msgSpend,2)+'</td><td class="n">'
-      +inr(r.fee)+'</td><td class="n">'+inr(r.gst,2)+'</td><td class="n"><b>'+inr(r.ours,2)+'</b></td><td class="n">'
+    h.push('<tr><td>'+esc(mlabel(r.month))+'</td><td class="n">'+inr(r.msgSpend,2)+'</td>'
+      +'<td class="n">'+inr(r.fee)+'</td><td class="n">'+inr(r.gst,2)+'</td>'
+      +'<td class="n"><b>'+inr(r.ours,2)+'</b></td><td class="n">'
       +(r.billed===null?"—":inr(r.billed,2))+'</td><td class="n">'
-      +(r.gap===null?"—":inr(r.gap,2))+' '+st+'</td><td style="text-align:right">'
-      +esc(r.source)+(r.invoiceNo?' <span class="status">'+esc(r.invoiceNo)+'</span>':'')+'</td></tr>');
+      +(r.gap===null?"—":inr(r.gap,2))+' '+st+'</td>'
+      +'<td style="text-align:right">'+esc(r.source)
+      +(r.invoiceNo?' <span class="status">'+esc(r.invoiceNo)+'</span>':'')+'</td></tr>');
   });
   h.push('</tbody></table></div>');
-  if(checked.length){
-    var w=0,b=0;checked.forEach(function(r){w+=r.ours;b+=r.billed;});
-    h.push('<p class="hint"><b>Where we land:</b> across the '+checked.length+' month'
-      +(checked.length>1?'s':'')+' we can check, our log accounts for '+inr(w)+' of the '+inr(b)
-      +' billed, a difference of '+pc((w-b)/b)+'. Our figure sits slightly under the bill every month and '
-      +'that is expected: the invoice covers every Gupshup app on the account, while the campaign log covers '
-      +'only the numbers campaigns are sent from. The automated and transactional traffic on the other apps is '
-      +'real cost we do not raise campaigns for.</p>');
+  var ck=rr.filter(function(r){return r.billed!==null;});
+  if(ck.length){
+    var w=0,b=0;ck.forEach(function(r){w+=r.ours;b+=r.billed;});
+    h.push('<p class="hint"><b>Where we land:</b> across the '+ck.length+' month'+(ck.length>1?'s':'')
+      +' we can check, our log accounts for '+inr(w)+' of the '+inr(b)+' billed, a difference of '
+      +pc((w-b)/b)+'. Our figure sits a little under the bill every month, and that is expected: the '
+      +'invoice covers every Gupshup app on the account, while the campaign log covers only the numbers '
+      +'campaigns are sent from. The automated and transactional traffic on the other apps is real cost '
+      +'we do not raise campaigns for.</p>');
   }
   h.push('</div>');
-
-  /* ---- is the rate itself fair ---- */
-  var mktMsgs=0,utilMsgs=0;
-  allRows().forEach(function(r){
-    var d=n(r.delivered);if(d===null)return;
-    var c=(r.category||"").trim().toLowerCase();
-    if(c==="marketing")mktMsgs+=d;else if(c==="utility")utilMsgs+=d;});
-  h.push('<div class="card wide" style="margin-top:14px"><h3>Is the Gupshup cost reasonable?</h3>'
+  return h.join("");
+}
+function fairBlock(a){
+  return '<div class="card"><h3>Is the Gupshup cost reasonable?</h3>'
    +'<p class="note">Four tests, each one a number anyone can re-check.</p>'
-   +'<div class="scroll"><table><thead><tr><th>Test</th><th>What we pay</th><th>What it is measured against</th>'
-   +'<th>Verdict</th></tr></thead><tbody>'
+   +'<div class="scroll"><table><thead><tr><th>Test</th><th>What we pay</th>'
+   +'<th>What it is measured against</th><th>Verdict</th></tr></thead><tbody>'
    +'<tr><td>Rate per marketing message</td><td class="n">'+inr(S.cfg.marketingRate,4)+'</td>'
    +'<td style="text-align:right">Billed on the invoice as MMLITE Per Message</td>'
    +'<td style="text-align:right"><span class="pill up">matches the invoice</span></td></tr>'
    +'<tr><td>Rate per utility message</td><td class="n">'+inr(S.cfg.utilityRate,2)+'</td>'
    +'<td style="text-align:right">Billed utility line</td>'
    +'<td style="text-align:right"><span class="pill up">matches the invoice</span></td></tr>'
-   +'<tr><td>Cost per click</td><td class="n">'+inr(t.cpc,2)+'</td>'
+   +'<tr><td>Cost per click</td><td class="n">'+inr(a.cpc,2)+'</td>'
    +'<td style="text-align:right">Meta '+inr(S.cfg.metaCPC)+' &middot; Google '+inr(S.cfg.googleCPC)+'</td>'
-   +'<td style="text-align:right">'+(t.cpc===null?'<span class="pill flat">—</span>'
-      :(t.cpc<=S.cfg.googleCPC?'<span class="pill up">under Google</span>'
+   +'<td style="text-align:right">'+(a.cpc===null?'<span class="pill flat">&mdash;</span>'
+      :(a.cpc<=S.cfg.googleCPC?'<span class="pill up">under Google</span>'
         :'<span class="pill warn">above both</span>'))+'</td></tr>'
-   +'<tr><td>Cost per conversion, all in</td><td class="n">'+inr(t.costPerConv)+'</td>'
-   +'<td style="text-align:right">Average order '+inr(t.conversions?t.revenue/t.conversions:null)+'</td>'
-   +'<td style="text-align:right">'+(t.costPerConv===null?'<span class="pill flat">—</span>'
-      :'<span class="pill up">'+(t.revenue/t.bill).toFixed(1)+'x back</span>')+'</td></tr>'
+   +'<tr><td>Cost per conversion, all in</td><td class="n">'+inr(a.costPerConv)+'</td>'
+   +'<td style="text-align:right">Average order '+inr(a.aov)+'</td>'
+   +'<td style="text-align:right">'+(a.costPerConv===null?'<span class="pill flat">&mdash;</span>'
+      :'<span class="pill up">'+(a.revenue/a.bill).toFixed(1)+'x back</span>')+'</td></tr>'
    +'</tbody></table></div>'
-   +'<p class="hint">Volume behind it: '+cnt(mktMsgs)+' marketing and '+cnt(utilMsgs)
-   +' utility messages delivered, '+cnt(t.clicks)+' clicks, '+cnt(t.conversions)+' conversions. '
-   +'The platform fee is fixed at '+inr(S.cfg.platformFee)+' a month whatever the volume, so cost per '
-   +'message falls as we send more.</p></div>');
-
-  var tAll=totals(ms);
-  h.push('<div class="card wide" style="margin-top:14px"><h3>Month by month</h3>'
-    +'<p class="note">How each month\'s cost is built up, and what it returned. Total cost is what we '
-    +'actually pay: messages at the tracked rates, plus the platform fee, plus GST at '+pc(S.cfg.gstRate,0)+'.</p>'
-    +'<div class="scroll"><table>'
-    +'<thead><tr><th>Month</th><th>Campaigns</th><th>Delivered</th><th>Clicks</th><th>Messages ₹</th>'
-    +'<th>Platform fee</th><th>GST</th><th>Total cost</th><th>Conversions</th><th>Revenue</th>'
-    +'<th>ROI</th><th>CPC</th></tr></thead><tbody>');
-  function mrow(m,label,bold){
-    return '<tr'+(bold?' style="font-weight:600;background:var(--surface-2)"':'')+'><td>'+esc(label)
-      +'</td><td class="n">'+cnt(m.campaigns)+'</td><td class="n">'+cnt(m.delivered)+'</td><td class="n">'
-      +cnt(m.clicks)+'</td><td class="n">'+inr(m.spend,2)+'</td><td class="n">'+inr(m.fee)+'</td><td class="n">'
-      +inr(m.gst,2)+'</td><td class="n"><b>'+inr(m.bill,2)+'</b></td><td class="n">'+cnt(m.conversions)
-      +'</td><td class="n">'+inr(m.revenue)+'</td><td class="n">'
-      +(m.roi===null?'<span class="pill flat">—</span>':'<span class="pill '+(m.roi>1?"up":"flat")+'">'
-        +Math.round(m.roi*100).toLocaleString("en-IN")+'%</span>')
-      +'</td><td class="n">'+inr(m.cpc,2)+'</td></tr>';
-  }
-  ms.forEach(function(m){h.push(mrow(m,mlabel(m.month),false));});
-  h.push(mrow(tAll,"All months",true));
-  h.push('</tbody></table></div></div>');
-  el.innerHTML=h.join("");
-  el.querySelectorAll("[data-p]").forEach(function(b){
-    b.onclick=function(){period=b.getAttribute("data-p");
-      try{localStorage.setItem("cs:period",period);}catch(e){}
-      viewLead();};
-  });
-  wireTips(el);
+   +'<p class="hint">Volume behind it: '+cnt(a.mktMsgs)+' marketing and '+cnt(a.utilMsgs)
+   +' utility messages delivered, '+cnt(a.clicks)+' clicks, '+cnt(a.conversions)+' conversions. '
+   +'The platform fee is fixed at '+inr(S.cfg.platformFee)+' a month whatever the volume, so the cost per '
+   +'message falls as we send more.</p></div>';
 }
+function rateBlock(a){
+  return '<div class="card"><h3>What a message costs</h3><p class="note">The rates in force, and what they '
+   +'came to across the period.</p><div class="scroll"><table><thead><tr><th>Kind</th><th>Rate</th>'
+   +'<th>Delivered</th><th>Spend</th><th>Share of message cost</th></tr></thead><tbody>'
+   +'<tr><td>Marketing</td><td class="n">'+inr(S.cfg.marketingRate,4)+'</td><td class="n">'
+   +cnt(a.mktMsgs)+'</td><td class="n">'+inr(a.mktSpend,2)+'</td><td class="n">'
+   +pc(a.spend>0?a.mktSpend/a.spend:null)+'</td></tr>'
+   +'<tr><td>Utility</td><td class="n">'+inr(S.cfg.utilityRate,2)+'</td><td class="n">'
+   +cnt(a.utilMsgs)+'</td><td class="n">'+inr(a.utilSpend,2)+'</td><td class="n">'
+   +pc(a.spend>0?a.utilSpend/a.spend:null)+'</td></tr>'
+   +'<tr class="tot"><td>All messages</td><td class="n">&mdash;</td><td class="n">'+cnt(a.delivered)
+   +'</td><td class="n">'+inr(a.spend,2)+'</td><td class="n">100.0%</td></tr>'
+   +'</tbody></table></div><p class="hint">All in, including the platform fee and GST, one delivered '
+   +'message costs '+inr(a.costPerMsg,3)+'.</p></div>';
+}
+function feeNote(a,bks){
+  return '<div class="card"><h3>What the fixed cost does to the maths</h3>'
+   +'<p class="note">The platform fee does not move with volume, so it is the reason cost per message '
+   +'falls as we send more.</p><div class="scroll"><table><thead><tr><th>Period</th><th>Delivered</th>'
+   +'<th>Message cost</th><th>Fee and GST</th><th>Total</th><th>All in per message</th>'
+   +'</tr></thead><tbody>'
+   +bks.map(function(b){return '<tr><td>'+esc(b.label)+'</td><td class="n">'+cnt(b.a.delivered)
+     +'</td><td class="n">'+inr(b.a.spend,2)+'</td><td class="n">'+inr(b.a.feeGst,2)+'</td>'
+     +'<td class="n">'+inr(b.a.bill,2)+'</td><td class="n">'+inr(b.a.costPerMsg,3)+'</td></tr>';}).join("")
+   +'<tr class="tot"><td>Whole period</td><td class="n">'+cnt(a.delivered)+'</td><td class="n">'
+   +inr(a.spend,2)+'</td><td class="n">'+inr(a.feeGst,2)+'</td><td class="n">'+inr(a.bill,2)
+   +'</td><td class="n">'+inr(a.costPerMsg,3)+'</td></tr>'
+   +'</tbody></table></div><p class="hint">The fee is pro-rated by days when a period cuts a month in half, '
+   +'so a part month is never charged a whole fee.</p></div>';
+}
+function savedBlock(a){
+  if(a.cpc===null||!(a.clicks>0))return "";
+  var mv=S.cfg.metaCPC*a.clicks-a.mktSpend, gv=S.cfg.googleCPC*a.clicks-a.mktSpend;
+  return '<div class="card"><h3>What the same clicks would have cost elsewhere</h3>'
+   +'<p class="note">'+cnt(a.clicks)+' clicks, priced at each platform’s benchmark.</p>'
+   +'<div class="scroll"><table><thead><tr><th>Channel</th><th>Cost per click</th><th>Same clicks would cost</th>'
+   +'<th>Against WhatsApp</th></tr></thead><tbody>'
+   +'<tr><td>WhatsApp, actual</td><td class="n">'+inr(a.cpc,2)+'</td><td class="n">'+inr(a.mktSpend,2)
+   +'</td><td class="n">&mdash;</td></tr>'
+   +'<tr><td>Meta benchmark</td><td class="n">'+inr(S.cfg.metaCPC,2)+'</td><td class="n">'
+   +inr(S.cfg.metaCPC*a.clicks)+'</td><td class="n">'+(mv>=0?'<span class="pill up">'+inr(mv)
+   +' cheaper</span>':'<span class="pill warn">'+inr(-mv)+' dearer</span>')+'</td></tr>'
+   +'<tr><td>Google benchmark</td><td class="n">'+inr(S.cfg.googleCPC,2)+'</td><td class="n">'
+   +inr(S.cfg.googleCPC*a.clicks)+'</td><td class="n">'+(gv>=0?'<span class="pill up">'+inr(gv)
+   +' cheaper</span>':'<span class="pill warn">'+inr(-gv)+' dearer</span>')+'</td></tr>'
+   +'</tbody></table></div><p class="hint">Benchmarks are the figures set on the Rates tab. Change them '
+   +'there and this table follows.</p></div>';
+}
+
+/* charts are drawn in SVG units, so the viewBox has to shrink on a phone
+   or the axis labels scale down to nothing */
+function narrow(){return (window.innerWidth||1200)<780;}
+function CW(){return narrow()?420:900;}
+function CH(h){return narrow()?Math.round(h*0.92):h;}
+/* ====================== leadership: area chart ====================== */
+function areaChart(o){
+  var W=o.width||640,H=o.height||170,T=16,B=24,R=6;
+  var cats=o.cats||[],vals=o.values.map(function(v){return (v===null||!isFinite(v))?0:v;});
+  var mx=Math.max.apply(null,vals.concat([0])),top=niceMax(mx*1.12)||1;
+  var iw=W-R,ih=H-T-B,N=vals.length;
+  var px=function(i){return N<=1?iw/2:R/2+(i/(N-1))*(iw-R);};
+  var py=function(v){return T+ih-(top>0?(v/top)*ih:0);};
+  var id="g"+Math.random().toString(36).slice(2,8);
+  var s=['<svg class="chart trend" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'
+    +esc(o.title||"trend")+'">'];
+  s.push('<defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1">'
+    +'<stop offset="0%" stop-color="'+o.color+'" stop-opacity=".34"/>'
+    +'<stop offset="100%" stop-color="'+o.color+'" stop-opacity="0"/></linearGradient></defs>');
+  [0,.5,1].forEach(function(f){var y=T+ih-ih*f;
+    s.push('<line x1="0" x2="'+W+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)
+      +'" stroke="var(--line)" stroke-width="1" stroke-dasharray="'+(f?"3 5":"0")+'"/>');});
+  var d=vals.map(function(v,i){return (i?"L":"M")+px(i).toFixed(1)+" "+py(v).toFixed(1);}).join(" ");
+  if(N===1)d="M"+(px(0)-30).toFixed(1)+" "+py(vals[0]).toFixed(1)+" L"+(px(0)+30).toFixed(1)+" "+py(vals[0]).toFixed(1);
+  s.push('<path d="'+d+' L'+px(N-1).toFixed(1)+' '+(T+ih)+' L'+px(0).toFixed(1)+' '+(T+ih)
+    +' Z" fill="url(#'+id+')"/>');
+  s.push('<path d="'+d+'" fill="none" stroke="'+o.color+'" stroke-width="2.4" stroke-linejoin="round" '
+    +'stroke-linecap="round"/>');
+  vals.forEach(function(v,i){
+    s.push('<circle cx="'+px(i).toFixed(1)+'" cy="'+py(v).toFixed(1)+'" r="'+(i===N-1?4.2:3)
+      +'" fill="var(--surface)" stroke="'+o.color+'" stroke-width="2" data-t="'
+      +esc((cats[i]||"")+" · "+o.fmt(o.values[i]))+'"/>');
+  });
+  if(N>1){
+    var show=N<=7?vals.map(function(_,i){return i;})
+      :[0,Math.floor((N-1)/3),Math.floor(2*(N-1)/3),N-1];
+    show.forEach(function(i){
+      var an=i===0?"start":(i===N-1?"end":"middle"),x=i===0?2:(i===N-1?W-2:px(i));
+      s.push('<text x="'+(+x).toFixed(1)+'" y="'+(H-6)+'" text-anchor="'+an
+        +'" font-size="11" fill="var(--ink-3)">'+esc(cats[i]||"")+'</text>');});
+  }
+  s.push('</svg>');
+  return s.join("");
+}
+function deltaChip(m,cur,prev){
+  if(!prev)return '<span class="delta none">no earlier period to compare</span>';
+  var a=m.val(cur),b=m.val(prev);
+  if(a===null||b===null||!isFinite(a)||!isFinite(b)||b===0)
+    return '<span class="delta none">no comparison</span>';
+  var ch=(a-b)/Math.abs(b);
+  var good=(m.k==="bill"||m.k==="spend"||m.k==="feeGst"||m.k==="cpc"||m.k==="costPerConv")?ch<0:ch>0;
+  return '<span class="delta '+(Math.abs(ch)<.005?"flat":(good?"up":"down"))+'">'
+    +(ch>=0?"▲ ":"▼ ")+Math.abs(ch*100).toFixed(ch>1?0:1)+'% <i>vs the '
+    +(spanDays(prev.from,prev.to)===1?"day":spanDays(prev.from,prev.to)+" days")
+    +' before</i></span>';
+}
+
+/* ====================== leadership: the page ====================== */
+function rangeBar(rg,idp){
+  var ms=dataMonths();
+  var h=['<div class="rangebar"><span class="rb-lab">Period</span><div class="seg">'];
+  RANGES.forEach(function(r){
+    h.push('<button data-rk="'+r.k+'" aria-pressed="'+(rg.k===r.k?"true":"false")+'">'+esc(r.label)+'</button>');
+  });
+  h.push('<button data-rk="month" aria-pressed="'+(rg.k==="month"?"true":"false")+'">A month</button>');
+  h.push('<button data-rk="custom" aria-pressed="'+(rg.k==="custom"?"true":"false")+'">Custom</button>');
+  h.push('</div>');
+  if(rg.k==="month"){
+    h.push('<select class="rb-month">'+ms.map(function(m){
+      return '<option value="'+m+'"'+(m===(rg.month||ms[ms.length-1])?" selected":"")+'>'
+        +esc(mlabel(m))+'</option>';}).join("")+'</select>');
+  }
+  if(rg.k==="custom"){
+    var sp=dataSpan();
+    h.push('<span class="custom">from <input type="date" class="rb-from" value="'+esc(rg.from||sp.lo||"")
+      +'"> to <input type="date" class="rb-to" value="'+esc(rg.to||sp.hi||"")+'"></span>');
+  }
+  h.push('</div>');
+  return h.join("");
+}
+function bindRange(root,rg,after){
+  root.querySelectorAll("[data-rk]").forEach(function(b){
+    b.onclick=function(){
+      var k=b.getAttribute("data-rk");
+      rg.k=k;
+      if(k==="month"&&!rg.month){var ms=dataMonths();rg.month=ms[ms.length-1]||"";}
+      if(k==="custom"&&!rg.from){var sp=dataSpan();rg.from=sp.lo||"";rg.to=sp.hi||"";}
+      after();
+    };
+  });
+  var sel=root.querySelector(".rb-month");
+  if(sel)sel.onchange=function(){rg.month=sel.value;after();};
+  var f=root.querySelector(".rb-from"),t=root.querySelector(".rb-to");
+  if(f)f.onchange=function(){rg.from=f.value;after();};
+  if(t)t.onchange=function(){rg.to=t.value;after();};
+}
+function viewLead(){
+  resetCache();
+  var el=document.getElementById("v-lead"), sp=dataSpan();
+  if(!sp.hi){el.innerHTML='<div class="empty"><h2>No campaigns yet</h2><p>Add them on the Campaigns tab, '
+    +'or bring a spreadsheet in through Import.</p></div>';return;}
+  if(RG.k==="month"&&dataMonths().indexOf(RG.month)<0)RG.month=dataMonths().pop();
+  var R=resolve(RG), cur=aggc(R.from,R.to), bks=buckets(R.from,R.to), prev=prevOf(R.from,R.to);
+  var hero=metricOf("roi"), rest=METRICS.filter(function(m){return !m.hero;});
+  var cats=bks.map(function(b){return b.label;});
+
+  var h=['<div class="lead2">'];
+  h.push('<div class="l2head"><div><h1>What WhatsApp returned</h1>'
+    +'<p class="period">'+esc(R.note||R.label)+' · '+cnt(cur.campaigns)+' campaign'
+    +(cur.campaigns===1?"":"s")+' · '+cnt(cur.delivered)+' messages delivered</p></div></div>');
+  h.push(rangeBar(RG,"l"));
+
+  /* the one number leadership opens on */
+  h.push('<div class="hero" data-open="roi" role="button" tabindex="0" '
+    +'aria-label="Open return on investment">'
+    +'<div class="hero-l"><span class="cap">Return on investment · '+esc(R.label)+'</span>'
+    +'<div class="fig">'+hero.big(cur)+'</div>'
+    +'<p class="hero-sub">'+hero.sub(cur)+'</p>'
+    +deltaChip(hero,cur,prev)
+    +'<span class="go">See the trend, the months and the campaigns →</span></div>'
+    +'<div class="hero-r">'
+    +areaChart({title:"ROI trend",cats:cats,values:bks.map(function(b){return hero.val(b.a);}),
+      color:"var(--accent)",width:narrow()?400:620,height:narrow()?150:186,fmt:function(v){return pcFig(v);}})
+    +'<div class="hero-pills">'
+    +'<span><b>'+cr(cur.revenue)+'</b>revenue</span>'
+    +'<span><b>'+cr(cur.bill)+'</b>total cost</span>'
+    +'<span><b>'+cnt(cur.conversions)+'</b>conversions</span>'
+    +'</div></div></div>');
+
+  /* everything else, one card at a time */
+  h.push('<div class="railhead"><h2>The rest of the numbers</h2>'
+    +'<span class="hint">Slide with the arrow keys. Open any card for its trend, its table and its own date filter.</span>'
+    +'<div class="railnavs"><button class="railnav l" aria-label="Previous cards">‹</button>'
+    +'<button class="railnav r" aria-label="Next cards">›</button></div></div>');
+  h.push('<div class="rail-wrap"><div class="rail" id="rail" tabindex="0" role="list">');
+  rest.forEach(function(m){
+    var v=m.val(cur);
+    h.push('<button class="tile" role="listitem" data-open="'+m.k+'" style="--c:'+m.color+'">'
+      +'<span class="cap">'+esc(m.cap)+'</span>'
+      +'<span class="fig">'+m.big(cur)+'</span>'
+      +'<span class="sub">'+m.sub(cur)+'</span>'
+      +(m.spark===false?'<span class="nospark"></span>'
+        :sparkline(bks.map(function(b){var x=m.val(b.a);return (x===null||!isFinite(x)||x<0)?0:x;}),m.color))
+      +'<span class="go">Open →</span></button>');
+  });
+  h.push('</div></div>');
+  h.push('<div class="progress"><i id="rprog" style="width:30%"></i></div>');
+
+  var jn=[];
+  if(RG.k==="all"&&dataMonths()[0]==="2026-06")
+    jn.push('Tracking started in July. June holds a few campaigns logged before conversions were being '
+      +'attributed, so its cost is real but its revenue reads zero.');
+  jn.push('Relative periods run back from the latest campaign in the data, '+dlong(sp.hi)
+    +', not from today. Cost is always our own campaign log plus the platform fee plus GST at '
+    +pc(S.cfg.gstRate,0)+', never the invoice. The invoice is checked against it on the Invoice match card.');
+  h.push('<p class="foot">'+jn.join(" ")+'</p>');
+  h.push('</div>');
+  el.innerHTML=h.join("");
+  bindRange(el,RG,function(){saveRange();viewLead();});
+  el.querySelectorAll("[data-open]").forEach(function(b){
+    b.onclick=function(){openSheet(b.getAttribute("data-open"));};
+    b.onkeydown=function(e){
+      if(e.key==="Enter"||e.key===" "){e.preventDefault();openSheet(b.getAttribute("data-open"));}};});
+  wireTips(el);
+  wireRail();
+}
+function saveRange(){try{localStorage.setItem("cs:range",JSON.stringify(RG));}catch(e){}}
+function wireRail(){
+  var rail=document.getElementById("rail");if(!rail)return;
+  var prog=document.getElementById("rprog");
+  function step(dir){
+    var t=rail.querySelector(".tile");
+    var w=t?t.getBoundingClientRect().width+14:260;
+    var by=dir*w*Math.max(1,Math.floor(rail.clientWidth/w/1.6));
+    try{rail.scrollBy({left:by,behavior:"smooth"});}catch(e){rail.scrollLeft+=by;}
+    if(!rail.scrollBy)rail.scrollLeft+=by;
+  }
+  function upd(){
+    if(!prog)return;
+    var mx=rail.scrollWidth-rail.clientWidth;
+    var w=Math.max(Math.min(1,rail.clientWidth/Math.max(rail.scrollWidth,1))*100,10);
+    var p=mx<=1?0:rail.scrollLeft/mx;
+    prog.style.width=w+"%";
+    prog.style.marginLeft=(p*(100-w)).toFixed(2)+"%";
+  }
+  rail.addEventListener("scroll",upd,{passive:true});
+  upd();
+  var l=document.querySelector(".railnav.l"), r=document.querySelector(".railnav.r");
+  if(l)l.onclick=function(){step(-1);};
+  if(r)r.onclick=function(){step(1);};
+  rail.onkeydown=function(e){
+    if(e.key==="ArrowRight"){step(1);e.preventDefault();}
+    if(e.key==="ArrowLeft"){step(-1);e.preventDefault();}
+  };
+  RAILSTEP=step;
+}
+var RAILSTEP=null;
+
+/* ====================== leadership: the sheet ====================== */
+var SK=null, SRG=null;
+function openSheet(k){
+  SK=k; SRG=Object.assign({},RG);
+  var s=document.getElementById("sheet");
+  s.hidden=false;
+  document.body.classList.add("locked");
+  drawSheet();
+  requestAnimationFrame(function(){s.classList.add("on");
+    var c=document.getElementById("sheet-card");if(c)c.scrollTop=0;});
+}
+function closeSheet(){
+  var s=document.getElementById("sheet");
+  if(!s||s.hidden)return;
+  s.classList.remove("on");
+  document.body.classList.remove("locked");
+  setTimeout(function(){s.hidden=true;},260);
+  var back=document.querySelector('[data-open="'+SK+'"]');
+  SK=null;
+  if(back)back.focus();
+}
+function sheetStep(dir){
+  if(!SK)return;
+  var i=0;METRICS.forEach(function(m,j){if(m.k===SK)i=j;});
+  var nx=(i+dir+METRICS.length)%METRICS.length;
+  SK=METRICS[nx].k;drawSheet();
+  var c=document.getElementById("sheet-card");if(c)c.scrollTop=0;
+}
+function drawSheet(){
+  resetCache();
+  var m=metricOf(SK), R=resolve(SRG), cur=aggc(R.from,R.to);
+  var bks=buckets(R.from,R.to), prev=prevOf(R.from,R.to);
+  var cats=bks.map(function(b){return b.label;});
+  var K=KIND(m.kind);
+  var head=document.getElementById("sheet-head");
+  head.innerHTML='<div><span class="cap">'+esc(m.cap)+'</span>'
+    +'<h2>'+m.big(cur)+' <small>'+esc(R.label)+'</small></h2>'
+    +'<p class="sub">'+m.sub(cur)+'</p></div>'
+    +'<div class="hx"><button class="icb" data-nav="-1" aria-label="Previous metric">‹</button>'
+    +'<button class="icb" data-nav="1" aria-label="Next metric">›</button>'
+    +'<button class="icb close" data-close aria-label="Close">✕</button></div>';
+  var h=[];
+  h.push(rangeBar(SRG,"s"));
+  h.push('<p class="blurb">'+esc(m.blurb)+' <span class="status">'+esc(R.note)+'</span></p>');
+  h.push('<div class="card"><div class="bigrow"><div><span class="cap">'+esc(m.cap)+'</span>'
+    +'<div class="bigfig" style="color:'+m.color+'">'+m.big(cur)+'</div>'
+    +deltaChip(m,cur,prev)+'</div>'
+    +'<div class="bigtrend">'+areaChart({title:m.cap+" trend",cats:cats,
+      values:bks.map(function(b){return m.val(b.a);}),color:m.color,
+      width:narrow()?400:700,height:narrow()?140:150,
+      fmt:function(v){return v===null?"—":K.tip(v);}})+'</div></div>');
+  h.push('<div class="mini">'+[
+    ["ROI",m.k==="roi"?null:(cur.roi===null?"—":Math.round(cur.roi*100).toLocaleString("en-IN")+"%")],
+    ["Revenue",cr(cur.revenue)],["Total cost",cr(cur.bill)],["Conversions",cnt(cur.conversions)],
+    ["Cost per conversion",inr(cur.costPerConv)],["Cost per click",inr(cur.cpc,2)],
+    ["Campaigns",cnt(cur.campaigns)],["Delivered",cnt(cur.delivered)],
+    ["Read rate",pc(cur.readRate)],["Click rate",pc(cur.clickRate)]
+  ].filter(function(p){return p[1]!==null;}).map(function(p){
+    return '<div><span>'+esc(p[0])+'</span><b>'+p[1]+'</b></div>';}).join("")+'</div></div>');
+  h.push('<div class="grid">');
+  h.push(chartCard(m.cap+" over the period",
+    bks.length>1?"Every period inside the filter, on the same scale.":"One period inside this filter.",
+    barChart({title:m.cap,cats:cats,width:CW(),height:CH(250),labels:bks.length<=(narrow()?5:10),
+      series:[{name:m.cap,color:m.color,values:bks.map(function(b){return m.val(b.a);})}],
+      fmtAxis:K.axis,fmtLabel:K.label,fmtTip:K.tip})));
+  if(m.extra)h.push(m.extra(cur,bks));
+  h.push(bkTable(bks,m.cols,cur,"Period by period","Every figure behind the chart, and the whole period on the last row."));
+  h.push('</div>');
+  var body=document.getElementById("sheet-body");
+  body.innerHTML=h.join("");
+  bindRange(body,SRG,drawSheet);
+  head.querySelectorAll("[data-nav]").forEach(function(b){
+    b.onclick=function(){sheetStep(+b.getAttribute("data-nav"));};});
+  head.querySelectorAll("[data-close]").forEach(function(b){b.onclick=closeSheet;});
+  wireTips(body);
+}
+document.getElementById("sheet-bg").onclick=closeSheet;
+document.addEventListener("keydown",function(e){
+  var open=!document.getElementById("sheet").hidden;
+  if(e.key==="Escape"&&open){closeSheet();return;}
+  var tag=(e.target&&e.target.tagName||"").toLowerCase();
+  if(tag==="input"||tag==="select"||tag==="textarea")return;
+  if(e.key==="ArrowRight"||e.key==="ArrowLeft"){
+    var dir=e.key==="ArrowRight"?1:-1;
+    if(open){sheetStep(dir);e.preventDefault();}
+    else if(document.getElementById("v-lead").hidden===false&&RAILSTEP){RAILSTEP(dir);e.preventDefault();}
+  }
+});
+
+var WASNARROW=narrow(),RSZ=null;
+window.addEventListener("resize",function(){
+  if(RSZ)clearTimeout(RSZ);
+  RSZ=setTimeout(function(){
+    if(narrow()===WASNARROW)return;
+    WASNARROW=narrow();
+    if(document.getElementById("v-lead").hidden===false)viewLead();
+    if(SK)drawSheet();
+  },220);
+});
+/* ====================== theme ====================== */
+var THEMES=["auto","light","dark"];
+function applyTheme(v){
+  if(THEMES.indexOf(v)<0)v="auto";
+  THEME=v;
+  if(v==="auto")document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme",v);
+  var b=document.getElementById("thm");
+  if(b){b.innerHTML=(v==="light"?"☀":(v==="dark"?"☾":"◐"))+'<span>'+v.charAt(0).toUpperCase()+v.slice(1)+'</span>';
+    b.setAttribute("aria-label","Appearance: "+v+". Click to change.");}
+  try{localStorage.setItem("cs:theme",v);}catch(e){}
+}
+var THEME="auto";
+(function(){
+  try{THEME=localStorage.getItem("cs:theme")||"auto";}catch(e){}
+  applyTheme(THEME);
+  var b=document.getElementById("thm");
+  if(b)b.onclick=function(){applyTheme(THEMES[(THEMES.indexOf(THEME)+1)%THEMES.length]);};
+})();
 
 var curMonth=null;
 function viewData(){
@@ -1377,7 +2203,9 @@ function fromLocal(){
 function boot(){
   fromSeed();
   fromLocal();
-  try{var p=localStorage.getItem("cs:period");if(p)period=p;}catch(e){}
+  try{var p=localStorage.getItem("cs:range");
+    if(p){var q=JSON.parse(p);if(q&&q.k)RG=Object.assign({k:"all",month:"",from:"",to:""},q);}
+  }catch(e){}
   render();
   try{var t=localStorage.getItem("cs:tab");if(t)switchTo(t);}catch(e){}
   if(!window.claude||!window.claude.use)return;
