@@ -12,6 +12,8 @@ img{max-width:100%}
 [hidden]{display:none!important}
 </style>
 <title>Campaign Signal</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f6b4f'/%3E%3Crect x='7' y='17' width='4' height='8' rx='1.5' fill='%23fff' opacity='.72'/%3E%3Crect x='14' y='12' width='4' height='13' rx='1.5' fill='%23fff' opacity='.86'/%3E%3Crect x='21' y='6' width='4' height='19' rx='1.5' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f6b4f'/%3E%3Crect x='7' y='17' width='4' height='8' rx='1.5' fill='%23fff' opacity='.72'/%3E%3Crect x='14' y='12' width='4' height='13' rx='1.5' fill='%23fff' opacity='.86'/%3E%3Crect x='21' y='6' width='4' height='19' rx='1.5' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
 :root{
@@ -376,6 +378,41 @@ tr.tot td{font-weight:700;background:var(--surface-2);border-top:1px solid var(-
   .rangebar{padding:8px 9px}
   .seg button{padding:6px 10px;font-size:12px}
 }
+
+/* ===================== method page + documents ===================== */
+.formula{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin:0 0 7px;padding:9px 13px;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:10px;font-size:13px}
+.formula b{flex:0 0 auto;min-width:150px;font-weight:600;color:var(--ink)}
+.formula span{font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+.limits{margin:4px 0 0;padding-left:20px;font-size:13.5px;color:var(--ink-2);line-height:1.68}
+.limits li{margin-bottom:9px}
+.limits b{color:var(--ink)}
+#v-met .card{margin-bottom:14px}
+#v-met .card .steps{gap:10px}
+#v-met .step{background:var(--surface-2)}
+#v-met table td:first-child{font-weight:500;color:var(--ink)}
+#v-met table.halves th,#v-met table.halves td{text-align:left;width:50%;white-space:normal}
+#v-met table.halves td:first-child{font-weight:400}
+#v-met table td,#v-met table th{white-space:normal}
+
+/* a document is a quiet icon, never a wall of text */
+.doc{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;
+  border-radius:8px;border:1px solid var(--line);background:var(--surface-2);color:var(--accent);
+  text-decoration:none;transition:background .14s ease,border-color .14s ease,transform .14s ease}
+.doc:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
+.doc.off{color:var(--ink-3);opacity:.45;cursor:default}
+.doc.off:hover{background:var(--surface-2);border-color:var(--line);color:var(--ink-3);transform:none}
+.doccell{white-space:nowrap}
+.doccell input{display:inline-block;width:auto;vertical-align:middle}
+.grid-tbl select.wide{min-width:112px}
+.doccell .doc{margin-left:6px;vertical-align:middle}
+
+/* a plain, legible switch */
+.switch{display:flex;gap:11px;align-items:flex-start;margin-top:14px;padding:12px 14px;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:11px;cursor:pointer}
+.switch input{margin:2px 0 0;width:17px;height:17px;accent-color:var(--accent);flex:none}
+.switch span{font-size:13px;color:var(--ink-2);line-height:1.6}
+.switch b{display:block;color:var(--ink);font-weight:600;margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -389,6 +426,7 @@ tr.tot td{font-weight:700;background:var(--surface-2);border-top:1px solid var(-
     <button class="tab" role="tab" id="t-data" aria-selected="false">Campaigns</button>
     <button class="tab" role="tab" id="t-inv"  aria-selected="false">Invoices</button>
     <button class="tab" role="tab" id="t-imp"  aria-selected="false">Import</button>
+    <button class="tab" role="tab" id="t-met"  aria-selected="false">Method</button>
     <button class="tab" role="tab" id="t-set"  aria-selected="false">Rates</button>
   </div>
   <button id="thm" type="button" aria-label="Appearance">◐<span>Auto</span></button>
@@ -399,6 +437,7 @@ tr.tot td{font-weight:700;background:var(--surface-2);border-top:1px solid var(-
   <section id="v-data" hidden></section>
   <section id="v-inv"  hidden></section>
   <section id="v-imp"  hidden></section>
+  <section id="v-met"  hidden></section>
   <section id="v-set"  hidden></section>
 </div>
 <div class="sheet" id="sheet" hidden>
@@ -410,14 +449,15 @@ tr.tot td{font-weight:700;background:var(--surface-2);border-top:1px solid var(-
 </div>
 <div class="tip" id="tip"></div>
 
-<script id="seed" type="application/json">{"months":{"2026-06":{"month":"2026-06","rows":[{"id":"r6","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"CFA all enrolled","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":39063,"sent":11879,"delivered":11712,"read":6405,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r7","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"CA All Enrolled","goal":"","category":"Marketing","number":"Website No.","targeted":83913,"sent":39801,"delivered":35769,"read":7719,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r8","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"FRM All","goal":"","category":"Marketing","number":"Main No","targeted":1777,"sent":634,"delivered":628,"read":388,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r9","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"Stock Market All","goal":"","category":"Marketing","number":"Main No","targeted":337,"sent":181,"delivered":180,"read":96,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r10","date":"2026-06-18","campaign":"FM Webinar (20th June)","cohort":"Scholarship all leads","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5554,"delivered":5302,"read":3441,"clicks":130,"unique":null,"conversions":null,"revenue":null},{"id":"r11","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"CFA Level 1 Enrolled","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":4834,"sent":2375,"delivered":2359,"read":1511,"clicks":49,"unique":null,"conversions":null,"revenue":null},{"id":"r12","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"FRM Enquired","goal":"","category":"Marketing","number":"Main No","targeted":2219,"sent":1020,"delivered":978,"read":348,"clicks":25,"unique":null,"conversions":null,"revenue":null},{"id":"r13","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"FRM Registered ","goal":"","category":"Marketing","number":"Main No","targeted":2012,"sent":954,"delivered":943,"read":540,"clicks":20,"unique":null,"conversions":null,"revenue":null},{"id":"r14","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"Risk Explore","goal":"","category":"Marketing","number":"Main No","targeted":1935,"sent":980,"delivered":970,"read":623,"clicks":9,"unique":null,"conversions":null,"revenue":null},{"id":"r15","date":"2026-06-18","campaign":"FRM Webinar (21st June)","cohort":"Scholarship all leads","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5203,"delivered":4965,"read":3087,"clicks":70,"unique":null,"conversions":null,"revenue":null},{"id":"r16","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CA Foundation","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":1801,"sent":969,"delivered":932,"read":471,"clicks":10,"unique":null,"conversions":null,"revenue":null},{"id":"r17","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CA Intermediate","goal":"","category":"Marketing","number":"Main No","targeted":8188,"sent":4759,"delivered":4676,"read":2608,"clicks":49,"unique":null,"conversions":null,"revenue":null},{"id":"r18","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CA Final","goal":"","category":"Marketing","number":"Main No","targeted":45619,"sent":21452,"delivered":20857,"read":11586,"clicks":187,"unique":null,"conversions":null,"revenue":null},{"id":"r19","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"ACCA","goal":"","category":"Marketing","number":"Main No","targeted":1214,"sent":808,"delivered":751,"read":543,"clicks":26,"unique":null,"conversions":null,"revenue":null},{"id":"r20","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"Scholaraship","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5225,"delivered":4956,"read":3177,"clicks":90,"unique":null,"conversions":null,"revenue":null},{"id":"r21","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"B2B Seminar Attendees","goal":"","category":"Marketing","number":"Main No","targeted":245,"sent":160,"delivered":156,"read":71,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r22","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CMA ","goal":"","category":"Marketing","number":"Main No","targeted":158,"sent":100,"delivered":100,"read":69,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r23","date":"2026-06-24","campaign":"Vidyut's Webinar (28th June)","cohort":"CFA Level 1 May'26","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":565,"sent":312,"delivered":310,"read":199,"clicks":17,"unique":null,"conversions":null,"revenue":null},{"id":"r24","date":"2026-06-24","campaign":"Vidyut's Webinar (28th June)","cohort":"CFA Level 2 May'26","goal":"","category":"Marketing","number":"Main No","targeted":122,"sent":65,"delivered":65,"read":37,"clicks":2,"unique":null,"conversions":null,"revenue":null},{"id":"r25","date":"2026-06-24","campaign":"Vidyut's Webinar (28th June)","cohort":"FRM May'26 (149)","goal":"","category":"Marketing","number":"Main No","targeted":149,"sent":96,"delivered":94,"read":62,"clicks":5,"unique":null,"conversions":null,"revenue":null},{"id":"r26","date":"2026-06-30","campaign":"ACCA Webinar (4th July)","cohort":"B2B all ","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":16354,"sent":9188,"delivered":8615,"read":4137,"clicks":135,"unique":null,"conversions":null,"revenue":null},{"id":"r27","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"CFA L1 Current ","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":4317,"sent":2256,"delivered":2246,"read":1446,"clicks":249,"unique":null,"conversions":null,"revenue":null},{"id":"r28","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"CFA L2 Current","goal":"","category":"Marketing","number":"Main No","targeted":911,"sent":475,"delivered":472,"read":308,"clicks":58,"unique":null,"conversions":null,"revenue":null},{"id":"r29","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"CFA L3 Current","goal":"","category":"Marketing","number":"Main No","targeted":479,"sent":272,"delivered":270,"read":161,"clicks":52,"unique":null,"conversions":null,"revenue":null},{"id":"r30","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"FRM Enquired","goal":"","category":"Marketing","number":"Main No","targeted":2221,"sent":1133,"delivered":1109,"read":743,"clicks":50,"unique":null,"conversions":null,"revenue":null},{"id":"r31","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"Risk Explore","goal":"","category":"Marketing","number":"Main No","targeted":1935,"sent":869,"delivered":856,"read":527,"clicks":23,"unique":null,"conversions":null,"revenue":null}]},"2026-07":{"month":"2026-07","rows":[{"id":"r32","date":"2026-07-03","campaign":"B2B Webinar (4th July)","cohort":"Medicaps data","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":375,"sent":206,"delivered":203,"read":171,"clicks":15,"unique":null,"conversions":null,"revenue":null},{"id":"r33","date":"2026-07-04","campaign":"AI Webinar (July 5th) 1 day to Reminder","cohort":"Registered for webinar","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":404,"sent":395,"delivered":393,"read":295,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r34","date":"2026-07-04","campaign":"CFA Level 2 Preparation Strategy (5th July)","cohort":"CFA Level 1 May'26 Cleared","goal":"Webinar Attendees","category":"Marketing","number":"Main No","targeted":152,"sent":144,"delivered":143,"read":102,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r35","date":"2026-07-06","campaign":"ACCA Webinar (11th July)","cohort":"CA Foundation","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":517,"sent":279,"delivered":275,"read":129,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r36","date":"2026-07-06","campaign":"ACCA Webinar (11th July)","cohort":"CA Inter current ","goal":"","category":"Marketing","number":"Main No","targeted":6084,"sent":3349,"delivered":3275,"read":1860,"clicks":44,"unique":null,"conversions":null,"revenue":null},{"id":"r37","date":"2026-07-06","campaign":"ACCA Webinar (11th July)","cohort":"CA Final","goal":"","category":"Marketing","number":"Main No","targeted":18057,"sent":8827,"delivered":8628,"read":4984,"clicks":201,"unique":null,"conversions":null,"revenue":null},{"id":"r38","date":"2026-07-07","campaign":"Alumni Alpha Initiative","cohort":"Alumni Alpha","goal":"alumni story/testimonial","category":"Marketing","number":"Main No","targeted":589,"sent":182,"delivered":166,"read":127,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r39","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"FRM not interested ","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":919,"sent":554,"delivered":540,"read":338,"clicks":13,"unique":null,"conversions":null,"revenue":null},{"id":"r40","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"Analyst Stack Not Interested","goal":"","category":"Marketing","number":"Main No","targeted":5919,"sent":3260,"delivered":2961,"read":1938,"clicks":22,"unique":null,"conversions":null,"revenue":null},{"id":"r41","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"scholarship all leads ","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5211,"delivered":4910,"read":3081,"clicks":31,"unique":null,"conversions":null,"revenue":null},{"id":"r42","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CFA Level 1 Not enrolled ","goal":"","category":"Marketing","number":"Main No","targeted":3247,"sent":1689,"delivered":1659,"read":968,"clicks":32,"unique":null,"conversions":null,"revenue":null},{"id":"r43","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CA Foundation current","goal":"","category":"Marketing","number":"Main No","targeted":44,"sent":29,"delivered":29,"read":18,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r44","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CA Inter current ","goal":"","category":"Marketing","number":"Main No","targeted":445,"sent":271,"delivered":267,"read":154,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r45","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CA Final current","goal":"","category":"Marketing","number":"Main No","targeted":1516,"sent":849,"delivered":838,"read":564,"clicks":20,"unique":null,"conversions":null,"revenue":null},{"id":"r46","date":"2026-07-07","campaign":"Post AI Webinar Msg (5th July)","cohort":"Webinar Attendees","goal":"Give access to session recordings","category":"Marketing","number":"Main No","targeted":403,"sent":326,"delivered":326,"read":245,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r47","date":"2026-07-08","campaign":"ACCA Webinar (11th July)","cohort":"ACCA All Leads","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":679,"sent":446,"delivered":431,"read":330,"clicks":21,"unique":null,"conversions":null,"revenue":null},{"id":"r48","date":"2026-07-08","campaign":"ACCA Webinar (11th July)","cohort":"ACCA all from past webinar","goal":"","category":"Marketing","number":"Main No","targeted":206,"sent":140,"delivered":139,"read":93,"clicks":12,"unique":null,"conversions":null,"revenue":null},{"id":"r49","date":"2026-07-09","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":20,"sent":19,"delivered":19,"read":15,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r50","date":"2026-07-09","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"","goal":"","category":"Utility","number":"Main No","targeted":15,"sent":15,"delivered":15,"read":14,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r51","date":"2026-07-10","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"","goal":"","category":"Utility","number":"Main No","targeted":63,"sent":59,"delivered":58,"read":43,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r52","date":"2026-07-10","campaign":"CA Final AFM Portfolio Managemnet Question Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":29,"sent":25,"delivered":24,"read":22,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r53","date":"2026-07-10","campaign":"ACCA 11th July Webinar reminder 1 day to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":68,"sent":67,"delivered":67,"read":46,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r54","date":"2026-07-11","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":67,"sent":62,"delivered":59,"read":48,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r55","date":"2026-07-11","campaign":"CFA 12th July Webinar Reminder 1 day to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":131,"sent":127,"delivered":125,"read":104,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r56","date":"2026-07-11","campaign":"ACCA 11th July Webinar reminder 1 hour to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":68,"sent":67,"delivered":68,"read":43,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r57","date":"2026-07-11","campaign":"ACCA 11th July Webinar reminder LIVE","cohort":"","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":68,"sent":67,"delivered":68,"read":41,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r58","date":"2026-07-12","campaign":"CFA 12th July Webinar Reminder 1 hour to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":131,"sent":127,"delivered":124,"read":100,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r59","date":"2026-07-12","campaign":"CFA 12th July Webinar Reminder LIVE","cohort":"","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":131,"sent":127,"delivered":124,"read":100,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r60","date":"2026-07-13","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":35,"sent":34,"delivered":34,"read":26,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r61","date":"2026-07-13","campaign":"CA Final AFM Portfolio Managemnet Question Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":48,"sent":45,"delivered":43,"read":32,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r62","date":"2026-07-13","campaign":"CA Final AFM Forex Part 2","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":43,"sent":38,"delivered":37,"read":30,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r63","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modeling All Qualified Leads","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":690,"sent":399,"delivered":396,"read":255,"clicks":null,"unique":null,"conversions":9,"revenue":182000},{"id":"r64","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modeling All Past Webinar Registrants","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1348,"sent":926,"delivered":923,"read":607,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r65","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"AS Not Interested","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":5919,"sent":3358,"delivered":3017,"read":1890,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r66","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 3 Current ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":852,"sent":442,"delivered":442,"read":440,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r67","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 2 Current","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1005,"sent":588,"delivered":583,"read":382,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r68","date":"2026-07-14","campaign":"Webinar or class","cohort":"Finance Career Utsav","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":9785,"sent":5497,"delivered":5128,"read":3126,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r69","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"AS Not Interested","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":5919,"sent":1992,"delivered":1818,"read":1149,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r70","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 3 Current ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":852,"sent":273,"delivered":273,"read":131,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r71","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 2 Current","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1005,"sent":344,"delivered":344,"read":209,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r72","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modeling All Past Webinar Registrants ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1348,"sent":632,"delivered":629,"read":392,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r73","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modleing All Leads ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":690,"sent":245,"delivered":243,"read":147,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r74","date":"2026-07-16","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"FRM Not Enrolled","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":256,"sent":146,"delivered":144,"read":94,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r75","date":"2026-07-17","campaign":"FRM CLass Access","cohort":"Form Responders ","goal":"Class Access","category":"Utility","number":"Main No","targeted":34,"sent":32,"delivered":32,"read":25,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r76","date":"2026-07-18","campaign":"Finance Lab Nudge","cohort":"All Scholarship Leads","goal":"WA Community Joins","category":"Marketing","number":"Main No","targeted":9727,"sent":4990,"delivered":4679,"read":2650,"clicks":189,"unique":null,"conversions":null,"revenue":null},{"id":"r77","date":"2026-07-20","campaign":"PR survey Nudge","cohort":"All SSEI Current Students","goal":"Survey Responses","category":"Utility","number":"9230188090","targeted":7911,"sent":7106,"delivered":7050,"read":4650,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r78","date":"2026-07-20","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"All Alumni","goal":"Webinar Registrations","category":"Marketing","number":"9230188090","targeted":42502,"sent":9707,"delivered":9594,"read":6397,"clicks":483,"unique":null,"conversions":null,"revenue":null},{"id":"r80","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"FM Past all webinar attendees","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":690,"sent":438,"delivered":431,"read":227,"clicks":19,"unique":null,"conversions":null,"revenue":null},{"id":"r81","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"CFA qualified leads","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":531,"sent":352,"delivered":352,"read":220,"clicks":37,"unique":null,"conversions":null,"revenue":null},{"id":"r82","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"CFA All Enrolled","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":6582,"sent":3590,"delivered":3566,"read":2129,"clicks":170,"unique":null,"conversions":null,"revenue":null},{"id":"r83","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"AS All leads","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":10773,"sent":5700,"delivered":5273,"read":3028,"clicks":188,"unique":null,"conversions":null,"revenue":null},{"id":"r84","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"CA All Enrolled","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":1729,"sent":1037,"delivered":1025,"read":703,"clicks":51,"unique":null,"conversions":null,"revenue":null},{"id":"r85","date":"2026-07-23","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"Scholarship All leads","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":9727,"sent":5964,"delivered":5529,"read":2750,"clicks":104,"unique":null,"conversions":null,"revenue":null},{"id":"r86","date":"2026-07-23","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"FRM Part 1 & 2","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":947,"sent":573,"delivered":572,"read":354,"clicks":29,"unique":null,"conversions":null,"revenue":null},{"id":"r87","date":"2026-07-24","campaign":"Webiste Launch Invite","cohort":"Form Responders ","goal":"Launch Attendees","category":"Marketing","number":"Main No","targeted":42,"sent":27,"delivered":27,"read":21,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r88","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"Alumni All","goal":"Conversion","category":"Utility","number":"Main No","targeted":42502,"sent":31845,"delivered":30366,"read":16034,"clicks":null,"unique":null,"conversions":103,"revenue":2580202},{"id":"r89","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"SSEI Students","goal":"","category":"Utility","number":"Main No","targeted":5986,"sent":5502,"delivered":5442,"read":3242,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r90","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"All Leads (1st half)","goal":"Conversion","category":"Marketing","number":"Main No","targeted":43013,"sent":24952,"delivered":23892,"read":13619,"clicks":1000,"unique":null,"conversions":null,"revenue":null},{"id":"r92","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"All leads (2nd half)","goal":"Conversion","category":"Marketing","number":"Main No","targeted":69999,"sent":15506,"delivered":15336,"read":8682,"clicks":463,"unique":null,"conversions":null,"revenue":null},{"id":"r94","date":"2026-07-25","campaign":"Faculty Recruitment","cohort":"Alumni all leads","goal":"Recruitement","category":"Marketing","number":"Main No","targeted":42502,"sent":15975,"delivered":15153,"read":7874,"clicks":63,"unique":null,"conversions":null,"revenue":null},{"id":"r95","date":"2026-07-25","campaign":"Claude vs Nifty 500 Webinar (26th July) 1 day to go reminder","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":899,"sent":874,"delivered":873,"read":661,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r96","date":"2026-07-25","campaign":"B2b medicaps","cohort":"Medicaps leads by shubham","goal":"Counselling Session","category":"Marketing","number":"Main No","targeted":1064,"sent":493,"delivered":487,"read":327,"clicks":null,"unique":null,"conversions":1,"revenue":37100},{"id":"r97","date":"2026-07-26","campaign":"Claude vs Nifty 500 Webinar (26th July) 1 hour to go reminder","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":899,"sent":874,"delivered":873,"read":642,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r98","date":"2026-07-26","campaign":"Claude vs Nifty 500 Webinar (26th July) Live","cohort":"","goal":"","category":"Utility","number":"Main No","targeted":899,"sent":873,"delivered":870,"read":616,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r99","date":"2026-07-27","campaign":"Claude vs Nifty 500 Webinar (26th July) Post webinar nudge","cohort":"Webinar Attendees","goal":"Resource Access","category":"Utility","number":"Main No","targeted":624,"sent":601,"delivered":601,"read":406,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r100","date":"2026-07-27","campaign":"Claude vs Nifty 500 Webinar (26th July) Post webinar nudge","cohort":"Webinar Non Attendees","goal":"Webinar Recording Access","category":"Utility","number":"Main No","targeted":543,"sent":359,"delivered":357,"read":232,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r101","date":"2026-07-27","campaign":"Faculty Recruitment","cohort":"Alumni all leads","goal":"Recruitement","category":"Marketing","number":"9230188090","targeted":42502,"sent":9056,"delivered":8714,"read":5012,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r102","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"CMA all students","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":158,"sent":101,"delivered":99,"read":56,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r103","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"ACCA All leads except enrolled ","goal":"","category":"Marketing","number":"Main No","targeted":872,"sent":593,"delivered":554,"read":383,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r104","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"B2B Seminar","goal":"","category":"Marketing","number":"Main No","targeted":375,"sent":223,"delivered":218,"read":127,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r105","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"ACCA all webinar ","goal":"","category":"Marketing","number":"Main No","targeted":439,"sent":319,"delivered":313,"read":177,"clicks":null,"unique":null,"conversions":null,"revenue":null}]},"2026-08":{"month":"2026-08","rows":[{"id":"r79","date":"2026-08-21","campaign":"B2B Medicaps","cohort":"B2B Medicaps data by Shubham","goal":"Counselling Session","category":"Marketing","number":"Main No","targeted":1064,"sent":565,"delivered":556,"read":397,"clicks":7,"unique":null,"conversions":0,"revenue":0},{"id":"r106","date":"2026-08-01","campaign":"ACCA Webinar (2nd August) 1 Day to go reminder","cohort":"Webinar Registrants","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":69,"sent":63,"delivered":62,"read":44,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r107","date":"2026-08-01","campaign":"ACCA Webinar (2nd August) 1 hour to go reminder","cohort":"","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":69,"sent":63,"delivered":61,"read":43,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r108","date":"2026-08-01","campaign":"ACCA Webinar (2nd August) Live","cohort":"","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":69,"sent":63,"delivered":61,"read":42,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r109","date":"2026-08-03","campaign":"ACCA Webinar (2nd August)  Post Webinar msg","cohort":"Webinar Attendees","goal":"Awareness","category":"Utility","number":"Main No","targeted":29,"sent":29,"delivered":29,"read":18,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r111","date":"2026-08-04","campaign":"ACCA Webinar (2nd August)  Post Webinar msg","cohort":"Webinar Non Attendees","goal":"Awareness","category":"Utility","number":"Main No","targeted":40,"sent":34,"delivered":32,"read":18,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r113","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Attendees from 3rd year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":28,"sent":21,"delivered":20,"read":15,"clicks":1,"unique":null,"conversions":2,"revenue":70100},{"id":"r115","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Attendees from 2nd year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":65,"sent":55,"delivered":51,"read":32,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r117","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Attendees from 1st year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":170,"sent":143,"delivered":143,"read":105,"clicks":11,"unique":null,"conversions":null,"revenue":null},{"id":"r119","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Non Attendees from 1st year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":971,"sent":799,"delivered":798,"read":530,"clicks":55,"unique":null,"conversions":null,"revenue":null},{"id":"r121","date":"2026-08-06","campaign":"Nudge to Xavier's College (2)","cohort":"All Xaviers Database: Seminar Attendees + Non Attendees","goal":"Conversion","category":"Marketing","number":"Main No","targeted":1234,"sent":994,"delivered":983,"read":577,"clicks":30,"unique":null,"conversions":0,"revenue":0},{"id":"r123","date":"2026-08-07","campaign":"B2B Medicaps","cohort":"B2B nudge","goal":"Conversion","category":"Marketing","number":"Main No","targeted":528,"sent":209,"delivered":190,"read":121,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r125","date":"2026-08-10","campaign":"Nudge to Xavier's College (3)","cohort":"Gupshup Failed","goal":"Conversion","category":"Marketing","number":"Main No","targeted":278,"sent":114,"delivered":112,"read":59,"clicks":4,"unique":null,"conversions":0,"revenue":0},{"id":"r127","date":"2026-08-10","campaign":"Nudge to Xavier's College (3)","cohort":"Gupshup Msg Read But Not Engaged","goal":"Conversion","category":"Marketing","number":"Main No","targeted":646,"sent":602,"delivered":584,"read":398,"clicks":20,"unique":null,"conversions":null,"revenue":null},{"id":"r129","date":"2026-08-10","campaign":"CFA Level 1 Nudge","cohort":"CFA L1 All leads Except Enrolled & Marketing Junk","goal":"Conversion","category":"Marketing","number":"Main No","targeted":2113,"sent":1294,"delivered":1258,"read":528,"clicks":43,"unique":null,"conversions":21,"revenue":706292},{"id":"r130","date":"2026-08-11","campaign":"CA Final AFm Equity Class 2","cohort":"Form Responders","goal":"Resource Access","category":"Utility","number":"Main No","targeted":20,"sent":20,"delivered":20,"read":14,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r131","date":"2026-08-12","campaign":"CFA Level 2 Nudge","cohort":"CFA L1 passed (from G-form), but not enrolled with ssei","goal":"Conversion","category":"Marketing","number":"Main No","targeted":40,"sent":28,"delivered":28,"read":18,"clicks":4,"unique":null,"conversions":2,"revenue":90000},{"id":"r132","date":"2026-08-12","campaign":"CFA Level 2 Nudge","cohort":"CFa L2 All Leads Except Enrolled & Marketing Junk","goal":"","category":"Marketing","number":"Main No","targeted":649,"sent":416,"delivered":404,"read":181,"clicks":8,"unique":null,"conversions":null,"revenue":null},{"id":"r133","date":"2026-08-18","campaign":"Webinar: The Interview Skills That Separate a Shortlist from an Offer (22nd August)","cohort":"CA, FRM, Analyst Stack, ACCA, Financial Modeling, CFA Level 2, CFA Level 3- Enrolled, CFA Level 1: Full Immersion, Live Focused, Accelarate - Current Students","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":7499,"sent":5067,"delivered":5010,"read":2315,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r134","date":"2026-08-18","campaign":"Webinar: The Interview Skills That Separate a Shortlist from an Offer (22nd August)","cohort":"CA, FRM, Analyst Stack, ACCA, Financial Modeling, CFA Level 2, CFA Level 3- Qualified and Partially Qualified Leads","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":275,"sent":183,"delivered":183,"read":85,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r135","date":"2026-08-18","campaign":"Webinar- CFA After 25: The Working Professional\u2019s Route\n(23rd August)","cohort":"CFA not interested leads (Money constrain, time issues, will take it later sometime)","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":12030,"sent":7901,"delivered":7622,"read":3517,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r136","date":"2026-08-18","campaign":"Webinar- CFA After 25: The Working Professional\u2019s Route\n(23rd August)","cohort":"CFA Live Focused, and Accelerate all Leads (Excluding Won)","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":654,"sent":379,"delivered":371,"read":187,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r137","date":"2026-08-20","campaign":"FRM New Entry Window (29th August)","cohort":"FRM Part 1 Qualified and partially Qualified","goal":"Enrollments","category":"Marketing","number":"Main No","targeted":856,"sent":560,"delivered":560,"read":301,"clicks":16,"unique":null,"conversions":7,"revenue":195000},{"id":"r138","date":"2026-08-20","campaign":"CFA Level 1 New Entry Window (24th August)","cohort":"CFA Level 1 Qualified and Partially Qualified","goal":"Enrollments","category":"Marketing","number":"Main No","targeted":911,"sent":475,"delivered":472,"read":242,"clicks":34,"unique":null,"conversions":16,"revenue":638499},{"id":"r139","date":"2026-08-21","campaign":"Gaurav Gill 22nd Aug Webinar Reminder 1 day to go","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":360,"sent":348,"delivered":345,"read":247,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r140","date":"2026-08-22","campaign":"Gaurav Gill 22nd Aug Webinar Reminder 1 hr to go","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":360,"sent":348,"delivered":344,"read":223,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r141","date":"2026-08-22","campaign":"Gaurav Gill 22nd Aug Webinar Reminder Live","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":360,"sent":348,"delivered":342,"read":214,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r142","date":"2026-08-22","campaign":"CFA after 25: Webinar (23rd Aug) 1 day to go reminder","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":124,"sent":116,"delivered":116,"read":77,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r143","date":"2026-08-23","campaign":"CFA after 25: Webinar (23rd Aug) 1 hr to go reminder","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":124,"sent":116,"delivered":116,"read":76,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r144","date":"2026-08-23","campaign":"CFA after 25: Webinar (23rd Aug) Live reminder","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":124,"sent":117,"delivered":117,"read":75,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r145","date":"2026-08-24","campaign":"Gaurav Gill 22nd Aug Post Webinar Msgs","cohort":"Webinar Attendees","goal":"Webinar Registration + Converstion","category":"Marketing","number":"Main No","targeted":262,"sent":166,"delivered":164,"read":95,"clicks":null,"unique":null,"conversions":1,"revenue":50000},{"id":"r146","date":"2026-08-24","campaign":"Gaurav Gill 22nd Aug Post Webinar Msgs","cohort":"Webinar Registered","goal":"Webinar Registration + Converstion","category":"Marketing","number":"Main No","targeted":121,"sent":75,"delivered":74,"read":41,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r147","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 2 Aug'26 Exam Givers","goal":"Conversion","category":"Marketing","number":"Main No","targeted":1132,"sent":735,"delivered":730,"read":328,"clicks":15,"unique":null,"conversions":8,"revenue":240000},{"id":"r148","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 1 May& Feb 2026, CFA level 2 Not Enrolled","goal":"","category":"Marketing","number":"Main No","targeted":154,"sent":109,"delivered":106,"read":50,"clicks":16,"unique":null,"conversions":null,"revenue":null},{"id":"r149","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 1, not taken Level 2 from cohortisation report","goal":"","category":"Marketing","number":"Main No","targeted":7998,"sent":4522,"delivered":4445,"read":1807,"clicks":66,"unique":null,"conversions":null,"revenue":null},{"id":"r150","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 2 Qualified/Partially Qualified ","goal":"","category":"Marketing","number":"Main No","targeted":35,"sent":25,"delivered":25,"read":11,"clicks":0,"unique":null,"conversions":null,"revenue":null},{"id":"r151","date":"2026-08-25","campaign":"CFA After 25 (23rd Aug) Post Webinar Msgs","cohort":"Webinar Attendees","goal":"Conversion","category":"Marketing","number":"Main No","targeted":59,"sent":42,"delivered":42,"read":26,"clicks":null,"unique":null,"conversions":0,"revenue":0},{"id":"r152","date":"2026-08-25","campaign":"CFA After 25 (23rd Aug) Post Webinar Msgs","cohort":"Webinar Registered","goal":"Conversion","category":"Utility","number":"Main No","targeted":63,"sent":44,"delivered":44,"read":20,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r153","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"CFA Level 3 Qualified, Partially Qualified","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":10,"sent":4,"delivered":4,"read":2,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r154","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"Financial Modeling Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":11,"sent":6,"delivered":6,"read":2,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r155","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"Analyst Stack Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":117,"sent":66,"delivered":66,"read":34,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r156","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"ACCA Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":22,"sent":13,"delivered":13,"read":10,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r157","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"CA Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":62,"sent":38,"delivered":38,"read":22,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r158","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"All current student","goal":"","category":"Marketing","number":"Main No","targeted":7343,"sent":4088,"delivered":4047,"read":2015,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r159","date":"2026-08-26","campaign":"FRM New Entry Window (29th August)","cohort":"FRM Part 1 Qualified and partially Qualified","goal":"Conversion","category":"Marketing","number":"Main No","targeted":84,"sent":47,"delivered":47,"read":29,"clicks":2,"unique":null,"conversions":null,"revenue":null},{"id":"r160","date":"2026-08-28","campaign":"Srishti Lamba Webinar 2 day to go reminder","cohort":"Webinar Registrants","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":408,"sent":395,"delivered":394,"read":285,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r161","date":"2026-08-29","campaign":"Srishti Lamba Webinar 1 day to go reminder","cohort":"Webinar Registrants","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":462,"sent":438,"delivered":437,"read":293,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r162","date":"2026-08-29","campaign":"CFA Aug'26 Attempt Webinar (2nd Septempber)","cohort":"CFA May'26 attempt, next lvl not enrolled","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":853,"sent":458,"delivered":452,"read":219,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r163","date":"2026-08-29","campaign":"CFA Aug'26 Attempt Webinar (2nd Septempber)","cohort":"CFA all current students","goal":"","category":"Marketing","number":"Main No","targeted":4776,"sent":2741,"delivered":2717,"read":1311,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r164","date":"2026-08-29","campaign":"CFA Aug'26 Attempt Webinar (2nd Septempber)","cohort":"CFA Aug'26 attempt","goal":"","category":"Marketing","number":"Main No","targeted":1458,"sent":888,"delivered":883,"read":434,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r165","date":"2026-08-30","campaign":"Srishti Lamba Webinar (2nd Sept) 1 hr to go reminder","cohort":"Webinar Registrants","goal":"Webinar Registrations","category":"Utility","number":"Main No","targeted":462,"sent":439,"delivered":438,"read":273,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r166","date":"2026-08-30","campaign":"Srishti Lamba Webinar (2nd Sept) live reminder","cohort":"Webinar Registrants","goal":"Webinar Registrations","category":"Utility","number":"Main No","targeted":462,"sent":438,"delivered":434,"read":265,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r167","date":"2026-08-31","campaign":"Srishti Lamba Webinar (2nd Sept) Post Webinar msg","cohort":"Webinar Attendees","goal":"Conversions","category":"Marketing","number":"Performance No.","targeted":126,"sent":86,"delivered":85,"read":49,"clicks":15,"unique":null,"conversions":0,"revenue":0},{"id":"r168","date":"2026-08-31","campaign":"CFA Level 1 New Entry Window Nudge (2nd September)","cohort":"CFA Level 1 Qialified and Partially Qualified","goal":"Conversions","category":"Marketing","number":"Main No","targeted":200,"sent":128,"delivered":127,"read":62,"clicks":7,"unique":null,"conversions":5,"revenue":203500},{"id":"r169","date":"2026-08-31","campaign":"Kumar Saurav AS 30th Aug Class","cohort":"Attendees","goal":"Resources","category":"Marketing","number":"Main No","targeted":36,"sent":35,"delivered":35,"read":25,"clicks":15,"unique":null,"conversions":null,"revenue":null}]},"2026-09":{"month":"2026-09","rows":[{"id":"r170","date":"2026-09-01","campaign":"CFA 6th September Webinar","cohort":"CFA L1 Accelaerate & Live Focused - Q ualified/Partially Qualified","goal":"Conversions","category":"Marketing","number":"Main No","targeted":648,"sent":436,"delivered":414,"read":270,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r171","date":"2026-09-01","campaign":"CFA Webinar 2nd September Reminder","cohort":"1 day to glo","goal":"Webinar Registrations","category":"Utility","number":"Main No","targeted":172,"sent":163,"delivered":162,"read":125,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r172","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM Part 1 Aug/Nov'25 & May/Aug'27","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":406,"sent":285,"delivered":284,"read":203,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r173","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM extra leads ","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":678,"sent":459,"delivered":456,"read":259,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r174","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM all students","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":965,"sent":608,"delivered":605,"read":363,"clicks":14,"unique":11,"conversions":null,"revenue":null},{"id":"r175","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM extra leads ","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":678,"sent":433,"delivered":423,"read":180,"clicks":3,"unique":3,"conversions":null,"revenue":null}]}},"invoices":{"2026-06":{"month":"2026-06","invoiceNo":"","source":"Not received","marketingMsgs":null,"utilityMsgs":null,"platformFee":20000,"taxable":null,"gst":null,"total":null,"notes":"No invoice or estimate on file for June."},"2026-07":{"month":"2026-07","invoiceNo":"","source":"Estimate","marketingMsgs":null,"utilityMsgs":null,"platformFee":20000,"taxable":null,"gst":null,"total":185000,"notes":"Recollected figure from the growth team, not an invoice. Replace it when the invoice is found."},"2026-08":{"month":"2026-08","invoiceNo":"132727123473","source":"Invoice","marketingMsgs":34238,"utilityMsgs":2878,"platformFee":20000,"taxable":53402.39,"gst":9612.4,"total":63014.79,"notes":"IGST 18%, Maharashtra supplier to West Bengal buyer. Platform fee bills as two lines of Rs 10,000: Console Platform Fee and Advance Messages Fixed Fee. Marketing bills as MMLITE Per Message at 0.9385, utility at 0.13. Covers 5 Gupshup apps; campaigns are sent from 2."},"2026-09":{"month":"2026-09","invoiceNo":"","source":"Not received","marketingMsgs":null,"utilityMsgs":null,"platformFee":20000,"taxable":null,"gst":null,"total":null,"notes":"Invoice not yet received."}},"config":{"marketingRate":0.9385,"utilityRate":0.13,"gstRate":0.18,"platformFee":20000,"metaCPC":15,"googleCPC":50,"currency":"INR"},"stamp":"2026-10-05"}</script>
+<script id="seed" type="application/json">{"months":{"2026-06":{"month":"2026-06","rows":[{"id":"r6","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"CFA all enrolled","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":39063,"sent":11879,"delivered":11712,"read":6405,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r7","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"CA All Enrolled","goal":"","category":"Marketing","number":"Website No.","targeted":83913,"sent":39801,"delivered":35769,"read":7719,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r8","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"FRM All","goal":"","category":"Marketing","number":"Main No","targeted":1777,"sent":634,"delivered":628,"read":388,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r9","date":"2026-06-15","campaign":"FM Webinar (20th June)","cohort":"Stock Market All","goal":"","category":"Marketing","number":"Main No","targeted":337,"sent":181,"delivered":180,"read":96,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r10","date":"2026-06-18","campaign":"FM Webinar (20th June)","cohort":"Scholarship all leads","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5554,"delivered":5302,"read":3441,"clicks":130,"unique":null,"conversions":null,"revenue":null},{"id":"r11","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"CFA Level 1 Enrolled","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":4834,"sent":2375,"delivered":2359,"read":1511,"clicks":49,"unique":null,"conversions":null,"revenue":null},{"id":"r12","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"FRM Enquired","goal":"","category":"Marketing","number":"Main No","targeted":2219,"sent":1020,"delivered":978,"read":348,"clicks":25,"unique":null,"conversions":null,"revenue":null},{"id":"r13","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"FRM Registered ","goal":"","category":"Marketing","number":"Main No","targeted":2012,"sent":954,"delivered":943,"read":540,"clicks":20,"unique":null,"conversions":null,"revenue":null},{"id":"r14","date":"2026-06-17","campaign":"FRM Webinar (21st June)","cohort":"Risk Explore","goal":"","category":"Marketing","number":"Main No","targeted":1935,"sent":980,"delivered":970,"read":623,"clicks":9,"unique":null,"conversions":null,"revenue":null},{"id":"r15","date":"2026-06-18","campaign":"FRM Webinar (21st June)","cohort":"Scholarship all leads","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5203,"delivered":4965,"read":3087,"clicks":70,"unique":null,"conversions":null,"revenue":null},{"id":"r16","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CA Foundation","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":1801,"sent":969,"delivered":932,"read":471,"clicks":10,"unique":null,"conversions":null,"revenue":null},{"id":"r17","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CA Intermediate","goal":"","category":"Marketing","number":"Main No","targeted":8188,"sent":4759,"delivered":4676,"read":2608,"clicks":49,"unique":null,"conversions":null,"revenue":null},{"id":"r18","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CA Final","goal":"","category":"Marketing","number":"Main No","targeted":45619,"sent":21452,"delivered":20857,"read":11586,"clicks":187,"unique":null,"conversions":null,"revenue":null},{"id":"r19","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"ACCA","goal":"","category":"Marketing","number":"Main No","targeted":1214,"sent":808,"delivered":751,"read":543,"clicks":26,"unique":null,"conversions":null,"revenue":null},{"id":"r20","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"Scholaraship","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5225,"delivered":4956,"read":3177,"clicks":90,"unique":null,"conversions":null,"revenue":null},{"id":"r21","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"B2B Seminar Attendees","goal":"","category":"Marketing","number":"Main No","targeted":245,"sent":160,"delivered":156,"read":71,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r22","date":"2026-06-24","campaign":"ACCA Webinar (27th June)","cohort":"CMA ","goal":"","category":"Marketing","number":"Main No","targeted":158,"sent":100,"delivered":100,"read":69,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r23","date":"2026-06-24","campaign":"Vidyut's Webinar (28th June)","cohort":"CFA Level 1 May'26","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":565,"sent":312,"delivered":310,"read":199,"clicks":17,"unique":null,"conversions":null,"revenue":null},{"id":"r24","date":"2026-06-24","campaign":"Vidyut's Webinar (28th June)","cohort":"CFA Level 2 May'26","goal":"","category":"Marketing","number":"Main No","targeted":122,"sent":65,"delivered":65,"read":37,"clicks":2,"unique":null,"conversions":null,"revenue":null},{"id":"r25","date":"2026-06-24","campaign":"Vidyut's Webinar (28th June)","cohort":"FRM May'26 (149)","goal":"","category":"Marketing","number":"Main No","targeted":149,"sent":96,"delivered":94,"read":62,"clicks":5,"unique":null,"conversions":null,"revenue":null},{"id":"r26","date":"2026-06-30","campaign":"ACCA Webinar (4th July)","cohort":"B2B all ","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":16354,"sent":9188,"delivered":8615,"read":4137,"clicks":135,"unique":null,"conversions":null,"revenue":null},{"id":"r27","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"CFA L1 Current ","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":4317,"sent":2256,"delivered":2246,"read":1446,"clicks":249,"unique":null,"conversions":null,"revenue":null},{"id":"r28","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"CFA L2 Current","goal":"","category":"Marketing","number":"Main No","targeted":911,"sent":475,"delivered":472,"read":308,"clicks":58,"unique":null,"conversions":null,"revenue":null},{"id":"r29","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"CFA L3 Current","goal":"","category":"Marketing","number":"Main No","targeted":479,"sent":272,"delivered":270,"read":161,"clicks":52,"unique":null,"conversions":null,"revenue":null},{"id":"r30","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"FRM Enquired","goal":"","category":"Marketing","number":"Main No","targeted":2221,"sent":1133,"delivered":1109,"read":743,"clicks":50,"unique":null,"conversions":null,"revenue":null},{"id":"r31","date":"2026-06-30","campaign":"AI Webinar by Sanjay Sir (5th July)","cohort":"Risk Explore","goal":"","category":"Marketing","number":"Main No","targeted":1935,"sent":869,"delivered":856,"read":527,"clicks":23,"unique":null,"conversions":null,"revenue":null}]},"2026-07":{"month":"2026-07","rows":[{"id":"r32","date":"2026-07-03","campaign":"B2B Webinar (4th July)","cohort":"Medicaps data","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":375,"sent":206,"delivered":203,"read":171,"clicks":15,"unique":null,"conversions":null,"revenue":null},{"id":"r33","date":"2026-07-04","campaign":"AI Webinar (July 5th) 1 day to Reminder","cohort":"Registered for webinar","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":404,"sent":395,"delivered":393,"read":295,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r34","date":"2026-07-04","campaign":"CFA Level 2 Preparation Strategy (5th July)","cohort":"CFA Level 1 May'26 Cleared","goal":"Webinar Attendees","category":"Marketing","number":"Main No","targeted":152,"sent":144,"delivered":143,"read":102,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r35","date":"2026-07-06","campaign":"ACCA Webinar (11th July)","cohort":"CA Foundation","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":517,"sent":279,"delivered":275,"read":129,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r36","date":"2026-07-06","campaign":"ACCA Webinar (11th July)","cohort":"CA Inter current ","goal":"","category":"Marketing","number":"Main No","targeted":6084,"sent":3349,"delivered":3275,"read":1860,"clicks":44,"unique":null,"conversions":null,"revenue":null},{"id":"r37","date":"2026-07-06","campaign":"ACCA Webinar (11th July)","cohort":"CA Final","goal":"","category":"Marketing","number":"Main No","targeted":18057,"sent":8827,"delivered":8628,"read":4984,"clicks":201,"unique":null,"conversions":null,"revenue":null},{"id":"r38","date":"2026-07-07","campaign":"Alumni Alpha Initiative","cohort":"Alumni Alpha","goal":"alumni story/testimonial","category":"Marketing","number":"Main No","targeted":589,"sent":182,"delivered":166,"read":127,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r39","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"FRM not interested ","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":919,"sent":554,"delivered":540,"read":338,"clicks":13,"unique":null,"conversions":null,"revenue":null},{"id":"r40","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"Analyst Stack Not Interested","goal":"","category":"Marketing","number":"Main No","targeted":5919,"sent":3260,"delivered":2961,"read":1938,"clicks":22,"unique":null,"conversions":null,"revenue":null},{"id":"r41","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"scholarship all leads ","goal":"","category":"Marketing","number":"Main No","targeted":9727,"sent":5211,"delivered":4910,"read":3081,"clicks":31,"unique":null,"conversions":null,"revenue":null},{"id":"r42","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CFA Level 1 Not enrolled ","goal":"","category":"Marketing","number":"Main No","targeted":3247,"sent":1689,"delivered":1659,"read":968,"clicks":32,"unique":null,"conversions":null,"revenue":null},{"id":"r43","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CA Foundation current","goal":"","category":"Marketing","number":"Main No","targeted":44,"sent":29,"delivered":29,"read":18,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r44","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CA Inter current ","goal":"","category":"Marketing","number":"Main No","targeted":445,"sent":271,"delivered":267,"read":154,"clicks":1,"unique":null,"conversions":null,"revenue":null},{"id":"r45","date":"2026-07-07","campaign":"CFA Webinar (12th July)","cohort":"CA Final current","goal":"","category":"Marketing","number":"Main No","targeted":1516,"sent":849,"delivered":838,"read":564,"clicks":20,"unique":null,"conversions":null,"revenue":null},{"id":"r46","date":"2026-07-07","campaign":"Post AI Webinar Msg (5th July)","cohort":"Webinar Attendees","goal":"Give access to session recordings","category":"Marketing","number":"Main No","targeted":403,"sent":326,"delivered":326,"read":245,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r47","date":"2026-07-08","campaign":"ACCA Webinar (11th July)","cohort":"ACCA All Leads","goal":"Webinar registrations","category":"Marketing","number":"Main No","targeted":679,"sent":446,"delivered":431,"read":330,"clicks":21,"unique":null,"conversions":null,"revenue":null},{"id":"r48","date":"2026-07-08","campaign":"ACCA Webinar (11th July)","cohort":"ACCA all from past webinar","goal":"","category":"Marketing","number":"Main No","targeted":206,"sent":140,"delivered":139,"read":93,"clicks":12,"unique":null,"conversions":null,"revenue":null},{"id":"r49","date":"2026-07-09","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":20,"sent":19,"delivered":19,"read":15,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r50","date":"2026-07-09","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"","goal":"","category":"Utility","number":"Main No","targeted":15,"sent":15,"delivered":15,"read":14,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r51","date":"2026-07-10","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"","goal":"","category":"Utility","number":"Main No","targeted":63,"sent":59,"delivered":58,"read":43,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r52","date":"2026-07-10","campaign":"CA Final AFM Portfolio Managemnet Question Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":29,"sent":25,"delivered":24,"read":22,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r53","date":"2026-07-10","campaign":"ACCA 11th July Webinar reminder 1 day to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":68,"sent":67,"delivered":67,"read":46,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r54","date":"2026-07-11","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":67,"sent":62,"delivered":59,"read":48,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r55","date":"2026-07-11","campaign":"CFA 12th July Webinar Reminder 1 day to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":131,"sent":127,"delivered":125,"read":104,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r56","date":"2026-07-11","campaign":"ACCA 11th July Webinar reminder 1 hour to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":68,"sent":67,"delivered":68,"read":43,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r57","date":"2026-07-11","campaign":"ACCA 11th July Webinar reminder LIVE","cohort":"","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":68,"sent":67,"delivered":68,"read":41,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r58","date":"2026-07-12","campaign":"CFA 12th July Webinar Reminder 1 hour to go","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":131,"sent":127,"delivered":124,"read":100,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r59","date":"2026-07-12","campaign":"CFA 12th July Webinar Reminder LIVE","cohort":"","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":131,"sent":127,"delivered":124,"read":100,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r60","date":"2026-07-13","campaign":"CA Final AFM new Age Question Series - Equity Valuation Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":35,"sent":34,"delivered":34,"read":26,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r61","date":"2026-07-13","campaign":"CA Final AFM Portfolio Managemnet Question Resources","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":48,"sent":45,"delivered":43,"read":32,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r62","date":"2026-07-13","campaign":"CA Final AFM Forex Part 2","cohort":"Form Responders ","goal":"Resource access","category":"Utility","number":"Main No","targeted":43,"sent":38,"delivered":37,"read":30,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r63","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modeling All Qualified Leads","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":690,"sent":399,"delivered":396,"read":255,"clicks":null,"unique":null,"conversions":8,"revenue":164000.0},{"id":"r64","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modeling All Past Webinar Registrants","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1348,"sent":926,"delivered":923,"read":607,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r65","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"AS Not Interested","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":5919,"sent":3358,"delivered":3017,"read":1890,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r66","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 3 Current ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":852,"sent":442,"delivered":442,"read":440,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r67","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 2 Current","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1005,"sent":588,"delivered":583,"read":382,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r68","date":"2026-07-14","campaign":"Webinar or class","cohort":"Finance Career Utsav","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":9785,"sent":5497,"delivered":5128,"read":3126,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r69","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"AS Not Interested","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":5919,"sent":1992,"delivered":1818,"read":1149,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r70","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 3 Current ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":852,"sent":273,"delivered":273,"read":131,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r71","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"CFA Level 2 Current","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1005,"sent":344,"delivered":344,"read":209,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r72","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modeling All Past Webinar Registrants ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":1348,"sent":632,"delivered":629,"read":392,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r73","date":"2026-07-14","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"Financial Modleing All Leads ","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":690,"sent":245,"delivered":243,"read":147,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r74","date":"2026-07-16","campaign":"Financial Modeling with AI Program 1st Class (19th July)","cohort":"FRM Not Enrolled","goal":"Conversion ","category":"Marketing","number":"Main No","targeted":256,"sent":146,"delivered":144,"read":94,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r75","date":"2026-07-17","campaign":"FRM CLass Access","cohort":"Form Responders ","goal":"Class Access","category":"Utility","number":"Main No","targeted":34,"sent":32,"delivered":32,"read":25,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r76","date":"2026-07-18","campaign":"Finance Lab Nudge","cohort":"All Scholarship Leads","goal":"WA Community Joins","category":"Marketing","number":"Main No","targeted":9727,"sent":4990,"delivered":4679,"read":2650,"clicks":189,"unique":null,"conversions":null,"revenue":null},{"id":"r77","date":"2026-07-20","campaign":"PR survey Nudge","cohort":"All SSEI Current Students","goal":"Survey Responses","category":"Utility","number":"9230188090","targeted":7911,"sent":7106,"delivered":7050,"read":4650,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r78","date":"2026-07-20","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"All Alumni","goal":"Webinar Registrations","category":"Marketing","number":"9230188090","targeted":42502,"sent":9707,"delivered":9594,"read":6397,"clicks":483,"unique":null,"conversions":null,"revenue":null},{"id":"r80","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"FM Past all webinar attendees","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":690,"sent":438,"delivered":431,"read":227,"clicks":19,"unique":null,"conversions":null,"revenue":null},{"id":"r81","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"CFA qualified leads","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":531,"sent":352,"delivered":352,"read":220,"clicks":37,"unique":null,"conversions":null,"revenue":null},{"id":"r82","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"CFA All Enrolled","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":6582,"sent":3590,"delivered":3566,"read":2129,"clicks":170,"unique":null,"conversions":null,"revenue":null},{"id":"r83","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"AS All leads","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":10773,"sent":5700,"delivered":5273,"read":3028,"clicks":188,"unique":null,"conversions":null,"revenue":null},{"id":"r84","date":"2026-07-22","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"CA All Enrolled","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":1729,"sent":1037,"delivered":1025,"read":703,"clicks":51,"unique":null,"conversions":null,"revenue":null},{"id":"r85","date":"2026-07-23","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"Scholarship All leads","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":9727,"sent":5964,"delivered":5529,"read":2750,"clicks":104,"unique":null,"conversions":null,"revenue":null},{"id":"r86","date":"2026-07-23","campaign":"Claude vs Nifty 500 Webinar (26th July)","cohort":"FRM Part 1 & 2","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":947,"sent":573,"delivered":572,"read":354,"clicks":29,"unique":null,"conversions":null,"revenue":null},{"id":"r87","date":"2026-07-24","campaign":"Webiste Launch Invite","cohort":"Form Responders ","goal":"Launch Attendees","category":"Marketing","number":"Main No","targeted":42,"sent":27,"delivered":27,"read":21,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r88","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"Alumni All","goal":"Conversion","category":"Utility","number":"Main No","targeted":42502,"sent":31845,"delivered":30366,"read":16034,"clicks":null,"unique":null,"conversions":61,"revenue":1408138.0},{"id":"r89","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"SSEI Students","goal":"","category":"Utility","number":"Main No","targeted":5986,"sent":5502,"delivered":5442,"read":3242,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r90","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"All Leads (1st half)","goal":"Conversion","category":"Marketing","number":"Main No","targeted":43013,"sent":24952,"delivered":23892,"read":13619,"clicks":1000,"unique":null,"conversions":null,"revenue":null},{"id":"r92","date":"2026-07-24","campaign":"Website Wide Site Offer","cohort":"All leads (2nd half)","goal":"Conversion","category":"Marketing","number":"Main No","targeted":69999,"sent":15506,"delivered":15336,"read":8682,"clicks":463,"unique":null,"conversions":null,"revenue":null},{"id":"r94","date":"2026-07-25","campaign":"Faculty Recruitment","cohort":"Alumni all leads","goal":"Recruitement","category":"Marketing","number":"Main No","targeted":42502,"sent":15975,"delivered":15153,"read":7874,"clicks":63,"unique":null,"conversions":null,"revenue":null},{"id":"r95","date":"2026-07-25","campaign":"Claude vs Nifty 500 Webinar (26th July) 1 day to go reminder","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":899,"sent":874,"delivered":873,"read":661,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r96","date":"2026-07-25","campaign":"B2b medicaps","cohort":"Medicaps leads by shubham","goal":"Counselling Session","category":"Marketing","number":"Main No","targeted":1064,"sent":493,"delivered":487,"read":327,"clicks":null,"unique":null,"conversions":0,"revenue":0},{"id":"r97","date":"2026-07-26","campaign":"Claude vs Nifty 500 Webinar (26th July) 1 hour to go reminder","cohort":"Webinar Registrants","goal":"Webinar attendees","category":"Utility","number":"Main No","targeted":899,"sent":874,"delivered":873,"read":642,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r98","date":"2026-07-26","campaign":"Claude vs Nifty 500 Webinar (26th July) Live","cohort":"","goal":"","category":"Utility","number":"Main No","targeted":899,"sent":873,"delivered":870,"read":616,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r99","date":"2026-07-27","campaign":"Claude vs Nifty 500 Webinar (26th July) Post webinar nudge","cohort":"Webinar Attendees","goal":"Resource Access","category":"Utility","number":"Main No","targeted":624,"sent":601,"delivered":601,"read":406,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r100","date":"2026-07-27","campaign":"Claude vs Nifty 500 Webinar (26th July) Post webinar nudge","cohort":"Webinar Non Attendees","goal":"Webinar Recording Access","category":"Utility","number":"Main No","targeted":543,"sent":359,"delivered":357,"read":232,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r101","date":"2026-07-27","campaign":"Faculty Recruitment","cohort":"Alumni all leads","goal":"Recruitement","category":"Marketing","number":"9230188090","targeted":42502,"sent":9056,"delivered":8714,"read":5012,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r102","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"CMA all students","goal":"Webinar Registartions","category":"Marketing","number":"Main No","targeted":158,"sent":101,"delivered":99,"read":56,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r103","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"ACCA All leads except enrolled ","goal":"","category":"Marketing","number":"Main No","targeted":872,"sent":593,"delivered":554,"read":383,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r104","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"B2B Seminar","goal":"","category":"Marketing","number":"Main No","targeted":375,"sent":223,"delivered":218,"read":127,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r105","date":"2026-07-28","campaign":"ACCA Webinar (2nd August)","cohort":"ACCA all webinar ","goal":"","category":"Marketing","number":"Main No","targeted":439,"sent":319,"delivered":313,"read":177,"clicks":null,"unique":null,"conversions":null,"revenue":null}]},"2026-08":{"month":"2026-08","rows":[{"id":"r79","date":"2026-08-21","campaign":"B2B Medicaps","cohort":"B2B Medicaps data by Shubham","goal":"Counselling Session","category":"Marketing","number":"Main No","targeted":1064,"sent":565,"delivered":556,"read":397,"clicks":7,"unique":null,"conversions":0,"revenue":0.0},{"id":"r106","date":"2026-08-01","campaign":"ACCA Webinar (2nd August) 1 Day to go reminder","cohort":"Webinar Registrants","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":69,"sent":63,"delivered":62,"read":44,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r107","date":"2026-08-01","campaign":"ACCA Webinar (2nd August) 1 hour to go reminder","cohort":"","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":69,"sent":63,"delivered":61,"read":43,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r108","date":"2026-08-01","campaign":"ACCA Webinar (2nd August) Live","cohort":"","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":69,"sent":63,"delivered":61,"read":42,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r109","date":"2026-08-03","campaign":"ACCA Webinar (2nd August)  Post Webinar msg","cohort":"Webinar Attendees","goal":"Awareness","category":"Utility","number":"Main No","targeted":29,"sent":29,"delivered":29,"read":18,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r111","date":"2026-08-04","campaign":"ACCA Webinar (2nd August)  Post Webinar msg","cohort":"Webinar Non Attendees","goal":"Awareness","category":"Utility","number":"Main No","targeted":40,"sent":34,"delivered":32,"read":18,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r113","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Attendees from 3rd year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":28,"sent":21,"delivered":20,"read":15,"clicks":1,"unique":null,"conversions":0,"revenue":0.0},{"id":"r115","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Attendees from 2nd year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":65,"sent":55,"delivered":51,"read":32,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r117","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Attendees from 1st year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":170,"sent":143,"delivered":143,"read":105,"clicks":11,"unique":null,"conversions":null,"revenue":null},{"id":"r119","date":"2026-08-05","campaign":"Nudge to Xavier's College (1)","cohort":"Seminar Non Attendees from 1st year","goal":"Conversion","category":"Marketing","number":"Main No","targeted":971,"sent":799,"delivered":798,"read":530,"clicks":55,"unique":null,"conversions":null,"revenue":null},{"id":"r121","date":"2026-08-06","campaign":"Nudge to Xavier's College (2)","cohort":"All Xaviers Database: Seminar Attendees + Non Attendees","goal":"Conversion","category":"Marketing","number":"Main No","targeted":1234,"sent":994,"delivered":983,"read":577,"clicks":30,"unique":null,"conversions":0,"revenue":0.0},{"id":"r123","date":"2026-08-07","campaign":"B2B Medicaps","cohort":"B2B nudge","goal":"Conversion","category":"Marketing","number":"Main No","targeted":528,"sent":209,"delivered":190,"read":121,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r125","date":"2026-08-10","campaign":"Nudge to Xavier's College (3)","cohort":"Gupshup Failed","goal":"Conversion","category":"Marketing","number":"Main No","targeted":278,"sent":114,"delivered":112,"read":59,"clicks":4,"unique":null,"conversions":0,"revenue":0.0},{"id":"r127","date":"2026-08-10","campaign":"Nudge to Xavier's College (3)","cohort":"Gupshup Msg Read But Not Engaged","goal":"Conversion","category":"Marketing","number":"Main No","targeted":646,"sent":602,"delivered":584,"read":398,"clicks":20,"unique":null,"conversions":null,"revenue":null},{"id":"r129","date":"2026-08-10","campaign":"CFA Level 1 Nudge","cohort":"CFA L1 All leads Except Enrolled & Marketing Junk","goal":"Conversion","category":"Marketing","number":"Main No","targeted":2113,"sent":1294,"delivered":1258,"read":528,"clicks":43,"unique":null,"conversions":7,"revenue":260599.0},{"id":"r130","date":"2026-08-11","campaign":"CA Final AFm Equity Class 2","cohort":"Form Responders","goal":"Resource Access","category":"Utility","number":"Main No","targeted":20,"sent":20,"delivered":20,"read":14,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r131","date":"2026-08-12","campaign":"CFA Level 2 Nudge","cohort":"CFA L1 passed (from G-form), but not enrolled with ssei","goal":"Conversion","category":"Marketing","number":"Main No","targeted":40,"sent":28,"delivered":28,"read":18,"clicks":4,"unique":null,"conversions":1,"revenue":45000.0},{"id":"r132","date":"2026-08-12","campaign":"CFA Level 2 Nudge","cohort":"CFa L2 All Leads Except Enrolled & Marketing Junk","goal":"","category":"Marketing","number":"Main No","targeted":649,"sent":416,"delivered":404,"read":181,"clicks":8,"unique":null,"conversions":null,"revenue":null},{"id":"r133","date":"2026-08-18","campaign":"Webinar: The Interview Skills That Separate a Shortlist from an Offer (22nd August)","cohort":"CA, FRM, Analyst Stack, ACCA, Financial Modeling, CFA Level 2, CFA Level 3- Enrolled, CFA Level 1: Full Immersion, Live Focused, Accelarate - Current Students","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":7499,"sent":5067,"delivered":5010,"read":2315,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r134","date":"2026-08-18","campaign":"Webinar: The Interview Skills That Separate a Shortlist from an Offer (22nd August)","cohort":"CA, FRM, Analyst Stack, ACCA, Financial Modeling, CFA Level 2, CFA Level 3- Qualified and Partially Qualified Leads","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":275,"sent":183,"delivered":183,"read":85,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r135","date":"2026-08-18","campaign":"Webinar- CFA After 25: The Working Professional’s Route\n(23rd August)","cohort":"CFA not interested leads (Money constrain, time issues, will take it later sometime)","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":12030,"sent":7901,"delivered":7622,"read":3517,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r136","date":"2026-08-18","campaign":"Webinar- CFA After 25: The Working Professional’s Route\n(23rd August)","cohort":"CFA Live Focused, and Accelerate all Leads (Excluding Won)","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":654,"sent":379,"delivered":371,"read":187,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r137","date":"2026-08-20","campaign":"FRM New Entry Window (29th August)","cohort":"FRM Part 1 Qualified and partially Qualified","goal":"Enrollments","category":"Marketing","number":"Main No","targeted":856,"sent":560,"delivered":560,"read":301,"clicks":16,"unique":null,"conversions":7,"revenue":188000.0},{"id":"r138","date":"2026-08-20","campaign":"CFA Level 1 New Entry Window (24th August)","cohort":"CFA Level 1 Qualified and Partially Qualified","goal":"Enrollments","category":"Marketing","number":"Main No","targeted":911,"sent":475,"delivered":472,"read":242,"clicks":34,"unique":null,"conversions":16,"revenue":584095.0},{"id":"r139","date":"2026-08-21","campaign":"Gaurav Gill 22nd Aug Webinar Reminder 1 day to go","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":360,"sent":348,"delivered":345,"read":247,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r140","date":"2026-08-22","campaign":"Gaurav Gill 22nd Aug Webinar Reminder 1 hr to go","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":360,"sent":348,"delivered":344,"read":223,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r141","date":"2026-08-22","campaign":"Gaurav Gill 22nd Aug Webinar Reminder Live","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":360,"sent":348,"delivered":342,"read":214,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r142","date":"2026-08-22","campaign":"CFA after 25: Webinar (23rd Aug) 1 day to go reminder","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":124,"sent":116,"delivered":116,"read":77,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r143","date":"2026-08-23","campaign":"CFA after 25: Webinar (23rd Aug) 1 hr to go reminder","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":124,"sent":116,"delivered":116,"read":76,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r144","date":"2026-08-23","campaign":"CFA after 25: Webinar (23rd Aug) Live reminder","cohort":"Webinar Registrants ","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":124,"sent":117,"delivered":117,"read":75,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r145","date":"2026-08-24","campaign":"Gaurav Gill 22nd Aug Post Webinar Msgs","cohort":"Webinar Attendees","goal":"Webinar Registration + Converstion","category":"Marketing","number":"Main No","targeted":262,"sent":166,"delivered":164,"read":95,"clicks":null,"unique":null,"conversions":1,"revenue":50000.0},{"id":"r146","date":"2026-08-24","campaign":"Gaurav Gill 22nd Aug Post Webinar Msgs","cohort":"Webinar Registered","goal":"Webinar Registration + Converstion","category":"Marketing","number":"Main No","targeted":121,"sent":75,"delivered":74,"read":41,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r147","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 2 Aug'26 Exam Givers","goal":"Conversion","category":"Marketing","number":"Main No","targeted":1132,"sent":735,"delivered":730,"read":328,"clicks":15,"unique":null,"conversions":8,"revenue":280000.0},{"id":"r148","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 1 May& Feb 2026, CFA level 2 Not Enrolled","goal":"","category":"Marketing","number":"Main No","targeted":154,"sent":109,"delivered":106,"read":50,"clicks":16,"unique":null,"conversions":null,"revenue":null},{"id":"r149","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 1, not taken Level 2 from cohortisation report","goal":"","category":"Marketing","number":"Main No","targeted":7998,"sent":4522,"delivered":4445,"read":1807,"clicks":66,"unique":null,"conversions":null,"revenue":null},{"id":"r150","date":"2026-08-25","campaign":"CFA Level 2 Nudge For New Entry Window (10th Sept)","cohort":"CFA Level 2 Qualified/Partially Qualified ","goal":"","category":"Marketing","number":"Main No","targeted":35,"sent":25,"delivered":25,"read":11,"clicks":0,"unique":null,"conversions":null,"revenue":null},{"id":"r151","date":"2026-08-25","campaign":"CFA After 25 (23rd Aug) Post Webinar Msgs","cohort":"Webinar Attendees","goal":"Conversion","category":"Marketing","number":"Main No","targeted":59,"sent":42,"delivered":42,"read":26,"clicks":null,"unique":null,"conversions":0,"revenue":0.0},{"id":"r152","date":"2026-08-25","campaign":"CFA After 25 (23rd Aug) Post Webinar Msgs","cohort":"Webinar Registered","goal":"Conversion","category":"Utility","number":"Main No","targeted":63,"sent":44,"delivered":44,"read":20,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r153","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"CFA Level 3 Qualified, Partially Qualified","goal":"Webinar Registration","category":"Marketing","number":"Main No","targeted":10,"sent":4,"delivered":4,"read":2,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r154","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"Financial Modeling Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":11,"sent":6,"delivered":6,"read":2,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r155","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"Analyst Stack Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":117,"sent":66,"delivered":66,"read":34,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r156","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"ACCA Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":22,"sent":13,"delivered":13,"read":10,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r157","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"CA Qualified, Partially Qualified","goal":"","category":"Marketing","number":"Main No","targeted":62,"sent":38,"delivered":38,"read":22,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r158","date":"2026-08-25","campaign":"Shrishti Lanba(30th Aug) Webinar","cohort":"All current student","goal":"","category":"Marketing","number":"Main No","targeted":7343,"sent":4088,"delivered":4047,"read":2015,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r159","date":"2026-08-26","campaign":"FRM New Entry Window (29th August)","cohort":"FRM Part 1 Qualified and partially Qualified","goal":"Conversion","category":"Marketing","number":"Main No","targeted":84,"sent":47,"delivered":47,"read":29,"clicks":2,"unique":null,"conversions":null,"revenue":null},{"id":"r160","date":"2026-08-28","campaign":"Srishti Lamba Webinar 2 day to go reminder","cohort":"Webinar Registrants","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":408,"sent":395,"delivered":394,"read":285,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r161","date":"2026-08-29","campaign":"Srishti Lamba Webinar 1 day to go reminder","cohort":"Webinar Registrants","goal":"Webinar Attendees","category":"Utility","number":"Main No","targeted":462,"sent":438,"delivered":437,"read":293,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r162","date":"2026-08-29","campaign":"CFA Aug'26 Attempt Webinar (2nd Septempber)","cohort":"CFA May'26 attempt, next lvl not enrolled","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":853,"sent":458,"delivered":452,"read":219,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r163","date":"2026-08-29","campaign":"CFA Aug'26 Attempt Webinar (2nd Septempber)","cohort":"CFA all current students","goal":"","category":"Marketing","number":"Main No","targeted":4776,"sent":2741,"delivered":2717,"read":1311,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r164","date":"2026-08-29","campaign":"CFA Aug'26 Attempt Webinar (2nd Septempber)","cohort":"CFA Aug'26 attempt","goal":"","category":"Marketing","number":"Main No","targeted":1458,"sent":888,"delivered":883,"read":434,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r165","date":"2026-08-30","campaign":"Srishti Lamba Webinar (2nd Sept) 1 hr to go reminder","cohort":"Webinar Registrants","goal":"Webinar Registrations","category":"Utility","number":"Main No","targeted":462,"sent":439,"delivered":438,"read":273,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r166","date":"2026-08-30","campaign":"Srishti Lamba Webinar (2nd Sept) live reminder","cohort":"Webinar Registrants","goal":"Webinar Registrations","category":"Utility","number":"Main No","targeted":462,"sent":438,"delivered":434,"read":265,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r167","date":"2026-08-31","campaign":"Srishti Lamba Webinar (2nd Sept) Post Webinar msg","cohort":"Webinar Attendees","goal":"Conversions","category":"Marketing","number":"Performance No.","targeted":126,"sent":86,"delivered":85,"read":49,"clicks":15,"unique":null,"conversions":0,"revenue":0.0},{"id":"r168","date":"2026-08-31","campaign":"CFA Level 1 New Entry Window Nudge (2nd September)","cohort":"CFA Level 1 Qialified and Partially Qualified","goal":"Conversions","category":"Marketing","number":"Main No","targeted":200,"sent":128,"delivered":127,"read":62,"clicks":7,"unique":null,"conversions":5,"revenue":170400.0},{"id":"r169","date":"2026-08-31","campaign":"Kumar Saurav AS 30th Aug Class","cohort":"Attendees","goal":"Resources","category":"Marketing","number":"Main No","targeted":36,"sent":35,"delivered":35,"read":25,"clicks":15,"unique":null,"conversions":null,"revenue":null}]},"2026-09":{"month":"2026-09","rows":[{"id":"r170","date":"2026-09-01","campaign":"CFA 6th September Webinar","cohort":"CFA L1 Accelaerate & Live Focused - Q ualified/Partially Qualified","goal":"Conversions","category":"Marketing","number":"Main No","targeted":648,"sent":436,"delivered":414,"read":270,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r171","date":"2026-09-01","campaign":"CFA Webinar 2nd September Reminder","cohort":"1 day to glo","goal":"Webinar Registrations","category":"Utility","number":"Main No","targeted":172,"sent":163,"delivered":162,"read":125,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r172","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM Part 1 Aug/Nov'25 & May/Aug'27","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":406,"sent":285,"delivered":284,"read":203,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r173","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM extra leads ","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":678,"sent":459,"delivered":456,"read":259,"clicks":null,"unique":null,"conversions":null,"revenue":null},{"id":"r174","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM all students","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":965,"sent":608,"delivered":605,"read":363,"clicks":14,"unique":11,"conversions":null,"revenue":null},{"id":"r175","date":"2026-09-01","campaign":"FRM Webinar 6th September Webinar","cohort":"FRM extra leads ","goal":"Webinar Registrations","category":"Marketing","number":"Main No","targeted":678,"sent":433,"delivered":423,"read":180,"clicks":3,"unique":3,"conversions":null,"revenue":null}]}},"invoices":{"2026-06":{"month":"2026-06","invoiceNo":"","source":"Not received","marketingMsgs":null,"utilityMsgs":null,"platformFee":20000,"taxable":null,"gst":null,"total":null,"notes":"No invoice or estimate on file for June."},"2026-07":{"month":"2026-07","invoiceNo":"","source":"Estimate","marketingMsgs":null,"utilityMsgs":null,"platformFee":20000,"taxable":null,"gst":null,"total":185000,"notes":"Recollected figure from the growth team, not an invoice. Replace it when the invoice is found."},"2026-08":{"month":"2026-08","invoiceNo":"132727123473","source":"Invoice","marketingMsgs":34238,"utilityMsgs":2878,"platformFee":20000,"taxable":53402.39,"gst":9612.4,"total":63014.79,"notes":"IGST 18%, Maharashtra supplier to West Bengal buyer. Platform fee bills as two lines of Rs 10,000: Console Platform Fee and Advance Messages Fixed Fee. Marketing bills as MMLITE Per Message at 0.9385, utility at 0.13. Covers 5 Gupshup apps; campaigns are sent from 2."},"2026-09":{"month":"2026-09","invoiceNo":"","source":"Not received","marketingMsgs":null,"utilityMsgs":null,"platformFee":20000,"taxable":null,"gst":null,"total":null,"notes":"Invoice not yet received."}},"config":{"marketingRate":0.9385,"utilityRate":0.13,"gstRate":0.18,"platformFee":20000,"metaCPC":15,"googleCPC":50,"currency":"INR"},"stamp":"2026-10-05"}</script>
 <script>
 (function(){
 "use strict";
 /* ============================ state ============================ */
 var DEF={marketingRate:.9385,utilityRate:.13,gstRate:.18,platformFee:20000,metaCPC:15,googleCPC:50,
-  windowDays:30};
-var S={cfg:Object.assign({},DEF),months:{},inv:{},orders:[],aud:[],match:null,ready:false,db:null,note:""};
+  windowDays:60,couponProof:false};
+var S={cfg:Object.assign({},DEF),months:{},inv:{},orders:[],aud:[],src:[],docs:{},
+  match:null,ready:false,db:null,note:""};
 var FIELDS=["date","campaign","cohort","goal","category","number","targeted","sent","delivered","read","clicks","unique","conversions","revenue"];
 var NUMF=["targeted","sent","delivered","read","clicks","unique","conversions","revenue"];
 var STANDALONE=!(window.claude&&window.claude.use);
@@ -554,18 +594,52 @@ function matchTargets(){
   return Object.keys(out).map(function(k){return out[k];})
     .sort(function(a,b){return (a.send||"")<(b.send||"")?-1:1;});
 }
+/* Dated source touches from the CRM, keyed by contact, earliest first.
+   A row is {k:contact, source:"Website", date:"2026-08-04"}.  Without this file
+   nothing can be taken away from WhatsApp, and the page says so. */
+function sourceIndex(){
+  var ix={};
+  (S.src||[]).forEach(function(r){
+    var k=r.k||keyOf(r.contact);if(!k)return;
+    var d=dnum(r.date);if(d===null)return;
+    (ix[k]=ix[k]||[]).push({d:d,source:String(r.source||"").trim(),wa:isWA(r.source)});
+  });
+  Object.keys(ix).forEach(function(k){ix[k].sort(function(a,b){return a.d-b.d;});});
+  return ix;
+}
+function isWA(v){var s=String(v||"").toLowerCase();
+  return s.indexOf("whatsapp")>=0||s.indexOf("wa ")===0||s==="gupshup";}
+/* Did another channel touch this person after our send and before they bought?
+   If so that channel owns the sale, by the 60 day last touch rule. */
+function takenOver(src,k,sd,od){
+  var list=src[k];if(!list||!list.length)return null;
+  var hit=null;
+  for(var i=0;i<list.length;i++){
+    var t=list[i];
+    if(t.wa)continue;
+    if(t.d>sd&&t.d<=od&&(hit===null||t.d>hit.d))hit=t;
+  }
+  return hit;
+}
 function runMatch(){
-  var ix=orderIndex(), win=n(S.cfg.windowDays)||30, used={}, detail=[], per={};
+  var ix=orderIndex(), src=sourceIndex(), win=n(S.cfg.windowDays)||60;
+  var used={}, detail=[], per={}, lost=[], haveSrc=(S.src||[]).length>0;
   var audBy={};
   S.aud.forEach(function(a){
     var k=(a.campaign||"").trim().toLowerCase();
     (audBy[k]=audBy[k]||[]).push(a.k);
   });
-  matchTargets().forEach(function(t){
+  var targets=matchTargets();
+  targets.forEach(function(t){
     var list=audBy[t.name.toLowerCase()];
     per[t.key]={name:t.name,month:t.month,conversions:0,revenue:0,audience:list?list.length:0,
+      lost:0,lostRevenue:0,
       rule:t.coupon?"Coupon "+t.coupon:(t.keyword?"Product: "+t.keyword:"Any product"),
       measurable:!!list};
+  });
+  /* latest send first, so the most recent campaign claims the sale */
+  targets.slice().sort(function(a,b){return (a.send||"")<(b.send||"")?1:-1;}).forEach(function(t){
+    var list=audBy[t.name.toLowerCase()];
     if(!list||!list.length)return;
     var sd=dnum(t.send), kw=(t.keyword||"").toLowerCase(), cp=(t.coupon||"").trim();
     var seen={};
@@ -574,25 +648,35 @@ function runMatch(){
       var cands=ix[k]||[], best=null;
       cands.forEach(function(i){
         if(used[i])return;
-        var o=S.orders[i];
-        if(cp){ if(String(o.coupon||"").trim()!==cp)return; }
-        else{
-          var od=dnum(o.date);
-          if(od===null||sd===null||od<sd||od-sd>win)return;
+        var o=S.orders[i], od=dnum(o.date);
+        if(od===null||sd===null||od<sd||od-sd>win)return;     /* the window binds everything now */
+        if(cp){
+          if(String(o.coupon||"").trim()!==cp)return;          /* a campaign coupon is direct proof */
+        }else{
           if(kw&&String(o.product||"").toLowerCase().indexOf(kw)<0)return;
         }
         if(best===null||String(S.orders[i].date)<String(S.orders[best].date))best=i;
       });
       if(best===null)return;
+      var o=S.orders[best], od=dnum(o.date);
+      var over=(cp&&S.cfg.couponProof===true)?null:takenOver(src,k,sd,od);
+      if(over){
+        /* the sale is spoken for, so no earlier campaign may pick it up either */
+        used[best]=1;
+        per[t.key].lost++;per[t.key].lostRevenue+=(+o.amount||0);
+        lost.push({campaign:t.name,month:t.month,contact:k,send:t.send,date:o.date,
+          product:o.product,amount:+o.amount||0,source:over.source});
+        return;
+      }
       used[best]=1;
-      var o=S.orders[best];
       per[t.key].conversions++;per[t.key].revenue+=(+o.amount||0);
       detail.push({campaign:t.name,month:t.month,contact:k,send:t.send,date:o.date,
         product:o.product,amount:+o.amount||0,coupon:o.coupon||"",rule:per[t.key].rule});
     });
   });
   S.match={when:new Date().toISOString().slice(0,16).replace("T"," "),per:per,detail:detail,
-    orders:S.orders.length,audience:S.aud.length};
+    lost:lost,haveSrc:haveSrc,window:win,
+    orders:S.orders.length,audience:S.aud.length,sources:(S.src||[]).length};
   return S.match;
 }
 function applyMatch(){
@@ -613,10 +697,29 @@ function applyMatch(){
   return done;
 }
 
+/* ---------- documents: the invoice behind a month, the list behind a campaign ---------- */
+var ICON={
+ doc:'<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" '
+   +'d="M9 1H4.5A1.5 1.5 0 0 0 3 2.5v11A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V5L9 1Zm0 1.6L11.4 5H9V2.6ZM5 8h6v1H5V8Zm0 2.5h6v1H5v-1Z"/></svg>',
+ sheet:'<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" '
+   +'d="M2.5 2h11A.5.5 0 0 1 14 2.5v11a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11A.5.5 0 0 1 2.5 2ZM3 5v2.5h3.5V5H3Zm4.5 0v2.5H13V5H7.5ZM3 8.5V11h3.5V8.5H3Zm4.5 0V11H13V8.5H7.5ZM3 12v1h3.5v-1H3Zm4.5 0v1H13v-1H7.5Z"/></svg>',
+ bill:'<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" '
+   +'d="M3 1.5 4.25 2.5 5.5 1.5 6.75 2.5 8 1.5 9.25 2.5 10.5 1.5 11.75 2.5 13 1.5v13l-1.25-1-1.25 1-1.25-1-1.25 1-1.25-1-1.25 1L4.25 13.5 3 14.5v-13ZM5 5h6v1.1H5V5Zm0 2.9h6V9H5V7.9Zm0 2.9h4v1.1H5v-1.1Z"/></svg>',
+ none:'<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="6" '
+   +'fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2.4 2"/></svg>'};
+function docKeyC(name,month){return "c:"+String(name||"").trim().toLowerCase()+"|"+(month||"");}
+function docUrl(k){var d=S.docs&&S.docs[k];return d&&d.url?d.url:"";}
+function docBtn(url,title,kind){
+  if(!url)return '<span class="doc off" title="Nothing linked yet">'+ICON.none+'</span>';
+  return '<a class="doc" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer" title="'
+    +esc(title||"Open the document")+'">'+(ICON[kind||"doc"]||ICON.doc)+'</a>';
+}
+function saveDocs(){write("settings/docs",S.docs||{});}
+
 /* ---------- what Gupshup should bill us, and what it did ---------- */
 function invFor(m){
   return S.inv[m]||{month:m,invoiceNo:"",source:"Not received",marketingMsgs:null,utilityMsgs:null,
-    platformFee:S.cfg.platformFee,taxable:null,gst:null,total:null,notes:""};
+    platformFee:S.cfg.platformFee,taxable:null,gst:null,total:null,notes:"",docUrl:""};
 }
 function billing(mo){
   var iv=invFor(mo.month);
@@ -896,7 +999,7 @@ var METRICS=[
  val:function(a){return a.roi===null?null:a.roi*100;},
  big:function(a){return a.roi===null?"—":Math.round(a.roi*100).toLocaleString("en-IN")+"%";},
  sub:function(a){return cr(a.revenue)+" back on "+cr(a.bill)+" of cost";},
- blurb:"Revenue credited to WhatsApp divided by everything the channel cost in the period: messages at the tracked rates, the Gupshup platform fee, and GST.",
+ blurb:"Revenue credited to WhatsApp divided by everything the channel cost in the period: messages at the tracked rates, the Gupshup platform fee, and GST. A sale only counts where WhatsApp was the last channel to touch the buyer, inside 60 days.",
  extra:function(a,bks){return chartCard("Cost against revenue",
    "The full cost of each period beside every rupee that came back.",
    legend2("Total cost","var(--s3)","Revenue","var(--s2)")+
@@ -910,13 +1013,13 @@ var METRICS=[
 {k:"revenue",cap:"Revenue attributed",kind:"money",color:"var(--s2)",cols:"roi",
  val:function(a){return a.revenue;},big:function(a){return cr(a.revenue);},
  sub:function(a){return cnt(a.conversions)+" conversions · "+inr(a.aov)+" average order";},
- blurb:"Purchases matched back to the people a campaign was sent to, inside the attribution window, credited once each.",
+ blurb:"The paid value of the orders that clear the attribution rule: on the list, inside 60 days, right product, and no later touch from another channel. The Method tab writes it out in full.",
  extra:function(a,bks){return campRevChart(a)+campTable(a,"revenue");}},
 
 {k:"conversions",cap:"Conversions",kind:"count",color:"var(--s1)",cols:"conv",
  val:function(a){return a.conversions;},big:function(a){return cnt(a.conversions);},
  sub:function(a){return "from "+cnt(a.clicks)+" clicks · "+inr(a.costPerConv)+" each";},
- blurb:"One conversion is one purchase by somebody who was on a campaign list, bought inside the window, and has not already been credited to an earlier campaign.",
+ blurb:"One conversion is one paid order by somebody who was on the campaign's list, bought within 60 days of the send, bought the thing the campaign was about, and had no other channel touch them in between. Each sale counts once. The Method tab writes the rule out in full.",
  extra:function(a,bks){return chartCard("Cost per conversion",
    "What one conversion cost us, all in.",
    barChart({title:"Cost per conversion",cats:bks.map(function(b){return b.label;}),width:CW(),height:CH(230),
@@ -1110,14 +1213,17 @@ function campTable(a,by){
    +'<p class="note">Every campaign inside the period. ROI here is measured on message cost alone, '
    +'because the platform fee and GST belong to the month and not to any one send.</p>'
    +'<div class="scroll"><table><thead><tr><th>Campaign</th><th>Sent</th><th>Message cost</th>'
-   +'<th>Clicks</th><th>Conversions</th><th>Revenue</th><th>ROI on message cost</th></tr></thead><tbody>'];
+   +'<th>Clicks</th><th>Conversions</th><th>Revenue</th><th>ROI on message cost</th>'
+   +'<th>Who it went to</th></tr></thead><tbody>'];
   cs.forEach(function(c){
     var r=(c.revenue!==null&&c.spend>0)?c.revenue/c.spend:null;
     h.push('<tr><td>'+esc(c.name)+' <span class="status">'+esc(mlabel(c.month))+'</span></td>'
       +'<td class="n">'+cnt(c.sent)+'</td><td class="n">'+inr(c.spend,2)+'</td>'
       +'<td class="n">'+cnt(c.clicks)+'</td><td class="n">'+cnt(c.conversions)+'</td>'
       +'<td class="n">'+(c.revenue===null?"—":inr(c.revenue))+'</td>'
-      +'<td class="n">'+roiPill(r)+'</td></tr>');
+      +'<td class="n">'+roiPill(r)+'</td>'
+      +'<td style="text-align:right">'+docBtn(docUrl(docKeyC(c.name,c.month)),
+        "Open the audience list for "+c.name,"sheet")+'</td></tr>');
   });
   h.push('</tbody></table></div></div>');
   return h.join("");
@@ -1150,7 +1256,8 @@ function reconBlock(a){
    +'<p class="note">Our own message log priced at the tracked rates, plus the platform fee, plus GST at '
    +pc(S.cfg.gstRate,0)+', set against the invoice.</p>'
    +'<div class="scroll"><table><thead><tr><th>Month</th><th>Messages</th><th>Platform fee</th><th>GST</th>'
-   +'<th>Our figure</th><th>Gupshup billed</th><th>Difference</th><th>Source</th></tr></thead><tbody>'];
+   +'<th>Our figure</th><th>Gupshup billed</th><th>Difference</th><th>Source</th><th>Invoice</th>'
+   +'</tr></thead><tbody>'];
   rr.forEach(function(r){
     var st=r.gapPc===null?'<span class="pill flat">not billed yet</span>'
       :(Math.abs(r.gapPc)<=0.05?'<span class="pill up">'+pc(r.gapPc)+'</span>'
@@ -1161,7 +1268,9 @@ function reconBlock(a){
       +(r.billed===null?"—":inr(r.billed,2))+'</td><td class="n">'
       +(r.gap===null?"—":inr(r.gap,2))+' '+st+'</td>'
       +'<td style="text-align:right">'+esc(r.source)
-      +(r.invoiceNo?' <span class="status">'+esc(r.invoiceNo)+'</span>':'')+'</td></tr>');
+      +(r.invoiceNo?' <span class="status">'+esc(r.invoiceNo)+'</span>':'')+'</td>'
+      +'<td style="text-align:right">'+docBtn((S.inv[r.month]||{}).docUrl,
+        "Open the "+mlabel(r.month)+" invoice","bill")+'</td></tr>');
   });
   h.push('</tbody></table></div>');
   var ck=rr.filter(function(r){return r.billed!==null;});
@@ -1539,6 +1648,213 @@ document.addEventListener("keydown",function(e){
   }
 });
 
+/* ====================== the method page ====================== */
+function mStep(n2,title,body){
+  return '<section class="step"><div class="stepno">'+n2+'</div><div class="stepbody">'
+    +'<h3>'+title+'</h3>'+body+'</div></section>';
+}
+function fml(a,b){return '<p class="formula"><b>'+a+'</b><span>'+b+'</span></p>';}
+function viewMethod(){
+  var el=document.getElementById("v-met");
+  var ms=months(), t=totals(ms), sp=dataSpan();
+  var M=S.match;
+  var h=[];
+  h.push('<div class="lead-head"><div><h1>How every number here is worked out</h1>'
+    +'<p class="period">Written so that anyone can re-check a figure without asking us. '
+    +'Last changed 8 Oct 2026, when the conversion rule moved to a 60 day last touch window.</p></div></div>');
+
+  /* -------- what it covers -------- */
+  h.push('<div class="card wide"><h3>What this page covers, and what it does not</h3>'
+    +'<p class="note">Scope matters more than any formula, so it goes first.</p>'
+    +'<div class="scroll"><table class="halves"><thead><tr><th>Counted here</th>'
+    +'<th>Not counted here</th></tr></thead><tbody>'
+    +'<tr><td>Marketing and utility WhatsApp campaigns sent through Gupshup from the SSEI numbers</td>'
+    +'<td style="text-align:left">Automated and transactional WhatsApp traffic from the other Gupshup apps</td></tr>'
+    +'<tr><td>Campaigns logged on the Campaigns tab, one row per cohort</td>'
+    +'<td style="text-align:left">Anything sent outside the tracker, which is why our cost reads slightly '
+    +'under the invoice every month</td></tr>'
+    +'<tr><td>Paid orders in the purchase file, by phone or email</td>'
+    +'<td style="text-align:left">Enquiries, registrations, downloads and any other non-paying action</td></tr>'
+    +'</tbody></table></div></div>');
+
+  /* -------- cost -------- */
+  h.push('<div class="card wide"><h3>Cost</h3>'
+    +'<p class="note">The cost we report is our own campaign log priced at the contracted rates, '
+    +'not a copy of the invoice. The invoice is then set against it, which is the only way the two can '
+    +'ever disagree out loud.</p>'
+    +fml("Message cost","delivered messages × the rate for that message type")
+    +fml("Marketing rate",inr(S.cfg.marketingRate,4)+" per delivered message, set on the Rates tab")
+    +fml("Utility rate",inr(S.cfg.utilityRate,2)+" per delivered message")
+    +fml("Platform fee",inr(S.cfg.platformFee)+" a month, fixed, whatever we send")
+    +fml("GST","("+"message cost + platform fee) × "+pc(S.cfg.gstRate,0))
+    +fml("Total cost","message cost + platform fee + GST")
+    +'<p class="hint"><b>Why delivered and not sent.</b> Gupshup bills on delivery, so a message that '
+    +'never landed is not a cost. Across everything tracked, '+cnt(t.sent)+' were sent and '
+    +cnt(t.delivered)+' were delivered.</p>'
+    +'<p class="hint"><b>The fee when a filter cuts a month in half.</b> The fee is a monthly charge, so '
+    +'a period that contains all of a month’s sending carries the whole fee. A period that cuts a '
+    +'month carries the fee in proportion to the messages delivered inside it. A part month is never '
+    +'charged a whole fee, and a whole month is never charged less than one.</p></div>');
+
+  /* -------- engagement -------- */
+  h.push('<div class="card wide"><h3>Engagement</h3>'
+    +'<p class="note">Each rate uses the fairest denominator, which is the step immediately before it.</p>'
+    +fml("Delivery rate","delivered ÷ sent")
+    +fml("Read rate","read ÷ delivered")
+    +fml("Click rate","clicks ÷ read, because a message nobody opened was never a chance to click")
+    +fml("Cost per click","marketing message cost ÷ clicks")
+    +'<p class="hint">Cost per click deliberately uses marketing spend only, with no platform fee and no '
+    +'GST, because that is how Meta and Google quote theirs. Comparing our all-in cost against their media '
+    +'cost would flatter them. The benchmarks themselves are the figures typed on the Rates tab, today '
+    +inr(S.cfg.metaCPC)+' for Meta and '+inr(S.cfg.googleCPC)+' for Google.</p></div>');
+
+  /* -------- the attribution rule -------- */
+  h.push('<div class="card wide"><h3>Conversions: the rule in full</h3>'
+    +'<p class="note">This is the part that decides whether the whole page is believable, so it is written '
+    +'out step by step. A sale has to clear every one of these to count for WhatsApp.</p>'
+    +'<div class="steps" style="margin-top:12px">');
+  h.push(mStep(1,"They were actually sent the message",
+    '<p class="note">The buyer has to appear on that campaign’s own audience list, matched on the last '
+    +'ten digits of the phone number or on a lowercased email. A campaign with no list uploaded is left '
+    +'out of the count entirely rather than recorded as zero, so a missing file can never look like a '
+    +'failed campaign.</p>'));
+  h.push(mStep(2,"They bought, and they bought after the send",
+    '<p class="note">Only paid orders in the purchase file count. The order date has to be on or after '
+    +'the send date. A sale that happened before the message went out is never credited to it.</p>'));
+  h.push(mStep(3,"Inside 60 days",
+    '<p class="note">A send owns the lead for <b>60 days</b>. A purchase on day 61 is not that '
+    +'campaign’s, whatever else is true. Sixty days was chosen because the scholarship study found '
+    +'most net-new buying lands inside the first 60 days, and because the CRM work needed one written '
+    +'window rather than three unwritten ones.</p>'
+    +fml("Window","purchase date − send date, between 0 and "+((n(S.cfg.windowDays))||60)+" days")));
+  h.push(mStep(4,"They bought the thing the campaign was about",
+    '<p class="note">Where a campaign carries a product keyword, the course bought has to contain it. '
+    +'A CFA Level 1 message does not get the credit for an FRM purchase. Campaigns with no keyword, '
+    +'such as a general offer, accept any course.</p>'));
+  h.push(mStep(5,"No other channel touched them in between",
+    '<p class="note">This is the test that changed on 8 Oct 2026, and it is the one that matters. '
+    +'The source history from the CRM is read as a dated list of touches. If any non-WhatsApp source '
+    +'touched the person <b>after our send and before they paid</b>, that channel owns the sale and '
+    +'WhatsApp does not claim it.</p>'
+    +'<p class="hint"><b>Worked example.</b> Someone comes in through the website on 1 July and buys on '
+    +'20 July. That is inside 60 days of the website touch, so the website gets it, even if a WhatsApp '
+    +'campaign also reached them on 5 July but the website touch came later. Now take the same person '
+    +'reaching 1 September with no new source touch: a WhatsApp campaign on 3 September and a purchase on '
+    +'20 September is WhatsApp’s, because WhatsApp is the last channel that touched them and the '
+    +'purchase is inside 60 days of it.</p>'
+    +'<p class="hint">Without a lead source file loaded this step cannot run, and the page says so in '
+    +'plain words on the Import tab rather than quietly counting everything.</p>'));
+  h.push(mStep(6,"A coupon excuses the product test, not the last touch test",
+    '<p class="note">Where a campaign carries its own coupon code, an order stamped with that code counts '
+    +'whatever course was bought, because the code is what ties the sale to the message. The coupon does '
+    +'<b>not</b> excuse step 5, and the 60 day window still applies.</p>'
+    +'<p class="hint">There is a switch on the Rates tab that would let a coupon override step 5 as well, '
+    +'and it is deliberately <b>'+(S.cfg.couponProof===true?"on":"off")+'</b>. The only coupon campaign we '
+    +'have is the Website Wide Site Offer, a site-wide launch discount promoted on the website at the same '
+    +'time, so the code proves nothing about which channel did the work: 206 people used it in five days '
+    +'and only half of them were on the WhatsApp list. Turning the switch on would hand WhatsApp back 42 '
+    +'sales worth '+inr(1172064)+' that the CRM says the website touched last.</p>'));
+  h.push(mStep(7,"Each sale counts once, for the most recent campaign",
+    '<p class="note">A single order is never shared between campaigns and never counted twice. Where '
+    +'several campaigns could claim it, the <b>most recent</b> send wins, because that is the message the '
+    +'person had actually just received. Before 8 Oct 2026 the earliest campaign won, which flattered '
+    +'older campaigns.</p>'));
+  h.push('</div>');
+  if(M){
+    h.push('<p class="hint" style="margin-top:14px"><b>Last time the rule ran:</b> '+esc(M.when)+', over '
+      +cnt(M.orders)+' orders and '+cnt(M.audience)+' audience rows, on a '+(M.window||60)+' day window. '
+      +(M.haveSrc?cnt(M.sources)+' source touches were checked.'
+        :'No lead source file was loaded, so step 5 did not run.')+'</p>');
+  }
+  h.push('</div>');
+
+  /* -------- what the rule did to the number -------- */
+  h.push('<div class="card wide"><h3>What the rule costs us, in the honest direction</h3>'
+    +'<p class="note">The figures on this dashboard were re-run under the new rule on 8 Oct 2026, against '
+    +'the dated source history of all 174 buyers pulled from LeadSquared.</p>'
+    +'<div class="scroll"><table><thead><tr><th>Measure</th><th>Old rule, 30 days, first touch</th>'
+    +'<th>New rule, 60 days, last touch</th><th>Change</th></tr></thead><tbody>'
+    +'<tr><td>Conversions</td><td class="n">175</td><td class="n">114</td>'
+    +'<td class="n"><span class="pill warn">−61</span></td></tr>'
+    +'<tr><td>Revenue attributed</td><td class="n">'+inr(4992693)+'</td><td class="n">'+inr(3150232)+'</td>'
+    +'<td class="n"><span class="pill warn">−'+inr(1842461)+'</span></td></tr>'
+    +'<tr><td>All-time ROI</td><td class="n">1,209%</td><td class="n">'
+    +(t.roi===null?"—":Math.round(t.roi*100).toLocaleString("en-IN")+"%")+'</td>'
+    +'<td class="n"><span class="pill warn">lower</span></td></tr>'
+    +'</tbody></table></div>'
+    +'<p class="hint">Of the 61 sales handed back, <b>58 went to the website</b>, 2 to a webinar and 1 to '
+    +'organic. Forty-two of those 58 came from the Website Wide Site Offer, a site-wide launch discount '
+    +'that was promoted everywhere at once: 206 people used that coupon in five days and only half of them '
+    +'were on the WhatsApp list, which is exactly the case where claiming the sale would have been '
+    +'unreasonable.</p></div>');
+
+  /* -------- the money metrics -------- */
+  h.push('<div class="card wide"><h3>Revenue, return and the rest</h3>'
+    +'<div class="scroll"><table><thead><tr><th>Measure</th><th>How it is worked out</th>'
+    +'<th>Where the inputs come from</th></tr></thead><tbody>'
+    +mrow2("Revenue attributed","The paid value of every order that clears all seven steps above",
+          "Purchase file, amount column")
+    +mrow2("Conversions","The count of those orders","Purchase file")
+    +mrow2("Average order","revenue attributed ÷ conversions","Both of the above")
+    +mrow2("Return on investment","revenue attributed ÷ total cost, shown as a percentage",
+          "Campaign log, rates, platform fee, GST")
+    +mrow2("Cost per conversion","total cost ÷ conversions, the whole channel cost and not just media",
+          "Campaign log and the purchase match")
+    +mrow2("Campaigns run","One named send counts once, however many cohorts it went to",
+          "Campaigns tab")
+    +mrow2("Campaign-level ROI","revenue ÷ that campaign’s message cost only, because the platform "
+          +"fee and GST belong to the month and not to any one send","Campaign log")
+    +'</tbody></table></div>'
+    +'<p class="hint"><b>Why ROI uses the full bill and not just the message cost.</b> The platform fee '
+    +'and GST are real money leaving the business, so leaving them out would inflate the return. Measuring '
+    +'against the full bill is what dropped all-time ROI from the 1,850% an earlier version of this page '
+    +'showed to the figure on the leadership page today.</p></div>');
+
+  /* -------- invoice -------- */
+  h.push('<div class="card wide"><h3>Checking ourselves against the invoice</h3>'
+    +'<p class="note">Our figure and the Gupshup invoice are produced independently and then compared. '
+    +'Both are on the leadership page and on the Invoices tab, with the invoice document itself one click '
+    +'away wherever a month appears.</p>'
+    +fml("Our figure","our campaign log, priced and totalled as above")
+    +fml("Difference","our figure − what Gupshup billed, so a small negative number is the healthy case")
+    +'<p class="hint">Our figure sits a little under the bill every month. That is expected and it is not '
+    +'an error: the invoice covers every Gupshup app on the account, while the campaign log covers only '
+    +'the numbers campaigns are sent from. The automated and transactional traffic on the other apps is '
+    +'real cost that no campaign is raised for.</p></div>');
+
+  /* -------- periods -------- */
+  h.push('<div class="card wide"><h3>Periods and filters</h3>'
+    +'<p class="note">Every figure is added up from the campaign rows by date, so any window is real '
+    +'rather than rounded to whole months.</p>'
+    +'<p class="hint">Relative periods such as 7 days or a quarter run back from <b>the latest campaign in '
+    +'the data</b>, '+(sp.hi?dlong(sp.hi):"—")+', not from today, so a filter never reads zero just '
+    +'because nothing has been sent this week. A trend breaks into days under about three weeks, into '
+    +'weeks under eight, and into months beyond that. Conversions sit on the month the campaign was sent '
+    +'in, not the month the money arrived, so a campaign is always judged in the period it ran.</p></div>');
+
+  /* -------- limits -------- */
+  h.push('<div class="card wide"><h3>What these numbers do not prove</h3>'
+    +'<p class="note">Four honest limits. Anyone challenging the figures will find these first, so they '
+    +'are written down rather than waited for.</p>'
+    +'<ol class="limits">'
+    +'<li><b>Last touch is a convention, not a fact.</b> It says which channel spoke last before the '
+    +'money moved. It does not prove that channel caused the sale, and it gives nothing to the channels '
+    +'that did the earlier work.</li>'
+    +'<li><b>The source history is only as good as the CRM.</b> Source is captured on most leads but the '
+    +'dated change log is not complete, so a touch that was never recorded cannot take a sale away from '
+    +'us. The number is therefore a ceiling, not a floor.</li>'
+    +'<li><b>No control group.</b> Some of these people would have bought anyway. A holdout group, a slice '
+    +'of each list deliberately left unmessaged, is the only way to answer that, and we do not run one '
+    +'yet.</li>'
+    +'<li><b>Only paid orders in the file.</b> Offline payments, franchise sales and anything collected '
+    +'outside the purchase export are invisible here, which pushes the number down rather than up.</li>'
+    +'</ol></div>');
+
+  el.innerHTML=h.join("");
+}
+function mrow2(a,b,c){return '<tr><td>'+a+'</td><td style="text-align:left">'+b
+  +'</td><td style="text-align:left">'+c+'</td></tr>';}
+
 var WASNARROW=narrow(),RSZ=null;
 window.addEventListener("resize",function(){
   if(RSZ)clearTimeout(RSZ);
@@ -1670,7 +1986,8 @@ function viewInv(){
   if(!ks.length){el.innerHTML=h.join("")
     +'<div class="empty">Add campaigns first and the months appear here.</div>';bindInvDrop(el);return;}
   h.push('<div class="panel" style="padding:0"><div class="scroll"><table class="grid-tbl"><thead><tr>'
-    +'<th>Month</th><th>Source</th><th>Invoice no.</th><th>Marketing msgs billed</th><th>Utility msgs billed</th>'
+    +'<th>Month</th><th>The invoice itself</th><th>Source</th><th>Invoice no.</th>'
+    +'<th>Marketing msgs billed</th><th>Utility msgs billed</th>'
     +'<th>Platform fee ₹</th><th>Taxable ₹</th><th>GST ₹</th><th>Invoice total ₹</th>'
     +'<th>Our figure ₹</th><th>Difference</th><th>Notes</th></tr></thead><tbody>');
   var ms={};months().forEach(function(m){ms[m.month]=m;});
@@ -1680,7 +1997,10 @@ function viewInv(){
     function i(f,type,cls){return '<td><input id="i-'+k+'-'+f+'" class="'+(cls||"num")+'" type="'+(type||"number")
       +'" data-m="'+k+'" data-if="'+f+'" value="'+esc(iv[f]===null||iv[f]===undefined?"":iv[f])+'"></td>';}
     h.push('<tr><td style="padding:6px 10px;font-weight:600;white-space:nowrap">'+esc(mlabel(k))+'</td>'
-      +'<td><select data-m="'+k+'" data-if="source" id="i-'+k+'-source">'
+      +'<td class="doccell"><input id="i-'+k+'-docUrl" type="text" style="min-width:190px" data-m="'+k
+      +'" data-if="docUrl" placeholder="Paste the invoice link" value="'+esc(iv.docUrl||"")+'">'
+      +docBtn(iv.docUrl,"Open the "+mlabel(k)+" invoice","bill")+'</td>'
+      +'<td><select class="wide" data-m="'+k+'" data-if="source" id="i-'+k+'-source">'
         +["Invoice","Estimate","Not received"].map(function(o){
           return '<option'+(iv.source===o?" selected":"")+'>'+o+'</option>';}).join("")+'</select></td>'
       +i("invoiceNo","text","")+i("marketingMsgs")+i("utilityMsgs")+i("platformFee")
@@ -1691,7 +2011,10 @@ function viewInv(){
       +'" data-if="notes" value="'+esc(iv.notes||"")+'"></td></tr>');
   });
   h.push('</tbody></table></div></div>');
-  h.push('<p class="hint">Type the invoice straight off the PDF. <b>Our figure</b> is worked out from the campaign '
+  h.push('<p class="hint">Paste a link to the invoice itself in <b>the invoice itself</b> column and the '
+    +'icon beside it opens the document, here and on the leadership page. Use a Google Drive link set to '
+    +'<b>anyone with the link can view</b>, so leadership can open it without an account. '
+    +'Type the invoice straight off the PDF. <b>Our figure</b> is worked out from the campaign '
     +'log: delivered messages at the rates on the Rates tab, plus the platform fee, plus GST. <b>Difference</b> '
     +'is ours minus theirs, so a small negative number is the healthy case. Mark a month <b>Estimate</b> when the '
     +'figure is a recollection rather than a document, so nobody mistakes it for a bill.</p>');
@@ -1701,7 +2024,7 @@ function viewInv(){
       var m=c.getAttribute("data-m"),f=c.getAttribute("data-if");
       if(!S.inv[m])S.inv[m]=invFor(m);
       S.inv[m].month=m;
-      S.inv[m][f]=(f==="invoiceNo"||f==="notes"||f==="source")?c.value:num(c.value);
+      S.inv[m][f]=(f==="invoiceNo"||f==="notes"||f==="source"||f==="docUrl")?c.value:num(c.value);
       saveInv(m);viewLead();viewInv();
     });
   });
@@ -1865,27 +2188,96 @@ function viewImport(){
     +'<b>Choose a file</b><span>or drop it here · Excel keeps every tab, CSV is one cohort</span></div>'
     +'<div id="aud-out"></div></div></section>');
 
-  /* ---- step 3, match ---- */
-  var ready=S.orders.length&&S.aud.length;
+  /* ---- step 3, the other channels ---- */
   h.push('<section class="step"><div class="stepno">3</div><div class="stepbody">'
+    +'<h3>Lead sources from the CRM</h3>'
+    +'<p class="note">The dated source history, so a sale can be taken away from WhatsApp when another '
+    +'channel touched the person later. One row per source touch, not one row per person. Without this '
+    +'file the 60 day rule still runs, but only against WhatsApp sends, and nothing can be taken away.</p>'
+    +'<p class="cols">Phone and/or Email · Source · Date of the touch</p>'
+    +'<p class="hint" style="margin:0 0 12px"><b>The figures on the leadership page already have this '
+    +'test applied.</b> On 8 Oct 2026 the dated source history of all 174 buyers was pulled from '
+    +'LeadSquared and the rule was run against it, which took 61 sales worth '+inr(1842461)+' away from '
+    +'WhatsApp. That result is baked into the page. This step is only needed when you bring fresh '
+    +'purchase or audience data in and re-match. The lists themselves are deliberately not stored in '
+    +'this page, because they hold personal phone numbers and the page sits on a public address.</p>'
+    +'<div class="drop" data-kind="sources" tabindex="0" role="button">'
+    +'<b>Choose a file</b><span>or drop it here · CSV or Excel</span></div>'
+    +'<div id="src-out"></div></div></section>');
+
+  /* ---- step 4, match ---- */
+  var ready=S.orders.length&&S.aud.length;
+  h.push('<section class="step"><div class="stepno">4</div><div class="stepbody">'
     +'<h3>Match them</h3>'
     +'<p class="note">A purchase counts for a campaign when the buyer was on that campaign\'s list, '
-    +'matched on phone or on email, and bought on or after the send date within '
-    +'<input type="number" id="win" min="1" max="365" value="'+(n(S.cfg.windowDays)||30)+'"> days. '
-    +'Where a product keyword is set the course bought has to contain it, and where a coupon is set only '
-    +'coupon-stamped orders count. Each order is credited once, to the earliest campaign that claims it.</p>'
+    +'matched on phone or on email, bought on or after the send date and within '
+    +'<input type="number" id="win" min="1" max="365" value="'+(n(S.cfg.windowDays)||60)+'"> days of it, '
+    +'and <b>no other channel touched them in between</b>. Where a product keyword is set the course '
+    +'bought has to contain it, and where a coupon is set only coupon-stamped orders count. Each order is '
+    +'credited once, to the <b>most recent</b> campaign that still claims it. '
+    +'The full rule is written out on the Method tab.</p>'
     +'<div class="bar"><button class="btn primary'+(ready?"":" off")+'" id="run"'+(ready?"":" disabled")+'>'
     +'Match purchases to campaigns</button>'
     +(S.match?'<button class="btn" id="apply">Write onto the campaigns</button>':'')
     +(S.match&&STANDALONE?'<a class="btn" id="dlrep" download="conversion-report.csv">Save the report</a>':'')
-    +'<span class="status" id="m-msg">'+(ready?"":"Both files are needed first.")+'</span></div>'
-    +'</div></section>');
+    +'<span class="status" id="m-msg">'+(ready?"":"The purchase data and an audience list are needed first.")
+    +'</span></div></div></section>');
   h.push('</div>');
 
   h.push('<div id="res"></div>');
+  h.push(docPanel());
   el.innerHTML=h.join("");
-  renderOrdPrev();renderAudPrev();renderResult();
+  renderOrdPrev();renderAudPrev();renderSrcPrev();renderResult();
   bindImport(el);
+  bindDocs(el);
+}
+/* every campaign, with a link to the list it went to, openable by anyone */
+function docPanel(){
+  var cs=campaigns(allRows()).sort(function(a,b){return (a.date||"")<(b.date||"")?1:-1;});
+  if(!cs.length)return "";
+  var have=cs.filter(function(c){return docUrl(docKeyC(c.name,c.month));}).length;
+  var h=['<div class="bar" style="margin-top:26px"><h2>Campaign documents</h2>'
+    +'<span class="status">'+have+' of '+cs.length+' campaigns have their list linked</span></div>'
+    +'<div class="panel" style="padding:0"><div class="scroll"><table class="grid-tbl"><thead><tr>'
+    +'<th>Campaign</th><th>Month</th><th>Sent on</th><th>People</th><th>Audience list link</th><th>Open</th>'
+    +'</tr></thead><tbody>'];
+  cs.forEach(function(c){
+    var k=docKeyC(c.name,c.month),u=docUrl(k);
+    h.push('<tr><td style="padding:6px 10px;font-weight:500">'+esc(c.name)+'</td>'
+      +'<td style="padding:6px 10px;text-align:right">'+esc(mlabel(c.month))+'</td>'
+      +'<td class="calc">'+esc(c.date||"")+'</td><td class="calc">'+cnt(c.sent)+'</td>'
+      +'<td><input type="text" data-doc="'+esc(k)+'" style="min-width:260px" '
+      +'placeholder="Paste the Google Sheet link for this list" value="'+esc(u)+'"></td>'
+      +'<td style="text-align:center">'+docBtn(u,"Open the audience list for "+c.name,"sheet")
+      +'</td></tr>');
+  });
+  h.push('</tbody></table></div></div>'
+    +'<p class="hint">Link the sheet each campaign was sent from, shared as <b>anyone with the link can '
+    +'view</b>. The icon then opens that list from here and from every campaign table on the leadership '
+    +'page, so anyone can see who a campaign actually went to. Keep the lists in Drive rather than in '
+    +'this page: they hold personal phone numbers, and this page is on a public address.</p>');
+  return h.join("");
+}
+function bindDocs(el){
+  el.querySelectorAll("[data-doc]").forEach(function(i){
+    i.addEventListener("change",function(){
+      var k=i.getAttribute("data-doc"),v=i.value.trim();
+      S.docs=S.docs||{};
+      if(v)S.docs[k]={url:v};else delete S.docs[k];
+      saveDocs();viewImport();viewLead();
+    });
+  });
+}
+function renderSrcPrev(){
+  var el=document.getElementById("src-out");if(!el)return;
+  if(!(S.src||[]).length){el.innerHTML="";return;}
+  var by={},people={};
+  S.src.forEach(function(r){var s=r.source||"(blank)";by[s]=(by[s]||0)+1;people[r.k]=1;});
+  var ks=Object.keys(by).sort(function(a,b){return by[b]-by[a];});
+  el.innerHTML=msgBox(cnt(S.src.length)+" source touches read for "+cnt(Object.keys(people).length)
+    +" people. The rule can now take a sale away from WhatsApp.","ok")
+    +'<div class="tags">'+ks.slice(0,14).map(function(k){
+      return '<span class="tagx">'+esc(k)+' <b>'+cnt(by[k])+'</b></span>';}).join("")+'</div>';
 }
 function bindImport(el){
   var file=document.createElement("input");
@@ -1941,15 +2333,39 @@ function msgBox(t,kind){
   return '<p class="msg'+(kind?" "+kind:"")+'">'+esc(t)+'</p>';
 }
 function takeFile(f,kind){
-  var out=document.getElementById(kind==="orders"?"ord-out":"aud-out");
+  var out=document.getElementById(kind==="orders"?"ord-out":(kind==="sources"?"src-out":"aud-out"));
   out.innerHTML=msgBox("Reading "+f.name+"…","");
   sheetsFromFile(f).then(function(sh){
-    if(kind==="orders")takeOrders(sh[0],f.name); else takeAudience(sh);
+    if(kind==="orders")takeOrders(sh[0],f.name);
+    else if(kind==="sources")takeSources(sh[0],f.name);
+    else takeAudience(sh);
   }).catch(function(e){
     out.innerHTML=msgBox(e.message==="reader-missing"
       ?"The spreadsheet reader did not load. Refresh the page and try again, or save the file as CSV."
       :"That file could not be read.","bad");
   });
+}
+/* ---------- the dated source history from the CRM ---------- */
+function takeSources(sheet,name){
+  var rows=sheet.rows||[];
+  if(rows.length<2){document.getElementById("src-out").innerHTML=
+    msgBox("That file has no rows under its header.","bad");return;}
+  var head=rows[0].map(function(x){return String(x==null?"":x).trim();});
+  var ph=findCol(head,["phone","mobile","number","contact"]),
+      em=findCol(head,["email","mail"]),
+      sc=findCol(head,["source","channel","medium"]),
+      dt=findCol(head,["date","on","touch","changed","created"]);
+  if(sc<0||dt<0){document.getElementById("src-out").innerHTML=
+    msgBox("That file needs a source column and a date column. Found: "+esc(head.join(", ")),"bad");return;}
+  var got=[],skipped=0;
+  rows.slice(1).forEach(function(r){
+    var ks=keysFrom([ph<0?"":r[ph],em<0?"":r[em]]);
+    var d=toIso(r[dt]), src=String(r[sc]||"").trim();
+    if(!ks.length||!d||!src){skipped++;return;}
+    ks.forEach(function(k){got.push({k:k,source:src,date:d});});
+  });
+  S.src=got;writeBig("sources",{rows:got});S.match=null;
+  viewImport();
 }
 /* ---------- purchases ---------- */
 function takeOrders(sheet,name){
@@ -2047,23 +2463,37 @@ function renderResult(){
   var M=S.match, per=Object.keys(M.per).map(function(k){return M.per[k];});
   var tot=per.reduce(function(a,p){a.c+=p.conversions;a.r+=p.revenue;return a;},{c:0,r:0});
   var measured=per.filter(function(p){return p.measurable;}).length;
+  var lost=per.reduce(function(a,p){a.c+=(p.lost||0);a.r+=(p.lostRevenue||0);return a;},{c:0,r:0});
   var h=['<div class="bar" style="margin-top:26px"><h2>Conversions by campaign</h2>'
-    +'<span class="status">matched '+esc(M.when)+'</span></div>'];
+    +'<span class="status">matched '+esc(M.when)+' · '+(M.window||60)+' day window</span></div>'];
+  h.push(M.haveSrc
+    ? msgBox("Checked against "+cnt(M.sources)+" source touches from the CRM. "+cnt(lost.c)
+        +" sale"+(lost.c===1?"":"s")+" worth "+inr(lost.r)+" went to another channel that touched the "
+        +"person after our send, so WhatsApp does not claim "+(lost.c===1?"it":"them")+".","ok")
+    : msgBox("No lead source file loaded in this browser, so the cross-channel half of the rule has not "
+        +"run on this re-match. These are sales by people on a WhatsApp list, inside the window, with "
+        +"nothing else checked, which is why the figure is higher than the leadership page. Add the "
+        +"source history in step 3 before writing these onto the campaigns.","bad"));
   h.push('<div class="kpis"><div class="kpi"><div class="cap">Conversions</div><div class="fig">'+cnt(tot.c)
     +'</div><div class="sub">across '+measured+' campaigns with a list</div></div>'
     +'<div class="kpi"><div class="cap">Revenue</div><div class="fig">'+cr(tot.r)+'</div>'
     +'<div class="sub">'+inr(tot.c?tot.r/tot.c:null)+' average order</div></div>'
+    +'<div class="kpi"><div class="cap">Given to another channel</div><div class="fig">'+cnt(lost.c)
+    +'</div><div class="sub">'+(M.haveSrc?inr(lost.r)+' of revenue, touched later elsewhere'
+      :'not tested, no source file')+'</div></div>'
     +'<div class="kpi"><div class="cap">No audience list</div><div class="fig">'+cnt(per.length-measured)
     +'</div><div class="sub">left out, never counted as zero</div></div></div>');
   h.push('<div class="card"><div class="scroll"><table><thead><tr><th>Campaign</th><th>Month</th>'
     +'<th>Rule used</th><th>Audience in purchases</th><th>Conversions</th><th>Revenue</th>'
-    +'</tr></thead><tbody>');
+    +'<th>Lost to another channel</th></tr></thead><tbody>');
   per.sort(function(a,b){return b.revenue-a.revenue;}).forEach(function(p){
     h.push('<tr><td>'+esc(p.name)+'</td><td style="text-align:right">'+esc(mlabel(p.month))
       +'</td><td style="text-align:right"><span class="pill flat">'+esc(p.rule)+'</span></td><td class="n">'
       +(p.measurable?cnt(p.audience):'—')+'</td><td class="n"><b>'
       +(p.measurable?cnt(p.conversions):'<span class="pill warn">no list</span>')+'</b></td><td class="n">'
-      +(p.measurable?inr(p.revenue):"—")+'</td></tr>');
+      +(p.measurable?inr(p.revenue):"—")+'</td><td class="n">'
+      +(!M.haveSrc?'<span class="pill flat">not tested</span>'
+        :(p.lost?cnt(p.lost)+' · '+inr(p.lostRevenue):'<span class="pill up">none</span>'))+'</td></tr>');
   });
   h.push('</tbody></table></div></div>');
   if(M.detail.length){
@@ -2092,7 +2522,14 @@ function viewSet(){
    +fld("platformFee","Platform fee ₹ per month",c.platformFee,"100")
    +fld("gstRate","GST rate",c.gstRate,"0.01")
    +fld("windowDays","Attribution window, days after the send",c.windowDays,"1")
-   +'</div><p class="hint">Campaign cost is delivered messages multiplied by the rate for that message category. '
+   +'</div>'
+   +'<label class="switch"><input type="checkbox" id="cproof"'+(c.couponProof!==false?" checked":"")
+   +'><span><b>A campaign coupon overrides the last touch test</b>Leave this off unless a coupon code was '
+   +'given out on WhatsApp and nowhere else. It is off today because the one coupon campaign we have, the '
+   +'Website Wide Site Offer, was a site-wide launch discount promoted on the website at the same time, so '
+   +'the code proves nothing about which channel did the work. Turning it on adds 42 sales and '
+   +inr(1172064)+' back to WhatsApp that the CRM says the website touched last.</span></label>'
+   +'<p class="hint">Campaign cost is delivered messages multiplied by the rate for that message category. '
    +'The benchmarks are planning figures supplied by the growth team, not measured from a live ad account. '
    +'Change anything here and every figure on every tab follows.</p></div>'
    +(STANDALONE?('<div class="panel" style="margin-top:14px"><h2 style="font-size:16px;font-weight:600">'
@@ -2107,10 +2544,13 @@ function viewSet(){
       var v=parseFloat(i.value);if(isFinite(v)){S.cfg[i.getAttribute("data-cfg")]=v;saveCfg();viewLead();viewData();}
     });
   });
+  var cp=el.querySelector("#cproof");
+  if(cp)cp.onchange=function(){S.cfg.couponProof=cp.checked;saveCfg();S.match=null;};
   var dl=el.querySelector("#dl");
   if(dl){
     dl.href=URL.createObjectURL(new Blob([JSON.stringify(
-      {months:S.months,invoices:S.inv,config:S.cfg,stamp:new Date().toISOString().slice(0,10)},null,1)],
+      {months:S.months,invoices:S.inv,config:S.cfg,docs:S.docs,
+       stamp:new Date().toISOString().slice(0,10)},null,1)],
       {type:"application/json"}));
     var ldf=el.querySelector("#ldf");
     el.querySelector("#ld").onclick=function(){ldf.click();};
@@ -2121,6 +2561,7 @@ function viewSet(){
         try{
           var d=JSON.parse(String(fr.result));
           if(d.config)S.cfg=Object.assign({},DEF,d.config);
+          if(d.docs){S.docs=Object.assign({},d.docs);saveDocs();}
           Object.keys(d.months||{}).forEach(function(k){S.months[k]=d.months[k];save(k);});
           Object.keys(d.invoices||{}).forEach(function(k){S.inv[k]=d.invoices[k];saveInv(k);});
           saveCfg();el.querySelector("#io-msg").textContent="Loaded.";viewLead();viewSet();
@@ -2163,7 +2604,7 @@ function render(){viewLead();}
 /* ============================ boot ============================ */
 function switchTo(id){
   [["t-lead","v-lead"],["t-data","v-data"],["t-inv","v-inv"],["t-imp","v-imp"],
-   ["t-set","v-set"]].forEach(function(p){
+   ["t-met","v-met"],["t-set","v-set"]].forEach(function(p){
     var on=p[0]===id;
     document.getElementById(p[0]).setAttribute("aria-selected",on?"true":"false");
     document.getElementById(p[1]).hidden=!on;
@@ -2171,10 +2612,11 @@ function switchTo(id){
   if(id==="t-data")viewData();
   if(id==="t-inv")viewInv();
   if(id==="t-imp")viewImport();
+  if(id==="t-met")viewMethod();
   if(id==="t-set")viewSet();
   try{localStorage.setItem("cs:tab",id);}catch(e){}
 }
-["t-lead","t-data","t-inv","t-imp","t-set"].forEach(function(id){
+["t-lead","t-data","t-inv","t-imp","t-met","t-set"].forEach(function(id){
   document.getElementById(id).onclick=function(){switchTo(id);};});
 
 function fromSeed(){                       /* so the page is never blank for a viewer without db */
@@ -2185,6 +2627,7 @@ function fromSeed(){                       /* so the page is never blank for a v
     if(d.config)S.cfg=Object.assign({},DEF,d.config);
     Object.keys(d.months||{}).forEach(function(k){S.months[k]=d.months[k];});
     Object.keys(d.invoices||{}).forEach(function(k){S.inv[k]=d.invoices[k];});
+    if(d.docs)S.docs=Object.assign({},d.docs);
   }catch(e){}
 }
 function fromLocal(){
@@ -2198,6 +2641,8 @@ function fromLocal(){
     }
     var ob=localStorage.getItem("cs:bulk/orders");if(ob)S.orders=(JSON.parse(ob)||{}).rows||[];
     var ab=localStorage.getItem("cs:bulk/audience");if(ab)S.aud=(JSON.parse(ab)||{}).rows||[];
+    var sb=localStorage.getItem("cs:bulk/sources");if(sb)S.src=(JSON.parse(sb)||{}).rows||[];
+    var db=localStorage.getItem("cs:settings/docs");if(db)S.docs=JSON.parse(db)||{};
   }catch(e){}
 }
 function boot(){
@@ -2231,7 +2676,11 @@ function boot(){
       db.doc("bulk/orders").get().then(function(d){
         if(d&&d.exists)S.orders=(d.data()||{}).rows||S.orders;}).catch(function(){}),
       db.doc("bulk/audience").get().then(function(d){
-        if(d&&d.exists)S.aud=(d.data()||{}).rows||S.aud;}).catch(function(){})
+        if(d&&d.exists)S.aud=(d.data()||{}).rows||S.aud;}).catch(function(){}),
+      db.doc("bulk/sources").get().then(function(d){
+        if(d&&d.exists)S.src=(d.data()||{}).rows||S.src;}).catch(function(){}),
+      db.doc("settings/docs").get().then(function(d){
+        if(d&&d.exists)S.docs=d.data()||S.docs;}).catch(function(){})
     ]).then(function(){
       render();
       var open=document.querySelector('.tab[aria-selected="true"]');
