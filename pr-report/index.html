@@ -276,6 +276,27 @@
   .vs td:first-child { font-weight: 600; width: 22%; }
   .vs .win { background: var(--tint); }
   @media (max-width: 760px) { .vs { min-width: 640px; } }
+  .buckets { display: grid; grid-template-columns: repeat(auto-fit, minmax(265px, 1fr)); gap: 12px; margin-bottom: 30px; }
+  .bucket { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--good);
+    border-radius: 12px; padding: 15px 16px; }
+  .bucket.w { border-top-color: var(--warn); }
+  .bucket.b { border-top-color: var(--bad); }
+  .bucket h3 { margin-bottom: 8px; }
+  .bucket ul { margin: 0 0 9px; padding-left: 18px; font-size: 13.5px; line-height: 1.5; }
+  .bucket li { margin-bottom: 4px; }
+  .bucket small { display: block; font-size: 12.5px; color: var(--mut); }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--mut);
+    margin: 0 0 10px; align-items: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .vs .dot { display: inline-block; vertical-align: -1px; margin-right: 3px; }
+  .wri { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 6px;
+    background: var(--tint2); color: var(--accent-ink); white-space: nowrap; }
+  .diffs { counter-reset: d; list-style: none; margin: 0 0 4px; padding: 0; display: grid; gap: 8px; }
+  .diffs li { counter-increment: d; position: relative; background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 14px 12px 50px; font-size: 14px; line-height: 1.5; }
+  .diffs li::before { content: counter(d); position: absolute; left: 14px; top: 11px; width: 24px; height: 24px;
+    border-radius: 50%; background: var(--tint); color: var(--accent-ink); font-weight: 700; font-size: 12.5px;
+    display: flex; align-items: center; justify-content: center; }
   .contract { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-top: 26px; }
   .contract h3 { margin-bottom: 10px; }
   .contract ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.5; }
@@ -332,7 +353,7 @@
     <div class="stats">
       <div class="stat"><b>17</b><span>articles about SSEI</span><small>from 6 separate stories</small></div>
       <div class="stat"><b>12</b><span>came from one study</span><small>Finance Talent Pulse, our survey of 133 finance students</small></div>
-      <div class="stat"><b>4 vs 0</b><span>Sanjay Saraf Sir vs Vidyut</span><small>articles featuring each of them</small></div>
+      <div class="stat"><b>4</b><span>featured Sanjay Sir by name</span><small>2 bylines, 1 expert panel, 1 wire quote</small></div>
     </div>
 
     <div class="funnel" role="img" aria-label="Of 17 articles, 8 were in national outlets and 4 featured Sanjay Sir. Whether they were reused on our channels or led to enquiries is not tracked yet.">
@@ -418,10 +439,10 @@
         </div>
 
         <div class="row" data-status="warn">
-          <div class="svc"><b>Sir and Vidyut as voices</b><small>Leaders quoted and invited as experts</small><span class="chip warn"><span class="dot warn"></span>Started</span></div>
-          <div class="step s1"><span class="ml">So far</span>Sir: <b>2 opinion pieces</b> (FE, The Hindu) and 2 expert quotes. Vidyut: none yet.</div>
-          <div class="step s2"><span class="ml">Next 90 days</span>One byline a month from Sir, his first TV panel and two talks. Vidyut's first interview, on careers and Gen Z.</div>
-          <div class="step s3"><span class="ml">In 6 to 12 months</span>Sir owns markets and exams; Vidyut owns careers and the education business.</div>
+          <div class="svc"><b>Sanjay Sir as the expert voice</b><small>Quoted and invited as the authority on finance careers</small><span class="chip warn"><span class="dot warn"></span>Started</span></div>
+          <div class="step s1"><span class="ml">So far</span><b>2 opinion pieces</b> (FE, The Hindu) and 2 expert quotes, all in digital press.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>One byline a month, the first TV panel and two talk slots, written into the agency contract.</div>
+          <div class="step s3"><span class="ml">In 6 to 12 months</span>Sir is quoted on finance careers, not just on SSEI: called by reporters, not placed.</div>
         </div>
 
         <div class="row" data-status="good">
@@ -504,64 +525,115 @@
   <section id="agencies">
     <p class="kicker">5 · The agencies</p>
     <h2>We met four. The real choice is between two.</h2>
-    <p class="intro">Two rule themselves out on price and scope. The other two quote exactly the same fee, so the only question is what that fee buys.</p>
+    <p class="intro">Every number below is a first-round quote, before negotiation. And in every single proposal, the fee buys the agency's work: summit passes, award entries and travel are billed to us on top.</p>
 
     <div class="agencies">
       <div class="ag">
-        <b>Bloomingdale PR</b><span class="cost">₹2.5 lakh per month, plus GST</span>
-        <p>Eleven activity lines, two research studies a year, three bylines and three industry stories a quarter. Sharp thinking on regulation and competition.</p>
-        <span class="chip bad"><span class="dot bad"></span>Out: same scope, three times the money</span>
+        <b>Bloomingdale PR</b><span class="cost">Quoted ₹2.5 lakh per month, plus GST</span>
+        <p>12 bylines and 12 releases a year, 2 studies, a press office, and the only media list that names broadcast TV and business magazines.</p>
+        <span class="chip bad"><span class="dot bad"></span>Out: a third of the articles, three times the fee</span>
       </div>
       <div class="ag">
-        <b>BrandStory Digital</b><span class="cost">Integrated retainer, the largest of the four</span>
-        <p>PR bundled with SEO, performance marketing and creators for Delhi and Mumbai. Good audience thinking, but the proposal is built around the digital work.</p>
-        <span class="chip bad"><span class="dot bad"></span>Out: we run organic and performance in-house</span>
+        <b>BrandStory Digital</b><span class="cost">Integrated bundle, the largest quote of the four</span>
+        <p>PR tied to SEO, performance marketing and creators for Delhi and Mumbai. No separate PR-only price anywhere in the deck.</p>
+        <span class="chip bad"><span class="dot bad"></span>Out: bundles work we already run in-house</span>
       </div>
       <div class="ag pick">
-        <b>Mandrake Mydia</b><span class="cost">₹2.5 lakh per quarter, plus GST</span>
-        <p>Our current agency. 18 to 20 articles a quarter, two data studies, seven cities, and a dated calendar of summits and awards.</p>
-        <span class="chip good"><span class="dot good"></span>Recommended, with a tighter brief</span>
+        <b>Mandrake Mydia</b><span class="cost">Quoted ₹2.5 lakh per quarter, plus GST, in advance</span>
+        <p>18 to 20 committed articles split by type, 2 data studies, media lists for all 7 cities, a dated summit and award calendar, 4 monthly reports.</p>
+        <span class="chip good"><span class="dot good"></span>Recommended, signed only after the write-ins below</span>
       </div>
       <div class="ag">
-        <b>Glad You Came</b><span class="cost">₹2.5 lakh per quarter, plus GST</span>
-        <p>13 articles, 40 plus wire copies, 5 print pieces, plus podcasts, college talks and a finance creator roster. Young team with sharp Gen Z ideas.</p>
-        <span class="chip warn"><span class="dot warn"></span>Borrow the ideas, not the retainer</span>
+        <b>Glad You Came</b><span class="cost">Quoted ₹2.5 lakh per quarter, plus GST</span>
+        <p>13 committed articles plus 40 wire copies and 5 print pieces. Podcasts, college talks and 10 finance creators, the creators billed at actuals.</p>
+        <span class="chip warn"><span class="dot warn"></span>Same fee, machinery built for consumer brands</span>
       </div>
     </div>
 
-    <h3>Same fee. Here is what each one actually commits to.</h3>
+    <p class="note">We are not hiring Bloomingdale, but their deck is the benchmark for the negotiation: broadcast channels named (CNBC TV18, ET Now, Zee Business, NDTV Profit), magazines and print as strategy, speaking slots pitched free by default, and numbers the client can check without the agency's report. Mandrake gets asked to match that standard at a third of the price.</p>
+
+    <h3 style="margin-top:28px">Where the money goes, in every proposal</h3>
+    <div class="buckets">
+      <div class="bucket">
+        <h3>Inside the quarterly fee</h3>
+        <ul>
+          <li>Pitching, drafting and placements</li>
+          <li>Interviews and bylines</li>
+          <li>Turning our data into stories</li>
+          <li>Screening and submitting awards and speaker slots</li>
+          <li>Monthly reporting</li>
+        </ul>
+        <small>The committed article numbers live here.</small>
+      </div>
+      <div class="bucket w">
+        <h3>Their work in the fee, the bills on us</h3>
+        <ul>
+          <li>Award nomination and ceremony fees</li>
+          <li>Summit delegate passes and sponsorships</li>
+          <li>Travel and stay</li>
+          <li>Venue and production for roundtables</li>
+          <li>Creators and gifting (Glad You Came)</li>
+        </ul>
+        <small>Billed at actuals, only with our written approval. This is why decision 2 sets a cap.</small>
+      </div>
+      <div class="bucket b">
+        <h3>Outside every proposal</h3>
+        <ul>
+          <li>Advertorials and sponsored features</li>
+          <li>Paid TV segments</li>
+          <li>LinkedIn and social management</li>
+          <li>Performance marketing</li>
+        </ul>
+        <small>Separate line items if we ever want them. Mostly things we already do in-house.</small>
+      </div>
+    </div>
+
+    <h3>Our nine asks, against what each one will actually sign</h3>
+    <div class="legend">
+      <span><span class="dot good"></span>In the fee</span>
+      <span><span class="dot warn"></span>Their effort in the fee, participation costs on us</span>
+      <span><span class="dot bad"></span>Not offered, or wrong fit</span>
+      <span><span class="wri">write in</span>&nbsp;what we add in negotiation</span>
+    </div>
     <div class="tscroll">
       <table class="vs">
-        <thead><tr><th>What matters to us</th><th>Mandrake Mydia</th><th>Glad You Came</th></tr></thead>
+        <thead><tr><th>What we want</th><th>Mandrake Mydia</th><th>Glad You Came</th></tr></thead>
         <tbody>
-          <tr><td>Fee for three months</td><td>₹2.5 lakh plus GST, paid in advance</td><td>₹2.5 lakh plus GST</td></tr>
-          <tr><td>Articles committed</td><td class="win">18 to 20, split by type: 2 bylines, 2 founder interviews, 4 expert quotes, 4 to 5 from data stories, 2 to 3 outcome stories, 3 to 4 city features</td><td>13: three releases, two thought leadership pieces, two listicles, one byline, five print</td></tr>
-          <tr><td>Wire copies</td><td class="win">Reported separately, not counted as wins</td><td>40 plus, counted as deliverables, which is the pattern we moved away from after Q1</td></tr>
-          <tr><td>Who their media list reaches</td><td class="win">Moneycontrol, Business Today, Forbes India, Fortune India, People Matters, ET, Mint, Education World, Careers360</td><td>Mostly lifestyle: Vogue, Elle, Femina, Brides Today, plus Marathi papers from Nagpur and Nashik. Business titles are a short sub-list</td></tr>
-          <tr><td>Our own research</td><td class="win">Two studies, including a seven-city readiness study. This format produced 71% of last quarter's coverage</td><td>Mentioned as an idea, not committed as a deliverable</td></tr>
-          <tr><td>Summits, events, awards</td><td class="win">Nine named opportunities with dates: FICCI (8 to 9 Oct), Elets (12 to 13 Oct), Bengaluru Tech Summit (17 to 19 Nov), DIDAC (25 to 27 Nov), India Finance Conference (21 to 23 Dec), plus two award entries</td><td>Listed as "at actuals", nothing named or dated</td></tr>
-          <tr><td>Podcasts, talks, creators</td><td>Not offered</td><td class="win">Podcast appearances, college talks, webinars and ten finance creators</td></tr>
-          <tr><td>Cities</td><td class="win">Seven, two a month, Kolkata included</td><td>Mumbai and Maharashtra heavy</td></tr>
-          <tr><td>How they report</td><td class="win">Four monthly reports</td><td>"Estimated viewership and PR value, 4M plus", the exact metric we dropped</td></tr>
-          <tr><td>Links back to our site</td><td class="win">Not excluded, so we can ask for them</td><td>States plainly that hyperlinks and backlinks are not included</td></tr>
+          <tr><td>Authored articles</td><td><span class="dot good"></span><b>In the fee:</b> 2 a quarter. Push to 3. <span class="wri">write in</span></td><td><span class="dot good"></span><b>In the fee:</b> 1 a quarter.</td></tr>
+          <tr><td>Print press interviews</td><td><span class="dot warn"></span>Not committed as a number, but the lists are right: Ananda Bazar, Ei Samay, Bartaman in Kolkata alone. <span class="wri">write in: 3</span></td><td><span class="dot warn"></span>5 print pieces committed, mostly Marathi papers around Nagpur and Nashik.</td></tr>
+          <tr><td>Magazines</td><td><span class="dot warn"></span>Forbes India, Business Today, Education World, Careers360 on the lists, no committed count. <span class="wri">write in: 1 feature</span></td><td><span class="dot bad"></span>Their magazine list is Vogue, Elle and Brides Today.</td></tr>
+          <tr><td>TV news and shows</td><td><span class="dot bad"></span>Only the websites of TV channels today. <span class="wri">write in: 2 pitches, channels named</span></td><td><span class="dot bad"></span>Not offered.</td></tr>
+          <tr><td>Invited sessions, seminars, webinars</td><td><span class="dot warn"></span>Speaker outreach is in the fee; confirmations depend on organisers.</td><td><span class="dot warn"></span>College talks and webinars in the plan, no counts.</td></tr>
+          <tr><td>Leadership and finance events</td><td><span class="dot warn"></span>India Finance Conference and employer roundtables, dated, costs on us.</td><td><span class="dot bad"></span>Nothing named.</td></tr>
+          <tr><td>Summits</td><td><span class="dot warn"></span>FICCI 8 to 9 Oct, Elets 12 to 13 Oct, Bengaluru Tech Summit 17 to 19 Nov, DIDAC 25 to 27 Nov. Entry and travel on us.</td><td><span class="dot bad"></span>"At actuals", nothing named or dated.</td></tr>
+          <tr><td>Tech talks</td><td><span class="dot warn"></span>Closest offer is Bengaluru Tech Summit outreach. <span class="wri">write in: 2 confirmed slots</span></td><td><span class="dot bad"></span>Not offered.</td></tr>
+          <tr><td>Award shows</td><td><span class="dot warn"></span>Screening and entries in the fee, 2 shows named; nomination and ceremony fees on us.</td><td><span class="dot bad"></span>"At actuals", nothing named.</td></tr>
         </tbody>
       </table>
     </div>
 
-    <p class="take"><b>In short:</b> for the same money, Mandrake commits to more real articles in the media our students and their parents actually read, plus the study format that carried last quarter. Glad You Came is better at the one thing we already do in-house: creators, podcasts and student-facing content.</p>
+    <h3 style="margin-top:28px">Five differences that decide it</h3>
+    <ol class="diffs">
+      <li><b>Volume for the fee.</b> 18 to 20 committed articles against 13: roughly ₹13,000 per committed article against ₹19,000, wire copies excluded on both sides.</li>
+      <li><b>The research engine.</b> Mandrake commits two data studies this quarter, built on our student base: the format behind 71% of last quarter's coverage. Glad You Came mentions research as an idea and commits nothing.</li>
+      <li><b>Media fit.</b> Mandrake's seven city lists are finance, business and education desks. Glad You Came's lists lead with fashion and lifestyle titles, with business as a short sub-list.</li>
+      <li><b>The machinery.</b> Glad You Came's own terms are written for consumer brands: influencer hampers, celebrity gifting, lookbooks, weekday-only hours, no urgent briefs, and client delays counted as delivered work. Our PR runs on results days and breaking news.</li>
+      <li><b>Reporting we can trust.</b> Four monthly reports against "estimated viewership and PR value, 4M plus", plus a stated policy of no backlinks. Those are the two things we removed from our own reporting.</li>
+    </ol>
+
+    <p class="take"><b>In short:</b> at the same fee, Mandrake is the stronger engine and the only plan built around our data. Nobody sells TV or talks as a committed number yet, which is exactly what the negotiation is for.</p>
 
     <div class="contract">
-      <h3>If we renew, this goes into the contract</h3>
+      <h3>These are opening quotes. We sign only with this in the deliverables table.</h3>
       <ul>
-        <li>Two television appearances, around results season and the budget.</li>
-        <li>One magazine feature, and three interviews in printed editions rather than only online.</li>
-        <li>Two talk slots, with Bengaluru Tech Summit in November as the first target.</li>
-        <li>Vidyut named in at least two deliverables, so we stop resting on one voice.</li>
-        <li>Links back to our website wherever the publication allows them.</li>
-        <li>Reporting with no "PR value" and no publication readership figures.</li>
-        <li>The two data studies kept as they are. That is the part that works.</li>
+        <li><b>The write-ins, counted and at the same fee:</b> 3 bylines a quarter, 1 magazine feature, 3 print-edition interviews, 2 TV pitches with channels named, 2 confirmed talk slots.</li>
+        <li><b>Free slots first:</b> speaking pitched free by default; a paid slot comes to us as a priced option, never assumed.</li>
+        <li><b>A quarterly cap on costs billed at actuals,</b> with written approval per item. Nothing auto-entered.</li>
+        <li><b>Payment:</b> they ask for the quarter in advance. Counter with half on signing, half at the mid-quarter review.</li>
+        <li><b>Numbers we can check:</b> live links in every report, no viewership or "PR value", links to our site wherever the outlet allows.</li>
+        <li><b>Our data stays ours:</b> the Talent Pulse dataset, methodology and report page belong to SSEI, whoever runs the PR.</li>
       </ul>
-      <p class="note">Nomination, delegate and travel costs for summits and awards are billed on top of the fee, at actuals. We should agree a ceiling before anything is entered.</p>
+      <p class="note">Our leverage: Glad You Came matches their price, last quarter they delivered 189% of what they promised so the capacity exists, and the study behind their best work comes from our student base.</p>
     </div>
   </section>
 
@@ -580,7 +652,7 @@
       <div class="node">
         <span class="chip warn"><span class="dot warn"></span>Partly tracked</span>
         <b>What it earned</b>
-        <ul><li>Articles in national outlets</li><li>Times Sir and Vidyut are quoted</li><li>Reporters who contact us first</li></ul>
+        <ul><li>Articles in national outlets</li><li>Times Sir is quoted by name</li><li>Reporters who contact us first</li></ul>
       </div>
       <div class="edge"><small>which leads to</small><i></i></div>
       <div class="node end">
@@ -598,9 +670,9 @@
     <h2>Six decisions for leadership</h2>
     <p class="intro">The fee stays where it was last quarter. What changes is the brief, and what we ask of ourselves.</p>
     <ol class="asks">
-      <li><b>Renew Mandrake Mydia for the quarter</b><span>₹2.5 lakh plus GST, with the seven contract changes above written in.</span></li>
-      <li><b>Set a ceiling for summit and award costs</b><span>Entries, delegate passes and travel are billed on top, at actuals. Agree the limit before we enter anything.</span></li>
-      <li><b>Time from Sanjay Sir and Vidyut</b><span>Two to three hours a week between them, plus travel days for the summits we accept.</span></li>
+      <li><b>Renew Mandrake Mydia, after the negotiation</b><span>Sign at the same ₹2.5 lakh plus GST only once the six write-ins above are in the deliverables table. All quotes are first-round.</span></li>
+      <li><b>Set the quarterly cap for costs billed on top</b><span>Every proposal bills entries, delegate passes and travel at actuals. We fix the cap and approve each item in writing.</span></li>
+      <li><b>Time from Sanjay Sir</b><span>Two to three hours a week for bylines, interviews and recordings, plus travel days for the summits we accept.</span></li>
       <li><b>Judge PR on trust, not article counts</b><span>The monthly three-step report replaces the agency's rupee "PR value".</span></li>
       <li><b>Make Talent Pulse a yearly study we own</b><span>1,000+ of our own students, published on our website first.</span></li>
       <li><b>One person inside SSEI owns PR</b><span>Holds the reporter list, the crisis plan, the event calendar and the monthly numbers.</span></li>
