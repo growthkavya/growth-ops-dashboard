@@ -85,14 +85,15 @@
   .hero .lead { font-size: 18px; color: var(--hero-ink); max-width: 54ch; margin: 0 0 30px; }
   .agenda-label { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
     color: var(--hero-mut); margin: 0 0 10px; }
-  .agenda { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .agenda { list-style: none; margin: 0; padding: 0; display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 10px; }
   .agenda a { display: block; height: 100%; text-decoration: none; color: var(--hero-ink);
     background: var(--hero-card); border: 1px solid var(--hero-line); border-radius: 12px; padding: 14px 15px 16px; }
   .agenda a:hover { background: var(--hero-card-hover); }
   .agenda .n { font-family: 'Newsreader', Georgia, serif; font-size: 28px; line-height: 1; color: var(--hero-mut); }
   .agenda b { display: block; font-size: 15px; margin: 8px 0 4px; }
   .agenda small { display: block; font-size: 12.5px; line-height: 1.4; color: var(--hero-mut); }
-  @media (max-width: 920px) { .agenda { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 760px) { .agenda { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 460px) { .agenda { grid-template-columns: 1fr; } }
 
   /* Sections */
@@ -247,6 +248,40 @@
   .asks b { display: block; font-size: 15.5px; line-height: 1.3; margin-bottom: 4px; }
   .asks span { display: block; color: var(--mut); font-size: 14px; line-height: 1.45; }
 
+  /* 4. Next quarter */
+  .nine { display: grid; grid-template-columns: repeat(auto-fit, minmax(265px, 1fr)); gap: 14px; }
+  .group { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; }
+  .group h3 { font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--mut); margin: 0 0 10px; }
+  .item { padding: 10px 0; border-top: 1px solid var(--line); }
+  .group .item:first-of-type { border-top: none; padding-top: 0; }
+  .item b { display: block; font-size: 14.5px; }
+  .item small { display: block; color: var(--mut); font-size: 12.5px; line-height: 1.4; margin: 2px 0 7px; }
+
+  /* 5. Agencies */
+  .agencies { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .ag { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 15px 16px; }
+  .ag.pick { border: 2px solid var(--accent); }
+  .ag > b { display: block; font-size: 15.5px; }
+  .ag .cost { display: block; font-size: 13px; font-weight: 700; color: var(--accent-ink); margin: 3px 0 8px; }
+  .ag p { font-size: 13.5px; color: var(--mut); line-height: 1.45; margin: 0 0 10px; }
+  .ag .chip { white-space: normal; align-items: flex-start; line-height: 1.35; }
+  .ag .chip .dot { margin-top: 4px; }
+  .tscroll { overflow-x: auto; }
+  .vs { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); font-size: 13.5px; }
+  .vs th, .vs td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .vs thead th { font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--mut); background: var(--tint); }
+  .vs tbody tr:last-child td { border-bottom: none; }
+  .vs td:first-child { font-weight: 600; width: 22%; }
+  .vs .win { background: var(--tint); }
+  @media (max-width: 760px) { .vs { min-width: 640px; } }
+  .contract { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-top: 26px; }
+  .contract h3 { margin-bottom: 10px; }
+  .contract ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.5; }
+  .contract li { margin-bottom: 6px; }
+  .contract .note { font-size: 13px; color: var(--mut); margin: 12px 0 0; }
+
   footer { max-width: 1120px; margin: 0 auto; padding: 22px 20px 48px; border-top: 1px solid var(--line);
     color: var(--mut); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
   footer a { color: var(--mut); }
@@ -261,6 +296,8 @@
       <a href="#short">The short version</a>
       <a href="#why">Why PR matters</a>
       <a href="#map">The PR map</a>
+      <a href="#next">Next quarter</a>
+      <a href="#agencies">The agencies</a>
       <a href="#measure">Measuring it</a>
       <a href="#ask">What we need</a>
     </div>
@@ -269,16 +306,18 @@
 
 <header class="hero" id="top">
   <div class="hero-in">
-    <p class="eyebrow">SSEI leadership review · September 2026</p>
+    <p class="eyebrow">SSEI leadership review · October 2026</p>
     <h1>From headlines to trust</h1>
-    <p class="lead">Our first quarter of PR worked. Here's what it taught us and what we'd like to do next, in about five minutes.</p>
+    <p class="lead">Our first quarter of PR worked. Here's what it taught us, the nine things we want next quarter, and which of the four agencies we met should deliver them.</p>
     <p class="agenda-label">Today's agenda</p>
     <ol class="agenda">
       <li><a href="#short"><span class="n">1</span><b>The short version</b><small>What May to August delivered</small></a></li>
       <li><a href="#why"><span class="n">2</span><b>Why PR matters</b><small>How a news story becomes an admission</small></a></li>
       <li><a href="#map"><span class="n">3</span><b>The PR map</b><small>Eight services: where we are, where we're headed</small></a></li>
-      <li><a href="#measure"><span class="n">4</span><b>Measuring it</b><small>Counting trust, not articles</small></a></li>
-      <li><a href="#ask"><span class="n">5</span><b>What we need</b><small>Five decisions for leadership</small></a></li>
+      <li><a href="#next"><span class="n">4</span><b>Next quarter</b><small>The nine things we want to do</small></a></li>
+      <li><a href="#agencies"><span class="n">5</span><b>The agencies</b><small>Who we met, and who should get the work</small></a></li>
+      <li><a href="#measure"><span class="n">6</span><b>Measuring it</b><small>Counting trust, not articles</small></a></li>
+      <li><a href="#ask"><span class="n">7</span><b>What we need</b><small>Six decisions for leadership</small></a></li>
     </ol>
   </div>
 </header>
@@ -374,14 +413,14 @@
         <div class="row" data-status="good">
           <div class="svc"><b>Media coverage</b><small>Getting SSEI into newspapers and news sites</small><span class="chip good"><span class="dot good"></span>Going well</span></div>
           <div class="step s1"><span class="ml">So far</span><b>17 articles</b> in 11 outlets, incl. Economic Times, The Hindu, HT. All online.</div>
-          <div class="step s2"><span class="ml">Next 90 days</span>More national outlets, fewer small sites. Add print editions, a Bengali paper and student success stories.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>18 to 20 articles. Add TV, magazines and print interviews to the brief, not just online pieces.</div>
           <div class="step s3"><span class="ml">In 6 to 12 months</span>Reporters call us first on exam results and finance careers.</div>
         </div>
 
         <div class="row" data-status="warn">
           <div class="svc"><b>Sir and Vidyut as voices</b><small>Leaders quoted and invited as experts</small><span class="chip warn"><span class="dot warn"></span>Started</span></div>
           <div class="step s1"><span class="ml">So far</span>Sir: <b>2 opinion pieces</b> (FE, The Hindu) and 2 expert quotes. Vidyut: none yet.</div>
-          <div class="step s2"><span class="ml">Next 90 days</span>One piece a month from Sir. Vidyut's first interview, on careers and Gen Z. First TV slot.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>One byline a month from Sir, his first TV panel and two talks. Vidyut's first interview, on careers and Gen Z.</div>
           <div class="step s3"><span class="ml">In 6 to 12 months</span>Sir owns markets and exams; Vidyut owns careers and the education business.</div>
         </div>
 
@@ -402,21 +441,21 @@
         <div class="row" data-status="bad">
           <div class="svc"><b>Events and experiences</b><small>Events outsiders want to attend and cover</small><span class="chip bad"><span class="dot bad"></span>Not yet</span></div>
           <div class="step s1"><span class="ml">So far</span>Webinars and events, promoted only to our own followers.</div>
-          <div class="step s2"><span class="ml">Next 90 days</span>Turn one webinar into a public panel with outside guests.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>Speak at FICCI, Elets and Bengaluru Tech Summit. Turn one webinar into a public panel.</div>
           <div class="step s3"><span class="ml">In 6 to 12 months</span>An inter-college analyst competition and a results-day helpline for every student.</div>
         </div>
 
         <div class="row" data-status="warn">
           <div class="svc"><b>Creators and partners</b><small>Influencers, colleges and employers</small><span class="chip warn"><span class="dot warn"></span>Started</span></div>
           <div class="step s1"><span class="ml">So far</span>Creator collaborations running well, but mostly paid posts.</div>
-          <div class="step s2"><span class="ml">Next 90 days</span>Pick creators for credibility, not follower count. One joint piece with a college or employer.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>Pick creators for credibility, not follower count. Run podcasts and college talks ourselves.</div>
           <div class="step s3"><span class="ml">In 6 to 12 months</span>Research and events built with partners, not just paid posts.</div>
         </div>
 
         <div class="row" data-status="bad">
           <div class="svc"><b>Awards and recognition</b><small>Credible outsiders vouching for us</small><span class="chip bad"><span class="dot bad"></span>Not yet</span></div>
           <div class="step s1"><span class="ml">So far</span>Planned, but nothing applied for yet.</div>
-          <div class="step s2"><span class="ml">Next 90 days</span>List the awards and rankings that carry weight. Skip pay-to-win ones.</div>
+          <div class="step s2"><span class="ml">Next 90 days</span>Enter the two award shows named in the agency plan. Skip pay-to-win ones.</div>
           <div class="step s3"><span class="ml">In 6 to 12 months</span>Two or three credible recognitions for SSEI and Sir.</div>
         </div>
 
@@ -433,8 +472,101 @@
     <p class="take"><b>In short:</b> two services are working, two have started, four haven't begun. The next 90 days fix the foundations; the year after builds the rest.</p>
   </section>
 
+  <section id="next">
+    <p class="kicker">4 · Next quarter</p>
+    <h2>Nine things we want PR to do next quarter</h2>
+    <p class="intro">This is the scope we settled on after meeting the agencies. Only one of the nine is something we have actually done before.</p>
+
+    <div class="nine">
+      <div class="group">
+        <h3>In writing</h3>
+        <div class="item"><b>Authored articles</b><small>Sir's byline online and in e-papers, as we did last quarter</small><span class="chip good"><span class="dot good"></span>Working</span></div>
+        <div class="item"><b>Print press interviews</b><small>Sir's opinion in the printed paper when something relevant happens</small><span class="chip bad"><span class="dot bad"></span>New</span></div>
+        <div class="item"><b>Magazines</b><small>Business and education magazines, longer pieces that stay relevant</small><span class="chip bad"><span class="dot bad"></span>New</span></div>
+      </div>
+      <div class="group">
+        <h3>On stage</h3>
+        <div class="item"><b>Sessions, seminars, webinars</b><small>Sir invited to speak by someone else, not us hosting our own</small><span class="chip warn"><span class="dot warn"></span>Started</span></div>
+        <div class="item"><b>Leadership and finance events</b><small>The rooms where employers and institutions already sit</small><span class="chip bad"><span class="dot bad"></span>New</span></div>
+        <div class="item"><b>Summits</b><small>FICCI, Elets, DIDAC and the finance conferences</small><span class="chip bad"><span class="dot bad"></span>New</span></div>
+        <div class="item"><b>Tech talks</b><small>Our priority this quarter: a talk-format slot on AI and finance careers</small><span class="chip bad"><span class="dot bad"></span>New</span></div>
+      </div>
+      <div class="group">
+        <h3>On air and on record</h3>
+        <div class="item"><b>TV news and shows</b><small>Invited to studio panels around results, budget and market moments</small><span class="chip bad"><span class="dot bad"></span>New</span></div>
+        <div class="item"><b>Award shows</b><small>Sir nominated and invited, judged by someone other than us</small><span class="chip bad"><span class="dot bad"></span>New</span></div>
+      </div>
+    </div>
+
+    <p class="take"><b>In short:</b> six of the nine sit inside what a PR agency normally sells. Television and tech talks do not, so they have to be written into the contract rather than hoped for.</p>
+  </section>
+
+  <section id="agencies">
+    <p class="kicker">5 · The agencies</p>
+    <h2>We met four. The real choice is between two.</h2>
+    <p class="intro">Two rule themselves out on price and scope. The other two quote exactly the same fee, so the only question is what that fee buys.</p>
+
+    <div class="agencies">
+      <div class="ag">
+        <b>Bloomingdale PR</b><span class="cost">₹2.5 lakh per month, plus GST</span>
+        <p>Eleven activity lines, two research studies a year, three bylines and three industry stories a quarter. Sharp thinking on regulation and competition.</p>
+        <span class="chip bad"><span class="dot bad"></span>Out: same scope, three times the money</span>
+      </div>
+      <div class="ag">
+        <b>BrandStory Digital</b><span class="cost">Integrated retainer, the largest of the four</span>
+        <p>PR bundled with SEO, performance marketing and creators for Delhi and Mumbai. Good audience thinking, but the proposal is built around the digital work.</p>
+        <span class="chip bad"><span class="dot bad"></span>Out: we run organic and performance in-house</span>
+      </div>
+      <div class="ag pick">
+        <b>Mandrake Mydia</b><span class="cost">₹2.5 lakh per quarter, plus GST</span>
+        <p>Our current agency. 18 to 20 articles a quarter, two data studies, seven cities, and a dated calendar of summits and awards.</p>
+        <span class="chip good"><span class="dot good"></span>Recommended, with a tighter brief</span>
+      </div>
+      <div class="ag">
+        <b>Glad You Came</b><span class="cost">₹2.5 lakh per quarter, plus GST</span>
+        <p>13 articles, 40 plus wire copies, 5 print pieces, plus podcasts, college talks and a finance creator roster. Young team with sharp Gen Z ideas.</p>
+        <span class="chip warn"><span class="dot warn"></span>Borrow the ideas, not the retainer</span>
+      </div>
+    </div>
+
+    <h3>Same fee. Here is what each one actually commits to.</h3>
+    <div class="tscroll">
+      <table class="vs">
+        <thead><tr><th>What matters to us</th><th>Mandrake Mydia</th><th>Glad You Came</th></tr></thead>
+        <tbody>
+          <tr><td>Fee for three months</td><td>₹2.5 lakh plus GST, paid in advance</td><td>₹2.5 lakh plus GST</td></tr>
+          <tr><td>Articles committed</td><td class="win">18 to 20, split by type: 2 bylines, 2 founder interviews, 4 expert quotes, 4 to 5 from data stories, 2 to 3 outcome stories, 3 to 4 city features</td><td>13: three releases, two thought leadership pieces, two listicles, one byline, five print</td></tr>
+          <tr><td>Wire copies</td><td class="win">Reported separately, not counted as wins</td><td>40 plus, counted as deliverables, which is the pattern we moved away from after Q1</td></tr>
+          <tr><td>Who their media list reaches</td><td class="win">Moneycontrol, Business Today, Forbes India, Fortune India, People Matters, ET, Mint, Education World, Careers360</td><td>Mostly lifestyle: Vogue, Elle, Femina, Brides Today, plus Marathi papers from Nagpur and Nashik. Business titles are a short sub-list</td></tr>
+          <tr><td>Our own research</td><td class="win">Two studies, including a seven-city readiness study. This format produced 71% of last quarter's coverage</td><td>Mentioned as an idea, not committed as a deliverable</td></tr>
+          <tr><td>Summits, events, awards</td><td class="win">Nine named opportunities with dates: FICCI (8 to 9 Oct), Elets (12 to 13 Oct), Bengaluru Tech Summit (17 to 19 Nov), DIDAC (25 to 27 Nov), India Finance Conference (21 to 23 Dec), plus two award entries</td><td>Listed as "at actuals", nothing named or dated</td></tr>
+          <tr><td>Podcasts, talks, creators</td><td>Not offered</td><td class="win">Podcast appearances, college talks, webinars and ten finance creators</td></tr>
+          <tr><td>Cities</td><td class="win">Seven, two a month, Kolkata included</td><td>Mumbai and Maharashtra heavy</td></tr>
+          <tr><td>How they report</td><td class="win">Four monthly reports</td><td>"Estimated viewership and PR value, 4M plus", the exact metric we dropped</td></tr>
+          <tr><td>Links back to our site</td><td class="win">Not excluded, so we can ask for them</td><td>States plainly that hyperlinks and backlinks are not included</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="take"><b>In short:</b> for the same money, Mandrake commits to more real articles in the media our students and their parents actually read, plus the study format that carried last quarter. Glad You Came is better at the one thing we already do in-house: creators, podcasts and student-facing content.</p>
+
+    <div class="contract">
+      <h3>If we renew, this goes into the contract</h3>
+      <ul>
+        <li>Two television appearances, around results season and the budget.</li>
+        <li>One magazine feature, and three interviews in printed editions rather than only online.</li>
+        <li>Two talk slots, with Bengaluru Tech Summit in November as the first target.</li>
+        <li>Vidyut named in at least two deliverables, so we stop resting on one voice.</li>
+        <li>Links back to our website wherever the publication allows them.</li>
+        <li>Reporting with no "PR value" and no publication readership figures.</li>
+        <li>The two data studies kept as they are. That is the part that works.</li>
+      </ul>
+      <p class="note">Nomination, delegate and travel costs for summits and awards are billed on top of the fee, at actuals. We should agree a ceiling before anything is entered.</p>
+    </div>
+  </section>
+
   <section id="measure">
-    <p class="kicker">4 · Measuring it</p>
+    <p class="kicker">6 · Measuring it</p>
     <h2>Count trust, not articles</h2>
     <p class="intro">Every month we'll report three steps, so we can see whether coverage is turning into anything for SSEI.</p>
 
@@ -462,22 +594,23 @@
   </section>
 
   <section id="ask">
-    <p class="kicker">5 · What we need</p>
-    <h2>Five decisions for leadership</h2>
-    <p class="intro">The next 90 days mostly reuse people and tools we already have. What they need is these five decisions.</p>
+    <p class="kicker">7 · What we need</p>
+    <h2>Six decisions for leadership</h2>
+    <p class="intro">The fee stays where it was last quarter. What changes is the brief, and what we ask of ourselves.</p>
     <ol class="asks">
+      <li><b>Renew Mandrake Mydia for the quarter</b><span>₹2.5 lakh plus GST, with the seven contract changes above written in.</span></li>
+      <li><b>Set a ceiling for summit and award costs</b><span>Entries, delegate passes and travel are billed on top, at actuals. Agree the limit before we enter anything.</span></li>
+      <li><b>Time from Sanjay Sir and Vidyut</b><span>Two to three hours a week between them, plus travel days for the summits we accept.</span></li>
       <li><b>Judge PR on trust, not article counts</b><span>The monthly three-step report replaces the agency's rupee "PR value".</span></li>
-      <li><b>Time from Sanjay Sir and Vidyut</b><span>Two to three hours a week between them for interviews, opinion pieces and podcasts.</span></li>
       <li><b>Make Talent Pulse a yearly study we own</b><span>1,000+ of our own students, published on our website first.</span></li>
-      <li><b>A new brief for the agency</b><span>Fewer copies of one story; more national outlets, TV, podcasts, print and Bengali press.</span></li>
-      <li><b>One person inside SSEI owns PR</b><span>Holds the reporter list, the crisis plan and the monthly numbers.</span></li>
+      <li><b>One person inside SSEI owns PR</b><span>Holds the reporter list, the crisis plan, the event calendar and the monthly numbers.</span></li>
     </ol>
   </section>
 
 </main>
 
 <footer>
-  <span>Built from Mandrake Mydia's coverage report (May to August 2026) and the published articles. Prepared by Growth &amp; Ops, September 2026.</span>
+  <span>Built from Mandrake Mydia's coverage report (May to August 2026), the published articles, and the four agency proposals received in September 2026. Prepared by Growth &amp; Ops, October 2026.</span>
   <a href="#top">Back to top ↑</a>
 </footer>
 
