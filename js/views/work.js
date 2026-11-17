@@ -36,8 +36,8 @@ const workView = {
 
     visible() {
         let items = auth.isAdmin ? store.workItems : store.mine();
-        if (this.lens === 'mine') items = items.filter(w => auth.keys.includes(w.owner_name));
-        if (this.lens === 'team') items = items.filter(w => !auth.keys.includes(w.owner_name));
+        if (this.lens === 'mine') items = items.filter(w => auth.ownKeys.includes(w.owner_name));
+        if (this.lens === 'team') items = items.filter(w => !auth.ownKeys.includes(w.owner_name));
         if (this.status === 'open') items = items.filter(w => store.isOpen(w));
         else if (this.status === 'done') items = items.filter(w => w.status === 'done');
 
@@ -50,7 +50,7 @@ const workView = {
     controls() {
         const lenses = auth.isAdmin
             ? [{ key: 'team', label: 'Handed out' }, { key: 'mine', label: 'Mine' }, { key: 'all', label: 'Everyone' }]
-            : [{ key: 'mine', label: 'Mine' }].concat(store.mine().some(w => !auth.keys.includes(w.owner_name)) ? [{ key: 'team', label: 'Handed out' }] : []);
+            : [{ key: 'mine', label: 'Mine' }].concat(store.mine().some(w => !auth.ownKeys.includes(w.owner_name)) ? [{ key: 'team', label: auth.isShared ? 'Others' : 'Handed out' }] : []);
         return `<div class="bar">
             <div class="segments">${lenses.map(l => `<button class="segment ${this.lens === l.key ? 'active' : ''}" data-lens="${l.key}">${esc(l.label)}</button>`).join('')}</div>
             <div class="segments">

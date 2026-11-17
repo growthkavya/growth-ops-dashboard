@@ -56,7 +56,7 @@ const homeView = {
 
     /** Late or blocked work, and scoring that is due. Absent when there is nothing. */
     waiting() {
-        const items = store.needsAttention(store.mine())
+        const items = store.needsAttention(store.ownWork())
             .sort((a, b) => (a.due_date || '9999').localeCompare(b.due_date || '9999'));
         const score = this.scoreLine();
         if (!items.length && !score) return '';
@@ -86,7 +86,7 @@ const homeView = {
 
     week() {
         const from = dates.weekStart(), to = dates.weekEnd();
-        const items = auth.isAdmin ? store.workItems : store.mine();
+        const items = auth.isAdmin ? store.workItems : store.ownWork();
         const due = store.dueBetween(from, to, items);
         const done = store.doneBetween(from, to, items);
 
@@ -110,7 +110,7 @@ const homeView = {
     plate() {
         if (auth.isAdmin) return '';
         const from = dates.weekStart(), to = dates.weekEnd();
-        const items = store.open(store.mine().filter(w => auth.keys.includes(w.owner_name)))
+        const items = store.open(store.ownWork().filter(w => auth.ownKeys.includes(w.owner_name)))
             .filter(w => !w.due_date || w.due_date > to || w.due_date < from)
             .filter(w => !(w.due_date && w.due_date < dates.today()))     // already under Waiting on you
             .sort((a, b) => (a.due_date || '9999').localeCompare(b.due_date || '9999'));
@@ -150,7 +150,7 @@ const homeView = {
     },
 
     latest() {
-        const items = store.visibleWork()
+        const items = (auth.isShared ? store.ownWork() : store.visibleWork())
             .filter(w => w.status === 'done' && w.completed_at)
             .sort((a, b) => b.completed_at.localeCompare(a.completed_at))
             .slice(0, 6);

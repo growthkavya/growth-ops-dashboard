@@ -28,6 +28,18 @@ const auth = {
         return this.seats.length ? this.seats : (this.profile?.member_key ? [this.profile.member_key] : []);
     },
 
+    /**
+     * Whose list "Mine" means. On a shared login that is the person who
+     * picked their name, not both people, so Rupam never lands on Palak's
+     * day. Edit rights still use keys, so either can update shared work.
+     */
+    get ownKeys() { return this.seat ? [this.seat] : this.keys; },
+
+    /** The other person on a two-person shared login, or null. */
+    get otherSeat() {
+        return this.seats.length === 2 ? this.seats.find(k => k !== this.seat) || null : null;
+    },
+
     get role()    { return this.profile?.role || 'member'; },
     get isAdmin() { return this.role === 'admin'; },
 

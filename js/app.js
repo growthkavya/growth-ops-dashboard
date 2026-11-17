@@ -59,6 +59,11 @@ const store = {
         return this.workItems.filter(w => auth.keys.includes(w.owner_name) || w.assigned_by === auth.userId);
     },
 
+    /** mine() without the other person on a shared login. */
+    ownWork() {
+        return this.mine().filter(w => auth.ownKeys.includes(w.owner_name) || !auth.keys.includes(w.owner_name));
+    },
+
     /** What the signed-in person can see, for the pages that list work. */
     visibleWork() {
         return auth.isAdmin || auth.isLeader ? this.workItems : this.mine();
@@ -239,6 +244,14 @@ const app = {
             ? `${VOCAB.role[auth.role] || auth.role} · shared login`
             : (auth.isLeader ? 'Leadership' : (CONFIG.team.find(m => m.key === auth.key)?.role || VOCAB.role[auth.role] || auth.role));
         document.getElementById('switch-seat')?.classList.toggle('hidden', !auth.isShared);
+        const swap = document.getElementById('seat-swap');
+        if (swap) {
+            swap.classList.toggle('hidden', !auth.isShared);
+            const other = auth.otherSeat;
+            swap.textContent = other
+                ? `Not ${personName(auth.seat).split(' ')[0]}? Switch to ${personName(other).split(' ')[0]}`
+                : 'Not you? Switch person';
+        }
         document.getElementById('rail-period').textContent = dates.long(dates.today());
 
         const mark = document.getElementById('user-mark');
@@ -344,7 +357,7 @@ const app = {
         };
         const attention = store.needsAttention().length;
         set('home', attention, attention > 0);
-        set('work', store.open(store.mine().filter(w => auth.keys.includes(w.owner_name))).length);
+        set('work', store.open(store.mine().filter(w => auth.ownKeys.includes(w.owner_name))).length);
     },
 
     onRegister() {
@@ -393,12 +406,20 @@ const app = {
     },
 
     wireSeatSwitch() {
-        document.getElementById('switch-seat')?.addEventListener('click', async () => {
-            await auth.switchSeat();
+        const go = async (direct) => {
+            const other = direct ? auth.otherSeat : null;
+            if (other) {
+                auth.seat = other;
+                sessionStorage.setItem('go-seat', other);
+            } else {
+                await auth.switchSeat();
+            }
             this.paintIdentity();
             await store.reload();
-            toast(`Signed in as ${auth.name}`);
-        });
+            toast(`Now showing ${auth.name}`);
+        };
+        document.getElementById('switch-seat')?.addEventListener('click', () => go(false));
+        document.getElementById('seat-swap')?.addEventListener('click', () => go(true));
     },
 
     wirePassword() {
